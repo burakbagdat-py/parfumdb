@@ -37,6 +37,11 @@ final class Notifier {
     static Uri soundUri(Context c, String spec) {
         if (spec == null || spec.isEmpty() || spec.equals("default")) return Settings.System.DEFAULT_NOTIFICATION_URI;
         if (spec.equals("silent")) return null;
+        if (spec.startsWith("dl:")) {
+            String name = spec.substring(3);
+            if (SoundProvider.safeName(name) && new java.io.File(SoundProvider.dir(c), name + ".wav").exists()) return SoundProvider.uriFor(name);
+            return Settings.System.DEFAULT_NOTIFICATION_URI;
+        }
         if (spec.startsWith("raw:")) {
             int id = c.getResources().getIdentifier(spec.substring(4), "raw", c.getPackageName());
             if (id == 0) return Settings.System.DEFAULT_NOTIFICATION_URI;

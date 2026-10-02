@@ -2,6 +2,7 @@ package com.parfumcarki.app;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -245,6 +246,103 @@ public class MainActivity extends Activity {
         while ((n = in.read(buf)) > 0) bo.write(buf, 0, n);
         in.close();
         return bo.toString("UTF-8");
+    }
+
+    /* ---------- generic fetch: lets the page add new price sources without a new APK ---------- */
+    void httpGet(int reqId, String url, String mode) {
+        net.execute(() -> {
+            try {
+                Uri u = Uri.parse(url);
+                if (!"https".equals(u.getScheme())) throw new IllegalArgumentException("https only");
+                HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+                c.setRequestProperty("User-Agent", UA);
+                c.setRequestProperty("Accept-Language", "tr-TR,tr;q=0.9");
+                c.setConnectTimeout(15000);
+                c.setReadTimeout(25000);
+                int code = c.getResponseCode();
+                InputStream in = code >= 400 ? c.getErrorStream() : c.getInputStream();
+                String body = in == null ? "" : readAll(in);
+                if ("next".equals(mode)) {
+                    int i = body.indexOf("id=\"__NEXT_DATA__\"");
+                    if (i < 0) {
+                        body = "";
+                    } else {
+                        int s = body.indexOf('>', i) + 1;
+                        body = body.substring(s, body.indexOf("</script>", s));
+                    }
+                } else if (body.length() > 3_000_000) {
+                    body = body.substring(0, 3_000_000);
+                }
+                deliver(reqId, new JSONObject().put("status", code).put("body", body).toString());
+            } catch (Exception e) {
+                deliver(reqId, "{\"error\":\"" + e.getClass().getSimpleName() + "\"}");
+            }
+        });
+    }
+
+    /* ---------- downloadable notification sounds ---------- */
+    boolean hasSound(String name) {
+        return SoundProvider.safeName(name) && new java.io.File(SoundProvider.dir(this), name + ".wav").exists();
+    }
+
+    void installSound(int reqId, String name, String url) {
+        net.execute(() -> {
+            try {
+                if (!SoundProvider.safeName(name)) throw new IllegalArgumentException("name");
+                HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+                c.setRequestProperty("User-Agent", UA);
+                if (c.getResponseCode() != 200) throw new IllegalStateException("http " + c.getResponseCode());
+                java.io.File tmp = new java.io.File(SoundProvider.dir(this), name + ".tmp");
+                try (InputStream in = c.getInputStream(); OutputStream out = new java.io.FileOutputStream(tmp)) {
+                    byte[] buf = new byte[16384];
+                    int n;
+                    while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+                }
+                java.io.File f = new java.io.File(SoundProvider.dir(this), name + ".wav");
+                if (!tmp.renameTo(f)) throw new IllegalStateException("rename");
+                deliver(reqId, "{\"ok\":true}");
+            } catch (Exception e) {
+                deliver(reqId, "{\"error\":\"" + e.getClass().getSimpleName() + "\"}");
+            }
+        });
+    }
+
+    /* ---------- in-app update: download the APK and hand it to Android's installer ---------- */
+    void installUpdate(String url) {
+        if (Build.VERSION.SDK_INT >= 26 && !getPackageManager().canRequestPackageInstalls()) {
+            Toast.makeText(this, "Bu uygulamaya “Bilinmeyen uygulamaları yükle” izni ver, sonra tekrar dokun", Toast.LENGTH_LONG).show();
+            try {
+                startActivity(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + getPackageName())));
+            } catch (Exception ignored) { }
+            return;
+        }
+        Toast.makeText(this, "Güncelleme indiriliyor…", Toast.LENGTH_SHORT).show();
+        net.execute(() -> {
+            try {
+                android.content.pm.PackageInstaller pi = getPackageManager().getPackageInstaller();
+                android.content.pm.PackageInstaller.SessionParams params =
+                        new android.content.pm.PackageInstaller.SessionParams(android.content.pm.PackageInstaller.SessionParams.MODE_FULL_INSTALL);
+                int sid = pi.createSession(params);
+                try (android.content.pm.PackageInstaller.Session session = pi.openSession(sid)) {
+                    HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+                    c.setRequestProperty("User-Agent", UA);
+                    c.setInstanceFollowRedirects(true);
+                    if (c.getResponseCode() != 200) throw new IllegalStateException("http " + c.getResponseCode());
+                    try (InputStream in = c.getInputStream(); OutputStream out = session.openWrite("update.apk", 0, -1)) {
+                        byte[] buf = new byte[65536];
+                        int n;
+                        while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+                        session.fsync(out);
+                    }
+                    Intent done = new Intent(this, InstallReceiver.class);
+                    int flags = PendingIntent.FLAG_UPDATE_CURRENT | (Build.VERSION.SDK_INT >= 31 ? PendingIntent.FLAG_MUTABLE : 0);
+                    PendingIntent p = PendingIntent.getBroadcast(this, 77, done, flags);
+                    session.commit(p.getIntentSender());
+                }
+            } catch (Exception e) {
+                runOnUiThread(() -> Toast.makeText(this, "Güncelleme indirilemedi: " + e.getClass().getSimpleName(), Toast.LENGTH_LONG).show());
+            }
+        });
     }
 
     /* ---------- sounds ---------- */

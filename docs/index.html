@@ -354,6 +354,7 @@ const ANY = 'Hepsi';
 const GENDER = {E:'Erkek',K:'Kadın',U:'Unisex'};
 const SIZES = [50,75,90,100,125,150,200];
 const INV_SIZES = [10,30,50,75,90,100,125,150,200];
+const fmtDate = t => new Date(t).toLocaleString('tr-TR', {day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'});
 const FAM_HUE = {
   'Narenciye':45,'Fresh':175,'Su':195,'Deniz':200,'Ozonik':190,'Yeşil':100,'Aromatik':120,'Taze baharatlı':60,
   'Lavanta':265,'İris':255,'Menekşe':275,'Pudralı':320,'Sabunsu':185,'Misk':300,'Odunsu':28,'Sıcak baharatlı':12,
@@ -381,9 +382,9 @@ const STORES = {
   hepsiburada: {n: 'Hepsiburada', url: q => 'https://www.hepsiburada.com/ara?q=' + encodeURIComponent(q)},
   amazon: {n: 'Amazon', url: q => 'https://www.amazon.com.tr/s?k=' + encodeURIComponent(q)}
 };
-const SOUNDS = {kristal: 'Kristal', gemi_cani: 'Gemi çanı', robot: 'Robot', sprey: 'Sprey', damla: 'Damla', nabiz: 'Nabız'};
+const SOUNDS = {bb: 'BB İmza', kristal: 'Kristal', gemi_cani: 'Gemi çanı', robot: 'Robot', sprey: 'Sprey', damla: 'Damla', nabiz: 'Nabız'};
 const SKINS = {
-  karamel: {n: 'Karamel', sub: 'Turuncudan karamele', bar: '#17110d', greet: 'Bugün sık', sound: 'damla',
+  karamel: {n: 'Karamel', sub: 'Turuncudan karamele', bar: '#17110d', greet: 'Bugün sık', sound: 'bb',
     fonts: 'family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Plus+Jakarta+Sans:wght@400;500;600;700',
     wheel: ['#f26d21','#7a3a17','#c98a4b','#4a2a18','#e5813a','#5e3520','#d99a5c','#33211a'],
     wheelText: ['#2a1407','#f8ede3','#2a1407','#f8ede3','#2a1407','#f8ede3','#2a1407','#f8ede3'], rim: '#f8ede3', hub: ['#f26d21','#c98a4b'],
@@ -443,8 +444,8 @@ function norm(p){
 }
 function defaultReminders(){
   return [
-    {id:'sabah', on:true, label:'Sabah', time:'08:30', days:[0,1,2,3,4,5,6], kind:'today', cat:'Günlük', sound:'tema', vib:true},
-    {id:'aksam', on:false, label:'Akşam planı', time:'19:00', days:[5,6], kind:'cat', cat:'Date', sound:'tema', vib:true}
+    {id:'sabah', on:true, label:'Sabah', time:'08:30', days:[0,1,2,3,4,5,6], kind:'today', cat:'Günlük', sound:'bb', vib:true},
+    {id:'aksam', on:false, label:'Akşam planı', time:'19:00', days:[5,6], kind:'cat', cat:'Date', sound:'bb', vib:true}
   ];
 }
 function freshState(){
@@ -456,7 +457,7 @@ function freshState(){
     inv: [], customCats: [],
     week, weekKey: '', source: 'envanter',
     wheelCats: [], wheelGroup: 'Kullanım', lastSpin: null,
-    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner',
+    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true,
     notif: {reminders: defaultReminders()}
   };
 }
@@ -632,24 +633,45 @@ function removeWhite(im){
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
   const ctx = cv.getContext('2d'); ctx.drawImage(im, 0, 0, W, H);
   const img = ctx.getImageData(0, 0, W, H), d = img.data, N = W * H;
-  const bgAt = i => { const r = d[i*4], g = d[i*4+1], b = d[i*4+2]; const mx = Math.max(r,g,b), mn = Math.min(r,g,b); return mn >= 218 && mx - mn <= 30; };
+  // 1) measure the backdrop from the border; only a near-white, even backdrop is removed
+  const border = [];
+  for (let x = 0; x < W; x += 2) border.push(x, (H - 1) * W + x);
+  for (let y = 0; y < H; y += 2) border.push(y * W, y * W + W - 1);
+  const lum = i => (d[i*4] * 3 + d[i*4+1] * 6 + d[i*4+2]) / 10;
+  const bl = border.map(lum).sort((a, b) => a - b);
+  const bgL = bl[Math.floor(bl.length / 2)];
+  if (bgL < 235 || bl[Math.floor(bl.length * 0.25)] < 225) return null;
+  // 2) flood fill from the border: a pixel joins only if it is close to the backdrop AND there is no edge
+  //    between it and its neighbour, so white caps, labels and clear glass inside the bottle stay
+  const near = i => { const r = d[i*4], g = d[i*4+1], b = d[i*4+2]; return Math.max(r, g, b) - Math.min(r, g, b) <= 14 && lum(i) >= bgL - 10; };
   const mask = new Uint8Array(N), q = new Int32Array(N); let qh = 0, qt = 0;
-  const push = i => { if (!mask[i] && bgAt(i)) { mask[i] = 1; q[qt++] = i; } };
-  for (let x = 0; x < W; x++) { push(x); push((H - 1) * W + x); }
-  for (let y = 0; y < H; y++) { push(y * W); push(y * W + W - 1); }
+  const push = (i, from) => {
+    if (mask[i] || !near(i)) return;
+    if (from >= 0 && Math.abs(lum(i) - lum(from)) > 4) return;
+    mask[i] = 1; q[qt++] = i;
+  };
+  for (const i of border) push(i, -1);
   while (qh < qt) {
     const i = q[qh++], x = i % W;
-    if (x > 0) push(i - 1);
-    if (x < W - 1) push(i + 1);
-    if (i >= W) push(i - W);
-    if (i < N - W) push(i + W);
+    if (x > 0) push(i - 1, i);
+    if (x < W - 1) push(i + 1, i);
+    if (i >= W) push(i - W, i);
+    if (i < N - W) push(i + W, i);
   }
-  if (qt < N * 0.04) return null;
+  if (qt < N * 0.04 || qt > N * 0.88) return null;
+  // 3) grow the mask by one pixel into the anti-aliased rim and fade it instead of cutting hard
+  const rim = new Uint8Array(N);
+  for (let i = 0; i < N; i++) {
+    if (mask[i]) continue;
+    const x = i % W;
+    if ((x > 0 && mask[i-1]) || (x < W-1 && mask[i+1]) || (i >= W && mask[i-W]) || (i < N-W && mask[i+W])) rim[i] = 1;
+  }
   for (let i = 0; i < N; i++) {
     if (mask[i]) { d[i*4+3] = 0; continue; }
-    const x = i % W;
-    const edge = (x > 0 && mask[i-1]) || (x < W-1 && mask[i+1]) || (i >= W && mask[i-W]) || (i < N-W && mask[i+W]);
-    if (edge) { const mn = Math.min(d[i*4], d[i*4+1], d[i*4+2]); if (mn > 190) d[i*4+3] = Math.max(0, Math.min(255, (255 - mn) * 5)); }
+    if (rim[i]) {
+      const l = lum(i);
+      if (l > bgL - 30) d[i*4+3] = Math.max(60, Math.min(255, Math.round((bgL - l) * 8 + 60)));
+    }
   }
   ctx.putImageData(img, 0, 0);
   return cv.toDataURL('image/webp', 0.86);
@@ -670,9 +692,9 @@ function cutImage(src){
 function getNobg(src){
   if (NOBG.has(src)) return NOBG.get(src);
   const p = (async () => {
-    try { const c = await idbGet('nb:' + src); if (c) return c; } catch (e) {}
+    try { const c = await idbGet('nb2:' + src); if (c) return c; } catch (e) {}
     const u = await cutImage(src);
-    if (u) idbSet('nb:' + src, u).catch(() => {});
+    if (u) idbSet('nb2:' + src, u).catch(() => {});
     return u;
   })();
   NOBG.set(src, p); return p;
@@ -767,7 +789,7 @@ function resolveSound(r){
   const k = r.sound === 'tema' || !r.sound ? skin().sound : r.sound;
   if (k === 'default' || k === 'silent') return k;
   if (k === 'custom') return r.customUri || 'default';
-  return 'raw:' + k;
+  return 'raw:' + (k === 'bb' ? 'bb_imza' : k);
 }
 function soundName(r){
   const k = r.sound || 'tema';
@@ -776,6 +798,12 @@ function soundName(r){
   if (k === 'silent') return 'Sessiz';
   if (k === 'custom') return r.customTitle || 'Telefondan seçilen ses';
   return SOUNDS[k] || k;
+}
+function notifyPick(p, why){
+  if (!NATIVE || !S.notifyRandom || !p) return;
+  const r = S.notif.reminders[0] || {sound: 'bb', vib: true};
+  const bits = [p.brand, why, p.top.slice(0, 3).join(', ')].filter(Boolean);
+  nativeCall('test', 'Rastgele seçim: ' + p.name, bits.join(' · '), resolveSound(r), r.vib !== false);
 }
 function msgFor(p, title, cat){
   const bits = [p.brand, cat ? cat : '', p.top.slice(0, 3).join(', ')].filter(Boolean);
@@ -832,7 +860,7 @@ const appVersion = () => parseInt(nativeCall('versionCode') || '0', 10) || 0;
 function renderUpdate(){
   const slot = document.getElementById('update-slot');
   slot.innerHTML = NATIVE && LATEST && LATEST.v > appVersion()
-    ? `<div class="update"><span>Uygulamanın yeni sürümü hazır</span><a class="btn sm" href="${esc(LATEST.url)}" data-act="extlink">İndir ve kur</a></div>` : '';
+    ? `<div class="update"><span>Uygulamanın yeni sürümü hazır</span>${updateBtn('sm', NATIVE.installUpdate ? 'Şimdi güncelle' : 'İndir ve kur')}</div>` : '';
 }
 
 /* ---------- toast ---------- */
@@ -924,23 +952,36 @@ function renderWeek(){
 
 /* ---------- wheel ---------- */
 let rot = 0, spinning = false, wheelList = [];
+const wheelBase = () => S.wheelInv && invPerfumes().length ? invPerfumes() : S.perfumes;
 function filteredWheel(){
-  const c = S.wheelCats;
-  return c.length ? sourcePerfumes().filter(p => c.every(x => p.cats.includes(x))) : sourcePerfumes().slice();
+  const c = S.wheelCats, off = new Set(S.wheelOff);
+  return wheelBase().filter(p => !off.has(p.id) && c.every(x => p.cats.includes(x)));
+}
+function wheelOptions(){
+  const inv = invPerfumes().length, base = wheelBase(), off = new Set(S.wheelOff);
+  return `<div class="box" style="gap:10px">
+    <label class="toggle-row" for="wheel-inv"><span><b>Envanter parfümleri</b><br><span class="muted small">${inv ? 'Çarkta sadece elindeki şişeler (' + inv + ')' : 'Envanterin boş; koleksiyon kullanılıyor'}</span></span>
+      <span class="switch"><input type="checkbox" id="wheel-inv"${S.wheelInv ? ' checked' : ''}><span></span></span></label>
+    <details class="cg" id="wheel-list"><summary>Çarktaki parfümler <small>${base.filter(p => !off.has(p.id)).length}/${base.length} işaretli</small></summary>
+      <div style="display:flex;flex-direction:column;gap:2px;padding:0 12px 12px">${base.map(p => `<label class="toggle-row" style="padding:6px 0;justify-content:flex-start;gap:10px">
+        <input type="checkbox" class="wheel-tick" data-id="${p.id}"${off.has(p.id) ? '' : ' checked'} style="width:20px;height:20px;accent-color:var(--accent);flex:none">
+        <span style="min-width:0">${esc(p.name)} <span class="muted small" lang="en">${esc(p.brand)}</span></span></label>`).join('')}</div></details>
+  </div>`;
 }
 function renderWheel(){
   wheelList = filteredWheel();
   const last = S.lastSpin && byId(S.lastSpin);
   view.innerHTML = `
   <section class="section">
-    <div class="row spread"><h2>Ne sıksam?</h2><span class="muted small">${wheelList.length} parfüm · ${usingInv() ? 'envanter' : 'koleksiyon'}</span></div>
+    <div class="row spread"><h2>Ne sıksam?</h2><span class="muted small">${wheelList.length} parfüm</span></div>
+    ${wheelOptions()}
     ${catFilter('wcat', S.wheelGroup, S.wheelCats)}
   </section>
   <section class="section">
     ${wheelList.length ? `
     <div class="wheel-wrap"><div class="pointer"></div><canvas id="wheel" aria-label="Parfüm çarkı, çevirmek için dokun" role="button" tabindex="0"></canvas></div>
     <div class="row" style="justify-content:center"><button class="btn primary" id="spin-btn" data-act="spin" type="button">Çarkı çevir</button></div>`
-    : `<div class="empty">Seçili kategorilerin hepsine uyan parfüm yok. Bir filtreyi kaldır ya da envanterine parfüm ekle.</div>`}
+    : `<div class="empty">Çarkta parfüm yok. Tikleri ya da kategori filtresini kontrol et.</div>`}
     <div id="result">${last ? resultCard(last) : ''}</div>
   </section>`;
   if (wheelList.length) {
@@ -1021,6 +1062,7 @@ function spin(){
     const p = wheelList[Math.floor((((-rot) % TAU + TAU) % TAU) / a) % n];
     S.lastSpin = p.id; save();
     const res = document.getElementById('result'); if (res) res.innerHTML = resultCard(p);
+    notifyPick(p, 'Çark');
     try { navigator.vibrate && navigator.vibrate([20, 40, 30]); } catch (e) {}
   })(t0);
 }
@@ -1151,6 +1193,7 @@ function renderInventory(){
         <div class="art">${art(p)}</div>
         <div class="item-body"><span class="item-name">${esc(p.name)}</span>
           <span class="item-meta"><span lang="en">${esc(p.brand)}</span> · ${i.ml} ml · %${i.level}${i.level === 0 ? ' · bitti' : ''}</span>
+          <span class="item-meta">Eklendi: ${esc(fmtDate(i.added))}</span>
           <div class="level"><i style="width:${i.level}%"></i></div></div>
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><path d="m9 6 6 6-6 6"/></svg>
       </button>`).join('')}</div>`
@@ -1188,7 +1231,7 @@ function openInvEdit(iid){
   const f = openOverlay();
   const draw = () => {
     f.innerHTML = `<div class="row spread"><span class="eyebrow">Envanter</span>${closeIcon}</div>
-      ${headHtml(p, '')}
+      ${headHtml(p, 'Envantere eklendi: ' + esc(fmtDate(it.added)))}
       <div class="field"><span class="label">Şişe boyutu</span>
         <div class="rate">${INV_SIZES.map(s => `<button class="${it.ml === s ? 'on' : ''}" data-act="invml" data-iid="${it.id}" data-v="${s}" type="button">${s} ml</button>`).join('')}</div></div>
       <div class="field"><label for="inv-level">Kalan: %<span id="inv-lv">${it.level}</span> · yaklaşık ${Math.round(it.ml * it.level / 100)} ml</label>
@@ -1350,36 +1393,64 @@ function addFromCatalog(cid){
   return p;
 }
 
-/* random buy */
-let rb = {g: '', cat: ''};
+/* random buy: asks only the mood; gender and store come from settings */
+const MOODS = [...TAX[0][1], 'Seksi', 'İltifat Toplayan', 'Temiz', 'Kör Alım Güvenli', 'Yaz', 'Kış', 'Gece'];
+let rb = {cat: '', rolling: false};
 function openRandomBuy(){
   sheetMode = 'randbuy';
   const f = openOverlay();
+  const st = STORES[S.store];
   f.innerHTML = `<div class="row spread"><h2>Rastgele parfüm al</h2>${closeIcon}</div>
-    <div class="field"><span class="label">Mağaza</span><div class="seg">${Object.entries(STORES).map(([k, s]) => `<button class="${S.store === k ? 'on' : ''}" data-act="rbstore" data-v="${k}" type="button">${s.n}</button>`).join('')}</div>
-      ${S.store === 'boyner' ? '<span class="muted small">Boyner seçiliyken sadece Boyner\'de satılan markalardan seçilir ve canlı fiyat gösterilir.</span>' : ''}</div>
-    <div class="field"><span class="label">Kimin için</span><div class="chips"><button class="chip${rb.g ? '' : ' on'}" data-act="rbg" data-g="" type="button">Fark etmez</button>${['E','K','U'].map(g => `<button class="chip${rb.g === g ? ' on' : ''}" data-act="rbg" data-g="${g}" type="button">${GENDER[g]}</button>`).join('')}</div></div>
-    <div class="field"><span class="label">Ne için</span><div class="chips"><button class="chip${rb.cat ? '' : ' on'}" data-act="rbcat" data-cat="" type="button">Fark etmez</button>${[...TAX[0][1], ...TAX[1][1].slice(0, 4), 'Seksi', 'İltifat Toplayan', 'Kör Alım Güvenli'].map(c => `<button class="chip${rb.cat === c ? ' on' : ''}" data-act="rbcat" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div></div>
-    <button class="btn primary block" data-act="rbgo" type="button">Rastgele seç</button>
+    <div class="field"><span class="label">Ne için?</span>
+      <div class="chips" id="rb-moods">${MOODS.map(c => `<button class="chip${rb.cat === c ? ' on' : ''}" data-act="rbcat" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div></div>
+    <div class="row" style="flex-wrap:nowrap">
+      <button class="btn block" data-act="rbroll" type="button" style="flex:1">Rastgele mod</button>
+      <button class="btn primary block" data-act="rbgo" type="button" style="flex:1">Parfüm seç</button>
+    </div>
+    <span class="muted small">${esc(st.n)} · ${S.gender ? GENDER[S.gender] : 'tüm cinsiyetler'} · <button class="back" style="display:inline;margin:0;color:var(--hi)" data-act="gosub" data-sub="alisveris" type="button">ayarlardan değiştir</button></span>
     <div id="rb-result"></div>`;
   loadCatalog().catch(() => {});
+}
+function rbRoll(){
+  if (rb.rolling) return;
+  const chips = [...document.querySelectorAll('#rb-moods .chip')];
+  if (!chips.length) return;
+  rb.rolling = true;
+  const target = Math.floor(Math.random() * chips.length);
+  const steps = chips.length * 2 + target + 1;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let k = 0;
+  const tick = () => {
+    chips.forEach(c => c.classList.remove('on'));
+    const c = chips[k % chips.length]; c.classList.add('on');
+    try { navigator.vibrate && navigator.vibrate(4); } catch (e) {}
+    if (++k >= steps) {
+      rb.rolling = false; rb.cat = c.dataset.cat;
+      setTimeout(rbPick, 450);
+      return;
+    }
+    const prog = k / steps;
+    setTimeout(tick, reduce ? 0 : 55 + Math.pow(prog, 3) * 420);
+  };
+  tick();
 }
 async function rbPick(){
   try { await loadCatalog(); } catch (e) { toast('Katalog yüklenemedi'); return; }
   const owned = new Set(S.inv.map(i => (byId(i.pid) || {}).cid).filter(Boolean));
-  const pool = CAT.filter(c => c.r[5] >= 1500 && !owned.has(c.r[0]) && (!rb.g || c.r[4] === rb.g) && (!rb.cat || c.r[12].includes(rb.cat)) && (S.store !== 'boyner' || c.boy));
+  const pool = CAT.filter(c => c.r[5] >= 1500 && !owned.has(c.r[0]) && (!S.gender || c.r[4] === S.gender || c.r[4] === 'U') && (!rb.cat || c.r[12].includes(rb.cat)) && (S.store !== 'boyner' || c.boy));
   const box = document.getElementById('rb-result'); if (!box) return;
   if (!pool.length) { box.innerHTML = '<div class="empty">Bu seçimlere uyan parfüm bulunamadı.</div>'; return; }
   const c = pick(pool);
   const p = toPerfume(c.r), st = STORES[S.store];
   box.innerHTML = `<div class="box">
-    ${headHtml(p, [GENDER[c.r[4]], c.r[13] ? '★ ' + c.r[13].toFixed(1) : ''].filter(Boolean).join(' · '))}
+    ${headHtml(p, [rb.cat, GENDER[c.r[4]], c.r[13] ? '★ ' + c.r[13].toFixed(1) : ''].filter(Boolean).join(' · '))}
     <div class="fam-line">${p.fam.slice(0, 4).map(famTag).join('')}</div>
     <div class="chips">${mainCats(p).map(x => `<span class="pill">${esc(x)}</span>`).join('')}</div>
     ${st.live ? pricesBox(p) : ''}
     <div class="row"><a class="btn sm primary" href="${esc(st.url(storeQuery(p)))}" data-act="extlink">${st.n}'da aç</a>
       <button class="btn sm" data-act="cview" data-cid="${c.r[0]}" type="button">Koku profili</button>
       <button class="btn sm ghost" data-act="rbgo" type="button">Başka seç</button></div></div>`;
+  notifyPick(p, rb.cat || 'Rastgele al');
   if (st.live) loadPricesInto(p);
 }
 
@@ -1484,6 +1555,7 @@ const ICONS = {
   tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3.5 12.5V4h8.5l8.5 8.5-8.5 8.5z"/><circle cx="8" cy="8.5" r="1.5"/></svg>',
   box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7.5 12 4l8 3.5v9L12 20l-8-3.5z"/><path d="M4 7.5 12 11l8-3.5M12 11v9"/></svg>',
   phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg>',
+  bag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
   chev: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>'
 };
 function notifSummary(){
@@ -1497,12 +1569,14 @@ function renderSettings(){
   if (S.sub === 'kategori') return renderCats();
   if (S.sub === 'yedek') return renderBackup();
   if (S.sub === 'uygulama') return renderAbout();
+  if (S.sub === 'alisveris') return renderShop();
   view.innerHTML = `
   <section class="section">
     <h2>Ayarlar</h2>
     <div class="menu">
       <button data-act="sub" data-sub="gorunum" type="button"><span class="mi">${ICONS.palette}</span><span><b>Tema ve görünüm</b><small>${esc(skin().n)} · arka plan ${S.nobg ? 'kaldırılıyor' : 'beyaz'}</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="bildirim" type="button"><span class="mi">${ICONS.bell}</span><span><b>Bildirimler ve sesler</b><small>${esc(notifSummary())}</small></span>${ICONS.chev}</button>
+      <button data-act="sub" data-sub="alisveris" type="button"><span class="mi">${ICONS.bag}</span><span><b>Alışveriş</b><small>${esc(STORES[S.store].n)} · ${S.gender ? GENDER[S.gender] : 'tüm cinsiyetler'}</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="kategori" type="button"><span class="mi">${ICONS.tag}</span><span><b>Kategoriler</b><small>${TAX_LABELS.length} genel${S.customCats.length ? ' + ' + S.customCats.length + ' kendi' : ''}</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="yedek" type="button"><span class="mi">${ICONS.box}</span><span><b>Yedek</b><small>${S.perfumes.length} parfüm · ${S.inv.length} şişe</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="uygulama" type="button"><span class="mi">${ICONS.phone}</span><span><b>Uygulama</b><small>${NATIVE ? 'Sürüm ' + esc(nativeCall('versionName') || '') : 'Android APK ve güncellemeler'}</small></span>${ICONS.chev}</button>
@@ -1510,6 +1584,21 @@ function renderSettings(){
   </section>`;
 }
 const backBtn = '<button class="back" data-act="sub" data-sub="" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>Ayarlar</button>';
+function renderShop(){
+  view.innerHTML = `
+  <section class="section">
+    ${backBtn}
+    <h2>Alışveriş</h2>
+    <div class="box">
+      <div class="field"><span class="label">Mağaza</span><div class="seg">${Object.entries(STORES).map(([k, s]) => `<button class="${S.store === k ? 'on' : ''}" data-act="setstore" data-v="${k}" type="button">${s.n}</button>`).join('')}</div>
+        <span class="muted small">${S.store === 'boyner' ? "Boyner seçiliyken sadece Boyner'de satılan markalardan seçilir ve canlı fiyat gösterilir." : 'Seçilen parfüm bu mağazada aranır.'}</span></div>
+      <div class="field"><span class="label">Kimin için</span><div class="seg">
+        <button class="${S.gender ? '' : 'on'}" data-act="setgender" data-g="" type="button">Hepsi</button>
+        ${['E','K'].map(g => `<button class="${S.gender === g ? 'on' : ''}" data-act="setgender" data-g="${g}" type="button">${GENDER[g]}</button>`).join('')}</div>
+        <span class="muted small">Erkek ya da Kadın seçince unisex parfümler de dahil edilir.</span></div>
+    </div>
+  </section>`;
+}
 function renderLook(){
   view.innerHTML = `
   <section class="section">
@@ -1544,6 +1633,8 @@ function renderNotif(){
     ${status}
     ${S.notif.reminders.map(remCard).join('')}
     <button class="btn block" data-act="addrem" type="button">+ Hatırlatıcı ekle</button>
+    <div class="box"><div class="toggle-row"><span><b>Rastgele seçimleri bildir</b><br><span class="muted small">Çark ya da “Rastgele parfüm al” bir parfüm seçince bildirim olarak da gelir.</span></span>
+      <label class="switch" aria-label="Rastgele seçimleri bildir"><input type="checkbox" id="notify-random"${S.notifyRandom ? ' checked' : ''}><span></span></label></div></div>
     <p class="muted small">“Günün parfümü” Hafta planındakini hatırlatır. “Kategoriden” seçtiğin kategoriden, “Rastgele” envanterinden her seferinde farklı bir parfüm önerir.</p>
   </section>`;
 }
@@ -1570,7 +1661,7 @@ function remCard(r){
           <option value="silent"${snd === 'silent' ? ' selected' : ''}>Sessiz</option>
         </select>
         ${NATIVE ? `<button class="btn sm" data-act="rplay" data-rem="${r.id}" type="button">Dinle</button>` : ''}
-      </div></div>
+      </div>${NATIVE && !NATIVE.installUpdate && (snd === 'bb' || (snd === 'tema' && skin().sound === 'bb')) ? '<span class="muted small">BB İmza sesi için uygulamanın son sürümünü kur; o zamana kadar telefonun sesi çalar.</span>' : ''}</div>
     <div class="toggle-row"><span class="small">Titreşim</span><label class="switch" aria-label="Titreşim"><input type="checkbox" id="rv-${r.id}" data-rem="${r.id}" data-k="vib"${r.vib !== false ? ' checked' : ''}><span></span></label></div>
     <div class="row spread"><span class="muted small">${remPreview(r)}</span>
       <button class="btn sm ghost danger" data-act="delrem" data-rem="${r.id}" type="button">${armed === 'rem-' + r.id ? 'Emin misin?' : 'Sil'}</button></div>
@@ -1632,7 +1723,7 @@ function renderAbout(){
     <div class="box">
       ${NATIVE ? `<span>Yüklü sürüm: <b>${esc(nativeCall('versionName') || '')}</b></span>
         <span class="muted small">Ekranlar ve katalog her açılışta internetten güncellenir. Android tarafında değişiklik olursa burada “Yeni sürüm” uyarısı çıkar.</span>
-        ${LATEST ? (LATEST.v > appVersion() ? `<a class="btn primary" href="${esc(LATEST.url)}" data-act="extlink">Yeni sürümü indir (v${LATEST.v})</a>` : '<span class="status ok"><i></i>En güncel sürümü kullanıyorsun.</span>') : ''}`
+        ${LATEST ? (LATEST.v > appVersion() ? updateBtn('primary', 'Güncelle (v' + LATEST.v + ')') : '<span class="status ok"><i></i>En güncel sürümü kullanıyorsun.</span>') : ''}`
       : `<span class="muted small">Bildirimler ve canlı fiyatlar için Android uygulamasını kur. APK'yı telefonda indirip açman yeterli.</span>
         ${rel ? `<a class="btn primary" href="${esc(LATEST ? LATEST.url : rel)}" target="_blank" rel="noopener">APK'yı indir</a>` : ''}`}
     </div>
@@ -1650,6 +1741,12 @@ function migrate(s){
   if (!Array.isArray(s.inv)) s.inv = [];
   if (!s.notif || !Array.isArray(s.notif.reminders)) s.notif = {reminders: defaultReminders()};
   s.notif.reminders.forEach(r => { if (!r.sound) r.sound = 'tema'; if (r.vib === undefined) r.vib = true; r.cat = OLD_CAT[r.cat] || r.cat; });
+  if (!s.bbSound) { s.notif.reminders.forEach(r => { if (r.sound === 'tema') r.sound = 'bb'; }); s.bbSound = true; }
+  if (s.notifyRandom === undefined) s.notifyRandom = true;
+  if (!s.gender) s.gender = '';
+  if (s.wheelInv === undefined) s.wheelInv = true;
+  if (!Array.isArray(s.wheelOff)) s.wheelOff = [];
+  s.inv.forEach(i => { if (!i.added) i.added = Date.now(); });
   s.wheelCats = (s.wheelCats || []).map(c => OLD_CAT[c] || c);
   if (!s.wheelGroup) s.wheelGroup = 'Kullanım';
   if (!SKINS[s.skin]) s.skin = 'karamel';
@@ -1674,6 +1771,9 @@ const redrawSheet = () => { const f = document.getElementById('sheet'); if (f &&
 
 /* ---------- events ---------- */
 function go(tab){ S.tab = tab; armed = ''; if (tab !== 'ayarlar') S.sub = null; closeSheet(); save(); render(); window.scrollTo(0, 0); }
+const updateBtn = (cls, label) => NATIVE && NATIVE.installUpdate
+  ? `<button class="btn ${cls}" data-act="appupdate" data-url="${esc(LATEST.url)}" type="button">${label}</button>`
+  : `<a class="btn ${cls}" href="${esc(LATEST.url)}" data-act="extlink">${label}</a>`;
 document.addEventListener('click', async e => {
   if (e.target.id === 'overlay') { closeSheet(); return; }
   const t = e.target.closest('[data-act],[data-tab]'); if (!t) return;
@@ -1728,10 +1828,13 @@ document.addEventListener('click', async e => {
       break;
     }
     case 'randbuy': openRandomBuy(); break;
-    case 'rbstore': S.store = t.dataset.v; save(); openRandomBuy(); break;
-    case 'rbg': rb.g = t.dataset.g; openRandomBuy(); break;
-    case 'rbcat': rb.cat = t.dataset.cat; openRandomBuy(); break;
-    case 'rbgo': rbPick(); break;
+    case 'rbcat': if (!rb.rolling) { rb.cat = rb.cat === t.dataset.cat ? '' : t.dataset.cat; document.querySelectorAll('#rb-moods .chip').forEach(c => c.classList.toggle('on', c.dataset.cat === rb.cat)); } break;
+    case 'rbroll': rbRoll(); break;
+    case 'rbgo': if (!rb.rolling) rbPick(); break;
+    case 'gosub': S.sub = t.dataset.sub; go('ayarlar'); break;
+    case 'setstore': S.store = t.dataset.v; save(); renderShop(); break;
+    case 'setgender': S.gender = t.dataset.g; save(); renderShop(); break;
+    case 'appupdate': nativeCall('installUpdate', t.dataset.url); break;
     case 'pricesize': if (priceState) { priceState.ml = +t.dataset.ml; drawPrices(); } break;
     case 'pricerefresh': if (priceState) { const p = priceState.p; priceMem.clear(); const b = document.getElementById('price-body'); if (b) b.innerHTML = '<span class="muted small">Fiyatlar alınıyor…</span>'; loadPricesInto(p); } break;
     case 'addboy': { const d = draft; closeSheet(); draft = d; openSheet(null); break; }
@@ -1824,6 +1927,13 @@ document.addEventListener('change', async e => {
     const d = +t.dataset.day; S.week[d].cat = t.value;
     const used = new Set(DAYS.filter(x => x.d !== d).map(x => S.week[x.d].pid).filter(Boolean));
     S.week[d].pid = rollDay(d, used); save(); render();
+  }
+  if (t.id === 'notify-random') { S.notifyRandom = t.checked; save(); }
+  if (t.id === 'wheel-inv') { S.wheelInv = t.checked; save(); renderWheel(); }
+  if (t.classList && t.classList.contains('wheel-tick')) {
+    S.wheelOff = t.checked ? S.wheelOff.filter(x => x !== t.dataset.id) : [...S.wheelOff, t.dataset.id];
+    save(); renderWheel();
+    const d = document.getElementById('wheel-list'); if (d) d.open = true;
   }
   if (t.id === 'nobg') { S.nobg = t.checked; save(); toast(S.nobg ? 'Arka planlar kaldırılacak' : 'Orijinal görseller'); }
   if (t.id === 'price-group' && priceState) { priceState.gi = +t.value; priceState.ml = null; drawPrices(); }

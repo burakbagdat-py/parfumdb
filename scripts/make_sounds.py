@@ -65,6 +65,20 @@ def damla(t):  # water drop: fast upward pitch sweep
 def nabiz(t):  # soft double pulse
     return sum(tone(523.25, t - s, ((1, 1), (2, .2)), a=.02, d=.18) for s in (0.0, 0.28) if t >= s)
 
+def bb_imza(t):
+    # Signature: two warm B plucks (B4, B5) = "B B", a soft perfume-spray whisper, then a high B sparkle.
+    bell = ((1, 1), (2, .35), (3.01, .18), (4.2, .07))
+    out = 0
+    if t >= 0.0: out += tone(493.88, t, bell, a=.003, d=.32) * .9
+    if t >= 0.16: out += tone(987.77, t - .16, bell, a=.003, d=.42)
+    x = t - 0.42
+    if 0 <= x < 0.32:
+        i = int(t * RATE) % RATE
+        out += (NOISE[i] - NOISE[i - 1]) * .22 * min(1, x / .03) * math.exp(-x / .11)
+    for s, f in ((0.62, 1975.53), (0.70, 2959.96)):
+        if t >= s: out += tone(f, t - s, ((1, 1), (2.76, .2)), a=.002, d=.35) * .35
+    return out
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     render('kristal', 1.6, kristal)
@@ -73,4 +87,5 @@ if __name__ == '__main__':
     render('sprey', 0.7, sprey, 0.7)
     render('damla', 0.7, damla)
     render('nabiz', 0.9, nabiz)
+    render('bb_imza', 1.6, bb_imza)
     print('ok')

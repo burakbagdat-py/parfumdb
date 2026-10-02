@@ -68,6 +68,26 @@ public class Bridge {
     }
 
     @JavascriptInterface
+    public void httpGet(int reqId, String url, String mode) {
+        activity.httpGet(reqId, url, mode);
+    }
+
+    @JavascriptInterface
+    public boolean hasSound(String name) {
+        return activity.hasSound(name);
+    }
+
+    @JavascriptInterface
+    public void installSound(int reqId, String name, String url) {
+        activity.installSound(reqId, name, url);
+    }
+
+    @JavascriptInterface
+    public void installUpdate(String url) {
+        activity.runOnUiThread(() -> activity.installUpdate(url));
+    }
+
+    @JavascriptInterface
     public void setBars(String hex) {
         activity.runOnUiThread(() -> activity.setBars(hex));
     }

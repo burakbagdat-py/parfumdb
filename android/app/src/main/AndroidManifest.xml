@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
         android:allowBackup="true"
@@ -30,6 +31,13 @@
         </activity>
 
         <receiver android:name=".AlarmReceiver" android:exported="false" />
+        <receiver android:name=".InstallReceiver" android:exported="false" />
+
+        <!-- read-only access to downloaded notification sounds; the system needs it to play them -->
+        <provider
+            android:name=".SoundProvider"
+            android:authorities="com.parfumcarki.app.sounds"
+            android:exported="true" />
 
         <receiver android:name=".BootReceiver" android:exported="true">
             <intent-filter>
