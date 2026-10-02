@@ -1,0 +1,58 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+    paths: ['android/**', '.github/workflows/apk.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: apk
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      # Created once and committed, so every later APK has the same signature and installs as an update.
+      - name: Signing key
+        run: |
+          if [ ! -f android/keystore.p12 ]; then
+            keytool -genkeypair -storetype PKCS12 -keystore android/keystore.p12 -alias parfum \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass parfumcarki -keypass parfumcarki -dname "CN=Parfum Carki"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add android/keystore.p12
+            git commit -m "Add APK signing key [skip ci]"
+            git push
+          fi
+
+      - name: Build APK
+        run: |
+          OWNER=$(echo "$GITHUB_REPOSITORY_OWNER" | tr '[:upper:]' '[:lower:]')
+          REPO="${GITHUB_REPOSITORY#*/}"
+          gradle -p android assembleRelease --no-daemon \
+            -PWEB_URL="https://${OWNER}.github.io/${REPO}/" \
+            -PVERSION_CODE=${{ github.run_number }}
+          cp android/app/build/outputs/apk/release/app-release.apk parfum-carki.apk
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Parfüm Çarkı v${{ github.run_number }}
+          body: Telefonda bu sayfadan parfum-carki.apk dosyasını indirip aç.
+          files: parfum-carki.apk
+          make_latest: true

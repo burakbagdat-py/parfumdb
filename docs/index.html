@@ -1,0 +1,1347 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Parfüm Çarkı</title>
+<meta name="theme-color" content="#17110d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,400..700,50;1,9..144,400..600,50&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: phone-first app shell; espresso ground, one orange→caramel gradient carries every accent (hero glow, primary buttons, wheel, active tab). */
+:root{
+  --bg:#17110d;
+  --panel:#211812;
+  --panel-2:#2b2019;
+  --line:#3d2d22;
+  --fg:#f8ede3;
+  --muted:#b49d8b;
+  --orange:#f26d21;
+  --caramel:#c98a4b;
+  --amber:#f0a25a;
+  --ink:#2a1407;
+  --danger:#ef7d6b;
+  --grad:linear-gradient(115deg,var(--orange) 0%,#e5813a 45%,var(--caramel) 100%);
+  --f-display:"Fraunces","Iowan Old Style",Georgia,serif;
+  --f-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r:16px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg)}
+body{font-family:var(--f-body);font-size:15px;line-height:1.5;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
+img{max-width:100%}
+[hidden]{display:none!important}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:default}
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+a{color:var(--amber)}
+
+.app{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:18px calc(100px + env(safe-area-inset-bottom,0px))}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.brand{font-family:var(--f-display);font-weight:600;font-size:27px;letter-spacing:-.01em;margin:0;line-height:1}
+.brand em{font-style:italic;font-weight:500;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:2px}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);font-weight:700}
+h2{font-family:var(--f-display);font-weight:600;font-size:23px;margin:0;letter-spacing:-.01em;text-wrap:balance}
+h3{font-family:var(--f-display);font-weight:600;font-size:18px;margin:0}
+.section{display:flex;flex-direction:column;gap:14px;margin-bottom:28px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.spread{justify-content:space-between}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+
+/* buttons */
+.btn{border:1px solid var(--line);background:var(--panel-2);border-radius:999px;padding:10px 17px;font-weight:600;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;color:var(--fg)}
+.btn:hover{border-color:var(--caramel)}
+.btn.primary{background:var(--grad);color:var(--ink);border-color:transparent;box-shadow:0 8px 24px -10px rgb(242 109 33 / .7)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 45%,var(--line))}
+.btn.sm{padding:7px 13px;font-size:13px}
+.btn.block{width:100%}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--panel-2);display:grid;place-items:center;flex:none;padding:0}
+.icon-btn svg{width:18px;height:18px}
+.icon-btn.added{background:var(--grad);color:var(--ink);border-color:transparent}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding-inline:16px}
+.chips.scroll::-webkit-scrollbar{display:none}
+.chip{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 13px;font-size:13px;font-weight:600;color:var(--muted);white-space:nowrap;flex:none}
+.chip.on{background:color-mix(in srgb,var(--orange) 18%,transparent);border-color:var(--orange);color:var(--fg)}
+.pill{font-size:11px;letter-spacing:.03em;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.boyner{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:6px;background:#f8ede3;color:#17110d;white-space:nowrap}
+
+/* art */
+.art{position:relative;overflow:hidden;background:var(--panel-2);display:block}
+.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:#fff}
+.ph{position:absolute;inset:0;display:grid;place-items:center;background:
+  radial-gradient(120% 80% at 30% 15%,hsl(var(--h) 75% 55% / .85),transparent 60%),
+  linear-gradient(160deg,hsl(var(--h) 45% 26%),hsl(calc(var(--h) - 12) 40% 12%))}
+.ph span{font-family:var(--f-display);font-style:italic;font-size:2.4em;color:hsl(var(--h) 80% 88%)}
+
+/* families */
+.fam{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:3px 10px 3px 8px;border-radius:999px;background:hsl(var(--fh) 55% 50% / .15);border:1px solid hsl(var(--fh) 55% 60% / .4);color:hsl(var(--fh) 75% 82%);white-space:nowrap}
+.fam::before{content:"";width:7px;height:7px;border-radius:50%;background:hsl(var(--fh) 75% 62%)}
+.fam-line{display:flex;flex-wrap:wrap;gap:6px}
+
+/* today hero */
+.hero{display:grid;grid-template-columns:122px 1fr;gap:16px;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:14px;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-40% -30% auto auto;width:70%;aspect-ratio:1;background:radial-gradient(circle,rgb(242 109 33 / .28),transparent 65%);pointer-events:none}
+.hero .art{border-radius:14px;aspect-ratio:4/5;font-size:22px}
+.hero-body{display:flex;flex-direction:column;gap:6px;min-width:0;padding-block:2px;position:relative}
+.hero-name{font-family:var(--f-display);font-weight:600;font-size:25px;line-height:1.1;margin:0;overflow-wrap:anywhere;text-wrap:balance;letter-spacing:-.01em}
+.hero-brand{color:var(--amber);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.hero-actions{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap;padding-top:4px}
+.notes-mini{font-size:13px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+
+/* week */
+.week{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--panel)}
+.day{display:grid;grid-template-columns:44px 44px minmax(0,1fr) auto;align-items:center;gap:12px;padding:10px 12px;border-top:1px solid var(--line)}
+.day:first-child{border-top:0}
+.day.today{background:linear-gradient(90deg,rgb(242 109 33 / .14),transparent 70%)}
+.dname{display:flex;flex-direction:column;align-items:center;line-height:1.1}
+.dname b{font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.dname span{font-family:var(--f-display);font-size:21px;font-variant-numeric:tabular-nums}
+.day.today .dname b{color:var(--orange)}
+.day .art{width:44px;height:54px;border-radius:9px;font-size:9px}
+.dinfo{min-width:0;display:flex;flex-direction:column;gap:2px}
+.dinfo .pn{font-family:var(--f-display);font-weight:600;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dinfo .none{font-size:13px;color:var(--muted)}
+.sel{appearance:none;-webkit-appearance:none;background:transparent;border:0;color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:0 14px 0 0;max-width:100%;
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 6px) 55%,calc(100% - 2px) 55%;background-size:4px 4px;background-repeat:no-repeat}
+.sel option{background:var(--panel);color:var(--fg);text-transform:none}
+
+/* wheel */
+.wheel-wrap{position:relative;width:min(100%,380px);margin:6px auto 0;aspect-ratio:1}
+.wheel-wrap canvas{width:100%;height:100%;display:block;cursor:pointer;border-radius:50%;box-shadow:0 24px 60px -18px rgb(242 109 33 / .45)}
+.pointer{position:absolute;left:50%;top:-8px;transform:translateX(-50%);width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:28px solid var(--fg);filter:drop-shadow(0 3px 5px rgb(0 0 0 / .5));z-index:2}
+.result{display:grid;grid-template-columns:88px minmax(0,1fr);gap:14px;align-items:center;background:var(--panel);border:1px solid var(--orange);border-radius:var(--r);padding:12px;animation:pop .45s ease-out}
+.result .art{border-radius:12px;aspect-ratio:4/5;font-size:14px}
+@keyframes pop{from{transform:scale(.96);opacity:.4}to{transform:none;opacity:1}}
+
+/* lists & cards */
+.search{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:12px 18px;font-size:15px}
+.search:focus{border-color:var(--orange);outline:none}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;text-align:left;padding:0;display:flex;flex-direction:column;color:var(--fg)}
+.card .art{aspect-ratio:4/5;font-size:20px}
+.card-body{padding:10px 12px 12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.card-name{font-family:var(--f-display);font-weight:600;font-size:16px;line-height:1.2;overflow-wrap:anywhere}
+.card-brand{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);font-weight:700}
+.sample-tag{position:absolute;top:8px;left:8px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;background:rgb(0 0 0 / .6);padding:3px 7px;border-radius:6px;color:#fff;z-index:1}
+.empty{border:1px dashed var(--line);border-radius:var(--r);padding:22px;text-align:center;color:var(--muted)}
+.note{background:color-mix(in srgb,var(--caramel) 12%,var(--panel));border:1px solid color-mix(in srgb,var(--caramel) 40%,var(--line));border-radius:var(--r);padding:12px 14px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;font-size:14px}
+.list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden}
+.item{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border-top:1px solid var(--line);text-align:left;background:none;border-left:0;border-right:0;border-bottom:0;width:100%;color:var(--fg)}
+.item:first-child{border-top:0}
+.item .art{width:52px;height:64px;border-radius:10px;font-size:11px}
+.item-body{min-width:0;display:flex;flex-direction:column;gap:3px}
+.item-name{font-family:var(--f-display);font-weight:600;font-size:16px;line-height:1.2;overflow-wrap:anywhere}
+.item-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.shelf{display:flex;gap:12px;overflow-x:auto;margin-inline:-16px;padding:2px 16px 6px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.shelf::-webkit-scrollbar{display:none}
+.shelf .card{flex:none;width:148px;scroll-snap-align:start}
+.price{font-weight:700;font-variant-numeric:tabular-nums;font-size:14px}
+
+/* detail */
+.detail-head{display:grid;grid-template-columns:132px minmax(0,1fr);gap:16px;align-items:end}
+.detail-head .art{border-radius:16px;aspect-ratio:4/5;font-size:26px}
+.pyramid{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.tier{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;padding:12px 14px;border-top:1px solid var(--line);align-items:start}
+.tier:first-child{border-top:0;background:linear-gradient(90deg,rgb(242 109 33 / .12),transparent)}
+.tier:nth-child(2){background:linear-gradient(90deg,rgb(229 129 58 / .08),transparent)}
+.tier:nth-child(3){background:linear-gradient(90deg,rgb(201 138 75 / .06),transparent)}
+.tier-name{display:flex;flex-direction:column;gap:2px}
+.tier-name b{font-family:var(--f-display);font-weight:600;font-size:17px}
+.tier-name span{font-size:11px;color:var(--muted)}
+.tier .chips{gap:6px}
+.note-chip{font-size:13px;padding:4px 10px;border-radius:8px;background:var(--panel-2);border:1px solid var(--line)}
+.meters{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.meter{background:var(--panel-2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:7px}
+.dots{display:flex;gap:5px}
+.dots i{flex:1;max-width:26px;height:6px;border-radius:3px;background:var(--line)}
+.dots i.on{background:var(--grad)}
+.rate{display:flex;gap:6px}
+.rate button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-weight:700;font-variant-numeric:tabular-nums;color:var(--muted)}
+.rate button.on{background:var(--grad);border-color:transparent;color:var(--ink)}
+.tap{cursor:pointer}
+
+/* settings */
+.box{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px;position:relative}
+.field>label,.label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.input,textarea.input,select.input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.input:focus{border-color:var(--orange);outline:none}
+textarea.input{resize:vertical;min-height:70px}
+.chip .x{margin-left:6px;opacity:.7}
+.menu{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden}
+.menu button{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px;background:none;border:0;border-top:1px solid var(--line);text-align:left;color:var(--fg)}
+.menu button:first-child{border-top:0}
+.menu .mi{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;background:var(--panel-2)}
+.menu .mi svg{width:19px;height:19px;color:var(--amber)}
+.menu b{font-weight:600;display:block}
+.menu small{color:var(--muted);font-size:13px}
+.back{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--muted);font-weight:600;padding:0;margin-bottom:6px}
+.switch{position:relative;width:46px;height:28px;flex:none}
+.switch input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.switch span{position:absolute;inset:0;border-radius:999px;background:var(--line);transition:background .2s;pointer-events:none}
+.switch span::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--fg);transition:transform .2s}
+.switch input:checked+span{background:var(--grad)}
+.switch input:checked+span::after{transform:translateX(18px)}
+.switch input:focus-visible+span{outline:2px solid var(--amber);outline-offset:2px}
+.rem{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:12px}
+.rem.off{opacity:.7}
+.time{font-family:var(--f-display);font-size:30px;font-weight:600;background:transparent;border:0;padding:0;font-variant-numeric:tabular-nums;width:auto}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:4px}
+.seg button{border:0;background:none;border-radius:9px;padding:8px 4px;font-size:12px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--panel-2);color:var(--fg);box-shadow:inset 0 0 0 1px var(--orange)}
+.status{display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel);font-size:14px}
+.status i{width:10px;height:10px;border-radius:50%;flex:none;background:var(--muted)}
+.status.ok i{background:#7ccf8a}
+.status.warn i{background:var(--amber)}
+.suggest{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
+.suggest button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:9px 12px;border:0;border-top:1px solid var(--line);background:none;text-align:left;color:var(--fg)}
+.suggest button:first-child{border-top:0}
+.suggest small{color:var(--muted);font-size:12px}
+.update{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 14px;border-radius:var(--r);background:var(--grad);color:var(--ink);font-weight:600;margin-bottom:18px}
+.update .btn{background:var(--ink);color:var(--fg);border-color:transparent}
+
+/* sheet */
+.overlay{position:fixed;inset:0;background:rgb(10 6 3 / .72);z-index:40;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+.sheet{width:100%;max-width:560px;max-height:92%;overflow:auto;background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px;animation:up .25s ease-out}
+@keyframes up{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}}
+.photo-pick{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:center}
+.photo-pick .art{border-radius:12px;aspect-ratio:4/5;font-size:16px}
+.file-label{position:relative;overflow:hidden}
+.file-label input{position:absolute;inset:0;opacity:0;cursor:pointer}
+
+/* tab bar */
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabs-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+.tab{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;color:var(--muted);font-size:11px;font-weight:600}
+.tab svg{width:22px;height:22px}
+.tab.on{color:var(--orange)}
+
+.toast{position:fixed;left:50%;bottom:calc(88px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:14px;font-weight:600;z-index:60;animation:fade .2s;max-width:calc(100% - 32px);text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <header class="top">
+    <h1 class="brand">Parfüm <em>Çarkı</em></h1>
+    <span class="eyebrow" id="today-label"></span>
+  </header>
+  <div id="update-slot"></div>
+  <main id="view"><p class="muted">Yükleniyor…</p></main>
+</div>
+
+<nav class="tabs" aria-label="Bölümler">
+  <div class="tabs-in">
+    <button class="tab" data-tab="hafta" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Hafta</button>
+    <button class="tab" data-tab="cark" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17M6 6l12 12M18 6 6 18"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>Çark</button>
+    <button class="tab" data-tab="kesfet" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg>Keşfet</button>
+    <button class="tab" data-tab="koleksiyon" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9.5 3h5v3h-5zM10.5 6v2M13.5 6v2"/><rect x="6" y="8" width="12" height="13" rx="3"/><path d="M9 14h6"/></svg>Koleksiyon</button>
+    <button class="tab" data-tab="ayarlar" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Ayarlar</button>
+  </div>
+</nav>
+
+<script>
+(() => {
+'use strict';
+
+/* ---------- native bridge (Android app) ---------- */
+const NATIVE = (() => { try { return window.ParfumApp && typeof window.ParfumApp.isApp === 'function' && window.ParfumApp.isApp() ? window.ParfumApp : null; } catch (e) { return null; } })();
+const nativeCall = (fn, ...a) => { try { return NATIVE && NATIVE[fn] ? NATIVE[fn](...a) : undefined; } catch (e) { return undefined; } };
+
+/* ---------- constants ---------- */
+const DEFAULT_CATS = ['Günlük','Date','Akşam','Sexy','Ofis','Spor','Yaz','Kış','Özel Gün'];
+const DAYS = [
+  {d:1,n:'Pazartesi',s:'Pzt'},{d:2,n:'Salı',s:'Sal'},{d:3,n:'Çarşamba',s:'Çar'},
+  {d:4,n:'Perşembe',s:'Per'},{d:5,n:'Cuma',s:'Cum'},{d:6,n:'Cumartesi',s:'Cmt'},{d:0,n:'Pazar',s:'Paz'}
+];
+const DEFAULT_WEEK = {1:'Ofis',2:'Günlük',3:'Ofis',4:'Günlük',5:'Akşam',6:'Date',0:'Günlük'};
+const ANY = 'Hepsi';
+const GENDER = {E:'Erkek',K:'Kadın',U:'Unisex'};
+const FAM_HUE = {
+  'Narenciye':45,'Fresh':175,'Su':195,'Deniz':200,'Ozonik':190,'Yeşil':100,'Aromatik':120,'Taze baharatlı':60,
+  'Lavanta':265,'İris':255,'Menekşe':275,'Pudralı':320,'Sabunsu':185,'Misk':300,'Odunsu':28,'Sıcak baharatlı':12,
+  'Yumuşak baharatlı':20,'Amber':34,'Vanilya':40,'Tatlı':345,'Karamel':30,'Kahve':22,'Kakao':18,'Çikolata':16,
+  'Tütün':26,'Deri':14,'Ud':8,'İsli':10,'Hayvansı':330,'Gül':350,'Beyaz çiçek':330,'Çiçeksi':335,'Sarı çiçek':48,
+  'Sümbülteber':325,'Meyveli':355,'Tropik':40,'Kiraz':352,'Balsamik':24,'Paçuli':30,'Bal':42,'Topraksı':30,
+  'Tarçın':16,'Rom':20,'Sütlü':38,'Badem':36,'Hindistan cevizi':36,'Metalik':210,'Tuzlu':195,'Yosunsu':95,'Gurme':32
+};
+const FAM_CATS = {
+  'Narenciye':['Günlük','Yaz','Spor'],'Fresh':['Günlük','Spor','Yaz'],'Su':['Spor','Yaz'],'Deniz':['Spor','Yaz'],
+  'Ozonik':['Spor','Yaz'],'Aromatik':['Ofis','Günlük'],'Yeşil':['Günlük','Yaz'],'Taze baharatlı':['Günlük','Ofis'],
+  'Lavanta':['Ofis','Günlük'],'İris':['Ofis','Özel Gün'],'Pudralı':['Ofis','Date'],'Sabunsu':['Ofis','Günlük'],
+  'Misk':['Günlük','Sexy'],'Odunsu':['Ofis','Akşam'],'Sıcak baharatlı':['Akşam','Kış'],'Amber':['Akşam','Kış','Sexy'],
+  'Vanilya':['Date','Kış','Sexy'],'Tatlı':['Date','Kış'],'Gurme':['Date','Kış'],'Karamel':['Date','Kış'],'Kahve':['Kış','Date'],
+  'Tütün':['Kış','Akşam'],'Deri':['Akşam','Sexy'],'Ud':['Akşam','Özel Gün'],'İsli':['Akşam','Kış'],'Hayvansı':['Sexy','Akşam'],
+  'Gül':['Date','Özel Gün'],'Beyaz çiçek':['Date','Özel Gün'],'Çiçeksi':['Date','Günlük'],'Sümbülteber':['Sexy','Özel Gün'],
+  'Meyveli':['Yaz','Date'],'Tropik':['Yaz'],'Kiraz':['Date','Sexy'],'Balsamik':['Kış','Akşam'],'Paçuli':['Akşam','Kış'],
+  'Bal':['Sexy','Kış'],'Rom':['Kış','Sexy'],'Tarçın':['Kış','Akşam'],'Sütlü':['Date'],'Kakao':['Kış','Sexy']
+};
+const CONCS = ['Eau de Cologne','Eau de Toilette','Eau de Parfum','Parfum','Extrait'];
+const TIERS = [['top','Üst','ilk 15–30 dk'],['heart','Kalp','30 dk – 3 saat'],['base','Alt','3 saatten sonra']];
+const SAMPLE_ROWS = [
+[25967,"Bleu de Chanel Eau de Parfum","Chanel",2014,"E",23037,3,3,["Narenciye","Amber","Odunsu","Taze baharatlı","Aromatik"],["Greyfurt","Limon","Nane","Bergamot","Pembe biber","Aldehitler","Kişniş"],["Zencefil","Yasemin","Muskat","Kavun"],["Tütsü","Amber","Sedir","Sandal ağacı","Amber ağacı","Paçuli","Labdanum"],["Günlük","Ofis","Akşam","Kış"]],
+[31861,"Sauvage","Dior",2015,"E",34238,4,3,["Taze baharatlı","Amber","Narenciye","Aromatik","Misk"],["Kalabriya bergamotu","Biber"],["Sichuan biberi","Lavanta","Pembe biber","Vetiver","Paçuli","Sardunya","Elemi"],["Ambroxan","Sedir","Labdanum"],["Günlük","Ofis"]],
+[33519,"Baccarat Rouge 540","Maison Francis Kurkdjian",2015,"U",29764,4,3,["Odunsu","Amber","Sıcak baharatlı","Metalik","Taze baharatlı"],["Safran","Yasemin"],["Amber ağacı","Amber balığı","Hedione"],["Köknar reçinesi","Sedir","Şeker","Ambroxan","Meşe yosunu"],["Akşam","Kış","Özel Gün"]],
+[1825,"Tobacco Vanille","Tom Ford",2007,"U",31666,4,4,["Vanilya","Tatlı","Tütün","Sıcak baharatlı","Meyveli"],["Tütün yaprağı","Baharatlı notalar"],["Vanilya","Kakao","Tonka fasulyesi","Tütün çiçeği"],["Kuru meyveler","Odunsu notalar"],["Kış","Date","Akşam","Sexy"]],
+[485,"Light Blue","Dolce&Gabbana",2001,"K",36883,3,2,["Narenciye","Odunsu","Fresh","Meyveli","Aromatik"],["Sicilya limonu","Elma","Sedir","Çan çiçeği"],["Bambu","Yasemin","Beyaz gül"],["Sedir","Misk","Amber"],["Günlük","Yaz","Ofis","Spor"]],
+[25324,"Black Opium","Yves Saint Laurent",2014,"K",34996,3,3,["Vanilya","Kahve","Tatlı","Beyaz çiçek","Sıcak baharatlı"],["Armut","Pembe biber","Portakal çiçeği"],["Kahve","Yasemin","Acı badem","Meyan kökü"],["Vanilya","Paçuli","Kaşmir ağacı","Sedir"],["Date","Kış","Sexy"]],
+[75805,"Khamrah","Lattafa Perfumes",2022,"U",30398,4,3,["Tatlı","Sıcak baharatlı","Vanilya","Amber","Tarçın"],["Tarçın","Muskat","Bergamot"],["Hurma","Pralin","Sümbülteber","Mahonial"],["Vanilya","Tonka fasulyesi","Amber ağacı","Mür","Benzoin","Akigala ağacı"],["Kış","Date","Akşam","Sexy"]],
+[13857,"Spicebomb","Viktor&Rolf",2012,"E",14120,4,3,["Sıcak baharatlı","Tarçın","Tütün","Tatlı","Yumuşak baharatlı"],["Pembe biber","Elemi","Bergamot","Greyfurt"],["Tarçın","Kırmızı biber","Safran"],["Tütün","Deri","Vetiver"],["Kış","Akşam","Date"]]
+];
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fimg = id => `https://fimgs.net/mdimg/perfume/375x500.${id}.jpg`;
+const fold = s => String(s || '').replace(/ı/g,'i').replace(/İ/g,'i').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const normBrand = s => String(s || '').toLowerCase().replace(/&/g,'and').replace(/\bparfums?\b|\bperfumes?\b|\bfragrances?\b|\bparis\b/g,'').replace(/[^a-z0-9]/g,'');
+
+function toPerfume(r, extra){
+  return norm({id: uid(), cid: r[0], name: r[1], brand: r[2], g: r[4], lon: r[6], sil: r[7], fam: r[8].slice(),
+    top: r[9].slice(), heart: r[10].slice(), base: r[11].slice(), cats: r[12].slice(), img: fimg(r[0]), conc: '', note: '', ...extra});
+}
+function norm(p){
+  for (const k of ['cats','fam','top','heart','base']) if (!Array.isArray(p[k])) p[k] = [];
+  if (typeof p.conc !== 'string') p.conc = '';
+  if (typeof p.img !== 'string') p.img = '';
+  p.lon = +p.lon || 0; p.sil = +p.sil || 0;
+  return p;
+}
+function defaultReminders(){
+  return [
+    {id:'sabah', on:true, label:'Sabah', time:'08:30', days:[0,1,2,3,4,5,6], kind:'today', cat:'Günlük'},
+    {id:'aksam', on:false, label:'Akşam planı', time:'19:00', days:[5,6], kind:'cat', cat:'Date'}
+  ];
+}
+function freshState(){
+  const week = {};
+  for (const {d} of DAYS) week[d] = {cat: DEFAULT_WEEK[d], pid: null};
+  return {
+    v: 2,
+    perfumes: SAMPLE_ROWS.map(r => toPerfume(r, {sample: true})),
+    cats: DEFAULT_CATS.slice(),
+    week, weekKey: '',
+    wheelCats: [], lastSpin: null,
+    tab: 'hafta', sub: null,
+    notif: {reminders: defaultReminders()}
+  };
+}
+
+/* ---------- storage ---------- */
+const KEY = 'parfum-carki-v1';
+let dbp = null;
+function db(){
+  if (!dbp) dbp = new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open('parfum-carki', 1);
+      r.onupgradeneeded = () => r.result.createObjectStore('kv');
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    } catch (e) { rej(e); }
+  });
+  return dbp;
+}
+async function idbGet(k){
+  const d = await db();
+  return new Promise((res, rej) => { const q = d.transaction('kv').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+}
+async function idbSet(k, v){
+  const d = await db();
+  return new Promise((res, rej) => { const t = d.transaction('kv','readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = res; t.onerror = () => rej(t.error); });
+}
+async function load(){
+  try { const v = await idbGet(KEY); if (v) return v; } catch (e) {}
+  try { const s = localStorage.getItem(KEY); if (s) return JSON.parse(s); } catch (e) {}
+  return null;
+}
+let saveTimer = null;
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    try { await idbSet(KEY, S); }
+    catch (e) { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e2) { toast('Kaydedilemedi: depolama dolu olabilir'); } }
+    syncNative();
+  }, 150);
+}
+
+/* ---------- catalog ---------- */
+let CAT = null, CAT_LOADING = null, BOY = null, BOY_KEYS = new Map();
+async function loadBoyner(){
+  if (BOY) return BOY;
+  try {
+    const r = await fetch('data/boyner.json');
+    if (!r.ok) throw new Error(r.status);
+    BOY = await r.json(); idbSet('boyner', BOY).catch(() => {});
+  } catch (e) { try { BOY = await idbGet('boyner'); } catch (e2) {} }
+  BOY = BOY || {brands: [], top: []};
+  BOY_KEYS = new Map(BOY.brands.map(b => [b.k, b]));
+  return BOY;
+}
+const boynerBrand = brand => BOY_KEYS.get(normBrand(brand));
+function loadCatalog(){
+  if (CAT) return Promise.resolve(CAT);
+  if (CAT_LOADING) return CAT_LOADING;
+  CAT_LOADING = (async () => {
+    await loadBoyner();
+    let data = null;
+    try {
+      const r = await fetch('data/catalog.json');
+      if (!r.ok) throw new Error(r.status);
+      data = await r.json();
+      idbGet('catalog-v').then(v => { if (v !== data.v) { idbSet('catalog', data).catch(() => {}); idbSet('catalog-v', data.v).catch(() => {}); } }).catch(() => {});
+    } catch (e) { try { data = await idbGet('catalog'); } catch (e2) {} }
+    if (!data) { CAT_LOADING = null; throw new Error('Katalog yüklenemedi'); }
+    CAT = data.items.map(r => ({r, key: fold(r[1] + ' ' + r[2]), nkey: fold([...r[8], ...r[9], ...r[10], ...r[11]].join(' ')), boy: BOY_KEYS.has(normBrand(r[2]))}));
+    CAT.byId = new Map(CAT.map(c => [c.r[0], c]));
+    return CAT;
+  })();
+  return CAT_LOADING;
+}
+function matchBoynerProduct(p){
+  if (!CAT || !p) return null;
+  const k = normBrand(p.b), t = fold(p.t);
+  let best = null;
+  for (const c of CAT) {
+    if (normBrand(c.r[2]) !== k) continue;
+    const n = fold(c.r[1]);
+    if (n.length > 2 && t.includes(n) && (!best || n.length > fold(best.r[1]).length || (n.length === fold(best.r[1]).length && c.r[5] > best.r[5]))) best = c;
+  }
+  return best;
+}
+
+/* ---------- helpers ---------- */
+let S;
+const byId = id => S.perfumes.find(p => p.id === id);
+const inCollection = cid => S.perfumes.find(p => p.cid === cid && !p.sample);
+const today = () => new Date().getDay();
+function weekKey(){
+  const t = new Date(); t.setHours(0,0,0,0);
+  t.setDate(t.getDate() - ((t.getDay() + 6) % 7));
+  return t.getFullYear() + '-' + (t.getMonth()+1) + '-' + t.getDate();
+}
+function dateOf(d){
+  const t = new Date(); t.setHours(0,0,0,0);
+  const mon = new Date(t); mon.setDate(t.getDate() - ((t.getDay() + 6) % 7));
+  const r = new Date(mon); r.setDate(mon.getDate() + (d + 6) % 7);
+  return r.getDate();
+}
+function hue(str){ let h = 0; for (const c of String(str)) h = (h * 31 + c.charCodeAt(0)) >>> 0; return 8 + (h % 40); }
+function art(p){
+  const name = p && p.name || '?';
+  const ph = `<div class="ph" style="--h:${hue(name)}"><span>${esc(name.trim().charAt(0).toUpperCase())}</span></div>`;
+  return p && p.img ? ph + `<img src="${esc(p.img)}" alt="" loading="lazy" onerror="this.remove()">` : ph;
+}
+const famHue = f => FAM_HUE[f] ?? hue(f) * 7 % 360;
+const famTag = f => `<span class="fam" style="--fh:${famHue(f)}">${esc(f)}</span>`;
+const dots = (n, label) => `<div class="meter"><span class="eyebrow">${label}</span><div class="dots" aria-label="${label} ${n}/5">${[1,2,3,4,5].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</div></div>`;
+const notesLine = p => [...p.top, ...p.heart, ...p.base].slice(0, 6).join(' · ');
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const poolFor = cat => S.perfumes.filter(p => cat === ANY || p.cats.includes(cat));
+function autoCats(fam){
+  const sc = {};
+  fam.slice(0, 5).forEach((f, i) => (FAM_CATS[f] || []).forEach((c, j) => { sc[c] = (sc[c] || 0) + (1 - i * .15) * (1 - j * .2); }));
+  const ranked = Object.entries(sc).filter(([c]) => S.cats.includes(c)).sort((a, b) => b[1] - a[1]);
+  if (!ranked.length) return [];
+  return ranked.filter(([, s]) => s >= Math.max(.6, ranked[0][1] * .5)).slice(0, 4).map(([c]) => c);
+}
+
+function rollDay(d, used){
+  const pool = poolFor(S.week[d].cat);
+  if (!pool.length) return null;
+  const fresh = pool.filter(p => !used.has(p.id) && p.id !== S.week[d].pid);
+  const fresh2 = pool.filter(p => !used.has(p.id));
+  return pick(fresh.length ? fresh : fresh2.length ? fresh2 : pool).id;
+}
+function shuffleWeek(){
+  const used = new Set();
+  for (const {d} of DAYS) { const id = rollDay(d, used); S.week[d].pid = id; if (id) used.add(id); }
+}
+function repairWeek(){
+  for (const {d} of DAYS) {
+    if (!S.week[d]) S.week[d] = {cat: DEFAULT_WEEK[d], pid: null};
+    const w = S.week[d];
+    if (w.cat !== ANY && !S.cats.includes(w.cat)) w.cat = ANY;
+    const p = w.pid && byId(w.pid);
+    if (!p || (w.cat !== ANY && !p.cats.includes(w.cat))) {
+      const used = new Set(DAYS.map(x => S.week[x.d] && S.week[x.d].pid).filter(Boolean));
+      w.pid = rollDay(d, used);
+    }
+  }
+}
+
+/* ---------- notifications plan ---------- */
+function msgFor(p, title, cat){
+  const bits = [p.brand, cat ? cat + ' günü' : '', p.top.slice(0, 3).join(', ')].filter(Boolean);
+  return {t: title + p.name, b: bits.join(' · ')};
+}
+function buildPlan(){
+  const reminders = S.notif.reminders.filter(r => r.on && r.days.length).map(r => {
+    const [h, m] = r.time.split(':').map(Number);
+    const msgs = {};
+    for (let d = 0; d < 7; d++) {
+      let list = [];
+      if (r.kind === 'today') {
+        const p = S.week[d] && S.week[d].pid && byId(S.week[d].pid);
+        if (p) list = [msgFor(p, 'Bugün: ', S.week[d].cat)];
+      } else {
+        const pool = r.kind === 'cat' ? poolFor(r.cat) : S.perfumes.slice();
+        list = pool.slice(0, 40).map(p => msgFor(p, r.kind === 'cat' ? r.cat + ' için: ' : 'Öneri: ', ''));
+      }
+      if (!list.length) list = [{t: 'Bugün ne sıksan?', b: 'Parfüm Çarkı\'nı aç, çarkı çevir.'}];
+      msgs[d] = list;
+    }
+    return {id: r.id, h, m, days: r.days, msgs};
+  });
+  return {reminders};
+}
+let lastPlan = '';
+function syncNative(){
+  if (!NATIVE || !S) return;
+  const plan = JSON.stringify(buildPlan());
+  if (plan === lastPlan) return;
+  lastPlan = plan; nativeCall('schedule', plan);
+}
+window.onNativePermission = () => { if (S && S.tab === 'ayarlar') render(); };
+
+/* ---------- updates (APK) ---------- */
+function repoInfo(){
+  const h = location.hostname;
+  if (!h.endsWith('.github.io')) return null;
+  const owner = h.split('.')[0];
+  const repo = location.pathname.split('/').filter(Boolean)[0] || h;
+  return {owner, repo};
+}
+let LATEST = null;
+async function checkUpdate(){
+  const ri = repoInfo(); if (!ri) return;
+  try {
+    const r = await fetch(`https://api.github.com/repos/${ri.owner}/${ri.repo}/releases/latest`, {headers: {Accept: 'application/vnd.github+json'}});
+    if (!r.ok) return;
+    const j = await r.json();
+    const asset = (j.assets || []).find(a => a.name.endsWith('.apk'));
+    LATEST = {v: parseInt(String(j.tag_name).replace(/\D/g, ''), 10) || 0, url: asset ? asset.browser_download_url : j.html_url, page: j.html_url};
+    renderUpdate();
+  } catch (e) {}
+}
+const appVersion = () => parseInt(nativeCall('versionCode') || '0', 10) || 0;
+function renderUpdate(){
+  const slot = document.getElementById('update-slot');
+  if (NATIVE && LATEST && LATEST.v > appVersion()) {
+    slot.innerHTML = `<div class="update"><span>Uygulamanın yeni sürümü hazır</span><a class="btn sm" href="${esc(LATEST.url)}" data-act="extlink">İndir ve kur</a></div>`;
+  } else slot.innerHTML = '';
+}
+
+/* ---------- toast ---------- */
+let toastT;
+function toast(msg){
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+  document.body.appendChild(t); clearTimeout(toastT); toastT = setTimeout(() => t.remove(), 2400);
+}
+
+/* ---------- views ---------- */
+const view = document.getElementById('view');
+function render(){
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
+  const d = DAYS.find(x => x.d === today());
+  document.getElementById('today-label').textContent = d.n + ' · ' + new Date().getDate();
+  ({hafta: renderWeek, cark: renderWheel, kesfet: renderExplore, koleksiyon: renderCollection, ayarlar: renderSettings}[S.tab] || renderWeek)();
+}
+function sampleNote(){
+  if (!S.perfumes.some(p => p.sample)) return '';
+  return `<div class="note"><span>Şu an örnek parfümler görünüyor. Kendi parfümlerini ekleyince bunları silebilirsin.</span>
+    <button class="btn sm" data-act="del-samples" type="button">Örnekleri sil</button></div>`;
+}
+
+function renderWeek(){
+  const t = today(); const tw = S.week[t]; const p = tw.pid && byId(tw.pid);
+  const catOpts = sel => [ANY, ...S.cats].map(c => `<option value="${esc(c)}"${c === sel ? ' selected' : ''}>${esc(c)}</option>`).join('');
+  view.innerHTML = `
+  <section class="section">
+    <span class="eyebrow">Bugün sık</span>
+    <div class="hero">
+      <div class="art${p ? ' tap' : ''}"${p ? ` data-act="view" data-id="${p.id}"` : ''}>${art(p)}</div>
+      <div class="hero-body">
+        ${p ? `<span class="hero-brand" lang="en">${esc(p.brand || tw.cat)}</span>
+          <p class="hero-name tap" data-act="view" data-id="${p.id}">${esc(p.name)}</p>
+          ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
+          <span class="notes-mini">${esc(notesLine(p) || tw.cat + ' günü')}</span>`
+        : `<p class="hero-name">Parfüm yok</p><span class="muted small">“${esc(tw.cat)}” kategorisinde parfüm bulunamadı. Keşfet'ten parfüm ekle ya da günün kategorisini değiştir.</span>`}
+        <div class="hero-actions">
+          <button class="btn sm primary" data-act="reroll" data-day="${t}" type="button">Başka öner</button>
+          ${p ? `<button class="btn sm ghost" data-act="view" data-id="${p.id}" type="button">Koku profili</button>` : ''}
+        </div>
+      </div>
+    </div>
+  </section>
+  ${sampleNote() ? `<section class="section">${sampleNote()}</section>` : ''}
+  <section class="section">
+    <div class="row spread"><h2>Bu hafta</h2>
+      <button class="btn sm" data-act="shuffle" type="button">Haftayı karıştır</button></div>
+    <div class="week">
+      ${DAYS.map(({d,s}) => { const w = S.week[d]; const q = w.pid && byId(w.pid); return `
+      <div class="day${d === t ? ' today' : ''}">
+        <div class="dname"><b>${s}</b><span>${dateOf(d)}</span></div>
+        <div class="art${q ? ' tap' : ''}"${q ? ` data-act="view" data-id="${q.id}"` : ''}>${art(q)}</div>
+        <div class="dinfo">
+          ${q ? `<span class="pn tap" data-act="view" data-id="${q.id}">${esc(q.name)}</span>` : `<span class="none">Uygun parfüm yok</span>`}
+          <select class="sel" id="wk-${d}" data-act="daycat" data-day="${d}" aria-label="${s} kategorisi">${catOpts(w.cat)}</select>
+        </div>
+        <button class="icon-btn" data-act="reroll" data-day="${d}" type="button" aria-label="${s} için başka öner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg></button>
+      </div>`; }).join('')}
+    </div>
+    <p class="muted small">Günlerin kategorisini değiştirebilirsin. Her hafta öneriler kendiliğinden karışır ve aynı parfümün o hafta tekrar gelmemesine çalışılır.</p>
+  </section>`;
+}
+
+/* wheel */
+let rot = 0, spinning = false, wheelList = [];
+const SEG = ['#f26d21','#7a3a17','#c98a4b','#4a2a18','#e5813a','#5e3520','#d99a5c','#33211a'];
+const SEG_TEXT = ['#2a1407','#f8ede3','#2a1407','#f8ede3','#2a1407','#f8ede3','#2a1407','#f8ede3'];
+function filteredWheel(){
+  const c = S.wheelCats;
+  return c.length ? S.perfumes.filter(p => p.cats.some(x => c.includes(x))) : S.perfumes.slice();
+}
+function renderWheel(){
+  wheelList = filteredWheel();
+  const last = S.lastSpin && byId(S.lastSpin);
+  view.innerHTML = `
+  <section class="section">
+    <div class="row spread"><h2>Ne sıksam?</h2><span class="muted small">${wheelList.length} parfüm</span></div>
+    <div class="chips scroll" role="group" aria-label="Kategori filtresi">
+      <button class="chip${S.wheelCats.length ? '' : ' on'}" data-act="wcat" data-cat="" type="button">${ANY}</button>
+      ${S.cats.map(c => `<button class="chip${S.wheelCats.includes(c) ? ' on' : ''}" data-act="wcat" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}
+    </div>
+  </section>
+  <section class="section">
+    ${wheelList.length ? `
+    <div class="wheel-wrap"><div class="pointer"></div><canvas id="wheel" aria-label="Parfüm çarkı, çevirmek için dokun" role="button" tabindex="0"></canvas></div>
+    <div class="row" style="justify-content:center"><button class="btn primary" id="spin-btn" data-act="spin" type="button">Çarkı çevir</button></div>`
+    : `<div class="empty">Seçili kategorilerde parfüm yok. Başka bir kategori seç ya da Keşfet'ten parfüm ekle.</div>`}
+    <div id="result">${last ? resultCard(last) : ''}</div>
+  </section>`;
+  if (wheelList.length) {
+    const cv = document.getElementById('wheel');
+    drawWheel(cv);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => drawWheel(cv));
+  }
+}
+function resultCard(p){
+  const isToday = S.week[today()].pid === p.id;
+  return `<div class="result">
+    <div class="art tap" data-act="view" data-id="${p.id}">${art(p)}</div>
+    <div class="hero-body">
+      <span class="eyebrow">Çark diyor ki</span>
+      <span class="hero-name" style="font-size:22px">${esc(p.name)}</span>
+      ${p.brand ? `<span class="hero-brand" lang="en">${esc(p.brand)}</span>` : ''}
+      ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
+      <div class="row"><button class="btn sm primary" data-act="settoday" data-id="${p.id}" type="button"${isToday ? ' disabled' : ''}>${isToday ? 'Bugünün parfümü' : 'Bugüne ata'}</button>
+        <button class="btn sm ghost" data-act="view" data-id="${p.id}" type="button">Koku profili</button></div>
+    </div></div>`;
+}
+function drawWheel(cv){
+  if (!cv || !cv.isConnected) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
+  const size = cv.clientWidth || 320;
+  if (cv.width !== Math.round(size * dpr)) { cv.width = cv.height = Math.round(size * dpr); }
+  const ctx = cv.getContext('2d'); const W = cv.width, c = W / 2, r = c - 4 * dpr;
+  const n = wheelList.length, a = Math.PI * 2 / n;
+  ctx.clearRect(0, 0, W, W);
+  for (let i = 0; i < n; i++) {
+    const st = rot + i * a - Math.PI / 2;
+    let ci = i % SEG.length;
+    if (n > 1 && i === n - 1 && ci === 0) ci = 3;
+    ctx.beginPath(); ctx.moveTo(c, c); ctx.arc(c, c, r, st, st + a); ctx.closePath();
+    ctx.fillStyle = SEG[ci]; ctx.fill();
+    if (n > 1) { ctx.strokeStyle = 'rgba(23,17,13,.55)'; ctx.lineWidth = 1.5 * dpr; ctx.stroke(); }
+    ctx.save(); ctx.translate(c, c); ctx.rotate(st + a / 2);
+    const fs = Math.max(11, Math.min(17, 300 / Math.max(n, 1) + 8)) * dpr;
+    ctx.font = `600 ${fs}px Fraunces, Georgia, serif`;
+    ctx.fillStyle = SEG_TEXT[ci]; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    let label = wheelList[i].name; const maxW = r * 0.66;
+    if (ctx.measureText(label).width > maxW) { while (label.length > 2 && ctx.measureText(label + '…').width > maxW) label = label.slice(0, -1); label += '…'; }
+    ctx.fillText(label, r - 14 * dpr, 0);
+    ctx.restore();
+  }
+  ctx.beginPath(); ctx.arc(c, c, r, 0, Math.PI * 2); ctx.strokeStyle = '#f8ede3'; ctx.lineWidth = 3 * dpr; ctx.stroke();
+  const hr = r * 0.17;
+  const g = ctx.createLinearGradient(c - hr, c - hr, c + hr, c + hr); g.addColorStop(0, '#f26d21'); g.addColorStop(1, '#c98a4b');
+  ctx.beginPath(); ctx.arc(c, c, hr, 0, Math.PI * 2); ctx.fillStyle = g; ctx.fill();
+  ctx.lineWidth = 3 * dpr; ctx.strokeStyle = '#17110d'; ctx.stroke();
+  ctx.fillStyle = '#2a1407'; ctx.font = `800 ${11 * dpr}px "Plus Jakarta Sans", sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('ÇEVİR', c, c + 0.5 * dpr);
+}
+function spin(){
+  if (spinning || !wheelList.length) return;
+  const cv = document.getElementById('wheel'); if (!cv) return;
+  spinning = true;
+  const btn = document.getElementById('spin-btn'); if (btn) btn.disabled = true;
+  const n = wheelList.length, a = Math.PI * 2 / n, TAU = Math.PI * 2;
+  const i = Math.floor(Math.random() * n);
+  const jitter = (Math.random() - 0.5) * a * 0.7;
+  const delta = ((-(i + 0.5) * a + jitter - rot) % TAU + TAU) % TAU;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const from = rot, to = rot + (reduce ? 1 : 6 + Math.floor(Math.random() * 3)) * TAU + delta;
+  const dur = reduce ? 700 : 4800 + Math.random() * 800;
+  const t0 = performance.now(); let lastSeg = -1;
+  const ease = x => 1 - Math.pow(1 - x, 4);
+  (function frame(now){
+    const k = Math.min(1, (now - t0) / dur);
+    rot = from + (to - from) * ease(k);
+    drawWheel(cv);
+    const seg = Math.floor((((-rot) % TAU + TAU) % TAU) / a);
+    if (seg !== lastSeg) { lastSeg = seg; try { navigator.vibrate && navigator.vibrate(3); } catch (e) {} }
+    if (k < 1) return requestAnimationFrame(frame);
+    rot = ((rot % TAU) + TAU) % TAU;
+    spinning = false; if (btn) btn.disabled = false;
+    const p = wheelList[Math.floor((((-rot) % TAU + TAU) % TAU) / a) % n];
+    S.lastSpin = p.id; save();
+    const res = document.getElementById('result'); if (res) res.innerHTML = resultCard(p);
+    try { navigator.vibrate && navigator.vibrate([20, 40, 30]); } catch (e) {}
+  })(t0);
+}
+
+/* explore (world catalog) */
+let ex = {q: '', g: '', boy: false, cat: '', limit: 40};
+function renderExplore(){
+  view.innerHTML = `
+  <section class="section">
+    <div class="row spread"><h2>Keşfet</h2><span class="muted small" id="cat-count"></span></div>
+    <input class="search" id="ex-q" type="search" placeholder="Parfüm, marka ya da nota ara (örn. vanilya)" value="${esc(ex.q)}" autocomplete="off">
+    <div class="chips scroll">
+      <button class="chip${ex.boy ? ' on' : ''}" data-act="exboy" type="button">Boyner'de</button>
+      ${['E','K','U'].map(g => `<button class="chip${ex.g === g ? ' on' : ''}" data-act="exg" data-g="${g}" type="button">${GENDER[g]}</button>`).join('')}
+    </div>
+    <div class="chips scroll">
+      <button class="chip${ex.cat ? '' : ' on'}" data-act="excat" data-cat="" type="button">Tüm kategoriler</button>
+      ${DEFAULT_CATS.map(c => `<button class="chip${ex.cat === c ? ' on' : ''}" data-act="excat" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}
+    </div>
+  </section>
+  <div id="ex-body"><div class="empty">Dünya parfüm kataloğu yükleniyor…</div></div>`;
+  loadCatalog().then(() => { document.getElementById('cat-count') && (document.getElementById('cat-count').textContent = CAT.length.toLocaleString('tr-TR') + ' parfüm'); renderExploreBody(); })
+    .catch(() => { const b = document.getElementById('ex-body'); if (b) b.innerHTML = `<div class="empty">Katalog yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.<br><br><button class="btn sm" data-act="go" data-tab="kesfet" type="button">Tekrar dene</button></div>`; });
+}
+function catRow(c){
+  const r = c.r, owned = inCollection(r[0]);
+  const p = {name: r[1], img: fimg(r[0])};
+  return `<div class="item">
+    <div class="art tap" data-act="cview" data-cid="${r[0]}">${art(p)}</div>
+    <div class="item-body tap" data-act="cview" data-cid="${r[0]}">
+      <span class="item-name">${esc(r[1])}</span>
+      <span class="item-meta">${esc(r[2])}${c.boy ? ' <span class="boyner">Boyner</span>' : ''} · ${GENDER[r[4]]}</span>
+      <div class="fam-line">${r[8].slice(0, 2).map(famTag).join('')}</div>
+    </div>
+    <button class="icon-btn${owned ? ' added' : ''}" data-act="cadd" data-cid="${r[0]}" type="button" aria-label="${owned ? 'Koleksiyonda' : 'Koleksiyona ekle'}">
+      ${owned ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 5 5 9-10"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>'}
+    </button>
+  </div>`;
+}
+function searchCatalog(){
+  const toks = fold(ex.q).split(/\s+/).filter(Boolean);
+  const out = [];
+  for (const c of CAT) {
+    if (ex.boy && !c.boy) continue;
+    if (ex.g && c.r[4] !== ex.g) continue;
+    if (ex.cat && !c.r[12].includes(ex.cat)) continue;
+    let rank = 0;
+    if (toks.length) {
+      if (toks.every(t => c.key.includes(t))) rank = 0;
+      else if (toks.every(t => c.key.includes(t) || c.nkey.includes(t))) rank = 1;
+      else continue;
+    }
+    out.push([c, rank]);
+  }
+  out.sort((a, b) => (a[1] - b[1]) || ((b[0].boy ? 1 : 0) - (a[0].boy ? 1 : 0)) || (b[0].r[5] - a[0].r[5]));
+  return out.map(x => x[0]);
+}
+function renderExploreBody(){
+  const body = document.getElementById('ex-body'); if (!body || !CAT) return;
+  const filtered = ex.q || ex.g || ex.boy || ex.cat;
+  let html = '';
+  if (!filtered && BOY && BOY.top && BOY.top.length) {
+    html += `<section class="section"><div class="row spread"><h3>Boyner'de en çok favorilenenler</h3></div>
+      <div class="shelf">${BOY.top.map((p, i) => `
+        <button class="card" data-act="bview" data-i="${i}" type="button">
+          <div class="art">${art({name: p.b, img: p.img})}</div>
+          <div class="card-body"><span class="card-brand" lang="en">${esc(p.b)}</span><span class="card-name" style="font-size:14px">${esc(p.t.trim())}</span>
+          ${p.p ? `<span class="price">${esc(p.p)} TL</span>` : ''}</div>
+        </button>`).join('')}</div></section>`;
+  }
+  const res = searchCatalog();
+  html += `<section class="section"><div class="row spread"><h3>${filtered ? res.length.toLocaleString('tr-TR') + ' sonuç' : 'Popüler parfümler'}</h3>
+    <span class="muted small">Boyner'de satılanlar önce</span></div>
+    ${res.length ? `<div class="list">${res.slice(0, ex.limit).map(catRow).join('')}</div>` : `<div class="empty">Sonuç yok. Yazımı kontrol et ya da filtreleri kaldır.</div>`}
+    ${res.length > ex.limit ? `<button class="btn block" data-act="exmore" type="button">Daha fazla göster</button>` : ''}
+    </section>`;
+  body.innerHTML = html;
+}
+
+/* collection */
+let colQuery = '', colCat = '';
+function renderCollection(){
+  view.innerHTML = `
+  <section class="section">
+    <div class="row spread"><h2>Koleksiyon <span class="muted small" style="font-family:var(--f-body)">${S.perfumes.length}</span></h2>
+      <div class="row"><button class="btn sm" data-act="add" type="button">Elle ekle</button>
+      <button class="btn sm primary" data-act="go" data-tab="kesfet" type="button">Katalogdan ekle</button></div></div>
+    ${sampleNote()}
+    <input class="search" id="col-search" type="search" placeholder="Koleksiyonda ara" value="${esc(colQuery)}" autocomplete="off">
+    <div class="chips scroll">
+      <button class="chip${colCat ? '' : ' on'}" data-act="ccat" data-cat="" type="button">${ANY}</button>
+      ${S.cats.map(c => `<button class="chip${colCat === c ? ' on' : ''}" data-act="ccat" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}
+    </div>
+  </section>
+  <section class="section" id="col-grid"></section>`;
+  renderGrid();
+}
+function renderGrid(){
+  const q = fold(colQuery.trim());
+  const list = S.perfumes.filter(p => (!colCat || p.cats.includes(colCat)) &&
+    (!q || fold([p.name, p.brand, ...p.fam, ...p.top, ...p.heart, ...p.base].join(' ')).includes(q)));
+  const g = document.getElementById('col-grid');
+  if (!S.perfumes.length) { g.innerHTML = `<div class="empty">Henüz parfüm yok. Keşfet'ten ara ve tek dokunuşla ekle: görseli, notaları ve kategorileri otomatik gelir.</div>`; return; }
+  if (!list.length) { g.innerHTML = `<div class="empty">Bu aramaya uyan parfüm yok.</div>`; return; }
+  g.innerHTML = `<div class="grid">${list.map(p => `
+    <button class="card" data-act="view" data-id="${p.id}" type="button">
+      <div class="art">${art(p)}${p.sample ? '<span class="sample-tag">Örnek</span>' : ''}</div>
+      <div class="card-body">
+        ${p.brand ? `<span class="card-brand" lang="en">${esc(p.brand)}</span>` : ''}
+        <span class="card-name">${esc(p.name)}</span>
+        ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 2).map(famTag).join('')}</div>` : ''}
+        <div class="chips" style="gap:4px;margin-top:4px">${p.cats.map(c => `<span class="pill">${esc(c)}</span>`).join('')}</div>
+      </div>
+    </button>`).join('')}</div>`;
+}
+
+/* sheets */
+let draft = null, delArmed = false, sheetMode = null;
+const listStr = a => a.join(', ');
+const parseList = s => String(s).split(/[,;\n]+/).map(x => x.trim()).filter(Boolean);
+const closeIcon = '<button class="icon-btn" data-act="close" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg></button>';
+function openOverlay(){
+  const old = document.getElementById('overlay'); if (old) old.remove();
+  const o = document.createElement('div'); o.className = 'overlay'; o.id = 'overlay';
+  o.innerHTML = `<form class="sheet" id="sheet" novalidate></form>`;
+  document.body.appendChild(o);
+  return o.firstChild;
+}
+function closeSheet(){ const o = document.getElementById('overlay'); if (o) o.remove(); draft = null; sheetMode = null; }
+function profileHtml(p){
+  const hasNotes = p.top.length || p.heart.length || p.base.length;
+  return `
+    ${p.fam.length ? `<div class="field"><span class="label">Koku ailesi</span><div class="fam-line">${p.fam.map(famTag).join('')}</div></div>` : ''}
+    <div class="field"><span class="label">Notalar</span>
+      ${hasNotes ? `<div class="pyramid">${TIERS.map(([k, label, when]) => `
+        <div class="tier"><div class="tier-name"><b>${label}</b><span>${when}</span></div>
+          <div class="chips">${p[k].length ? p[k].map(n => `<span class="note-chip">${esc(n)}</span>`).join('') : '<span class="muted small">Yok</span>'}</div></div>`).join('')}</div>`
+      : `<div class="empty">Henüz nota eklenmemiş. “Düzenle” ile ekleyebilirsin.</div>`}
+    </div>
+    ${p.lon || p.sil ? `<div class="meters">${dots(p.lon, 'Kalıcılık')}${dots(p.sil, 'Yayılım')}</div>` : ''}
+    ${p.cats.length ? `<div class="field"><span class="label">Ne zaman</span><div class="chips">${p.cats.map(c => `<span class="pill">${esc(c)}</span>`).join('')}</div></div>` : ''}`;
+}
+function headHtml(p, sub){
+  return `<div class="detail-head">
+      <div class="art">${art(p)}</div>
+      <div class="hero-body">
+        ${p.brand ? `<span class="hero-brand" lang="en">${esc(p.brand)}</span>` : ''}
+        <span class="hero-name">${esc(p.name)}</span>
+        ${sub ? `<span class="muted small">${sub}</span>` : ''}
+      </div>
+    </div>`;
+}
+function boynerLink(brand, url){
+  const b = boynerBrand(brand);
+  const u = url || (b && b.u);
+  return u ? `<a class="btn sm" href="${esc(u)}" target="_blank" rel="noopener" data-act="extlink">Boyner'de gör</a>` : '';
+}
+function openDetail(p){
+  if (!p) return;
+  sheetMode = 'detail';
+  const f = openOverlay();
+  const isToday = S.week[today()].pid === p.id;
+  const sub = [p.g ? GENDER[p.g] : '', p.conc].filter(Boolean).join(' · ');
+  f.innerHTML = `
+    <div class="row spread"><span class="eyebrow">Koku profili</span>${closeIcon}</div>
+    ${headHtml(p, sub)}
+    ${profileHtml(p)}
+    ${p.note ? `<div class="field"><span class="label">Not</span><span>${esc(p.note)}</span></div>` : ''}
+    <div class="row spread">
+      <div class="row"><button class="btn sm" data-act="edit" data-id="${p.id}" type="button">Düzenle</button>${boynerLink(p.brand)}</div>
+      <button class="btn sm primary" data-act="settoday" data-id="${p.id}" type="button"${isToday ? ' disabled' : ''}>${isToday ? 'Bugünün parfümü' : 'Bugün bunu sık'}</button>
+    </div>`;
+  loadBoyner().then(() => { const s = document.getElementById('sheet'); if (s && sheetMode === 'detail' && !s.querySelector('[data-act="extlink"]')) { const row = s.querySelector('[data-act="edit"]'); if (row) row.insertAdjacentHTML('afterend', boynerLink(p.brand)); } });
+}
+function openCatalogDetail(cid, boyUrl){
+  const c = CAT && CAT.byId.get(+cid); if (!c) return;
+  sheetMode = 'cdetail';
+  const r = c.r, p = toPerfume(r), owned = inCollection(r[0]);
+  const f = openOverlay();
+  const sub = [GENDER[r[4]], r[3] || '', r[5].toLocaleString('tr-TR') + ' oy'].filter(Boolean).join(' · ');
+  f.innerHTML = `
+    <div class="row spread"><span class="eyebrow">Katalog${c.boy ? ' · <span class="boyner">Boyner</span>' : ''}</span>${closeIcon}</div>
+    ${headHtml(p, sub)}
+    ${profileHtml(p)}
+    <div class="row spread">
+      ${boynerLink(r[2], boyUrl) || '<span></span>'}
+      <button class="btn sm primary" data-act="cadd" data-cid="${r[0]}" type="button"${owned ? ' disabled' : ''}>${owned ? 'Koleksiyonda' : 'Koleksiyona ekle'}</button>
+    </div>`;
+}
+function openBoynerOnly(p){
+  sheetMode = 'bdetail';
+  const f = openOverlay();
+  f.innerHTML = `
+    <div class="row spread"><span class="eyebrow"><span class="boyner">Boyner</span></span>${closeIcon}</div>
+    ${headHtml({name: p.t.trim(), brand: p.b, img: p.img}, [p.g, p.p ? p.p + ' TL' : ''].filter(Boolean).join(' · '))}
+    <div class="empty">Bu ürünün nota bilgisi katalogda bulunamadı. Elle ekleyip notaları kendin yazabilirsin.</div>
+    <div class="row spread">${boynerLink(p.b, p.u)}
+      <button class="btn sm primary" data-act="addboy" type="button">Elle ekle</button></div>`;
+  draft = norm({id: null, name: p.t.trim(), brand: p.b, img: p.img, note: '', cats: []});
+}
+function addFromCatalog(cid){
+  const c = CAT && CAT.byId.get(+cid); if (!c) return null;
+  const ex = inCollection(c.r[0]); if (ex) return ex;
+  const p = toPerfume(c.r);
+  p.cats = p.cats.filter(x => S.cats.includes(x));
+  S.perfumes.unshift(p);
+  repairWeek(); save();
+  toast(p.name + ' koleksiyona eklendi');
+  return p;
+}
+
+function openSheet(p){
+  draft = p ? {...p, cats: p.cats.slice(), fam: p.fam.slice()} : (draft && !draft.id ? draft : norm({id: null, name: '', brand: '', img: '', note: ''}));
+  delArmed = false; sheetMode = 'edit';
+  openOverlay(); drawSheet();
+  setTimeout(() => { const n = document.getElementById('f-name'); if (n && !p) n.focus(); }, 60);
+}
+const famChoices = () => [...new Set([...Object.keys(FAM_HUE), ...(draft ? draft.fam : [])])];
+function drawSheet(){
+  const f = document.getElementById('sheet'); if (!f) return;
+  f.innerHTML = `
+    <div class="row spread"><h2>${draft.id ? 'Parfümü düzenle' : 'Yeni parfüm'}</h2>${closeIcon}</div>
+    <div class="photo-pick">
+      <div class="art" id="f-preview">${art(draft.name || draft.img ? draft : {name: '+'})}</div>
+      <div class="field">
+        <span class="label">Görsel</span>
+        <div class="row">
+          <label class="btn sm file-label">Fotoğraf seç<input id="f-photo" type="file" accept="image/*"></label>
+          ${draft.img ? '<button class="btn sm ghost" data-act="rmimg" type="button">Kaldır</button>' : ''}
+        </div>
+        <span class="muted small">Şişenin fotoğrafını çek ya da galeriden seç.</span>
+      </div>
+    </div>
+    <div class="field"><label for="f-name">Parfüm adı</label><input class="input" id="f-name" value="${esc(draft.name)}" placeholder="Örn. Aventus" autocomplete="off" required>
+      <div id="f-suggest"></div></div>
+    <div class="field"><label for="f-brand">Marka</label><input class="input" id="f-brand" value="${esc(draft.brand)}" placeholder="Örn. Creed" autocomplete="off"></div>
+    <div class="field"><span class="label">Koku ailesi</span>
+      <div class="chips">${famChoices().map(c => `<button class="chip${draft.fam.includes(c) ? ' on' : ''}" data-act="ffam" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>
+    </div>
+    <div class="field"><div class="row spread"><span class="label">Kategoriler</span>
+      <button class="btn sm ghost" data-act="fauto" type="button">Koku ailesine göre öner</button></div>
+      <div class="chips">${S.cats.map(c => `<button class="chip${draft.cats.includes(c) ? ' on' : ''}" data-act="fcat" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>
+    </div>
+    <div class="field"><span class="label">Konsantrasyon</span>
+      <div class="chips">${CONCS.map(c => `<button class="chip${draft.conc === c ? ' on' : ''}" data-act="fconc" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>
+    </div>
+    ${TIERS.map(([k, label, when]) => `<div class="field"><label for="f-${k}">${label} notalar <span style="text-transform:none;letter-spacing:0;font-weight:500">· ${when}</span></label>
+      <input class="input" id="f-${k}" value="${esc(listStr(draft[k]))}" placeholder="${{top:'Örn. Bergamot, Limon, Pembe biber',heart:'Örn. Lavanta, Yasemin',base:'Örn. Vanilya, Sedir, Misk'}[k]}" autocomplete="off"></div>`).join('')}
+    <span class="muted small" style="margin-top:-8px">Notaları virgülle ayır.</span>
+    <div class="meters">
+      ${[['lon','Kalıcılık'],['sil','Yayılım']].map(([k, l]) => `<div class="field"><span class="label">${l}</span><div class="rate">${[1,2,3,4,5].map(i => `<button class="${draft[k] === i ? 'on' : ''}" data-act="frate" data-k="${k}" data-v="${i}" type="button" aria-label="${l} ${i}">${i}</button>`).join('')}</div></div>`).join('')}
+    </div>
+    <div class="field"><label for="f-note">Not</label><textarea class="input" id="f-note" placeholder="Örn. 2 fıs yeter, kalıcılığı uzun">${esc(draft.note)}</textarea></div>
+    <div class="row spread">
+      ${draft.id ? `<button class="btn sm danger" data-act="delete" type="button">${delArmed ? 'Silmek için tekrar dokun' : 'Sil'}</button>` : '<span></span>'}
+      <button class="btn primary" type="submit">Kaydet</button>
+    </div>`;
+}
+function syncDraft(){
+  const g = id => document.getElementById(id);
+  if (!draft || !g('f-name')) return;
+  draft.name = g('f-name').value; draft.brand = g('f-brand').value; draft.note = g('f-note').value;
+  for (const [k] of TIERS) draft[k] = parseList(g('f-' + k).value);
+}
+function suggestFor(q){
+  const box = document.getElementById('f-suggest'); if (!box) return;
+  const t = fold(q).trim();
+  if (!CAT || t.length < 2 || (draft && draft.cid)) { box.innerHTML = ''; return; }
+  const toks = t.split(/\s+/);
+  const res = [];
+  for (const c of CAT) { if (toks.every(x => c.key.includes(x))) { res.push(c); if (res.length > 200) break; } }
+  res.sort((a, b) => ((b.boy ? 1 : 0) - (a.boy ? 1 : 0)) || (b.r[5] - a.r[5]));
+  box.innerHTML = res.length ? `<div class="suggest">${res.slice(0, 5).map(c => `<button data-act="fpick" data-cid="${c.r[0]}" type="button"><span>${esc(c.r[1])}</span><small>${esc(c.r[2])}${c.boy ? ' · Boyner' : ''} · katalogdan doldur</small></button>`).join('')}</div>` : '';
+}
+function resizeImage(file){
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onerror = () => rej(fr.error);
+    fr.onload = () => {
+      const im = new Image();
+      im.onerror = () => rej(new Error('img'));
+      im.onload = () => {
+        const max = 520, s = Math.min(1, max / Math.max(im.width, im.height));
+        const cv = document.createElement('canvas');
+        cv.width = Math.round(im.width * s); cv.height = Math.round(im.height * s);
+        cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height);
+        res(cv.toDataURL('image/jpeg', 0.82));
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+function saveDraft(){
+  syncDraft();
+  const name = draft.name.trim();
+  if (!name) { toast('Parfüm adını yaz'); document.getElementById('f-name').focus(); return; }
+  const rec = norm({...draft, id: draft.id || uid(), name, brand: draft.brand.trim(), note: draft.note.trim(), sample: false});
+  const i = S.perfumes.findIndex(p => p.id === rec.id);
+  if (i >= 0) S.perfumes[i] = rec; else S.perfumes.unshift(rec);
+  repairWeek(); save(); closeSheet(); render();
+  toast(i >= 0 ? 'Güncellendi' : 'Koleksiyona eklendi');
+}
+
+/* settings */
+let armed = '', importText = '';
+const ICONS = {
+  bell: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>',
+  tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3.5 12.5V4h8.5l8.5 8.5-8.5 8.5z"/><circle cx="8" cy="8.5" r="1.5"/></svg>',
+  box: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7.5 12 4l8 3.5v9L12 20l-8-3.5z"/><path d="M4 7.5 12 11l8-3.5M12 11v9"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg>',
+  chev: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 6 6 6-6 6"/></svg>'
+};
+function notifSummary(){
+  const on = S.notif.reminders.filter(r => r.on);
+  if (!NATIVE) return 'Android uygulamasında çalışır';
+  if (!on.length) return 'Kapalı';
+  return on.map(r => r.time).join(', ');
+}
+function renderSettings(){
+  if (S.sub === 'bildirim') return renderNotif();
+  if (S.sub === 'kategori') return renderCats();
+  if (S.sub === 'yedek') return renderBackup();
+  if (S.sub === 'uygulama') return renderAbout();
+  view.innerHTML = `
+  <section class="section">
+    <h2>Ayarlar</h2>
+    <div class="menu">
+      <button data-act="sub" data-sub="bildirim" type="button"><span class="mi">${ICONS.bell}</span><span><b>Bildirimler</b><small>${esc(notifSummary())}</small></span>${ICONS.chev}</button>
+      <button data-act="sub" data-sub="kategori" type="button"><span class="mi">${ICONS.tag}</span><span><b>Kategoriler</b><small>${S.cats.length} kategori</small></span>${ICONS.chev}</button>
+      <button data-act="sub" data-sub="yedek" type="button"><span class="mi">${ICONS.box}</span><span><b>Yedek</b><small>${S.perfumes.length} parfüm</small></span>${ICONS.chev}</button>
+      <button data-act="sub" data-sub="uygulama" type="button"><span class="mi">${ICONS.phone}</span><span><b>Uygulama</b><small>${NATIVE ? 'Sürüm ' + esc(nativeCall('versionName') || '') : 'Android APK ve güncellemeler'}</small></span>${ICONS.chev}</button>
+    </div>
+  </section>`;
+}
+const backBtn = '<button class="back" data-act="sub" data-sub="" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>Ayarlar</button>';
+
+function renderNotif(){
+  const perm = NATIVE ? nativeCall('hasNotifPermission') : false;
+  const status = !NATIVE
+    ? `<div class="status warn"><i></i><span>Bildirimler yalnızca Android uygulamasında çalışır. Buradaki ayarlar kaydedilir, uygulamayı kurunca devreye girer.</span></div>`
+    : perm ? `<div class="status ok"><i></i><span>Bildirim izni açık.</span></div>`
+    : `<div class="status warn"><i></i><span style="flex:1">Bildirim izni kapalı.</span><button class="btn sm primary" data-act="perm" type="button">İzin ver</button></div>`;
+  view.innerHTML = `
+  <section class="section">
+    ${backBtn}
+    <div class="row spread"><h2>Bildirimler</h2>${NATIVE ? '<button class="btn sm" data-act="testnotif" type="button">Deneme gönder</button>' : ''}</div>
+    ${status}
+    ${S.notif.reminders.map(remCard).join('')}
+    <button class="btn block" data-act="addrem" type="button">+ Hatırlatıcı ekle</button>
+    <p class="muted small">“Günün parfümü” Hafta planındaki parfümü hatırlatır. “Kategoriden” seçtiğin kategoriden, “Rastgele” bütün koleksiyondan her seferinde farklı bir parfüm önerir.</p>
+  </section>`;
+}
+function remCard(r){
+  const kinds = [['today','Günün parfümü'],['cat','Kategoriden'],['any','Rastgele']];
+  return `<div class="rem${r.on ? '' : ' off'}">
+    <div class="row spread">
+      <input class="input" id="rl-${r.id}" data-rem="${r.id}" data-k="label" value="${esc(r.label)}" aria-label="Hatırlatıcı adı" style="flex:1;min-width:0;background:transparent;border:0;padding:0;font-weight:700">
+      <label class="switch" aria-label="Hatırlatıcıyı aç/kapat"><input type="checkbox" id="ro-${r.id}" data-rem="${r.id}" data-k="on"${r.on ? ' checked' : ''}><span></span></label>
+    </div>
+    <input class="time" type="time" id="rt-${r.id}" data-rem="${r.id}" data-k="time" value="${esc(r.time)}" aria-label="Saat">
+    <div class="chips">${DAYS.map(({d, s}) => `<button class="chip${r.days.includes(d) ? ' on' : ''}" data-act="rday" data-rem="${r.id}" data-day="${d}" type="button">${s}</button>`).join('')}</div>
+    <div class="seg">${kinds.map(([k, l]) => `<button class="${r.kind === k ? 'on' : ''}" data-act="rkind" data-rem="${r.id}" data-kind="${k}" type="button">${l}</button>`).join('')}</div>
+    ${r.kind === 'cat' ? `<select class="input" id="rc-${r.id}" data-rem="${r.id}" data-k="cat" aria-label="Kategori">${S.cats.map(c => `<option${c === r.cat ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select>` : ''}
+    <div class="row spread"><span class="muted small">${remPreview(r)}</span>
+      <button class="btn sm ghost danger" data-act="delrem" data-rem="${r.id}" type="button">${armed === 'rem-' + r.id ? 'Emin misin?' : 'Sil'}</button></div>
+  </div>`;
+}
+function remPreview(r){
+  if (r.kind === 'today') { const p = S.week[today()].pid && byId(S.week[today()].pid); return p ? 'Bugün: ' + esc(p.name) : 'Bugün için parfüm yok'; }
+  const n = (r.kind === 'cat' ? poolFor(r.cat) : S.perfumes).length;
+  return n + ' parfüm arasından';
+}
+function renderCats(){
+  view.innerHTML = `
+  <section class="section">
+    ${backBtn}
+    <h2>Kategoriler</h2>
+    <div class="box">
+      <div class="chips">${S.cats.map(c => `<button class="chip on" data-act="rmcat" data-cat="${esc(c)}" type="button">${esc(c)}<span class="x">${armed === 'cat-' + c ? 'sil?' : '×'}</span></button>`).join('')}</div>
+      <form class="row" id="cat-form"><input class="input" id="cat-new" placeholder="Yeni kategori, örn. Düğün" style="flex:1;min-width:0" autocomplete="off"><button class="btn sm primary" type="submit">Ekle</button></form>
+      <span class="muted small">Silmek için iki kez dokun. Parfümlerden de kaldırılır.</span>
+    </div>
+    <div class="box">
+      <span><b>Otomatik kategorile</b></span>
+      <span class="muted small">Koku ailesi olan parfümlere uygun kategorileri (Günlük, Date, Akşam, Sexy…) ekler. Senin eklediğin kategoriler silinmez.</span>
+      <div class="row"><button class="btn sm" data-act="autocat" type="button">Koleksiyonu kategorile</button></div>
+    </div>
+  </section>`;
+}
+function renderBackup(){
+  const imgs = S.perfumes.filter(p => p.img && p.img.startsWith('data:')).length;
+  view.innerHTML = `
+  <section class="section">
+    ${backBtn}
+    <h2>Yedek</h2>
+    <div class="box">
+      <span class="muted small">Veriler bu telefonda duruyor (${S.perfumes.length} parfüm, ${imgs} fotoğraf). Telefon değiştirmeden ya da uygulamayı silmeden önce yedek al.</span>
+      <div class="row">
+        ${NATIVE ? '<button class="btn sm primary" data-act="sharebk" type="button">Yedeği dosyaya kaydet</button>' : ''}
+        <button class="btn sm" data-act="export" type="button">Yedeği kopyala</button>
+        <label class="btn sm file-label">Dosyadan yükle<input id="imp-file" type="file" accept=".json,.txt,application/json,text/plain"></label>
+      </div>
+      <div class="field"><label for="imp-text">Yedeği yapıştır</label>
+        <textarea class="input" id="imp-text" placeholder="Kopyaladığın yedeği buraya yapıştır" rows="3">${esc(importText)}</textarea></div>
+      <div class="row"><button class="btn sm primary" data-act="import" type="button">Yedeği geri yükle</button></div>
+    </div>
+    <div class="box">
+      <span class="muted small">Tüm parfümleri ve ayarları siler, örneklerle baştan başlar.</span>
+      <div class="row"><button class="btn sm danger" data-act="reset" type="button">${armed === 'reset' ? 'Emin misin? Tekrar dokun' : 'Her şeyi sıfırla'}</button></div>
+    </div>
+  </section>`;
+}
+function renderAbout(){
+  const ri = repoInfo();
+  const rel = ri ? `https://github.com/${ri.owner}/${ri.repo}/releases/latest` : '';
+  view.innerHTML = `
+  <section class="section">
+    ${backBtn}
+    <h2>Uygulama</h2>
+    <div class="box">
+      ${NATIVE ? `<span>Yüklü sürüm: <b>${esc(nativeCall('versionName') || '')}</b></span>
+        <span class="muted small">Ekranlar ve katalog her açılışta internetten güncellenir, bunun için bir şey kurman gerekmez. Bildirim tarafında değişiklik olursa burada “Yeni sürüm” uyarısı çıkar.</span>
+        ${LATEST ? (LATEST.v > appVersion() ? `<a class="btn primary" href="${esc(LATEST.url)}" data-act="extlink">Yeni sürümü indir (v${LATEST.v})</a>` : '<span class="status ok"><i></i>En güncel sürümü kullanıyorsun.</span>') : ''}`
+      : `<span class="muted small">Bildirimler için Android uygulamasını kur. APK'yı telefonda indirip açman yeterli. Android “bilinmeyen kaynak” izni isteyebilir.</span>
+        ${rel ? `<a class="btn primary" href="${esc(LATEST ? LATEST.url : rel)}" target="_blank" rel="noopener">APK'yı indir</a>` : '<span class="muted small">APK indirme linki GitHub sayfası yayına girince burada görünür.</span>'}`}
+    </div>
+    <div class="box">
+      <span class="muted small">Parfüm verileri: Fragrantica topluluk verilerinden derlenen açık bir veri seti (${CAT ? CAT.length.toLocaleString('tr-TR') : '33 bin+'} parfüm). Boyner marka listesi haftada bir güncellenir.</span>
+    </div>
+  </section>`;
+}
+function applyImport(txt){
+  try {
+    const d = JSON.parse(txt);
+    if (!d || !Array.isArray(d.perfumes)) throw new Error('bad');
+    const base = freshState();
+    S = {...base, ...d, tab: 'koleksiyon', sub: null};
+    S.perfumes.forEach(norm);
+    if (!Array.isArray(S.cats) || !S.cats.length) S.cats = base.cats;
+    if (!S.week) S.week = base.week;
+    if (!S.notif || !Array.isArray(S.notif.reminders)) S.notif = base.notif;
+    repairWeek(); save(); importText = ''; render();
+    toast(S.perfumes.length + ' parfüm geri yüklendi');
+  } catch (e) { toast('Bu metin geçerli bir yedek değil'); }
+}
+const remById = id => S.notif.reminders.find(r => r.id === id);
+
+/* ---------- events ---------- */
+function go(tab){ S.tab = tab; armed = ''; if (tab !== 'ayarlar') S.sub = null; closeSheet(); save(); render(); window.scrollTo(0, 0); }
+document.addEventListener('click', async e => {
+  if (e.target.id === 'overlay') { closeSheet(); return; }
+  const t = e.target.closest('[data-act],[data-tab]'); if (!t) return;
+  const act = t.dataset.act;
+  if (!act && t.dataset.tab) { if (S.tab === t.dataset.tab && S.tab === 'ayarlar') S.sub = null; go(t.dataset.tab); return; }
+  const keepArmed = ['rmcat','reset','delrem'].includes(act);
+  if (!keepArmed) armed = '';
+  switch (act) {
+    case 'go': go(t.dataset.tab); break;
+    case 'extlink':
+      if (NATIVE) { e.preventDefault(); nativeCall('openUrl', t.getAttribute('href')); }
+      break;
+    case 'shuffle': shuffleWeek(); save(); render(); toast('Hafta yeniden karıştırıldı'); break;
+    case 'reroll': {
+      const d = +t.dataset.day; const used = new Set(DAYS.filter(x => x.d !== d).map(x => S.week[x.d].pid).filter(Boolean));
+      const before = S.week[d].pid; S.week[d].pid = rollDay(d, used); save(); render();
+      if (S.week[d].pid && S.week[d].pid === before) toast('Bu kategoride başka parfüm yok');
+      break;
+    }
+    case 'del-samples': S.perfumes = S.perfumes.filter(p => !p.sample); repairWeek(); save(); render(); toast('Örnekler silindi'); break;
+    case 'wcat': {
+      const c = t.dataset.cat;
+      S.wheelCats = !c ? [] : S.wheelCats.includes(c) ? S.wheelCats.filter(x => x !== c) : [...S.wheelCats, c];
+      save(); renderWheel(); break;
+    }
+    case 'spin': spin(); break;
+    case 'settoday': S.week[today()].pid = t.dataset.id; save(); t.textContent = 'Bugünün parfümü'; t.disabled = true; if (S.tab === 'hafta') render(); toast('Bugünün parfümü ayarlandı'); break;
+    case 'exboy': ex.boy = !ex.boy; ex.limit = 40; renderExplore(); break;
+    case 'exg': ex.g = ex.g === t.dataset.g ? '' : t.dataset.g; ex.limit = 40; renderExplore(); break;
+    case 'excat': ex.cat = t.dataset.cat; ex.limit = 40; renderExplore(); break;
+    case 'exmore': ex.limit += 40; renderExploreBody(); break;
+    case 'cview': openCatalogDetail(t.dataset.cid); break;
+    case 'bview': {
+      const p = BOY.top[+t.dataset.i]; const m = matchBoynerProduct(p);
+      if (m) openCatalogDetail(m.r[0], p.u); else openBoynerOnly(p);
+      break;
+    }
+    case 'cadd': {
+      if (inCollection(+t.dataset.cid)) { openDetail(inCollection(+t.dataset.cid)); break; }
+      addFromCatalog(t.dataset.cid);
+      if (sheetMode === 'cdetail') { t.textContent = 'Koleksiyonda'; t.disabled = true; }
+      if (S.tab === 'kesfet') renderExploreBody();
+      break;
+    }
+    case 'addboy': { const d = draft; closeSheet(); draft = d; openSheet(null); break; }
+    case 'ccat': colCat = t.dataset.cat; renderCollection(); break;
+    case 'add': draft = null; openSheet(null); loadCatalog().catch(() => {}); break;
+    case 'edit': openSheet(byId(t.dataset.id)); break;
+    case 'view': openDetail(byId(t.dataset.id)); break;
+    case 'close': closeSheet(); break;
+    case 'fcat': syncDraft(); { const c = t.dataset.cat; draft.cats = draft.cats.includes(c) ? draft.cats.filter(x => x !== c) : [...draft.cats, c]; } drawSheet(); break;
+    case 'ffam': syncDraft(); { const c = t.dataset.cat; draft.fam = draft.fam.includes(c) ? draft.fam.filter(x => x !== c) : [...draft.fam, c]; } drawSheet(); break;
+    case 'fauto': syncDraft(); { const a = autoCats(draft.fam); if (!a.length) { toast('Önce koku ailesi seç'); break; } draft.cats = [...new Set([...draft.cats, ...a])]; } drawSheet(); toast('Kategoriler önerildi'); break;
+    case 'fconc': syncDraft(); draft.conc = draft.conc === t.dataset.cat ? '' : t.dataset.cat; drawSheet(); break;
+    case 'frate': syncDraft(); { const k = t.dataset.k, v = +t.dataset.v; draft[k] = draft[k] === v ? 0 : v; } drawSheet(); break;
+    case 'fpick': {
+      syncDraft();
+      const c = CAT.byId.get(+t.dataset.cid); if (!c) break;
+      const p = toPerfume(c.r);
+      draft = {...draft, cid: p.cid, name: p.name, brand: p.brand, g: p.g, fam: p.fam, top: p.top, heart: p.heart, base: p.base,
+        lon: p.lon, sil: p.sil, cats: [...new Set([...draft.cats, ...p.cats.filter(x => S.cats.includes(x))])], img: draft.img || p.img};
+      drawSheet(); toast('Katalogdan dolduruldu'); break;
+    }
+    case 'rmimg': syncDraft(); draft.img = ''; drawSheet(); break;
+    case 'delete':
+      if (!delArmed) { syncDraft(); delArmed = true; drawSheet(); break; }
+      S.perfumes = S.perfumes.filter(p => p.id !== draft.id);
+      if (S.lastSpin === draft.id) S.lastSpin = null;
+      repairWeek(); save(); closeSheet(); render(); toast('Silindi'); break;
+    case 'sub': S.sub = t.dataset.sub || null; save(); render(); window.scrollTo(0, 0); break;
+    case 'rmcat': {
+      const c = t.dataset.cat;
+      if (armed !== 'cat-' + c) { armed = 'cat-' + c; renderCats(); break; }
+      S.cats = S.cats.filter(x => x !== c);
+      S.perfumes.forEach(p => p.cats = p.cats.filter(x => x !== c));
+      S.wheelCats = S.wheelCats.filter(x => x !== c);
+      armed = ''; repairWeek(); save(); renderCats(); toast('“' + c + '” silindi'); break;
+    }
+    case 'autocat': {
+      let n = 0;
+      S.perfumes.forEach(p => { const a = autoCats(p.fam).filter(c => !p.cats.includes(c)); if (a.length) { p.cats.push(...a); n++; } });
+      repairWeek(); save(); toast(n ? n + ' parfüme kategori eklendi' : 'Eklenecek yeni kategori yok'); break;
+    }
+    case 'perm': nativeCall('requestNotifPermission'); break;
+    case 'testnotif': {
+      const plan = buildPlan(); const r = plan.reminders[0];
+      const m = r ? pick(r.msgs[today()]) : {t: 'Parfüm Çarkı', b: 'Bildirimler çalışıyor.'};
+      nativeCall('test', m.t, m.b); toast('Deneme bildirimi gönderildi'); break;
+    }
+    case 'addrem': S.notif.reminders.push({id: uid(), on: true, label: 'Hatırlatıcı', time: '12:00', days: [0,1,2,3,4,5,6], kind: 'any', cat: S.cats[0] || 'Günlük'}); save(); renderNotif(); break;
+    case 'delrem': {
+      const id = t.dataset.rem;
+      if (armed !== 'rem-' + id) { armed = 'rem-' + id; renderNotif(); break; }
+      S.notif.reminders = S.notif.reminders.filter(r => r.id !== id); armed = ''; save(); renderNotif(); break;
+    }
+    case 'rday': { const r = remById(t.dataset.rem), d = +t.dataset.day; r.days = r.days.includes(d) ? r.days.filter(x => x !== d) : [...r.days, d]; save(); renderNotif(); break; }
+    case 'rkind': { const r = remById(t.dataset.rem); r.kind = t.dataset.kind; save(); renderNotif(); break; }
+    case 'export': {
+      const txt = JSON.stringify(S);
+      try { await navigator.clipboard.writeText(txt); toast('Yedek panoya kopyalandı'); }
+      catch (err) { importText = txt; renderBackup(); const ta = document.getElementById('imp-text'); ta.focus(); ta.select(); toast('Kutudaki metni seçip kopyala'); }
+      break;
+    }
+    case 'sharebk': toast(nativeCall('saveBackup', JSON.stringify(S)) || 'Kaydedilemedi'); break;
+    case 'import': applyImport(document.getElementById('imp-text').value.trim()); break;
+    case 'reset':
+      if (armed !== 'reset') { armed = 'reset'; renderBackup(); break; }
+      S = freshState(); S.tab = 'ayarlar'; S.weekKey = weekKey(); shuffleWeek(); armed = ''; save(); render(); toast('Sıfırlandı'); break;
+  }
+});
+document.addEventListener('change', async e => {
+  const t = e.target;
+  if (t.dataset && t.dataset.act === 'daycat') {
+    const d = +t.dataset.day; S.week[d].cat = t.value;
+    const used = new Set(DAYS.filter(x => x.d !== d).map(x => S.week[x.d].pid).filter(Boolean));
+    S.week[d].pid = rollDay(d, used); save(); render();
+  }
+  if (t.dataset && t.dataset.rem && t.dataset.k) {
+    const r = remById(t.dataset.rem); if (!r) return;
+    const k = t.dataset.k;
+    r[k] = k === 'on' ? t.checked : t.value;
+    if (k === 'on' && t.checked && NATIVE && !nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission');
+    save(); if (k !== 'label') renderNotif();
+  }
+  if (t.id === 'f-photo' && t.files && t.files[0]) {
+    syncDraft();
+    try { draft.img = await resizeImage(t.files[0]); drawSheet(); }
+    catch (err) { toast('Bu fotoğraf açılamadı, başka bir tane dene'); }
+  }
+  if (t.id === 'imp-file' && t.files && t.files[0]) {
+    const fr = new FileReader(); fr.onload = () => applyImport(String(fr.result)); fr.readAsText(t.files[0]);
+  }
+});
+let exT;
+document.addEventListener('input', e => {
+  const id = e.target.id;
+  if (id === 'col-search') { colQuery = e.target.value; renderGrid(); }
+  if (id === 'ex-q') { ex.q = e.target.value; ex.limit = 40; clearTimeout(exT); exT = setTimeout(renderExploreBody, 160); }
+  if (id === 'f-name' && draft) {
+    draft.name = e.target.value; if (draft.cid) delete draft.cid;
+    if (!draft.img) { const pv = document.getElementById('f-preview'); if (pv) pv.innerHTML = art(draft.name ? draft : {name: '+'}); }
+    clearTimeout(exT); exT = setTimeout(() => suggestFor(e.target.value), 160);
+  }
+});
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  if (e.target.id === 'sheet' && sheetMode === 'edit') saveDraft();
+  if (e.target.id === 'cat-form') {
+    const v = document.getElementById('cat-new').value.trim();
+    if (!v) return;
+    if (S.cats.some(c => fold(c) === fold(v))) { toast('Bu kategori zaten var'); return; }
+    S.cats.push(v); save(); renderCats(); toast('“' + v + '” eklendi');
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && document.getElementById('overlay')) closeSheet();
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.id === 'wheel') { e.preventDefault(); spin(); }
+});
+document.addEventListener('pointerup', e => { if (e.target.id === 'wheel') spin(); });
+let rz; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => drawWheel(document.getElementById('wheel')), 120); });
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible' || !S) return;
+  if (S.weekKey !== weekKey()) { S.weekKey = weekKey(); shuffleWeek(); save(); render(); }
+  if (S.tab === 'ayarlar' && S.sub === 'bildirim') renderNotif();
+});
+// Android back button: native asks the page first
+window.onNativeBack = () => {
+  if (document.getElementById('overlay')) { closeSheet(); return true; }
+  if (S.tab === 'ayarlar' && S.sub) { S.sub = null; render(); return true; }
+  if (S.tab !== 'hafta') { go('hafta'); return true; }
+  return false;
+};
+
+/* ---------- boot ---------- */
+(async () => {
+  const saved = await load();
+  S = saved && Array.isArray(saved.perfumes) ? {...freshState(), ...saved} : freshState();
+  S.perfumes.forEach(norm);
+  if (!S.notif || !Array.isArray(S.notif.reminders)) S.notif = {reminders: defaultReminders()};
+  if (S.weekKey !== weekKey()) { S.weekKey = weekKey(); shuffleWeek(); }
+  repairWeek(); save(); render();
+  loadBoyner();
+  checkUpdate();
+})();
+})();
+</script>
+</body>
+</html>
