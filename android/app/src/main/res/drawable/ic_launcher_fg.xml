@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- "BB" monogram: two geometric B letters with an orange-to-caramel gradient, centred in the 66dp safe zone. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
-    <!-- cap -->
-    <path android:fillColor="#FF2A1407" android:pathData="M47,29h14a2,2 0 0 1 2,2v7h-18v-7a2,2 0 0 1 2,-2z" />
-    <!-- neck -->
-    <path android:fillColor="#FFF8EDE3" android:pathData="M50,38h8v6h-8z" />
-    <!-- bottle -->
-    <path android:fillColor="#FFF8EDE3" android:pathData="M39,44h30a7,7 0 0 1 7,7v22a9,9 0 0 1 -9,9h-26a9,9 0 0 1 -9,-9v-22a7,7 0 0 1 7,-7z" />
-    <!-- wheel label -->
-    <path android:fillColor="#FFF26D21" android:pathData="M54,52a10,10 0 1 1 0,20a10,10 0 1 1 0,-20z" />
-    <path android:fillColor="#FFF8EDE3" android:pathData="M54,59a3,3 0 1 1 0,6a3,3 0 1 1 0,-6z" />
+    <path android:fillType="evenOdd"
+        android:pathData="M30,35H42.5A9,9 0 0 1 42.5,53H43.5A9.5,9.5 0 0 1 43.5,72H30ZM36.5,41V47H42.5A3,3 0 0 0 42.5,41ZM36.5,59V66H43.5A3.5,3.5 0 0 0 43.5,59Z
+                          M55,35H67.5A9,9 0 0 1 67.5,53H68.5A9.5,9.5 0 0 1 68.5,72H55ZM61.5,41V47H67.5A3,3 0 0 0 67.5,41ZM61.5,59V66H68.5A3.5,3.5 0 0 0 68.5,59Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="30" android:startY="35" android:endX="78" android:endY="72">
+                <item android:offset="0" android:color="#FFFF8A3D" />
+                <item android:offset="0.5" android:color="#FFF26D21" />
+                <item android:offset="1" android:color="#FFC98A4B" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- thin underline -->
+    <path android:fillColor="#FFF26D21" android:pathData="M30,76.5H78V78.5H30Z" />
 </vector>

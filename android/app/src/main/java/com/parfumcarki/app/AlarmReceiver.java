@@ -22,7 +22,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         JSONObject msgs = r.optJSONObject("msgs");
         JSONArray list = msgs != null ? msgs.optJSONArray(String.valueOf(dow)) : null;
         String title = "Bugün ne sıksan?";
-        String body = "Parfüm Çarkı'nı aç, çarkı çevir.";
+        String body = "BB Parfüm Envanteri'ni aç, çarkı çevir.";
         if (list != null && list.length() > 0) {
             JSONObject m = list.optJSONObject(new Random().nextInt(list.length()));
             if (m != null) {
@@ -30,7 +30,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 body = m.optString("b", body);
             }
         }
-        Notifier.show(c, 100 + idx, title, body);
+        Notifier.show(c, 100 + idx, title, body,
+                r.optString("sound", "default"), r.optBoolean("vib", true), r.optString("soundName", "Ses"));
         Scheduler.scheduleOne(c, idx, r);
     }
 }

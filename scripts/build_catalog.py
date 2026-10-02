@@ -118,27 +118,105 @@ NOTE_TR = {
     'jasmine tea': 'Yasemin çayı', 'sugar cane': 'Şeker kamışı', 'vanilla extract': 'Vanilya özü', 'lemon tree': 'Limon ağacı', 'nutmeg flower': 'Muskat çiçeği', 'caviar': 'Havyar', 'gin': 'Cin', 'vodka': 'Votka',
 }
 
-# Category rules: accord -> weight per category (accord strengths are 0..100 in source)
-CAT_RULES = {
+# Full category taxonomy: how a perfume is generally perceived, derived from community-voted accords,
+# rating, longevity and sillage. Groups are shown as filter sections in the app.
+TAXONOMY = [
+    ('Kullanım', ['Günlük', 'Ofis', 'Date', 'Parti', 'Özel Gün', 'Spor', 'Tatil']),
+    ('Mevsim', ['İlkbahar', 'Yaz', 'Sonbahar', 'Kış', 'Dört Mevsim']),
+    ('Zaman', ['Gündüz', 'Gece']),
+    ('Karakter', ['Fresh', 'Narenciye', 'Aquatik', 'Aromatik', 'Yeşil', 'Çiçeksi', 'Meyveli', 'Tatlı', 'Gurme',
+                  'Vanilyalı', 'Amber', 'Oryantal', 'Baharatlı', 'Odunsu', 'Ud', 'Deri', 'Tütün', 'Misk', 'Pudralı', 'İsli']),
+    ('Etki', ['Seksi', 'İltifat Toplayan', 'Temiz', 'Kör Alım Güvenli']),
+    ('Yoğunluk', ['Hafif', 'Orta', 'Güçlü', 'Uzun Kalıcı']),
+    ('Popülerlik', ['Çok Popüler', 'Yüksek Puanlı', 'Klasik', 'Yeni Çıkan']),
+    ('Cinsiyet', ['Erkek', 'Kadın', 'Unisex']),
+]
+LABELS = [l for _, ls in TAXONOMY for l in ls]
+LABEL_IDX = {l: i for i, l in enumerate(LABELS)}
+
+USE_RULES = {
     'Günlük': {'fresh': 1, 'citrus': 1, 'aromatic': .8, 'green': .8, 'fresh spicy': .7, 'musky': .5, 'aquatic': .8,
-               'ozonic': .7, 'lavender': .6, 'herbal': .6, 'soapy': .7, 'powdery': .3, 'fruity': .4},
+               'ozonic': .7, 'lavender': .6, 'herbal': .6, 'soapy': .7, 'powdery': .3, 'fruity': .4, 'woody': .3},
     'Ofis': {'aromatic': 1, 'woody': .5, 'citrus': .6, 'fresh spicy': .7, 'iris': .8, 'powdery': .6, 'lavender': .7,
              'soapy': .8, 'mossy': .6, 'musky': .4, 'green': .4, 'violet': .5},
     'Spor': {'aquatic': 1.1, 'marine': 1.1, 'ozonic': 1, 'citrus': .8, 'fresh': .9, 'green': .5, 'salty': .7, 'fresh spicy': .4},
-    'Yaz': {'citrus': 1, 'aquatic': 1, 'marine': 1, 'ozonic': .8, 'fresh': .8, 'tropical': 1, 'coconut': .8, 'fruity': .6,
-            'green': .5, 'salty': .8, 'yellow floral': .4},
-    'Kış': {'warm spicy': 1, 'amber': .9, 'vanilla': .7, 'balsamic': .9, 'tobacco': 1, 'leather': .8, 'oud': .8,
-            'smoky': .9, 'cinnamon': .9, 'caramel': .7, 'honey': .6, 'rum': .9, 'whiskey': .9, 'coffee': .7,
-            'chocolate': .7, 'cacao': .7, 'patchouli': .5, 'conifer': .5},
-    'Akşam': {'amber': 1, 'oud': 1, 'leather': .9, 'smoky': .8, 'warm spicy': .8, 'balsamic': .8, 'tobacco': .8,
-              'patchouli': .6, 'animalic': .7, 'rum': .6, 'whiskey': .6, 'woody': .3, 'vanilla': .4},
+    'Tatil': {'tropical': 1.2, 'coconut': 1.2, 'marine': .9, 'salty': 1, 'aquatic': .7, 'citrus': .5, 'fruity': .5, 'yellow floral': .6},
+    'Parti': {'sweet': .8, 'fruity': .6, 'vanilla': .6, 'cherry': .8, 'rum': .8, 'caramel': .6, 'warm spicy': .4,
+              'amber': .4, 'tropical': .3, 'coffee': .5},
     'Date': {'vanilla': .9, 'sweet': .7, 'rose': .7, 'white floral': .7, 'warm spicy': .5, 'amber': .5, 'lactonic': .8,
-             'powdery': .4, 'fruity': .5, 'cherry': .9, 'iris': .4, 'tuberose': .6, 'almond': .6, 'caramel': .5},
-    'Sexy': {'animalic': 1, 'vanilla': .7, 'amber': .6, 'leather': .7, 'tuberose': .8, 'oud': .6, 'musky': .5,
-             'cacao': .7, 'caramel': .6, 'honey': .7, 'rum': .7, 'cherry': .7, 'coffee': .6, 'sweet': .4, 'tobacco': .5},
+             'powdery': .4, 'fruity': .4, 'cherry': .9, 'iris': .4, 'tuberose': .6, 'almond': .6, 'caramel': .5, 'musky': .3},
     'Özel Gün': {'oud': .9, 'white floral': .6, 'rose': .6, 'iris': .7, 'amber': .5, 'tuberose': .6, 'aldehydic': .9,
                  'balsamic': .5, 'leather': .5, 'champagne': 1},
 }
+SEXY = {'animalic': 1, 'vanilla': .7, 'amber': .6, 'leather': .7, 'tuberose': .8, 'oud': .6, 'musky': .5,
+        'cacao': .7, 'caramel': .6, 'honey': .7, 'rum': .7, 'cherry': .7, 'coffee': .6, 'sweet': .4, 'tobacco': .5}
+CHARACTER = {
+    'Fresh': ['fresh', 'ozonic'], 'Narenciye': ['citrus'], 'Aquatik': ['aquatic', 'marine', 'salty'],
+    'Aromatik': ['aromatic', 'lavender', 'herbal'], 'Yeşil': ['green'],
+    'Çiçeksi': ['floral', 'white floral', 'rose', 'yellow floral', 'tuberose', 'violet'],
+    'Meyveli': ['fruity', 'tropical', 'cherry'], 'Tatlı': ['sweet', 'honey', 'caramel'],
+    'Gurme': ['caramel', 'cacao', 'chocolate', 'coffee', 'almond', 'nutty', 'lactonic', 'coconut', 'rum'],
+    'Vanilyalı': ['vanilla'], 'Amber': ['amber', 'balsamic'],
+    'Baharatlı': ['warm spicy', 'fresh spicy', 'soft spicy', 'cinnamon'],
+    'Odunsu': ['woody', 'mossy', 'conifer', 'patchouli', 'earthy'], 'Ud': ['oud'], 'Deri': ['leather'],
+    'Tütün': ['tobacco'], 'Misk': ['musky', 'animalic'], 'Pudralı': ['powdery', 'iris'], 'İsli': ['smoky'],
+}
+
+def categories(accords, lon, sil5, votes, rating, year, g):
+    w = {a: v / 100 for a, v in accords}
+    top3 = {a for a, _ in accords[:3]}
+    v = lambda *ks: sum(w.get(k, 0) for k in ks)
+    out = []
+    # Kullanım
+    sc = {c: sum(w.get(a, 0) * k for a, k in r.items()) for c, r in USE_RULES.items()}
+    if lon >= 4: sc['Özel Gün'] += .3
+    if lon and lon < 2.8: sc['Günlük'] += .2
+    if sil5 >= 4: sc['Parti'] += .3
+    ranked = sorted(sc.items(), key=lambda x: -x[1])
+    out += [c for c, s in ranked if s >= max(.7, ranked[0][1] * .55)][:3] or [ranked[0][0]]
+    # Mevsim
+    seasons = {
+        'İlkbahar': v('floral', 'white floral', 'rose', 'green', 'fruity', 'powdery', 'yellow floral') + .5 * v('citrus'),
+        'Yaz': v('fresh', 'citrus', 'aquatic', 'marine', 'ozonic', 'tropical', 'coconut', 'salty') + .5 * v('fruity', 'green'),
+        'Sonbahar': v('woody', 'fresh spicy', 'soft spicy', 'patchouli', 'leather', 'earthy') + .5 * v('amber', 'warm spicy'),
+        'Kış': v('warm spicy', 'vanilla', 'amber', 'tobacco', 'oud', 'balsamic', 'caramel', 'smoky', 'cinnamon', 'leather', 'rum'),
+    }
+    m = max(seasons.values()) or 1
+    ss = [s for s, x in seasons.items() if x >= m * .6]
+    out += ss
+    if len(ss) >= 3: out.append('Dört Mevsim')
+    # Zaman
+    day = v('fresh', 'citrus', 'aquatic', 'marine', 'green', 'aromatic', 'soapy', 'ozonic', 'fresh spicy')
+    night = v('amber', 'vanilla', 'sweet', 'warm spicy', 'oud', 'leather', 'animalic', 'tobacco', 'balsamic', 'smoky')
+    if day >= night * .7: out.append('Gündüz')
+    if night >= day * .7: out.append('Gece')
+    # Karakter
+    for label, keys in CHARACTER.items():
+        if any(w.get(k, 0) >= .45 or k in top3 for k in keys): out.append(label)
+    if (w.get('amber', 0) >= .4 and w.get('warm spicy', 0) >= .4) or w.get('balsamic', 0) >= .5 or w.get('oud', 0) >= .5:
+        out.append('Oryantal')
+    # Etki
+    if sum(w.get(a, 0) * k for a, k in SEXY.items()) >= .95: out.append('Seksi')
+    if max(w.get('sweet', 0), w.get('vanilla', 0), w.get('fruity', 0)) >= .6 and sil5 >= 3 and votes >= 1500 and rating >= 3.9:
+        out.append('İltifat Toplayan')
+    if w.get('soapy', 0) >= .3 or w.get('aldehydic', 0) >= .4 or (w.get('musky', 0) >= .5 and max(w.get('fresh', 0), w.get('powdery', 0)) >= .4):
+        out.append('Temiz')
+    if rating >= 4.0 and votes >= 3000: out.append('Kör Alım Güvenli')
+    # Yoğunluk
+    strength = (lon + sil5) / 2
+    out.append('Hafif' if strength < 2.6 else 'Orta' if strength < 3.4 else 'Güçlü')
+    if lon >= 3.9: out.append('Uzun Kalıcı')
+    # Popülerlik
+    if votes >= 10000: out.append('Çok Popüler')
+    if rating >= 4.2 and votes >= 300: out.append('Yüksek Puanlı')
+    if year and year <= 2005 and votes >= 2000: out.append('Klasik')
+    if year and year >= 2025: out.append('Yeni Çıkan')
+    out.append({'E': 'Erkek', 'K': 'Kadın'}.get(g, 'Unisex'))
+    seen, res = set(), []
+    for c in out:
+        if c not in seen:
+            seen.add(c); res.append(LABEL_IDX[c])
+    return res
 
 def tr_note(n):
     n = n.strip()
@@ -152,15 +230,6 @@ def parse_weighted(s, limit):
         if not name: name, w = part, '0'
         out.append((name.strip(), float(w or 0)))
     return out[:limit]
-
-def categories(accords, lon):
-    w = {a: v / 100 for a, v in accords}
-    scores = {c: sum(w.get(a, 0) * k for a, k in rule.items()) for c, rule in CAT_RULES.items()}
-    if lon >= 4: scores['Özel Gün'] += .3; scores['Akşam'] += .2
-    if lon and lon < 2.8: scores['Günlük'] += .2
-    ranked = sorted(scores.items(), key=lambda x: -x[1])
-    top = ranked[0][1] if ranked else 0
-    return [c for c, s in ranked if s >= max(.7, top * .55)][:4] or [ranked[0][0]]
 
 def norm_brand(s):
     s = s.lower().replace('&', 'and')
@@ -194,9 +263,12 @@ def build_world(src):
             if t not in fam: fam.append(t)
         g = {'male': 'E', 'female': 'K'}.get(x['gender'], 'U')
         year = x['year'].split('.')[0] if x['year'] and x['year'] != 'nan' else ''
+        year = int(year) if year.isdigit() else 0
+        rating = float(x['rating_avg'] or 0)
+        sil5 = min(5, sil * 5 / 4)
         items.append([
-            int(x['id']), x['name'].strip(), x['brand'].strip(), int(year) if year.isdigit() else 0, g, votes,
-            round(lon), min(5, round(sil * 5 / 4)), fam, top, mid, base, categories(acc, lon),
+            int(x['id']), x['name'].strip(), x['brand'].strip(), year, g, votes,
+            round(lon), round(sil5), fam, top, mid, base, categories(acc, lon, sil5, votes, rating, year, g), round(rating, 2),
         ])
     items.sort(key=lambda i: -i[5])
     return items
@@ -234,7 +306,7 @@ def main():
     os.makedirs(OUT, exist_ok=True)
     items = build_world(src)
     with open(os.path.join(OUT, 'catalog.json'), 'w', encoding='utf-8') as f:
-        json.dump({'v': datetime.date.today().isoformat(), 'n': len(items), 'items': items}, f, ensure_ascii=False, separators=(',', ':'))
+        json.dump({'v': datetime.date.today().isoformat(), 'n': len(items), 'tax': TAXONOMY, 'labels': LABELS, 'items': items}, f, ensure_ascii=False, separators=(',', ':'))
     print('catalog', len(items))
     try:
         b = fetch_boyner(sys.argv[sys.argv.index('--boyner-html') + 1] if '--boyner-html' in sys.argv else None)

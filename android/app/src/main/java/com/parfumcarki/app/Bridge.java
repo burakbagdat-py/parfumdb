@@ -2,7 +2,7 @@ package com.parfumcarki.app;
 
 import android.webkit.JavascriptInterface;
 
-/** Methods the web page can call as window.ParfumApp.*. */
+/** Methods the web page can call as window.ParfumApp.*. Async calls answer through window.__nativeResult(id, json). */
 public class Bridge {
     private final MainActivity activity;
 
@@ -45,6 +45,31 @@ public class Bridge {
     @JavascriptInterface
     public void test(String title, String body) {
         Notifier.show(activity, 4242, title, body);
+    }
+
+    @JavascriptInterface
+    public void test(String title, String body, String sound, boolean vib) {
+        Notifier.show(activity, 4242, title, body, sound, vib, "Deneme");
+    }
+
+    @JavascriptInterface
+    public void previewSound(String spec) {
+        activity.runOnUiThread(() -> activity.previewSound(spec));
+    }
+
+    @JavascriptInterface
+    public void pickSound(int reqId) {
+        activity.runOnUiThread(() -> activity.pickSound(reqId));
+    }
+
+    @JavascriptInterface
+    public void boynerSearch(int reqId, String query, String mlFilter) {
+        activity.boynerSearch(reqId, query, mlFilter);
+    }
+
+    @JavascriptInterface
+    public void setBars(String hex) {
+        activity.runOnUiThread(() -> activity.setBars(hex));
     }
 
     @JavascriptInterface
