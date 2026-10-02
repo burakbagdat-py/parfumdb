@@ -66,6 +66,11 @@ final class Scheduler {
     }
 
     static long nextTrigger(JSONObject r) {
+        // one-time reminder (e.g. "buy this perfume"): fires once at the given moment
+        if (r.has("at")) {
+            long at = r.optLong("at", -1);
+            return at > System.currentTimeMillis() ? at : -1;
+        }
         int h = r.optInt("h", 8), m = r.optInt("m", 30);
         boolean[] ok = new boolean[7];
         JSONArray days = r.optJSONArray("days");

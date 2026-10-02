@@ -180,6 +180,11 @@ public class MainActivity extends Activity {
             getWindow().setStatusBarColor(col);
             getWindow().setNavigationBarColor(col);
             web.setBackgroundColor(col);
+            // light themes need dark status/navigation bar icons
+            double lum = (0.299 * Color.red(col) + 0.587 * Color.green(col) + 0.114 * Color.blue(col)) / 255;
+            int flags = web.getRootView().getSystemUiVisibility();
+            int light = android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR | android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+            web.getRootView().setSystemUiVisibility(lum > 0.6 ? (flags | light) : (flags & ~light));
         } catch (Exception ignored) { }
     }
 

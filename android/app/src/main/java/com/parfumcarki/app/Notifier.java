@@ -53,14 +53,16 @@ final class Notifier {
     /** A channel's sound cannot change after creation, so every sound/vibration combination gets its own channel. */
     static String channelFor(Context c, String spec, boolean vib, String soundName) {
         String key = spec == null ? "default" : spec;
-        String id = "s_" + Integer.toHexString(key.hashCode()) + (vib ? "_v" : "_n");
+        Uri resolved = soundUri(c, key);
+        // id follows the sound that will actually play, so a sound downloaded later gets a fresh channel
+        String id = "s_" + Integer.toHexString((key + "|" + resolved).hashCode()) + (vib ? "_v" : "_n");
         NotificationManager nm = c.getSystemService(NotificationManager.class);
         if (nm.getNotificationChannel(id) == null) {
             NotificationChannel ch = new NotificationChannel(id,
                     "Hatırlatıcı · " + (soundName == null || soundName.isEmpty() ? "Ses" : soundName) + (vib ? "" : " · titreşimsiz"),
                     NotificationManager.IMPORTANCE_HIGH);
             ch.setDescription("Parfüm hatırlatıcıları");
-            Uri u = soundUri(c, key);
+            Uri u = resolved;
             AudioAttributes aa = new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                     .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
