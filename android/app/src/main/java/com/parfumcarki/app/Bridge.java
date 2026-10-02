@@ -88,6 +88,16 @@ public class Bridge {
     }
 
     @JavascriptInterface
+    public void ready() {
+        activity.runOnUiThread(activity::hideSplash);
+    }
+
+    @JavascriptInterface
+    public void haptic(String kind) {
+        activity.runOnUiThread(() -> activity.haptic(kind));
+    }
+
+    @JavascriptInterface
     public void setBars(String hex) {
         activity.runOnUiThread(() -> activity.setBars(hex));
     }

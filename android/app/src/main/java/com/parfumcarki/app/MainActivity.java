@@ -63,14 +63,38 @@ public class MainActivity extends Activity {
         super.onCreate(state);
         Notifier.ensureChannel(this);
 
+        int bar = getSharedPreferences(Scheduler.PREFS, MODE_PRIVATE).getInt("bar", 0xFF17110D);
         web = new WebView(this);
-        web.setBackgroundColor(0xFF17110D);
-        setContentView(web);
+        web.setBackgroundColor(bar);
+        // app feel: no edge glow, no scrollbars, no long-press menu
+        web.setOverScrollMode(android.view.View.OVER_SCROLL_NEVER);
+        web.setVerticalScrollBarEnabled(false);
+        web.setHorizontalScrollBarEnabled(false);
+        web.setOnLongClickListener(v -> true);
+        web.setLongClickable(false);
+
+        // splash shown until the page reports it has drawn its first screen
+        splash = new android.widget.FrameLayout(this);
+        splash.setBackgroundColor(bar);
+        android.widget.ImageView logo = new android.widget.ImageView(this);
+        logo.setImageResource(R.drawable.ic_launcher_fg);
+        int size = (int) (160 * getResources().getDisplayMetrics().density);
+        splash.addView(logo, new android.widget.FrameLayout.LayoutParams(size, size, android.view.Gravity.CENTER));
+        android.widget.FrameLayout root = new android.widget.FrameLayout(this);
+        root.addView(web);
+        root.addView(splash);
+        setContentView(root);
+        setBars(String.format("#%06X", bar & 0xFFFFFF));
+        web.postDelayed(this::hideSplash, 8000);
 
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
         s.setDatabaseEnabled(true);
+        s.setSupportZoom(false);
+        s.setBuiltInZoomControls(false);
+        s.setDisplayZoomControls(false);
+        s.setTextZoom(100);
         s.setCacheMode(isOnline() ? WebSettings.LOAD_DEFAULT : WebSettings.LOAD_CACHE_ELSE_NETWORK);
 
         web.addJavascriptInterface(new Bridge(this), "ParfumApp");
@@ -110,6 +134,11 @@ public class MainActivity extends Activity {
             }
 
             @Override
+            public void onPageFinished(WebView view, String url) {
+                view.postDelayed(MainActivity.this::hideSplash, 1500);
+            }
+
+            @Override
             public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError err) {
                 if (req.isForMainFrame()) view.loadDataWithBaseURL(null, offlinePage(), "text/html", "utf-8", null);
             }
@@ -138,6 +167,19 @@ public class MainActivity extends Activity {
     /* Each launch asks for a fresh copy of the page (unique URL), so a new version shows up immediately
        instead of after the HTTP cache expires. Offline, the cached copy of the plain URL is used. */
     private long loadedAt;
+    private android.widget.FrameLayout splash;
+
+    void hideSplash() {
+        if (splash == null || splash.getVisibility() != android.view.View.VISIBLE) return;
+        splash.animate().alpha(0f).setDuration(220).withEndAction(() -> splash.setVisibility(android.view.View.GONE)).start();
+    }
+
+    void haptic(String kind) {
+        int c = android.view.HapticFeedbackConstants.CLOCK_TICK;
+        if ("confirm".equals(kind)) c = Build.VERSION.SDK_INT >= 30 ? android.view.HapticFeedbackConstants.CONFIRM : android.view.HapticFeedbackConstants.LONG_PRESS;
+        else if ("press".equals(kind)) c = android.view.HapticFeedbackConstants.KEYBOARD_TAP;
+        web.performHapticFeedback(c);
+    }
 
     private void loadHome() {
         boolean online = isOnline();
@@ -177,6 +219,8 @@ public class MainActivity extends Activity {
     void setBars(String hex) {
         try {
             int col = Color.parseColor(hex);
+            getSharedPreferences(Scheduler.PREFS, MODE_PRIVATE).edit().putInt("bar", col).apply();
+            if (splash != null) splash.setBackgroundColor(col);
             getWindow().setStatusBarColor(col);
             getWindow().setNavigationBarColor(col);
             web.setBackgroundColor(col);

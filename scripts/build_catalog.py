@@ -12,6 +12,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, 'docs', 'data')
 SRC_URL = 'https://raw.githubusercontent.com/aStyxxx/dataset_Fragrantica_perfumes/HEAD/perfumes_actual.csv'
 BOYNER_URL = 'https://www.boyner.com.tr/parfum-x-c4001'
+PARFUMO_URL = 'https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2024/2024-12-10/parfumo_data_clean.csv'
 UA = 'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Mobile Safari/537.36'
 
 ACCORD_TR = {
@@ -231,12 +232,68 @@ def parse_weighted(s, limit):
         out.append((name.strip(), float(w or 0)))
     return out[:limit]
 
+# ---------- concentration (EDT / EDP / Parfum / Extrait / Elixir / EDC) ----------
+CONC_WORDS = [('extrait de parfum', 'Extrait'), ('extrait', 'Extrait'), ('eau de parfum', 'EDP'), ('eau de toilette', 'EDT'),
+              ('eau de cologne', 'EDC'), ('elixir', 'Elixir'), ('parfum', 'Parfum'), ('perfume', 'Parfum'), ('cologne', 'EDC')]
+
+def conc_of(text):
+    l = ' ' + (text or '').lower().replace('\u00e9', 'e') + ' '
+    for k, v in CONC_WORDS:
+        if ' ' + k + ' ' in l: return v
+    return None
+
+# Well-known concentrations for popular perfumes whose names and the Parfumo data do not say it.
+CONC_OVERRIDE = {
+    14982: 'EDP', 75805: 'EDP', 9828: 'EDP', 31623: 'EDT', 52802: 'EDP', 13016: 'EDP', 632: 'EDT', 3747: 'EDT',
+    62615: 'EDP', 20541: 'EDT', 9099: 'EDT', 30529: 'EDP', 209: 'EDT', 913: 'EDT', 6086: 'EDT', 52180: 'EDP',
+    39314: 'EDP', 50239: 'EDP', 65414: 'EDP', 52002: 'EDP', 214: 'EDP', 1826: 'EDP', 30947: 'EDT', 498: 'EDP',
+    30499: 'EDP', 39029: 'EDT', 12426: 'EDP', 43297: 'EDP', 72: 'EDP', 64338: 'EDP', 51694: 'EDP', 25529: 'EDC',
+    88175: 'EDP', 18471: 'EDT', 18: 'EDT', 975: 'EDT', 147: 'EDT', 238: 'EDT', 40816: 'EDP', 31666: 'EDP',
+    413: 'EDP', 9045: 'EDP', 83483: 'EDP', 94713: 'EDP', 15211: 'EDP', 72821: 'EDP', 13857: 'EDT', 67370: 'EDP',
+    728: 'EDT', 55795: 'EDP', 55858: 'EDP', 46663: 'EDP', 55157: 'EDP', 29157: 'EDP', 39358: 'EDP', 88836: 'EDP',
+    802: 'EDP', 84951: 'EDP', 76880: 'EDP', 5752: 'EDT', 55785: 'EDT', 44174: 'Extrait', 52616: 'EDP', 10464: 'EDP',
+    78740: 'EDP', 412: 'EDT', 84109: 'EDP', 62318: 'EDP', 23280: 'EDT', 46890: 'EDP', 44035: 'EDP', 11721: 'EDP',
+    664: 'EDP', 45258: 'EDT', 54785: 'Extrait', 75668: 'EDP', 16939: 'EDP', 17666: 'EDP', 11801: 'EDP', 45639: 'EDP',
+    44894: 'EDP', 26358: 'EDP', 1849: 'EDP', 32172: 'Extrait', 920: 'EDP', 43632: 'EDP', 18021: 'EDP', 1801: 'EDP',
+    669: 'EDP', 31861: 'EDT', 1825: 'EDP', 485: 'EDT', 25324: 'EDP', 33519: 'EDP', 68226: 'EDT', 99116: 'Parfum',
+    16657: 'EDT', 61856: 'EDP', 430: 'EDT', 81642: 'Parfum', 34696: 'EDT',
+}
+
+def load_parfumo(src):
+    if src and os.path.exists(src):
+        f = open(src, encoding='utf-8', errors='replace')
+    else:
+        try:
+            f = io.TextIOWrapper(urllib.request.urlopen(PARFUMO_URL, timeout=120), encoding='utf-8', errors='replace')
+        except Exception as e:
+            print('parfumo skipped:', e); return {}
+    idx = {}
+    for x in csv.DictReader(f):
+        c = conc_of(x['Concentration']) if x['Concentration'] not in ('', 'NA') else None
+        name, brand = x['Name'], x['Brand']
+        if not c and (' ' + brand) in name: c = conc_of(name.split(' ' + brand)[-1])
+        if not c: continue
+        base = name.split(' ' + brand)[0] if (' ' + brand) in name else name
+        try: y = int(x['Release_Year'])
+        except ValueError: y = 0
+        idx.setdefault(norm_brand(brand), []).append((re.sub(r'[^a-z0-9]', '', base.lower()), y, c))
+    return idx
+
+def concentration(pid, name, brand, year, parfumo):
+    if pid in CONC_OVERRIDE: return CONC_OVERRIDE[pid]
+    c = conc_of(name)
+    if c: return c
+    fn = re.sub(r'[^a-z0-9]', '', name.lower())
+    hits = [(abs(y - year) if y and year else 5, c) for n, y, c in parfumo.get(norm_brand(brand), [])
+            if n == fn and (not y or not year or abs(y - year) <= 1)]
+    return sorted(hits)[0][1] if hits else ''
+
 def norm_brand(s):
     s = s.lower().replace('&', 'and')
     s = re.sub(r'\bparfums?\b|\bperfumes?\b|\bfragrances?\b|\bparis\b', '', s)
     return re.sub(r'[^a-z0-9]', '', s)
 
-def build_world(src):
+def build_world(src, parfumo):
     if src and os.path.exists(src):
         f = open(src, encoding='utf-8', errors='replace')
     else:
@@ -269,6 +326,7 @@ def build_world(src):
         items.append([
             int(x['id']), x['name'].strip(), x['brand'].strip(), year, g, votes,
             round(lon), round(sil5), fam, top, mid, base, categories(acc, lon, sil5, votes, rating, year, g), round(rating, 2),
+            concentration(int(x['id']), x['name'], x['brand'], year, parfumo),
         ])
     items.sort(key=lambda i: -i[5])
     return items
@@ -304,7 +362,9 @@ def fetch_boyner(local=None):
 def main():
     src = sys.argv[sys.argv.index('--src') + 1] if '--src' in sys.argv else None
     os.makedirs(OUT, exist_ok=True)
-    items = build_world(src)
+    parfumo = load_parfumo(sys.argv[sys.argv.index('--parfumo') + 1] if '--parfumo' in sys.argv else None)
+    items = build_world(src, parfumo)
+    print('with concentration', sum(1 for i in items if i[14]))
     with open(os.path.join(OUT, 'catalog.json'), 'w', encoding='utf-8') as f:
         json.dump({'v': datetime.date.today().isoformat(), 'n': len(items), 'tax': TAXONOMY, 'labels': LABELS, 'items': items}, f, ensure_ascii=False, separators=(',', ':'))
     print('catalog', len(items))
