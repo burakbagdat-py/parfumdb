@@ -128,10 +128,23 @@ public class MainActivity extends Activity {
             }
         });
 
-        if (state == null) web.loadUrl(BuildConfig.WEB_URL);
+        if (state == null) loadHome();
         else web.restoreState(state);
 
         Scheduler.scheduleAll(this);
+    }
+
+    /* Each launch asks for a fresh copy of the page (unique URL), so a new version shows up immediately
+       instead of after the HTTP cache expires. Offline, the cached copy of the plain URL is used. */
+    private long loadedAt;
+
+    private void loadHome() {
+        boolean online = isOnline();
+        web.getSettings().setCacheMode(online ? WebSettings.LOAD_DEFAULT : WebSettings.LOAD_CACHE_ELSE_NETWORK);
+        String url = BuildConfig.WEB_URL;
+        if (online) url += (url.contains("?") ? "&" : "?") + "t=" + System.currentTimeMillis();
+        web.loadUrl(url);
+        loadedAt = System.currentTimeMillis();
     }
 
     private String offlinePage() {
@@ -353,6 +366,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         web.onResume();
+        if (loadedAt > 0 && System.currentTimeMillis() - loadedAt > 6 * 3600_000L && isOnline()) loadHome();
         web.evaluateJavascript("window.onNativePermission && window.onNativePermission(" + Notifier.canNotify(this) + ")", null);
     }
 
