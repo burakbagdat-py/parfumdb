@@ -85,12 +85,18 @@ public class MainActivity extends Activity {
         root.addView(splash);
         setContentView(root);
         setBars(String.format("#%06X", bar & 0xFFFFFF));
+        if (getSharedPreferences(Scheduler.PREFS, MODE_PRIVATE).getBoolean("fullscreen", false)) setFullscreen(true);
         web.postDelayed(this::hideSplash, 8000);
 
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
         s.setDatabaseEnabled(true);
+        s.setAllowFileAccess(false);
+        s.setAllowContentAccess(false);
+        s.setGeolocationEnabled(false);
+        s.setSafeBrowsingEnabled(true);
+        s.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         s.setSupportZoom(false);
         s.setBuiltInZoomControls(false);
         s.setDisplayZoomControls(false);
@@ -103,8 +109,8 @@ public class MainActivity extends Activity {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest req) {
                 Uri u = req.getUrl();
                 String home = Uri.parse(BuildConfig.WEB_URL).getHost();
-                if (home != null && home.equals(u.getHost())) return false;
-                openExternal(u.toString());
+                if ("https".equals(u.getScheme()) && home != null && home.equals(u.getHost())) return false;
+                if ("https".equals(u.getScheme()) || "http".equals(u.getScheme())) openExternal(u.toString());
                 return true;
             }
 
@@ -134,6 +140,11 @@ public class MainActivity extends Activity {
             }
 
             @Override
+            public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
+                pageUrl = url;
+            }
+
+            @Override
             public void onPageFinished(WebView view, String url) {
                 view.postDelayed(MainActivity.this::hideSplash, 1500);
             }
@@ -158,8 +169,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        if (state == null) loadHome();
-        else web.restoreState(state);
+        loadHome();
 
         Scheduler.scheduleAll(this);
     }
@@ -168,6 +178,38 @@ public class MainActivity extends Activity {
        instead of after the HTTP cache expires. Offline, the cached copy of the plain URL is used. */
     private long loadedAt;
     private android.widget.FrameLayout splash;
+    private volatile String pageUrl = "";
+
+    /** True only while our own site (the GitHub Pages address) is shown. */
+    boolean trusted() {
+        Uri home = Uri.parse(BuildConfig.WEB_URL), cur = Uri.parse(pageUrl == null ? "" : pageUrl);
+        return "https".equals(cur.getScheme()) && home.getHost() != null && home.getHost().equals(cur.getHost())
+                && cur.getPath() != null && cur.getPath().startsWith(home.getPath());
+    }
+
+    /** https://github.com/<owner>/<repo>/releases/download/ for this app's own repository. */
+    private String releasePrefix() {
+        Uri home = Uri.parse(BuildConfig.WEB_URL);
+        String owner = home.getHost() == null ? "" : home.getHost().split("\\.")[0];
+        String repo = home.getPathSegments().isEmpty() ? "" : home.getPathSegments().get(0);
+        return "https://github.com/" + owner + "/" + repo + "/releases/download/";
+    }
+
+    private static boolean hostAllowed(String url, String... suffixes) {
+        Uri u = Uri.parse(url);
+        if (!"https".equals(u.getScheme()) || u.getHost() == null) return false;
+        for (String s : suffixes) if (u.getHost().equals(s) || u.getHost().endsWith("." + s)) return true;
+        return false;
+    }
+
+    void setFullscreen(boolean on) {
+        android.view.View d = getWindow().getDecorView();
+        int f = android.view.View.SYSTEM_UI_FLAG_FULLSCREEN | android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+        int cur = d.getSystemUiVisibility();
+        d.setSystemUiVisibility(on ? (cur | f) : (cur & ~f));
+        getSharedPreferences(Scheduler.PREFS, MODE_PRIVATE).edit().putBoolean("fullscreen", on).apply();
+    }
 
     void hideSplash() {
         if (splash == null || splash.getVisibility() != android.view.View.VISIBLE) return;
@@ -209,6 +251,8 @@ public class MainActivity extends Activity {
     }
 
     void openExternal(String url) {
+        String scheme = Uri.parse(url).getScheme();
+        if (!"https".equals(scheme) && !"http".equals(scheme)) return;
         try {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
         } catch (Exception e) {
@@ -301,8 +345,9 @@ public class MainActivity extends Activity {
     void httpGet(int reqId, String url, String mode) {
         net.execute(() -> {
             try {
-                Uri u = Uri.parse(url);
-                if (!"https".equals(u.getScheme())) throw new IllegalArgumentException("https only");
+                if (!hostAllowed(url, "boyner.com.tr", "trendyol.com", "hepsiburada.com", "amazon.com.tr", Uri.parse(BuildConfig.WEB_URL).getHost())) {
+                    throw new IllegalArgumentException("host not allowed");
+                }
                 HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
                 c.setRequestProperty("User-Agent", UA);
                 c.setRequestProperty("Accept-Language", "tr-TR,tr;q=0.9");
@@ -338,6 +383,7 @@ public class MainActivity extends Activity {
         net.execute(() -> {
             try {
                 if (!SoundProvider.safeName(name)) throw new IllegalArgumentException("name");
+                if (!url.startsWith(BuildConfig.WEB_URL)) throw new IllegalArgumentException("sounds come from our own site only");
                 HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
                 c.setRequestProperty("User-Agent", UA);
                 if (c.getResponseCode() != 200) throw new IllegalStateException("http " + c.getResponseCode());
@@ -358,6 +404,12 @@ public class MainActivity extends Activity {
 
     /* ---------- in-app update: download the APK and hand it to Android's installer ---------- */
     void installUpdate(String url) {
+        // updates may only come from this app's own GitHub releases; Android additionally refuses any APK
+        // that is not signed with the app's key
+        if (url == null || !url.startsWith(releasePrefix()) || !url.endsWith(".apk")) {
+            Toast.makeText(this, "Güncelleme adresi geçersiz", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (Build.VERSION.SDK_INT >= 26 && !getPackageManager().canRequestPackageInstalls()) {
             Toast.makeText(this, "Bu uygulamaya “Bilinmeyen uygulamaları yükle” izni ver, sonra tekrar dokun", Toast.LENGTH_LONG).show();
             try {
@@ -524,9 +576,4 @@ public class MainActivity extends Activity {
         super.onPause();
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle out) {
-        super.onSaveInstanceState(out);
-        web.saveState(out);
-    }
 }

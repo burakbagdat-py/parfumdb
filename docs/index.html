@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>BB Parfüm Envanteri</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://statics-mp.boyner.com.tr; connect-src 'self' https://api.github.com; media-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="theme-color" content="#17110d">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -355,6 +356,52 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 
 .toast{position:fixed;left:16px;right:16px;margin:0 auto;max-width:528px;bottom:calc(86px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--fg) 94%,var(--bg));color:var(--bg);padding:13px 16px;border-radius:12px;font-size:14px;font-weight:600;z-index:60;animation:snack .25s cubic-bezier(.2,.8,.2,1);box-shadow:0 8px 24px rgb(0 0 0 / .35)}
 @keyframes snack{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+/* --- compact detail sheet with tabs --- */
+.dhead{display:grid;grid-template-columns:92px minmax(0,1fr);gap:14px;align-items:center}
+.dhead .art{border-radius:14px;aspect-ratio:4/5;font-size:20px}
+.dhead .hero-name{font-size:21px}
+.dstats{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);align-items:center}
+.dstats .mini{display:inline-flex;gap:3px;align-items:center}
+.dstats .mini i{width:7px;height:7px;border-radius:2px;background:var(--line)}
+.dstats .mini i.on{background:var(--accent)}
+.dtabs{position:sticky;top:-18px;z-index:2;background:var(--panel);padding-block:6px;margin-block:-6px}
+.dpane{display:flex;flex-direction:column;gap:12px;min-height:250px}
+.dpane[hidden]{display:none!important}
+.dpane .tier{grid-template-columns:64px minmax(0,1fr);padding:9px 12px;gap:10px}
+.dpane .tier-name b{font-size:15px}
+.dpane .note-chip{font-size:12px;padding:3px 8px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+.kv span:nth-child(odd){color:var(--muted)}
+/* --- appearance options --- */
+html.no-anim *,html.no-anim *::before,html.no-anim *::after{animation:none!important;transition:none!important}
+html.no-blur .top,html.no-blur .tabs{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--bg)}
+html.compact .section{margin-bottom:20px;gap:10px}
+html.compact .item{padding:7px 12px}
+html.compact .item .art{width:44px;height:54px}
+html.compact .grid{gap:8px}
+html.compact .card-body{padding:8px 10px}
+html.compact .day{padding:7px 12px}
+html.amoled:not([data-skin="althair"]){--bg:#000;--panel:#0a0a0a;--panel-2:#131313}
+html.no-labels .tab{font-size:0;gap:0}
+html.fs-s{zoom:.93}
+html.fs-l{zoom:1.08}
+/* --- scent journal --- */
+.journal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.jday{aspect-ratio:1;border-radius:8px;background:var(--panel);border:1px solid var(--line);position:relative;overflow:hidden;font-size:10px;color:var(--muted);display:grid;place-items:center;font-variant-numeric:tabular-nums}
+.jday.on{border-color:color-mix(in srgb,var(--accent) 60%,var(--line))}
+.jday.on .art{position:absolute;inset:0;background:transparent}
+.jday.on .art img.cut{padding:4%}
+.jday.today{outline:2px solid var(--accent);outline-offset:1px}
+.jday.future{opacity:.35}
+.jhead{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;font-size:10px;color:var(--muted);text-align:center;letter-spacing:.06em;text-transform:uppercase;font-weight:700}
+.streak{display:flex;gap:10px}
+.streak div{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.streak b{display:block;font-family:var(--f-display);font-weight:var(--dw);font-size:22px;font-variant-numeric:tabular-nums}
+.streak span{font-size:12px;color:var(--muted)}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar{display:grid;grid-template-columns:110px 1fr 28px;gap:10px;align-items:center;font-size:13px}
+.bar i{display:block;height:8px;border-radius:4px;background:var(--grad)}
+.bar em{font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
 /* --- Angels' Share details --- */
 [data-skin="angels"] .btn{background:transparent;border-color:color-mix(in srgb,var(--accent) 55%,transparent);font-size:12px;padding:11px 18px}
 [data-skin="angels"] .btn.primary{background:var(--grad);color:var(--ink);border-color:transparent;box-shadow:inset 0 0 0 1px rgb(255 240 200 / .45),inset 0 0 0 3px rgb(20 11 4 / .3)}
@@ -600,7 +647,7 @@ function freshState(){
     inv: [], customCats: [],
     week, weekKey: '', source: 'envanter',
     wheelCats: [], wheelGroup: 'Kullanım', lastSpin: null,
-    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true, buys: [],
+    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true, buys: [], wears: [], ui: {...UI_DEFAULT},
     notif: {reminders: defaultReminders()}
   };
 }
@@ -658,6 +705,14 @@ function applySkin(){
   nativeCall('setBars', SKINS[k].bar);
 }
 const skin = () => SKINS[S.skin] || SKINS.karamel;
+const UI_DEFAULT = {fullscreen: false, anim: true, haptic: true, blur: true, amoled: false, compact: false, labels: true, fs: 'm'};
+function applyUi(){
+  const u = S.ui, c = document.documentElement.classList;
+  c.toggle('no-anim', !u.anim); c.toggle('no-blur', !u.blur); c.toggle('amoled', !!u.amoled);
+  c.toggle('compact', !!u.compact); c.toggle('no-labels', !u.labels);
+  c.toggle('fs-s', u.fs === 's'); c.toggle('fs-l', u.fs === 'l');
+  nativeCall('setFullscreen', !!u.fullscreen);
+}
 
 /* ---------- catalog ---------- */
 let CAT = null, CAT_LOADING = null, BOY = null, BOY_KEYS = new Map();
@@ -688,7 +743,7 @@ function loadCatalog(){
     CAT_LABELS = data.labels;
     CAT = data.items.map(r => {
       r[12] = r[12].map(labelOf);
-      return {r, key: fold(r[1] + ' ' + r[2] + ' ' + (r[14] || '') + ' ' + (CONC_FULL[r[14]] || '')), nkey: fold([...r[8], ...r[9], ...r[10], ...r[11]].join(' ')), boy: BOY_KEYS.has(normBrand(r[2]))};
+      return {r, key: fold((r[1] + ' ' + r[2] + ' ' + (r[14] || '') + ' ' + (CONC_FULL[r[14]] || '')).replace(/['’&]/g, ' ')), nkey: fold([...r[8], ...r[9], ...r[10], ...r[11]].join(' ')), boy: BOY_KEYS.has(normBrand(r[2]))};
     });
     CAT.byId = new Map(CAT.map(c => [c.r[0], c]));
     if (S) {
@@ -1061,7 +1116,7 @@ const view = document.getElementById('view');
 const TAB_ORDER = ['hafta', 'cark', 'kesfet', 'koleksiyon', 'envanter', 'ayarlar'];
 const TAB_TITLE = {hafta: 'Bu hafta', cark: 'Çark', kesfet: 'Keşfet', koleksiyon: 'Koleksiyon', envanter: 'Envanter', ayarlar: 'Ayarlar'};
 let shownTab = null;
-function haptic(kind){ if (NATIVE && NATIVE.haptic) nativeCall('haptic', kind || 'tick'); else try { navigator.vibrate && navigator.vibrate(kind === 'confirm' ? 15 : 6); } catch (e) {} }
+function haptic(kind){ if (S && S.ui && !S.ui.haptic) return; if (NATIVE && NATIVE.haptic) nativeCall('haptic', kind || 'tick'); else try { navigator.vibrate && navigator.vibrate(kind === 'confirm' ? 15 : 6); } catch (e) {} }
 function render(){
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
   document.getElementById('bar-title').textContent = TAB_TITLE[S.tab] || '';
@@ -1129,8 +1184,8 @@ function renderWeek(){
           <span class="notes-mini">${esc(notesLine(p) || tw.cat)}</span>`
         : `<p class="hero-name">Parfüm yok</p><span class="muted small">“${esc(tw.cat)}” kategorisinde parfüm bulunamadı. Günün kategorisini değiştir ya da envanterine parfüm ekle.</span>`}
         <div class="hero-actions">
-          <button class="btn sm primary" data-act="reroll" data-day="${t}" type="button">Başka öner</button>
-          ${p ? `<button class="btn sm ghost" data-act="view" data-id="${p.id}" type="button">Koku profili</button>` : ''}
+          ${p ? (wornToday(p.id) ? `<button class="btn sm" type="button" disabled>Sıktım ✓</button>` : `<button class="btn sm primary" data-act="wear" data-id="${p.id}" type="button">Sıktım</button>`) : ''}
+          <button class="btn sm${p ? '' : ' primary'}" data-act="reroll" data-day="${t}" type="button">Başka öner</button>
         </div>
       </div>
     </div>
@@ -1153,6 +1208,45 @@ function renderWeek(){
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg></button>
       </div>`; }).join('')}
     </div>
+  </section>
+  ${journalHtml()}`;
+}
+const dayKey = t => { const d = new Date(t); return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate(); };
+const wornToday = pid => (S.wears || []).some(w => w.pid === pid && dayKey(w.t) === dayKey(Date.now()));
+function journalHtml(){
+  const wears = S.wears || [];
+  const byDay = new Map();
+  wears.forEach(w => { const k = dayKey(w.t); if (!byDay.has(k)) byDay.set(k, w); });
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const start = new Date(now); start.setDate(now.getDate() - ((now.getDay() + 6) % 7) - 28);
+  const cells = [];
+  for (let i = 0; i < 35; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    const w = byDay.get(dayKey(d)), p = w && byId(w.pid), fut = d > now;
+    cells.push(`<div class="jday${p ? ' on tap' : ''}${+d === +now ? ' today' : ''}${fut ? ' future' : ''}"${p ? ` data-act="view" data-id="${p.id}" title="${esc(p.name)}"` : ''}>${p ? `<div class="art">${art(p)}</div>` : d.getDate()}</div>`);
+  }
+  let streak = 0; const c = new Date(now);
+  if (!byDay.has(dayKey(c))) c.setDate(c.getDate() - 1);
+  while (byDay.has(dayKey(c))) { streak++; c.setDate(c.getDate() - 1); }
+  const month = wears.filter(w => new Date(w.t).getMonth() === now.getMonth() && new Date(w.t).getFullYear() === now.getFullYear()).length;
+  return `<section class="section"><div class="row spread"><h2>Koku günlüğü</h2><span class="muted small">Son 5 hafta</span></div>
+    <div class="streak"><div><b>${streak}</b><span>gün üst üste</span></div><div><b>${month}</b><span>bu ay</span></div><div><b>${new Set(wears.map(w => w.pid)).size}</b><span>farklı parfüm</span></div></div>
+    <div class="jhead">${['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'].map(x => `<span>${x}</span>`).join('')}</div>
+    <div class="journal">${cells.join('')}</div>
+    ${wears.length ? '' : '<span class="muted small">Bugünün parfümünü sıkınca “Sıktım”a dokun; günlüğün burada dolacak.</span>'}</section>`;
+}
+function profileStats(items){
+  const fam = new Map();
+  items.forEach(({p}) => p.fam.slice(0, 3).forEach((f, i) => fam.set(f, (fam.get(f) || 0) + (3 - i))));
+  const top = [...fam.entries()].sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const max = top.length ? top[0][1] : 1;
+  const worn = new Map(); (S.wears || []).forEach(w => worn.set(w.pid, (worn.get(w.pid) || 0) + 1));
+  const fav = [...worn.entries()].map(([pid, n]) => [byId(pid), n]).filter(x => x[0]).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  if (!top.length) return '';
+  return `<section class="section"><h2>Koku profilin</h2>
+    <div class="box"><div class="bars">${top.map(([f, n]) => `<div class="bar"><span>${esc(f)}</span><i style="width:${Math.max(8, n / max * 100)}%"></i><em>${n}</em></div>`).join('')}</div></div>
+    ${fav.length ? `<div class="list">${fav.map(([p, n]) => `<button class="item" data-act="view" data-id="${p.id}" type="button"><div class="art">${art(p)}</div>
+      <div class="item-body"><span class="item-name">${esc(p.name)}</span><span class="item-meta">${n} kez sıktın</span></div><span></span></button>`).join('')}</div>` : ''}
   </section>`;
 }
 
@@ -1306,8 +1400,28 @@ function catRow(c){
     </button>
   </div>`;
 }
+// common shorthands people type for houses and perfumes
+const ALIASES = {
+  pdm: 'parfums de marly', jpg: 'jean paul gaultier', ysl: 'yves saint laurent', mfk: 'maison francis kurkdjian',
+  tf: 'tom ford', dg: 'dolce gabbana', 'd&g': 'dolce gabbana', ck: 'calvin klein', ch: 'carolina herrera',
+  vr: 'viktor rolf', 'v&r': 'viktor rolf', mm: 'maison margiela', mmm: 'maison martin margiela', lv: 'louis vuitton',
+  ga: 'giorgio armani', ea: 'emporio armani', pr: 'rabanne', pacorabanne: 'rabanne', fm: 'frederic malle',
+  ld: 'le labo', jm: 'jo malone', bdc: 'bleu de chanel', br540: 'baccarat rouge 540', br: 'baccarat rouge',
+  cdnim: 'club de nuit intense man', cdni: 'club de nuit intense', adg: 'acqua di gio', adgp: 'acqua di gio profumo',
+  swy: 'stronger with you', swyi: 'stronger with you intensely', tv: 'tobacco vanille', dh: 'dior homme', dhi: 'dior homme intense',
+  lm: 'le male', lmlp: 'le male le parfum', tdh: 'terre d hermes', ow: 'oud wood', ol: 'ombre leather',
+  xj: 'xerjoff', ae: 'angels share', 'angel share': 'angels share', vs: 'victoria secret', mb: 'montblanc', hb: 'hugo boss',
+  edp: 'edp', edt: 'edt'
+};
+function expandQuery(q){
+  let f = ' ' + fold(q).replace(/['’]/g, '') + ' ';
+  for (const [k, v] of Object.entries(ALIASES)) f = f.replace(new RegExp(' ' + k.replace(/[&]/g, '\\$&') + ' ', 'g'), ' ' + v + ' ');
+  return f.split(/\s+/).filter(Boolean);
+}
+// one- and two-letter words ("y", "le") must match a whole word, longer ones may match inside a word
+const hasTok = (k, t) => t.length <= 2 ? (' ' + k + ' ').includes(' ' + t + ' ') : k.includes(t);
 function searchCatalog(){
-  const tk = fold(ex.q).split(/\s+/).filter(Boolean);
+  const tk = expandQuery(ex.q);
   const out = [];
   for (const c of CAT) {
     if (ex.boy && !c.boy) continue;
@@ -1316,8 +1430,8 @@ function searchCatalog(){
     if (ex.cats.length && !ex.cats.every(x => c.r[12].includes(x))) continue;
     let rank = 0;
     if (tk.length) {
-      if (tk.every(t => c.key.includes(t))) rank = 0;
-      else if (tk.every(t => c.key.includes(t) || c.nkey.includes(t))) rank = 1;
+      if (tk.every(t => hasTok(c.key, t))) rank = 0;
+      else if (tk.every(t => hasTok(c.key, t) || hasTok(c.nkey, t))) rank = 1;
       else continue;
     }
     out.push([c, rank]);
@@ -1366,9 +1480,9 @@ function renderCollection(){
   renderGrid();
 }
 function renderGrid(){
-  const q = fold(col.q.trim());
+  const qt = expandQuery(col.q);
   const list = S.perfumes.filter(p => col.cats.every(c => p.cats.includes(c)) && (!col.conc || p.conc === col.conc) &&
-    (!q || fold([p.name, p.brand, ...p.fam, ...p.top, ...p.heart, ...p.base].join(' ')).includes(q)));
+    (!qt.length || ((h) => qt.every(t => hasTok(h, t)))(fold([p.name, p.brand, p.conc, CONC_FULL[p.conc] || '', ...p.fam, ...p.top, ...p.heart, ...p.base].join(' ').replace(/['’&]/g, ' ')))));
   const g = document.getElementById('col-grid');
   if (!S.perfumes.length) { g.innerHTML = `<div class="empty">Henüz parfüm yok. Keşfet'ten ara ve tek dokunuşla ekle: görseli, notaları ve kategorileri otomatik gelir.</div>`; return; }
   if (!list.length) { g.innerHTML = `<div class="empty">Bu filtreye uyan parfüm yok.</div>`; return; }
@@ -1443,8 +1557,9 @@ function renderInventory(){
           <div class="level"><i style="width:${i.level}%"></i></div></div>
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><path d="m9 6 6 6-6 6"/></svg>
       </button>`).join('')}</div>`
-    : `<div class="empty">Envanterin boş. “Şişe ekle” ile koleksiyonundaki parfümlerden elinde olanları seç, boyutunu (ml) gir.</div>`}
-  </section>`;
+    : `<div class="empty">Envanterin boş. Sağ alttaki + ile koleksiyonundaki parfümlerden elinde olanları ekle.</div>`}
+  </section>
+  ${profileStats(items)}`;
 }
 function openInvPicker(){
   sheetMode = 'invpick';
@@ -1606,27 +1721,61 @@ function drawPrices(){
       ? `<button class="${s === ml ? 'on' : ''}" data-act="pricesize" data-ml="${s}" type="button"><b>${s} ml</b><small>${fmtPrice(g.sizes[s].price)}</small></button>`
       : `<button class="na" type="button" disabled><b>${s} ml</b><small>yok</small></button>`).join('')}</div>`;
 }
+let dTab = 'notes';
+function miniDots(n){ return `<span class="mini">${[1,2,3,4,5].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</span>`; }
+function wearInfo(p){
+  const w = (S.wears || []).filter(x => x.pid === p.id);
+  if (!w.length) return '';
+  const last = Math.max(...w.map(x => x.t)), days = Math.floor((Date.now() - last) / 864e5);
+  return `${w.length} kez sıkıldı · son: ${days === 0 ? 'bugün' : days + ' gün önce'}`;
+}
+function detailHtml(p, o){
+  const notes = p.top.length || p.heart.length || p.base.length;
+  const stats = [p.rating ? '★ ' + p.rating.toFixed(1) : '', p.lon ? 'Kalıcılık ' + miniDots(p.lon) : '', p.sil ? 'Yayılım ' + miniDots(p.sil) : ''].filter(Boolean).map(x => `<span class="mini">${x}</span>`).join('');
+  return `
+    <div class="row spread"><span class="eyebrow">${o.eyebrow}</span>${closeIcon}</div>
+    <div class="dhead">
+      <div class="art">${art(p)}</div>
+      <div class="hero-body">
+        ${p.brand ? `<span class="hero-brand" lang="en">${esc(p.brand)} ${concTag(o.conc || p.conc, p.name)}</span>` : ''}
+        <span class="hero-name">${esc(p.name)}</span>
+        ${stats ? `<div class="dstats">${stats}</div>` : ''}
+        ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
+      </div>
+    </div>
+    <div class="row">${o.actions}</div>
+    <div class="seg dtabs">${[['notes', 'Notalar'], ['price', 'Fiyat'], ['info', 'Bilgi']].map(([k, l]) => `<button class="${dTab === k ? 'on' : ''}" data-act="dtab" data-v="${k}" type="button">${l}</button>`).join('')}</div>
+    <div class="dpane" data-pane="notes"${dTab === 'notes' ? '' : ' hidden'}>
+      ${notes ? `<div class="pyramid">${TIERS.map(([k, label, when]) => `<div class="tier"><div class="tier-name"><b>${label}</b><span>${when}</span></div>
+        <div class="chips">${p[k].length ? p[k].map(n => `<span class="note-chip">${esc(n)}</span>`).join('') : '<span class="muted small">Yok</span>'}</div></div>`).join('')}</div>`
+      : '<div class="empty">Henüz nota eklenmemiş. “Düzenle” ile ekleyebilirsin.</div>'}
+      ${p.fam.length > 3 ? `<div class="fam-line">${p.fam.slice(3).map(famTag).join('')}</div>` : ''}
+    </div>
+    <div class="dpane" data-pane="price"${dTab === 'price' ? '' : ' hidden'}>${pricesBox(p)}${storeLinks(p)}</div>
+    <div class="dpane" data-pane="info"${dTab === 'info' ? '' : ' hidden'}>
+      <div class="kv">${[
+        ['Tür', o.conc || p.conc ? esc(CONC_FULL[o.conc || p.conc] || o.conc || p.conc) : '—'],
+        ['Cinsiyet', p.g ? GENDER[p.g] : '—'],
+        o.year ? ['Çıkış', o.year] : null,
+        o.votes ? ['Oy', o.votes.toLocaleString('tr-TR')] : null,
+        wearInfo(p) ? ['Günlük', esc(wearInfo(p))] : null,
+        p.note ? ['Not', esc(p.note)] : null
+      ].filter(Boolean).map(([k, v]) => `<span>${k}</span><span>${v}</span>`).join('')}</div>
+      ${p.cats.length ? `<div class="box" style="gap:8px;padding:12px">${catsHtml(p.cats)}</div>` : ''}
+    </div>`;
+}
 function openDetail(p){
   if (!p) return;
   sheetMode = 'detail';
   const f = openOverlay();
   const isToday = S.week[today()].pid === p.id;
   const iv = invOf(p.id);
-  const sub = [p.conc ? (CONC_FULL[p.conc] || p.conc) : '', p.g ? GENDER[p.g] : '', p.rating ? '★ ' + p.rating.toFixed(1) : ''].filter(Boolean).join(' · ');
-  f.innerHTML = `
-    <div class="row spread"><span class="eyebrow">Koku profili</span>${closeIcon}</div>
-    ${headHtml(p, sub)}
-    <div class="row">
+  f.innerHTML = detailHtml(p, {eyebrow: 'Koku profili', conc: iv && iv.conc, actions: `
       ${iv ? `<button class="btn sm primary" data-act="settoday" data-id="${p.id}" type="button"${isToday ? ' disabled' : ''}>${isToday ? 'Bugünün parfümü' : 'Bugün bunu sık'}</button>
         <button class="btn sm" data-act="invedit" data-iid="${iv.id}" type="button">Envanterde · ${iv.ml} ml</button>`
       : `<button class="btn sm primary" data-act="buyopen" data-id="${p.id}" type="button">${buyOf(p.id) ? '⏰ ' + esc(fmtShort(buyOf(p.id).at)) : 'Almak için hatırlatıcı kur'}</button>
         <button class="btn sm" data-act="invaddp" data-id="${p.id}" type="button">Elimde var</button>`}
-      <button class="btn sm ghost" data-act="edit" data-id="${p.id}" type="button">Düzenle</button>
-    </div>
-    ${pricesBox(p)}
-    ${profileHtml(p)}
-    ${p.note ? `<div class="field"><span class="label">Not</span><span>${esc(p.note)}</span></div>` : ''}
-    ${storeLinks(p)}`;
+      <button class="btn sm ghost" data-act="edit" data-id="${p.id}" type="button">Düzenle</button>`});
   loadPricesInto(p);
 }
 function openCatalogDetail(cid){
@@ -1634,18 +1783,10 @@ function openCatalogDetail(cid){
   sheetMode = 'cdetail';
   const r = c.r, p = toPerfume(r), owned = inCollection(r[0]);
   const f = openOverlay();
-  const sub = [r[14] ? CONC_FULL[r[14]] || r[14] : '', GENDER[r[4]], r[3] || '', r[13] ? '★ ' + r[13].toFixed(1) : ''].filter(Boolean).join(' · ');
-  f.innerHTML = `
-    <div class="row spread"><span class="eyebrow">Katalog${c.boy ? ' · <span class="boyner">Boyner</span>' : ''}</span>${closeIcon}</div>
-    ${headHtml(p, sub)}
-    <div class="row">
+  f.innerHTML = detailHtml(p, {eyebrow: 'Katalog' + (c.boy ? ' · <span class="boyner">Boyner</span>' : ''), year: r[3], votes: r[5], actions: `
       <button class="btn sm primary" data-act="cadd" data-cid="${r[0]}" type="button"${owned ? ' disabled' : ''}>${owned ? 'Koleksiyonda' : 'Koleksiyona ekle'}</button>
       <button class="btn sm" data-act="cbuy" data-cid="${r[0]}" type="button">Almak için hatırlat</button>
-      <button class="btn sm" data-act="cinv" data-cid="${r[0]}" type="button"${owned && invOf(owned.id) ? ' disabled' : ''}>${owned && invOf(owned.id) ? 'Envanterde' : 'Elimde var'}</button>
-    </div>
-    ${pricesBox(p)}
-    ${profileHtml(p)}
-    ${storeLinks(p)}`;
+      <button class="btn sm" data-act="cinv" data-cid="${r[0]}" type="button"${owned && invOf(owned.id) ? ' disabled' : ''}>${owned && invOf(owned.id) ? 'Envanterde' : 'Elimde var'}</button>`});
   loadPricesInto(p);
 }
 function openBoynerOnly(p){
@@ -1888,6 +2029,24 @@ function renderLook(){
     <p class="muted small">Tema; renkleri, yazı tipini, çarkı, karşılama yazısını, Keşfet'teki seçkiyi ve “Temanın sesi” seçili hatırlatıcıların sesini değiştirir.</p>
   </section>
   <section class="section">
+    <details class="cg" open style="background:var(--panel)">
+      <summary>Uygulama görünümü <small>${Object.values(S.ui).filter(v => v === true).length} açık</small></summary>
+      <div style="display:flex;flex-direction:column;gap:14px;padding:4px 12px 14px">
+        ${[
+          ['fullscreen', 'Tam ekran', NATIVE && NATIVE.setFullscreen ? 'Üstteki saat ve bildirim çubuğunu gizler.' : 'Uygulamanın son sürümünde çalışır.'],
+          ['anim', 'Animasyonlar', 'Sayfa geçişleri, paneller ve çark hareketleri.'],
+          ['haptic', 'Dokunma titreşimi', 'Sekme ve seçimlerde hafif titreşim.'],
+          ['blur', 'Cam efekti', 'Üst ve alt çubuklar arkadaki içeriği bulanık gösterir.'],
+          ['amoled', 'Saf siyah (AMOLED)', 'Koyu temalarda zemini tamamen siyah yapar, pil dostu.'],
+          ['compact', 'Sıkı yerleşim', 'Listeler ve kartlar daha az yer kaplar.'],
+          ['labels', 'Sekme yazıları', 'Alt çubukta ikonların altındaki yazılar.']
+        ].map(([k, t, d]) => `<label class="toggle-row" for="ui-${k}"><span><b>${t}</b><br><span class="muted small">${d}</span></span>
+          <span class="switch"><input type="checkbox" id="ui-${k}" data-ui="${k}"${S.ui[k] ? ' checked' : ''}><span></span></span></label>`).join('')}
+        <div class="field"><span class="label">Yazı boyutu</span><div class="seg">${[['s', 'Küçük'], ['m', 'Normal'], ['l', 'Büyük']].map(([k, l]) => `<button class="${S.ui.fs === k ? 'on' : ''}" data-act="uifs" data-v="${k}" type="button">${l}</button>`).join('')}</div></div>
+      </div>
+    </details>
+  </section>
+  <section class="section">
     <h2>Görseller</h2>
     <div class="box">
       <div class="toggle-row"><span><b>Arka planı kaldır</b><br><span class="muted small">Şişe fotoğraflarının beyaz zeminini silip şişeyi tek başına gösterir. Kötü görünürse kapat.</span></span>
@@ -2028,6 +2187,8 @@ function migrate(s){
   if (!Array.isArray(s.wheelOff)) s.wheelOff = [];
   s.inv.forEach(i => { if (!i.added) i.added = Date.now(); });
   if (!Array.isArray(s.buys)) s.buys = [];
+  if (!Array.isArray(s.wears)) s.wears = [];
+  s.ui = {...UI_DEFAULT, ...(s.ui || {})};
   s.wheelCats = (s.wheelCats || []).map(c => OLD_CAT[c] || c);
   if (!s.wheelGroup) s.wheelGroup = 'Kullanım';
   if (!SKINS[s.skin]) s.skin = 'karamel';
@@ -2121,6 +2282,14 @@ document.addEventListener('click', async e => {
     case 'setgender': S.gender = t.dataset.g; save(); renderShop(); break;
     case 'appupdate': nativeCall('installUpdate', t.dataset.url); break;
     case 'buyopen': openBuySheet(t.dataset.id); break;
+    case 'dtab': dTab = t.dataset.v; document.querySelectorAll('.dpane').forEach(x => x.hidden = x.dataset.pane !== dTab); document.querySelectorAll('.dtabs button').forEach(b => b.classList.toggle('on', b === t)); break;
+    case 'uifs': S.ui.fs = t.dataset.v; save(); applyUi(); renderLook(); break;
+    case 'wear': {
+      const p = byId(t.dataset.id); if (!p || wornToday(p.id)) break;
+      S.wears.push({pid: p.id, t: Date.now()}); if (S.wears.length > 2000) S.wears = S.wears.slice(-2000);
+      const it = invOf(p.id); if (it && it.level > 0) it.level = Math.max(0, it.level - 1);
+      save(); render(); toast(p.name + ' günlüğe eklendi'); break;
+    }
     case 'cbuy': { const p = inCollection(+t.dataset.cid) || addFromCatalog(t.dataset.cid); if (p) openBuySheet(p.id); break; }
     case 'buypreset': { const i = document.getElementById('buy-at'); if (i) i.value = toLocalInput(+t.dataset.at); document.querySelectorAll('#buy-presets .chip').forEach(c => c.classList.toggle('on', c === t)); break; }
     case 'buysave': {
@@ -2171,6 +2340,7 @@ document.addEventListener('click', async e => {
       S.perfumes = S.perfumes.filter(p => p.id !== draft.id);
       S.inv = S.inv.filter(i => i.pid !== draft.id);
       S.buys = S.buys.filter(b => b.pid !== draft.id);
+      S.wears = S.wears.filter(w => w.pid !== draft.id);
       if (S.lastSpin === draft.id) S.lastSpin = null;
       repairWeek(); save(); closeSheet(); render(); toast('Silindi'); break;
     case 'sub': S.sub = t.dataset.sub || null; save(); render(); window.scrollTo(0, 0); break;
@@ -2230,6 +2400,7 @@ document.addEventListener('change', async e => {
     S.week[d].pid = rollDay(d, used); save(); render();
   }
   if (t.id === 'notify-random') { S.notifyRandom = t.checked; save(); }
+  if (t.dataset && t.dataset.ui) { S.ui[t.dataset.ui] = t.checked; save(); applyUi(); const sm = document.querySelector('details.cg summary small'); if (sm) sm.textContent = Object.values(S.ui).filter(v => v === true).length + ' açık'; }
   if (t.id === 'wheel-inv') { S.wheelInv = t.checked; save(); renderWheel(); }
   if (t.classList && t.classList.contains('wheel-tick')) {
     S.wheelOff = t.checked ? S.wheelOff.filter(x => x !== t.dataset.id) : [...S.wheelOff, t.dataset.id];
@@ -2306,7 +2477,7 @@ window.onNativeBack = () => {
 (async () => {
   const saved = await load();
   S = migrate(saved && Array.isArray(saved.perfumes) ? {...freshState(), ...saved} : freshState());
-  applySkin();
+  applySkin(); applyUi();
   if (S.weekKey !== weekKey()) { S.weekKey = weekKey(); shuffleWeek(); }
   cleanBuys();
   repairWeek(); save(); render();

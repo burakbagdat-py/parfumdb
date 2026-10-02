@@ -20,20 +20,11 @@ android {
 
     buildFeatures { buildConfig true }
 
-    signingConfigs {
-        release {
-            storeFile file('../keystore.p12')
-            storeType 'pkcs12'
-            storePassword 'parfumcarki'
-            keyAlias 'parfum'
-            keyPassword 'parfumcarki'
-        }
-    }
 
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.release
+            // signed in CI with apksigner (see .github/workflows/apk.yml); no keys or passwords live here
         }
     }
 

@@ -6,6 +6,7 @@ on:
     paths: ['android/**', '.github/workflows/apk.yml']
   workflow_dispatch:
 
+# Only pushes to main by the repo owner run this; pull requests from forks never do and never see secrets.
 permissions:
   contents: write
 
@@ -15,44 +16,58 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      # third-party actions are pinned to exact commits so a hijacked tag cannot change what runs here
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
         with:
           gradle-version: '8.9'
 
-      # Created once and committed, so every later APK has the same signature and installs as an update.
-      - name: Signing key
-        run: |
-          if [ ! -f android/keystore.p12 ]; then
-            keytool -genkeypair -storetype PKCS12 -keystore android/keystore.p12 -alias parfum \
-              -keyalg RSA -keysize 2048 -validity 10000 \
-              -storepass parfumcarki -keypass parfumcarki -dname "CN=Parfum Carki"
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add android/keystore.p12
-            git commit -m "Add APK signing key [skip ci]"
-            git push
-          fi
-
-      - name: Build APK
+      - name: Build APK (unsigned)
         run: |
           OWNER=$(echo "$GITHUB_REPOSITORY_OWNER" | tr '[:upper:]' '[:lower:]')
           REPO="${GITHUB_REPOSITORY#*/}"
           gradle -p android assembleRelease --no-daemon \
             -PWEB_URL="https://${OWNER}.github.io/${REPO}/" \
             -PVERSION_CODE=${{ github.run_number }}
-          cp android/app/build/outputs/apk/release/app-release.apk parfum-carki.apk
 
-      - uses: softprops/action-gh-release@v2
+      # The private key lives only in the repository's Actions secrets. It is rotated in from the old
+      # (public, retired) key with APK Signature Scheme v3 so installed apps update without losing data;
+      # the old key keeps no rollback right, so phones that installed a rotated build reject APKs signed only with it.
+      - name: Sign APK
+        env:
+          SIGNING_KEY_B64: ${{ secrets.SIGNING_KEY_B64 }}
+          SIGNING_KEY_PASS: ${{ secrets.SIGNING_KEY_PASS }}
+        run: |
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          "$BT/zipalign" -p -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk aligned.apk
+          if [ -n "$SIGNING_KEY_B64" ]; then
+            echo "$SIGNING_KEY_B64" | base64 -d > "$RUNNER_TEMP/new.p12"
+            "$BT/apksigner" rotate --out "$RUNNER_TEMP/lineage.bin" \
+              --old-signer --ks android/keystore.p12 --ks-pass pass:parfumcarki --ks-key-alias parfum --set-rollback false \
+              --new-signer --ks "$RUNNER_TEMP/new.p12" --ks-pass env:SIGNING_KEY_PASS --ks-key-alias bb
+            "$BT/apksigner" sign \
+              --ks android/keystore.p12 --ks-pass pass:parfumcarki --ks-key-alias parfum \
+              --next-signer --ks "$RUNNER_TEMP/new.p12" --ks-pass env:SIGNING_KEY_PASS --ks-key-alias bb \
+              --lineage "$RUNNER_TEMP/lineage.bin" --out parfum-carki.apk aligned.apk
+            rm -f "$RUNNER_TEMP/new.p12"
+          else
+            echo "::warning::SIGNING_KEY_B64 secret bulunamadı; APK eski (herkese açık) anahtarla imzalandı."
+            "$BT/apksigner" sign --ks android/keystore.p12 --ks-pass pass:parfumcarki --ks-key-alias parfum --out parfum-carki.apk aligned.apk
+          fi
+          "$BT/apksigner" verify --print-certs parfum-carki.apk | grep -E "Signer|SHA-256" || true
+
+      - uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
         with:
           tag_name: v${{ github.run_number }}
-          name: Parfüm Çarkı v${{ github.run_number }}
-          body: Telefonda bu sayfadan parfum-carki.apk dosyasını indirip aç.
+          name: BB Parfüm Envanteri v${{ github.run_number }}
+          body: Telefonda uygulamanın içindeki "Şimdi güncelle" ile ya da bu dosyayı indirip kur.
           files: parfum-carki.apk
           make_latest: true
