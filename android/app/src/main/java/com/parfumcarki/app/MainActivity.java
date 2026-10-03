@@ -281,7 +281,7 @@ public class MainActivity extends Activity {
         net.execute(() -> deliver(reqId, fetchBoyner(query, mlFilter)));
     }
 
-    private static String fetchBoyner(String query, String mlFilter) {
+    static String fetchBoyner(String query, String mlFilter) {
         try {
             String url = "https://www.boyner.com.tr/search?q=" + URLEncoder.encode(query, "UTF-8")
                     + (mlFilter == null || mlFilter.isEmpty() ? "" : "&mililitre-bilgisi=" + URLEncoder.encode(mlFilter, "UTF-8"));
@@ -345,7 +345,7 @@ public class MainActivity extends Activity {
     void httpGet(int reqId, String url, String mode) {
         net.execute(() -> {
             try {
-                if (!hostAllowed(url, "boyner.com.tr", "trendyol.com", "hepsiburada.com", "amazon.com.tr", Uri.parse(BuildConfig.WEB_URL).getHost())) {
+                if (!hostAllowed(url, "boyner.com.tr", "beymen.com", "sephora.com.tr", "trendyol.com", "hepsiburada.com", "amazon.com.tr", Uri.parse(BuildConfig.WEB_URL).getHost())) {
                     throw new IllegalArgumentException("host not allowed");
                 }
                 HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
@@ -364,6 +364,13 @@ public class MainActivity extends Activity {
                         int s = body.indexOf('>', i) + 1;
                         body = body.substring(s, body.indexOf("</script>", s));
                     }
+                } else if (mode != null && mode.startsWith("hrefs:")) {
+                    // only the links whose path matches the given pattern, e.g. product pages
+                    java.util.regex.Pattern pat = java.util.regex.Pattern.compile(mode.substring(6));
+                    java.util.regex.Matcher m = java.util.regex.Pattern.compile("href=\"([^\"]{1,300})\"").matcher(body);
+                    java.util.LinkedHashSet<String> links = new java.util.LinkedHashSet<>();
+                    while (m.find() && links.size() < 80) if (pat.matcher(m.group(1)).find()) links.add(m.group(1));
+                    body = new JSONArray(links).toString();
                 } else if (body.length() > 3_000_000) {
                     body = body.substring(0, 3_000_000);
                 }

@@ -394,6 +394,15 @@ html.fs-l{zoom:1.08}
 .rb-notes b{color:var(--fg);font-weight:600}
 .wx{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
 .wx b{color:var(--fg);font-variant-numeric:tabular-nums}
+/* --- store order, alarms, similar --- */
+.order{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
+.order .o{display:grid;grid-template-columns:24px 1fr auto auto;gap:10px;align-items:center;padding:8px 10px;border-top:1px solid var(--line)}
+.order .o:first-child{border-top:0}
+.order .o b{font-variant-numeric:tabular-nums;color:var(--muted);font-size:12px}
+.order .o.off span{opacity:.45}
+.order .icon-btn{width:32px;height:32px}
+.alarm-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);border:1px solid color-mix(in srgb,var(--accent) 50%,transparent)}
+.sim-pct{font-size:12px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
 /* --- scent journal --- */
 .journal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 .jday{aspect-ratio:1;border-radius:8px;background:var(--panel);border:1px solid var(--line);position:relative;overflow:hidden;font-size:10px;color:var(--muted);display:grid;place-items:center;font-variant-numeric:tabular-nums}
@@ -555,6 +564,8 @@ function concFromText(t){
 const TIERS = [['top','Üst','ilk 15–30 dk'],['heart','Kalp','30 dk – 3 saat'],['base','Alt','3 saatten sonra']];
 const STORES = {
   boyner: {n: 'Boyner', loc: "Boyner'de", live: true, url: q => 'https://www.boyner.com.tr/search?q=' + encodeURIComponent(q)},
+  beymen: {n: 'Beymen', loc: "Beymen'de", url: q => 'https://www.beymen.com/tr/search?q=' + encodeURIComponent(q)},
+  sephora: {n: 'Sephora', loc: "Sephora'da", url: q => 'https://www.sephora.com.tr/arama/?q=' + encodeURIComponent(q)},
   trendyol: {n: 'Trendyol', loc: "Trendyol'da", url: q => 'https://www.trendyol.com/sr?q=' + encodeURIComponent(q)},
   hepsiburada: {n: 'Hepsiburada', loc: "Hepsiburada'da", url: q => 'https://www.hepsiburada.com/ara?q=' + encodeURIComponent(q)},
   amazon: {n: 'Amazon', loc: "Amazon'da", url: q => 'https://www.amazon.com.tr/s?k=' + encodeURIComponent(q)}
@@ -659,6 +670,8 @@ function freshState(){
     week, weekKey: '', source: 'envanter',
     wheelCats: [], wheelGroup: 'Kullanım', lastSpin: null,
     tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true, buys: [], wears: [], ui: {...UI_DEFAULT}, weather: {on: false, city: 'İstanbul', auto: false, day: ''},
+    shop: {exact: true, order: ['boyner', 'beymen', 'sephora', 'trendyol', 'hepsiburada', 'amazon'], off: []},
+    alarms: [], alarmTime: '12:00', sim: {on: true, cheap: false},
     notif: {reminders: defaultReminders()}
   };
 }
@@ -1513,6 +1526,128 @@ function renderGrid(){
     </button>`; }).join('')}</div>`;
 }
 
+/* ---------- open the exact product: Boyner first, then the user's store order ---------- */
+let currentP = null;
+const STOP_SLUG = new Set(['ml', 'erkek', 'kadin', 'unisex', 'parfum', 'parfumu', 'edt', 'edp', 'eau', 'de', 'toilette', 'cologne', 'extrait', 'set', 'seti', 'sprey']);
+async function beymenMatch(p){
+  if (!NATIVE || !NATIVE.httpGet) return null;
+  const res = await nativeAsync('httpGet', STORES.beymen.url(storeQuery(p)), 'hrefs:^/tr/p_');
+  if (!res || !res.body) return null;
+  let links = []; try { links = JSON.parse(res.body); } catch (e) { return null; }
+  const nameT = toks(p.name).filter(t => !CONC_WORDS.has(t)), brandT = toks(shortBrand(p.brand));
+  const want = p.conc ? fold(CONC_FULL[p.conc] || p.conc) : '';
+  let best = null;
+  for (const l of links) {
+    const slug = l.replace(/^\/tr\/p_/, '').replace(/_\d+$/, '');
+    const st = slug.split('-').filter(Boolean);
+    if (!nameT.every(t => st.includes(t))) continue;
+    if (/\b(set|seti|deodorant|deo|losyon|jel|balm|krem)\b/.test(st.join(' '))) continue;
+    const extra = st.filter(t => !nameT.includes(t) && !brandT.includes(t) && !STOP_SLUG.has(t) && !/^\d+$/.test(t)).length;
+    let score = extra - (st.includes('100') ? .3 : 0) - (want && fold(st.join(' ')).includes(want.split(' ').pop()) ? .4 : 0);
+    if (!best || score < best.score) best = {score, url: 'https://www.beymen.com' + l};
+  }
+  return best && best.url;
+}
+function openLink(url){ if (NATIVE) nativeCall('openUrl', url); else window.open(url, '_blank', 'noopener'); }
+async function openBest(p){
+  if (!p) return;
+  const order = S.shop.order.filter(k => STORES[k] && !S.shop.off.includes(k));
+  if (!order.length) { toast('Ayarlar > Alışveriş’te en az bir mağaza seç'); return; }
+  const q = storeQuery(p);
+  if (!S.shop.exact || !NATIVE) { openLink(STORES[order[0]].url(q)); return; }
+  toast('Mağazalarda aranıyor…');
+  const missed = [];
+  for (const k of order) {
+    if (k === 'boyner') {
+      const d = await fetchPrices(p);
+      const g = d && d.groups && d.groups[0];
+      if (g) {
+        const sizes = Object.keys(g.sizes).map(Number);
+        const ml = g.sizes[100] ? 100 : sizes.sort((a, b) => Math.abs(a - 100) - Math.abs(b - 100))[0];
+        toast(`${missed.length ? missed.join(', ') + ' yok · ' : ''}Boyner'de bulundu (${ml} ml)`); openLink(g.sizes[ml].url); return;
+      }
+      missed.push('Boyner'); continue;
+    }
+    if (k === 'beymen') {
+      const u = await beymenMatch(p);
+      if (u) { toast(`${missed.length ? missed.join(', ') + ' yok · ' : ''}Beymen'de bulundu`); openLink(u); return; }
+      missed.push('Beymen'); continue;
+    }
+    // these stores block automated lookups, so their search page is opened
+    toast(`${missed.length ? missed.join(', ') + ' yok · ' : ''}${STORES[k].loc} aranıyor`); openLink(STORES[k].url(q)); return;
+  }
+  toast('Seçili mağazaların hiçbirinde bulunamadı');
+}
+
+/* ---------- price alarms (checked daily by the app in the background) ---------- */
+const alarmFor = (name, ml) => S.alarms.find(a => a.name === name && (ml == null || a.ml === ml));
+function syncAlarms(){
+  nativeCall('setPriceWatches', JSON.stringify(S.alarms.map(a => ({id: a.id, name: a.name, brand: a.brand, q: a.q, ml: a.ml, target: a.target}))), S.alarmTime);
+}
+function alarmResults(){ try { return JSON.parse(nativeCall('priceResults') || '{}'); } catch (e) { return {}; } }
+function openAlarmSheet(){
+  if (!priceState || !priceState.data || !priceState.data.groups.length) return;
+  const p = priceState.p, g = priceState.data.groups[Math.min(priceState.gi, priceState.data.groups.length - 1)];
+  const sizes = Object.keys(g.sizes).map(Number).sort((a, b) => a - b);
+  let ml = priceState.ml || sizes[0];
+  const prevSheet = sheetMode;
+  sheetMode = 'alarm';
+  const f = openOverlay();
+  const draw = () => {
+    const cur = g.sizes[ml].price, ex = alarmFor(p.name, ml);
+    f.innerHTML = `<div class="row spread"><h2>Fiyat alarmı</h2>${closeIcon}</div>
+      <div class="dhead"><div class="art">${art(p)}</div><div class="hero-body"><span class="hero-brand" lang="en">${esc(p.brand)}</span><span class="hero-name">${esc(p.name)}</span>
+        <span class="muted small">Şu an Boyner'de ${ml} ml: <b>${fmtPrice(cur)}</b></span></div></div>
+      <div class="field"><span class="label">Boyut</span><div class="rate">${sizes.map(s => `<button class="${s === ml ? 'on' : ''}" data-act="alml" data-v="${s}" type="button">${s} ml</button>`).join('')}</div></div>
+      <div class="field"><label for="al-target">Bu fiyatın altına düşünce haber ver (TL)</label>
+        <input class="input" id="al-target" type="number" inputmode="numeric" min="1" value="${ex ? ex.target : Math.max(1, Math.round(cur * 0.9 / 50) * 50)}"></div>
+      <span class="muted small">Uygulama her gün ${esc(S.alarmTime)} civarı Boyner'i kontrol eder; fiyat hedefin altına inince bildirim gelir.</span>
+      <div class="row spread">${ex ? `<button class="btn sm danger" data-act="aldel" data-id="${ex.id}" type="button">Alarmı sil</button>` : '<span></span>'}
+        <button class="btn primary" data-act="alsave" type="button">${ex ? 'Güncelle' : 'Alarmı kur'}</button></div>`;
+  };
+  f._draw = draw; f._alarm = {p, g, get ml(){ return ml; }, set ml(v){ ml = v; }};
+  draw();
+}
+
+/* ---------- similar perfumes and cheaper alternatives ---------- */
+const FAM_W = [1, .8, .6, .45, .35];
+function similarTo(p, cheapOnly){
+  if (!CAT) return [];
+  const fw = new Map(p.fam.map((f, i) => [f, FAM_W[i] || .3]));
+  const notes = new Set([...p.top, ...p.heart, ...p.base].map(fold));
+  if (!fw.size && !notes.size) return [];
+  const brandK = normBrand(p.brand), nameK = fold(p.name);
+  const out = [];
+  for (const c of CAT) {
+    const r = c.r;
+    if (r[0] === p.cid || r[5] < 300) continue;
+    if (cheapOnly && !(r[15] === 'O' || r[15] === 'M')) continue;
+    if (cheapOnly && normBrand(r[2]) === brandK) continue;
+    if (normBrand(r[2]) === brandK && fold(r[1]).startsWith(nameK)) continue;
+    let fs = 0; r[8].forEach((f, i) => { const w = fw.get(f); if (w) fs += Math.min(w, FAM_W[i] || .3); });
+    let shared = 0, cn = 0;
+    for (const n of [...r[9], ...r[10], ...r[11]]) { cn++; if (notes.has(fold(n))) shared++; }
+    const ns = notes.size && cn ? shared / Math.sqrt(notes.size * cn) : 0;
+    const score = fs / 3.2 * .55 + ns * .45;
+    if (score > .3) out.push([c, score]);
+  }
+  out.sort((a, b) => b[1] - a[1] || b[0].r[5] - a[0].r[5]);
+  return out.slice(0, 8);
+}
+function simPane(p){
+  if (!CAT) { loadCatalog().then(() => { const el = document.querySelector('.dpane[data-pane="sim"]'); if (el) el.innerHTML = simPane(p); }); return '<span class="muted small">Katalog yükleniyor…</span>'; }
+  const list = similarTo(p, S.sim.cheap);
+  return `<div class="chips"><button class="chip${S.sim.cheap ? '' : ' on'}" data-act="simcheap" data-v="0" type="button">Benzerler</button><button class="chip${S.sim.cheap ? ' on' : ''}" data-act="simcheap" data-v="1" type="button">Uygun muadiller</button></div>
+    ${list.length ? `<div class="list">${list.map(([c, sc]) => `<div class="item">
+      <div class="art tap" data-act="cview" data-cid="${c.r[0]}">${art({name: c.r[1], img: fimg(c.r[0])})}</div>
+      <div class="item-body tap" data-act="cview" data-cid="${c.r[0]}"><span class="item-name">${esc(c.r[1])} ${concTag(c.r[14], c.r[1])}</span>
+        <span class="item-meta"><span lang="en">${esc(c.r[2])}</span> ${segTag(c.r[15])}${c.r[13] ? ' · ★ ' + c.r[13].toFixed(1) : ''}</span>
+        <div class="fam-line">${c.r[8].slice(0, 2).map(famTag).join('')}</div></div>
+      <span class="sim-pct">%${Math.round(Math.min(.99, sc) * 100)}</span></div>`).join('')}</div>`
+      : `<div class="empty">${S.sim.cheap ? 'Bu parfüme yakın uygun fiyatlı muadil bulunamadı.' : 'Yeterince benzer parfüm bulunamadı.'}</div>`}
+    <span class="muted small">Benzerlik, koku ailesi ve notaların örtüşmesine göre hesaplanır.</span>`;
+}
+
 /* ---------- weather-based suggestion (Open-Meteo, no key, no location permission: the user picks a city) ---------- */
 const CITIES = {'İstanbul': [41.01, 28.98], 'Ankara': [39.93, 32.86], 'İzmir': [38.42, 27.14], 'Bursa': [40.19, 29.06], 'Antalya': [36.89, 30.71],
   'Adana': [37.0, 35.32], 'Konya': [37.87, 32.48], 'Gaziantep': [37.07, 37.38], 'Kayseri': [38.72, 35.48], 'Mersin': [36.81, 34.64],
@@ -1750,7 +1885,8 @@ function headHtml(p, sub){
 }
 function storeLinks(p){
   const q = storeQuery(p);
-  return `<div class="field"><span class="label">Mağazalarda ara</span><div class="chips">${Object.entries(STORES).map(([k, s]) =>
+  return `<button class="btn block" data-act="openbest" type="button">${S.shop.exact && NATIVE ? 'Mağazada tam ürünü aç' : 'Mağazada aç'}</button>
+    <div class="field"><span class="label">Mağazalarda ara</span><div class="chips">${Object.entries(STORES).map(([k, s]) =>
     `<a class="chip" href="${esc(s.url(q))}" target="_blank" rel="noopener" data-act="extlink">${s.n}</a>`).join('')}</div></div>`;
 }
 function pricesBox(p){
@@ -1793,6 +1929,9 @@ function drawPrices(){
     ${data.groups.length > 1 ? `<select class="input" id="price-group" aria-label="Ürün">${data.groups.map((x, i) => `<option value="${i}"${x === g ? ' selected' : ''}>${esc(x.label)}${concFromText(x.label) ? ' · ' + concFromText(x.label) : ''}</option>`).join('')}</select>` : `<span class="small">${esc(g.label)}</span>`}
     <div class="row spread" style="align-items:flex-end"><div><span class="muted small">${ml} ml ${concTag(concFromText(g.label))}</span><div class="bigprice">${fmtPrice(cur.price)}</div></div>
       <a class="btn sm primary" href="${esc(cur.url)}" data-act="extlink">Boyner'de aç</a></div>
+    ${NATIVE && NATIVE.setPriceWatches ? (() => { const a = alarmFor(p.name, ml); return a
+      ? `<button class="alarm-chip" data-act="alopen" type="button">🔔 Alarm: ${a.ml} ml ≤ ${fmtPrice(a.target)}</button>`
+      : `<button class="btn sm ghost" data-act="alopen" type="button">🔔 Fiyat düşünce haber ver</button>`; })() : ''}
     <div class="sizes">${showSizes.map(s => g.sizes[s]
       ? `<button class="${s === ml ? 'on' : ''}" data-act="pricesize" data-ml="${s}" type="button"><b>${s} ml</b><small>${fmtPrice(g.sizes[s].price)}</small></button>`
       : `<button class="na" type="button" disabled><b>${s} ml</b><small>yok</small></button>`).join('')}</div>`;
@@ -1806,6 +1945,8 @@ function wearInfo(p){
   return `${w.length} kez sıkıldı · son: ${days === 0 ? 'bugün' : days + ' gün önce'}`;
 }
 function detailHtml(p, o){
+  currentP = p;
+  if (dTab === 'sim' && !S.sim.on) dTab = 'notes';
   const notes = p.top.length || p.heart.length || p.base.length;
   const stats = [p.rating ? '★ ' + p.rating.toFixed(1) : '', p.lon ? 'Kalıcılık ' + miniDots(p.lon) : '', p.sil ? 'Yayılım ' + miniDots(p.sil) : ''].filter(Boolean).map(x => `<span class="mini">${x}</span>`).join('');
   return `
@@ -1820,7 +1961,7 @@ function detailHtml(p, o){
       </div>
     </div>
     <div class="row">${o.actions}</div>
-    <div class="seg dtabs">${[['notes', 'Notalar'], ['price', 'Fiyat'], ['info', 'Bilgi']].map(([k, l]) => `<button class="${dTab === k ? 'on' : ''}" data-act="dtab" data-v="${k}" type="button">${l}</button>`).join('')}</div>
+    <div class="seg dtabs">${[['notes', 'Notalar'], ['price', 'Fiyat'], ['info', 'Bilgi'], ...(S.sim.on ? [['sim', 'Benzer']] : [])].map(([k, l]) => `<button class="${dTab === k ? 'on' : ''}" data-act="dtab" data-v="${k}" type="button">${l}</button>`).join('')}</div>
     <div class="dpane" data-pane="notes"${dTab === 'notes' ? '' : ' hidden'}>
       ${notes ? `<div class="pyramid">${TIERS.map(([k, label, when]) => `<div class="tier"><div class="tier-name"><b>${label}</b><span>${when}</span></div>
         <div class="chips">${p[k].length ? p[k].map(n => `<span class="note-chip">${esc(n)}</span>`).join('') : '<span class="muted small">Yok</span>'}</div></div>`).join('')}</div>`
@@ -1828,6 +1969,7 @@ function detailHtml(p, o){
       ${p.fam.length > 3 ? `<div class="fam-line">${p.fam.slice(3).map(famTag).join('')}</div>` : ''}
     </div>
     <div class="dpane" data-pane="price"${dTab === 'price' ? '' : ' hidden'}>${pricesBox(p)}${storeLinks(p)}</div>
+    ${S.sim.on ? `<div class="dpane" data-pane="sim"${dTab === 'sim' ? '' : ' hidden'}>${dTab === 'sim' ? simPane(p) : ''}</div>` : ''}
     <div class="dpane" data-pane="info"${dTab === 'info' ? '' : ' hidden'}>
       <div class="kv">${[
         ['Tür', o.conc || p.conc ? esc(CONC_FULL[o.conc || p.conc] || o.conc || p.conc) : '—'],
@@ -1944,6 +2086,7 @@ async function rbPick(){
   let c = pick(pool); if (pool.length > 1 && c.r[0] === rb.cid) c = pick(pool);
   rb.cid = c.r[0];
   const r = c.r, p = toPerfume(r), st = STORES[S.store], owned = inCollection(r[0]);
+  currentP = p;
   const stats = [r[13] ? '★ ' + r[13].toFixed(1) : '', p.lon ? 'Kalıcılık ' + miniDots(p.lon) : '', p.sil ? 'Yayılım ' + miniDots(p.sil) : ''].filter(Boolean).map(x => `<span class="mini">${x}</span>`).join('');
   f.innerHTML = `<div class="row spread"><button class="back" style="margin:0" data-act="randbuy" type="button">‹ ${esc([rb.seg ? SEG[rb.seg] : '', rb.cat].filter(Boolean).join(' · ') || 'Seçime dön')}</button>${closeIcon}</div>
     <div class="dhead">
@@ -1961,7 +2104,7 @@ async function rbPick(){
     <div class="rb-actions">
       <button class="btn primary" data-act="cadd" data-cid="${r[0]}" type="button"${owned ? ' disabled' : ''}>${owned ? 'Koleksiyonda ✓' : 'Koleksiyona ekle'}</button>
       <button class="btn" data-act="cbuy" data-cid="${r[0]}" type="button">Satın almayı planla</button>
-      <a class="btn" href="${esc(st.url(storeQuery(p)))}" data-act="extlink">${st.loc} aç</a>
+      <button class="btn" data-act="openbest" type="button">Mağazada aç</button>
       <button class="btn" data-act="rbgo" type="button">Başka seç</button>
     </div>
     <button class="btn ghost block" data-act="cview" data-cid="${r[0]}" type="button">Tüm detaylar</button>`;
@@ -2105,13 +2248,50 @@ function renderShop(){
     ${backBtn}
     <h2>Alışveriş</h2>
     <div class="box">
-      <div class="field"><span class="label">Mağaza</span><div class="seg">${Object.entries(STORES).map(([k, s]) => `<button class="${S.store === k ? 'on' : ''}" data-act="setstore" data-v="${k}" type="button">${s.n}</button>`).join('')}</div>
+      <div class="field"><span class="label">Rastgele al için mağaza</span><div class="chips">${Object.entries(STORES).map(([k, s]) => `<button class="chip${S.store === k ? ' on' : ''}" data-act="setstore" data-v="${k}" type="button">${s.n}</button>`).join('')}</div>
         <span class="muted small">${S.store === 'boyner' ? "Boyner seçiliyken sadece Boyner'de satılan markalardan seçilir ve canlı fiyat gösterilir." : 'Seçilen parfüm bu mağazada aranır.'}</span></div>
       <div class="field"><span class="label">Kimin için</span><div class="seg">
         <button class="${S.gender ? '' : 'on'}" data-act="setgender" data-g="" type="button">Hepsi</button>
         ${['E','K'].map(g => `<button class="${S.gender === g ? 'on' : ''}" data-act="setgender" data-g="${g}" type="button">${GENDER[g]}</button>`).join('')}</div>
         <span class="muted small">Erkek ya da Kadın seçince unisex parfümler de dahil edilir.</span></div>
     </div>
+    <details class="cg" style="background:var(--panel)" open>
+      <summary>Mağaza eşleştirme <small>${S.shop.exact ? 'tam ürün' : 'arama'}</small></summary>
+      <div style="display:flex;flex-direction:column;gap:12px;padding:4px 12px 14px">
+        <label class="toggle-row" for="shop-exact"><span><b>Tam ürüne git</b><br><span class="muted small">“Mağazada aç” önce ${esc(STORES[S.shop.order.find(k => !S.shop.off.includes(k)) || 'boyner'].loc)} ürünü arar; bulamazsa aşağıdaki sırayla sonraki mağazaya geçer.</span></span>
+          <span class="switch"><input type="checkbox" id="shop-exact"${S.shop.exact ? ' checked' : ''}><span></span></span></label>
+        <div class="order">${S.shop.order.map((k, i) => `<div class="o${S.shop.off.includes(k) ? ' off' : ''}">
+          <b>${i + 1}</b><span><input type="checkbox" data-shopk="${k}"${S.shop.off.includes(k) ? '' : ' checked'} style="accent-color:var(--accent);width:18px;height:18px;vertical-align:-3px"> ${STORES[k].n}
+            <span class="muted small">${k === 'boyner' || k === 'beymen' ? '· tam ürün' : '· arama sayfası'}</span></span>
+          <button class="icon-btn" data-act="shopmove" data-k="${k}" data-d="-1" type="button" aria-label="Yukarı"${i === 0 ? ' disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 15 6-6 6 6"/></svg></button>
+          <button class="icon-btn" data-act="shopmove" data-k="${k}" data-d="1" type="button" aria-label="Aşağı"${i === S.shop.order.length - 1 ? ' disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button></div>`).join('')}</div>
+        <span class="muted small">Boyner ve Beymen'de birebir ürün (100 ml öncelikli) aranır. Sephora, Trendyol, Hepsiburada ve Amazon otomatik aramaya izin vermediği için onların arama sayfası açılır.</span>
+      </div>
+    </details>
+    <details class="cg" style="background:var(--panel)"${S.alarms.length ? ' open' : ''}>
+      <summary>Fiyat alarmı <small>${S.alarms.length ? S.alarms.length + ' alarm' : 'kapalı'}</small></summary>
+      <div style="display:flex;flex-direction:column;gap:12px;padding:4px 12px 14px">
+        ${NATIVE && NATIVE.setPriceWatches ? `
+        <span class="muted small">Bir parfümün Fiyat sekmesinde “Fiyat düşünce haber ver”e dokun. Uygulama her gün Boyner fiyatını kontrol eder, hedefin altına inince bildirim gönderir.</span>
+        <div class="field"><label for="al-time">Günlük kontrol saati</label><input class="input" type="time" id="al-time" value="${esc(S.alarmTime)}"></div>
+        ${S.alarms.length ? `<div class="list">${S.alarms.map(a => { const r = alarmResults()[a.id]; return `<div class="item" style="grid-template-columns:minmax(0,1fr) auto">
+          <div class="item-body"><span class="item-name">${esc(a.name)}</span>
+            <span class="item-meta">${a.ml} ml · hedef ${fmtPrice(a.target)} · başta ${fmtPrice(a.start)}</span>
+            <span class="item-meta">${r ? 'Son kontrol: ' + fmtPrice(r.price) + ' · ' + esc(fmtShort(r.t)) + (r.price <= a.target ? ' · <b style="color:var(--ok)">hedefte!</b>' : '') : 'Henüz kontrol edilmedi'}</span></div>
+          <button class="icon-btn" data-act="aldel" data-id="${a.id}" type="button" aria-label="Alarmı sil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`; }).join('')}</div>
+          <button class="btn sm" data-act="alcheck" type="button">Şimdi kontrol et</button>` : '<span class="muted small">Henüz alarm yok.</span>'}`
+        : '<span class="muted small">Fiyat alarmı uygulamanın son sürümünde çalışır; üstteki “Şimdi güncelle” ile kur.</span>'}
+      </div>
+    </details>
+    <details class="cg" style="background:var(--panel)">
+      <summary>Benzer parfümler ve muadiller <small>${S.sim.on ? 'açık' : 'kapalı'}</small></summary>
+      <div style="display:flex;flex-direction:column;gap:12px;padding:4px 12px 14px">
+        <label class="toggle-row" for="sim-on"><span><b>“Benzer” sekmesi</b><br><span class="muted small">Parfüm detayında, notaları ve koku ailesi en yakın parfümleri gösterir.</span></span>
+          <span class="switch"><input type="checkbox" id="sim-on"${S.sim.on ? ' checked' : ''}><span></span></span></label>
+        <label class="toggle-row" for="sim-cheap"><span><b>Önce uygun muadiller</b><br><span class="muted small">Başka markalardan, Orta Doğu ve uygun fiyat segmentindeki benzerleri gösterir.</span></span>
+          <span class="switch"><input type="checkbox" id="sim-cheap"${S.sim.cheap ? ' checked' : ''}><span></span></span></label>
+      </div>
+    </details>
   </section>`;
 }
 function renderLook(){
@@ -2301,6 +2481,11 @@ function migrate(s){
   if (!Array.isArray(s.buys)) s.buys = [];
   if (!Array.isArray(s.wears)) s.wears = [];
   s.weather = {on: false, city: 'İstanbul', auto: false, day: '', ...(s.weather || {})};
+  s.shop = {exact: true, order: ['boyner', 'beymen', 'sephora', 'trendyol', 'hepsiburada', 'amazon'], off: [], ...(s.shop || {})};
+  Object.keys(STORES).forEach(k => { if (!s.shop.order.includes(k)) s.shop.order.push(k); });
+  if (!Array.isArray(s.alarms)) s.alarms = [];
+  if (!s.alarmTime) s.alarmTime = '12:00';
+  s.sim = {on: true, cheap: false, ...(s.sim || {})};
   s.ui = {...UI_DEFAULT, ...(s.ui || {})};
   s.wheelCats = (s.wheelCats || []).map(c => OLD_CAT[c] || c);
   if (!s.wheelGroup) s.wheelGroup = 'Kullanım';
@@ -2402,7 +2587,26 @@ document.addEventListener('click', async e => {
     case 'setgender': S.gender = t.dataset.g; save(); renderShop(); break;
     case 'appupdate': nativeCall('installUpdate', t.dataset.url); break;
     case 'buyopen': openBuySheet(t.dataset.id); break;
-    case 'dtab': dTab = t.dataset.v; document.querySelectorAll('.dpane').forEach(x => x.hidden = x.dataset.pane !== dTab); document.querySelectorAll('.dtabs button').forEach(b => b.classList.toggle('on', b === t)); break;
+    case 'openbest': openBest(currentP); break;
+    case 'shopmove': { const o = S.shop.order, i = o.indexOf(t.dataset.k), j = i + (+t.dataset.d); if (j >= 0 && j < o.length) { [o[i], o[j]] = [o[j], o[i]]; save(); renderShop(); } break; }
+    case 'simcheap': S.sim.cheap = t.dataset.v === '1'; save(); { const el = document.querySelector('.dpane[data-pane="sim"]'); if (el && currentP) el.innerHTML = simPane(currentP); } break;
+    case 'alopen': openAlarmSheet(); break;
+    case 'alml': { const f = document.getElementById('sheet'); if (f && f._alarm) { f._alarm.ml = +t.dataset.v; f._draw(); } break; }
+    case 'alsave': {
+      const f = document.getElementById('sheet'); if (!f || !f._alarm) break;
+      const {p, g} = f._alarm, ml = f._alarm.ml, target = Math.round(+document.getElementById('al-target').value);
+      if (!target || target <= 0) { toast('Geçerli bir fiyat yaz'); break; }
+      const ex = alarmFor(p.name, ml);
+      if (ex) Object.assign(ex, {target});
+      else S.alarms.push({id: uid(), name: p.name, brand: p.brand, q: storeQuery(p), ml, target, start: g.sizes[ml].price, created: Date.now()});
+      save(); syncAlarms(); closeSheet();
+      if (NATIVE && !nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission');
+      toast(`Alarm kuruldu: ${ml} ml ${fmtPrice(target)} altına inince haber verilecek`); break;
+    }
+    case 'aldel': S.alarms = S.alarms.filter(a => a.id !== t.dataset.id); save(); syncAlarms(); if (document.getElementById('overlay')) closeSheet(); if (S.tab === 'ayarlar') renderShop(); toast('Alarm silindi'); break;
+    case 'alcheck': nativeCall('checkPricesNow'); toast('Fiyatlar kontrol ediliyor…'); setTimeout(() => { if (S.tab === 'ayarlar' && S.sub === 'alisveris') renderShop(); }, 6000 + S.alarms.length * 2500); break;
+    case 'dtab': dTab = t.dataset.v; document.querySelectorAll('.dpane').forEach(x => x.hidden = x.dataset.pane !== dTab);
+      if (dTab === 'sim' && currentP) { const el = document.querySelector('.dpane[data-pane="sim"]'); if (el && !el.innerHTML.trim()) el.innerHTML = simPane(currentP); } document.querySelectorAll('.dtabs button').forEach(b => b.classList.toggle('on', b === t)); break;
     case 'uifs': S.ui.fs = t.dataset.v; save(); applyUi(); renderLook(); break;
     case 'wear': {
       const p = byId(t.dataset.id); if (!p || wornToday(p.id)) break;
@@ -2521,6 +2725,11 @@ document.addEventListener('change', async e => {
   }
   if (t.id === 'notify-random') { S.notifyRandom = t.checked; save(); }
   if (t.id === 'rb-good') { rb.good = t.checked; rbCount(); }
+  if (t.id === 'shop-exact') { S.shop.exact = t.checked; save(); }
+  if (t.dataset && t.dataset.shopk) { const k = t.dataset.shopk; S.shop.off = t.checked ? S.shop.off.filter(x => x !== k) : [...S.shop.off, k]; save(); renderShop(); }
+  if (t.id === 'al-time') { S.alarmTime = t.value || '12:00'; save(); syncAlarms(); }
+  if (t.id === 'sim-on') { S.sim.on = t.checked; save(); }
+  if (t.id === 'sim-cheap') { S.sim.cheap = t.checked; save(); }
   if (t.id === 'wx-on') { S.weather.on = t.checked; save(); if (t.checked) fetchWeather(true).then(() => renderLook()); else renderLook(); }
   if (t.id === 'wx-auto') { S.weather.auto = t.checked; save(); }
   if (t.id === 'wx-city') { S.weather.city = t.value; WX = null; save(); fetchWeather(true).then(() => renderLook()); }

@@ -120,6 +120,24 @@ public class Bridge {
     }
 
     @JavascriptInterface
+    public void setPriceWatches(String json, String hhmm) {
+        if (!activity.trusted()) return;
+        PriceWatch.save(activity, json, hhmm);
+    }
+
+    @JavascriptInterface
+    public String priceResults() {
+        if (!activity.trusted()) return "{}";
+        return PriceWatch.results(activity);
+    }
+
+    @JavascriptInterface
+    public void checkPricesNow() {
+        if (!activity.trusted()) return;
+        new Thread(() -> PriceWatch.check(activity)).start();
+    }
+
+    @JavascriptInterface
     public void setBars(String hex) {
         if (!activity.trusted()) return;
         activity.runOnUiThread(() -> activity.setBars(hex));
