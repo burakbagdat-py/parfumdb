@@ -471,6 +471,8 @@ body.sheet-open{overflow:hidden}
 .vchip{white-space:nowrap}
 .vchip small{opacity:.65;font-weight:600;margin-left:3px}
 .linkbtn{background:none;border:0;color:var(--accent);font-weight:700;font-size:13px;padding:2px 0}
+.conc.sold{background:transparent;border:1px dashed currentColor;opacity:.85}
+#sold-line:empty{display:none}
 .sim-why{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .sim-pct{font-size:12px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
 /* --- scent journal --- */
@@ -1052,7 +1054,9 @@ const famTag = f => `<span class="fam" style="--fh:${famHue(f)}">${esc(f)}</span
 const dots = (n, label) => `<div class="meter"><span class="eyebrow">${label}</span><div class="dots" aria-label="${label} ${n}/5">${[1,2,3,4,5].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</div></div>`;
 const notesLine = p => [...p.top, ...p.heart, ...p.base].slice(0, 6).join(' · ');
 const pick = a => a[Math.floor(Math.random() * a.length)];
-const poolFor = cat => sourcePerfumes().filter(p => cat === ANY || p.cats.includes(cat));
+// a unisex perfume belongs under Erkek and under Kadın too
+const inCat = (cats, c) => cats.includes(c) || ((c === 'Erkek' || c === 'Kadın') && cats.includes('Unisex'));
+const poolFor = cat => sourcePerfumes().filter(p => cat === ANY || inCat(p.cats, cat));
 const mainCats = p => p.cats.filter(c => TAX[0][1].includes(c) || TAX[1][1].includes(c)).slice(0, 4);
 function autoCats(fam){
   const sc = {};
@@ -1082,7 +1086,7 @@ function repairWeek(){
     w.cat = OLD_CAT[w.cat] || w.cat;
     if (w.cat !== ANY && !allCats().includes(w.cat)) w.cat = ANY;
     const p = w.pid && byId(w.pid);
-    if (!p || !src.has(p.id) || (w.cat !== ANY && !p.cats.includes(w.cat))) {
+    if (!p || !src.has(p.id) || (w.cat !== ANY && !inCat(p.cats, w.cat))) {
       const used = new Set(DAYS.map(x => S.week[x.d] && S.week[x.d].pid).filter(Boolean));
       w.pid = rollDay(d, used);
     }
@@ -1381,7 +1385,7 @@ let rot = 0, spinning = false, wheelList = [];
 const wheelBase = () => S.wheelInv && invPerfumes().length ? invPerfumes() : S.perfumes;
 function filteredWheel(){
   const c = S.wheelCats, off = new Set(S.wheelOff);
-  return wheelBase().filter(p => !off.has(p.id) && c.every(x => p.cats.includes(x)));
+  return wheelBase().filter(p => !off.has(p.id) && c.every(x => inCat(p.cats, x)));
 }
 function wheelOptions(){
   const inv = invPerfumes().length, base = wheelBase(), off = new Set(S.wheelOff);
@@ -1622,7 +1626,7 @@ function catRow(c){
   return `<div class="item">
     <div class="art tap" data-act="cview" data-cid="${r[0]}">${art({name: r[1], img: fimg(r[0])})}</div>
     <div class="item-body tap" data-act="cview" data-cid="${r[0]}">
-      <span class="item-name">${esc(r[1])} ${concTag(r[14], r[1])}</span>
+      <span class="item-name">${esc(r[1])} ${catConc(r)}</span>
       <span class="item-meta"><span lang="en">${esc(r[2])}</span> ${segTag(r[15])}${c.boy ? ' <span class="boyner">Boyner</span>' : ''} · ${GENDER[r[4]]}${r[13] ? ' · ★ ' + r[13].toFixed(1) : ''}</span>
       <div class="fam-line">${r[8].slice(0, 2).map(famTag).join('')}</div>
     </div>
@@ -1656,10 +1660,10 @@ function searchCatalog(){
   const out = [];
   for (const c of CAT) {
     if (ex.boy && !c.boy) continue;
-    if (ex.g && c.r[4] !== ex.g) continue;
+    if (ex.g && c.r[4] !== ex.g && !(c.r[4] === 'U' && ex.g !== 'U')) continue;
     if (ex.conc && c.r[14] !== ex.conc) continue;
     if (ex.seg && c.r[15] !== ex.seg) continue;
-    if (ex.cats.length && !ex.cats.every(x => c.r[12].includes(x))) continue;
+    if (ex.cats.length && !ex.cats.every(x => inCat(c.r[12], x))) continue;
     let rank = 0;
     if (tk.length) {
       if (tk.every(t => hasTok(c.key, t))) rank = 0;
@@ -1714,7 +1718,7 @@ function renderCollection(){
 }
 function renderGrid(){
   const qt = expandQuery(col.q);
-  const list = S.perfumes.filter(p => col.cats.every(c => p.cats.includes(c)) && (!col.conc || p.conc === col.conc) &&
+  const list = S.perfumes.filter(p => col.cats.every(c => inCat(p.cats, c)) && (!col.conc || p.conc === col.conc) &&
     (!qt.length || ((h) => qt.every(t => hasTok(h, t)))(fold([p.name, p.brand, p.conc, CONC_FULL[p.conc] || '', ...p.fam, ...p.top, ...p.heart, ...p.base].join(' ').replace(/['’&]/g, ' ')))));
   const g = document.getElementById('col-grid');
   if (!S.perfumes.length) { g.innerHTML = `<div class="empty">Henüz parfüm yok. Keşfet'ten ara ve tek dokunuşla ekle: görseli, notaları ve kategorileri otomatik gelir.</div>`; return; }
@@ -1828,6 +1832,45 @@ function mMatch(p, title){
   const i = tl.indexOf(nameT[0]); if (i > 0 && tl[i - 1] === 'eau' && !mFold(p.name).startsWith('eau')) return false;
   return concOK(p.conc, p.name, t);
 }
+// same perfume whatever concentration the store sells it in
+function mMatchName(p, title){ return mMatch({...p, conc: ''}, title); }
+// what the store sells: EDP, EDT, Parfum… ("?" when the title does not say). A name that carries its own word
+// (Le Male Elixir, Le Male Le Parfum) is that product, so it takes the perfume's own label.
+function soldConc(p, title){
+  const t = mFold(String(title).split(' - ')[0].replace(/parf[üÜ]m/gi, ' '));
+  const cs = mConcs(t), nc = mConcs(mFold(p.name));
+  if (nc.length && nc.every(c => cs.includes(c))) { const rest = cs.filter(c => !nc.includes(c)); return p.conc || rest[0] || nc[0]; }
+  return cs.filter(c => !nc.includes(c))[0] || '?';
+}
+// {EDP: {100: {p, u, t}}, EDT: {...}, '?': {...}}
+function mBuckets(items, p){
+  const out = {};
+  for (const it of items || []) {
+    if (!(it.p > 0) || !mMatchName(p, it.t)) continue;
+    const m = /(\d{2,3})\s*ml/i.exec(it.t); const ml = it.ml || (m ? +m[1] : 0); if (!ml) continue;
+    const c = soldConc(p, it.t), b = out[c] || (out[c] = {});
+    if (!b[ml] || b[ml].p > it.p) b[ml] = {p: it.p, u: it.u, t: it.t};
+  }
+  return out;
+}
+const CONC_RANK = ['EDT', 'EDP', 'Parfum', 'Elixir', 'Extrait', 'EDC', '?'];
+function concCounts(data){
+  const n = {};
+  for (const v of Object.values(data.shops || {})) for (const [c, b] of Object.entries(v.byConc || {})) if (Object.keys(b).length) n[c] = (n[c] || 0) + 1;
+  return n;
+}
+// choose which concentration the price view shows: the asked one, else the perfume's own, else the most sold; never mixes them
+function pickConc(data, want, p){
+  if (!data || !data.shops) return data;
+  const n = concCounts(data), known = Object.keys(n).filter(c => c !== '?');
+  let c = want && n[want] ? want : p && p.conc && n[p.conc] ? p.conc : known.sort((a, b) => n[b] - n[a] || CONC_RANK.indexOf(a) - CONC_RANK.indexOf(b))[0] || (n['?'] ? '?' : '');
+  data.conc = c;
+  for (const v of Object.values(data.shops)) if (v.byConc) v.sizes = v.byConc[c] || {};
+  // remember what the stores sell, so lists can show it for perfumes the catalog has no label for
+  if (p && p.cid && known.length) { S.soldConc = S.soldConc || {}; const k = known.sort((a, b) => CONC_RANK.indexOf(a) - CONC_RANK.indexOf(b)); if (String(S.soldConc[p.cid]) !== String(k)) { S.soldConc[p.cid] = k; save(); } }
+  return data;
+}
+const hasAny = b => Object.values(b || {}).some(x => Object.keys(x).length);
 // several ways to write the same search, tried in order until a store finds it
 function queryVariants(p){
   const ascii = s => String(s).normalize('NFD').replace(/\p{M}/gu, '').replace(/[’'`´]/g, ' ').replace(/&/g, ' ').replace(/\s+/g, ' ').trim();
@@ -1873,16 +1916,18 @@ async function boynerShop(p, qs){
     const r = await boynerItems(q);
     if (r.blocked) return {sizes: {}, blocked: true};
     if (r.error) continue;
-    let sz = mSizes(r.items, p);
-    if (!Object.keys(sz).length && r.items.some(it => mMatch(p, it.t) && !/\d{2,3}\s*ml/i.test(it.t))) {
+    let bc = mBuckets(r.items, p);
+    if (!hasAny(bc) && r.items.some(it => mMatchName(p, it.t) && !/\d{2,3}\s*ml/i.test(it.t))) {
       // the perfume is there but its titles have no size: ask Boyner per size
+      const extra = [];
       for (const ml of [50, 100, 200]) {
         const x = await nativeAsync('boynerSearch', q, ml + '-ml');
-        if (x && x.products) Object.assign(sz, mSizes(x.products.filter(it => fold(it.c).includes('parfum'))
-          .map(it => ({t: it.t, u: 'https://www.boyner.com.tr/' + String(it.u).replace(/^\//, ''), p: parsePrice(it.p), ml})), p));
+        if (x && x.products) extra.push(...x.products.filter(it => fold(it.c).includes('parfum'))
+          .map(it => ({t: it.t, u: 'https://www.boyner.com.tr/' + String(it.u).replace(/^\//, ''), p: parsePrice(it.p), ml})));
       }
+      bc = mBuckets(extra, p);
     }
-    if (Object.keys(sz).length) return {sizes: sz, q};
+    if (hasAny(bc)) return {byConc: bc, sizes: {}, q};
   }
   return {sizes: {}};
 }
@@ -1894,7 +1939,7 @@ async function storeShop(rule, k, p, qs){
     for (const q of qs) {
       const r = await shopTry(rule, k, q);
       if (r.blocked) return {sizes: {}, blocked: true};
-      if (!r.error) { const sz = mSizes(r.items, p); if (Object.keys(sz).length) return {sizes: sz, q}; }
+      if (!r.error) { const bc = mBuckets(r.items, p); if (hasAny(bc)) return {byConc: bc, sizes: {}, q}; }
     }
     return {sizes: {}};
   }
@@ -1902,16 +1947,16 @@ async function storeShop(rule, k, p, qs){
   for (let i = 0; i < runs.length; i++) {
     const r = await runs[i];
     if (r.blocked) return {sizes: {}, blocked: true};
-    if (!r.error) { const sz = mSizes(r.items, p); if (Object.keys(sz).length) return {sizes: sz, q: qs[i]}; }
+    if (!r.error) { const bc = mBuckets(r.items, p); if (hasAny(bc)) return {byConc: bc, sizes: {}, q: qs[i]}; }
   }
   return {sizes: {}};
 }
 const withTimeout = (pr, ms, v) => Promise.race([pr, new Promise(r => setTimeout(() => r(v), ms))]);
-const mKey = p => 'mp3:' + fold(storeQuery(p)) + ':' + (p.conc || '');
+const mKey = p => 'mp4:' + fold(storeQuery(p));
 async function cachedMulti(p){
   const key = mKey(p);
-  if (mpMem.has(key)) return mpMem.get(key);
-  try { const c = await idbGet(key); if (c) { mpMem.set(key, c); return c; } } catch (e) {}
+  if (mpMem.has(key)) return pickConc(mpMem.get(key), mpMem.get(key).conc, p);
+  try { const c = await idbGet(key); if (c) { mpMem.set(key, c); return pickConc(c, c.conc, p); } } catch (e) {}
   return null;
 }
 const mpFlight = new Map();
@@ -1932,16 +1977,18 @@ function fetchMulti(p, onProgress, opt){
     const finish = () => {
       // a store that is rate-limited right now keeps the prices it gave last time
       if (old) for (const [k, v] of Object.entries(out.shops)) if (!Object.keys(v.sizes).length && old.shops && old.shops[k] && Object.keys(old.shops[k].sizes).length && (v.blocked || v.slow)) out.shops[k] = {...old.shops[k], stale: true};
-      if (Object.values(out.shops).some(x => Object.keys(x.sizes).length)) { mpMem.set(key, out); idbSet(key, out).catch(() => {}); }
+      pickConc(out, out.conc, p);
+      if (Object.values(out.shops).some(x => hasAny(x.byConc) || Object.keys(x.sizes).length)) { mpMem.set(key, out); idbSet(key, out).catch(() => {}); }
     };
     // every store at once; the page stops waiting for a slow store after 15 s, its answer is still added when it arrives
     await Promise.all(ids.map(async k => {
       const job = (k === 'boyner' ? boynerShop(p, qs) : storeShop(rules[k], k, p, qs)).catch(() => ({sizes: {}}));
       const r = await withTimeout(job, 15000, null);
       out.shops[k] = r || {sizes: {}, slow: true};
+      pickConc(out, out.conc, p);
       done++;
       listeners.forEach(f => f(rules[k].n, done - 1, ids.length, out));
-      if (!r) job.then(late => { out.shops[k] = late; finish(); listeners.forEach(f => f(rules[k].n, ids.length, ids.length, out, true)); });
+      if (!r) job.then(late => { out.shops[k] = late; pickConc(out, out.conc, p); finish(); listeners.forEach(f => f(rules[k].n, ids.length, ids.length, out, true)); });
     }));
     finish();
     return out;
@@ -2029,6 +2076,16 @@ function bellHtml(p){
 const PIG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 11.5a6.5 5.5 0 0 1 12.2-2.6c.9-.9 2.3-1.2 2.3-1.2l-.4 2.6c.6.6 1 1.3 1.2 2.1H21v3h-1.4a6.6 6.6 0 0 1-2.1 2.4V20h-2.6v-1.2a8 8 0 0 1-3.8 0V20H8.5v-2a5.4 5.4 0 0 1-3.5-5"/><path d="M10 7.2h3.6"/><circle cx="15.6" cy="11.3" r=".8" fill="currentColor"/><path d="M5 12.2c-1.3 0-2-.8-2-1.8"/></svg>';
 const pigFor = name => (S.piggies || []).find(g => g.name === name);
 const pigPct = g => Math.min(100, Math.floor(g.saved / g.target * 100));
+function soldLine(p){
+  const k = p && p.cid && S.soldConc && S.soldConc[p.cid];
+  return k && k.length ? 'Satışta: ' + k.map(c => `<span class="conc">${esc(c)}</span>`).join(' ') : '';
+}
+// catalog rows: the catalog's own label, else what stores were seen selling (dashed tag)
+function catConc(r){
+  if (r[14]) return concTag(r[14], r[1]);
+  const k = S.soldConc && S.soldConc[r[0]];
+  return k && k.length ? k.map(c => `<span class="conc sold" title="Mağazalarda bu türde satılıyor">${esc(c)}</span>`).join(' ') : '';
+}
 function piggyChip(p){
   const g = p && pigFor(p.name);
   return `<button class="bell${g ? ' on' : ''}" data-act="pig" type="button" aria-label="Kumbara">${PIG_SVG}<span>${g ? `Kumbara · %${pigPct(g)}` : 'Kumbara'}</span></button>`;
@@ -2162,7 +2219,7 @@ async function toggleBell(btn){
   }
   const ml = same && priceState.ml && sizes.includes(priceState.ml) ? priceState.ml : pickMl(sizes, 100);
   const b = bestAt(d, ml), cur = b.p, target = Math.max(1, Math.round(cur * 0.9 / 50) * 50);
-  S.alarms.push({id: uid(), name: p.name, brand: p.brand, conc: p.conc || '', q: storeQuery(p), ml, target, start: cur, created: Date.now()});
+  S.alarms.push({id: uid(), name: p.name, brand: p.brand, conc: (d.conc && d.conc !== '?' ? d.conc : p.conc) || '', q: storeQuery(p), ml, target, start: cur, created: Date.now()});
   save(); syncAlarms(); refreshBells(); haptic('confirm');
   if (!nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission');
   toast(`Fiyat takibi açık: ${ml} ml en ucuz ${(STORES[b.shop] || {n: b.shop}).n}'de ${fmtPrice(cur)}; ${fmtPrice(target)} altına inince haber vereceğim`);
@@ -2270,7 +2327,7 @@ function simPane(p){
   return `<div class="chips"><button class="chip${S.sim.cheap ? '' : ' on'}" data-act="simcheap" data-v="0" type="button">Benzerler</button><button class="chip${S.sim.cheap ? ' on' : ''}" data-act="simcheap" data-v="1" type="button">Uygun muadiller</button></div>
     ${list.length ? `<div class="list">${list.map(([c, sc]) => `<div class="item">
       <div class="art tap" data-act="cview" data-cid="${c.r[0]}">${art({name: c.r[1], img: fimg(c.r[0])})}</div>
-      <div class="item-body tap" data-act="cview" data-cid="${c.r[0]}"><span class="item-name">${esc(c.r[1])} ${concTag(c.r[14], c.r[1])}</span>
+      <div class="item-body tap" data-act="cview" data-cid="${c.r[0]}"><span class="item-name">${esc(c.r[1])} ${catConc(c.r)}</span>
         <span class="item-meta"><span lang="en">${esc(c.r[2])}</span> ${segTag(c.r[15])}${c.r[13] ? ' · ★ ' + c.r[13].toFixed(1) : ''}</span>
         ${(() => { const sh = sharedNotes(p, c); return sh.length ? `<span class="sim-why">Ortak: ${esc(sh.join(', '))}</span>` : `<div class="fam-line">${c.r[8].slice(0, 2).map(famTag).join('')}</div>`; })()}</div>
       <span class="sim-pct">%${Math.round(Math.min(.99, sc) * 100)}</span></div>`).join('')}</div>`
@@ -2318,7 +2375,7 @@ function wxCats(w){
 }
 function wxPick(w){
   const cats = wxCats(w);
-  const scored = sourcePerfumes().map(p => [p, cats.reduce((n, c) => n + (p.cats.includes(c) ? 1 : 0), 0)]).filter(x => x[1] > 0);
+  const scored = sourcePerfumes().map(p => [p, cats.reduce((n, c) => n + (inCat(p.cats, c) ? 1 : 0), 0)]).filter(x => x[1] > 0);
   if (!scored.length) return null;
   const best = Math.max(...scored.map(x => x[1]));
   return pick(scored.filter(x => x[1] >= best - 1).map(x => x[0]));
@@ -2658,17 +2715,26 @@ function drawPrices(){
     return;
   }
   if (meta) { const m = Math.round((Date.now() - data.t) / 60000); meta.textContent = m < 2 ? 'şimdi güncellendi' : m < 60 ? m + ' dk önce' : Math.round(m / 60) + ' saat önce'; }
+  const cc = concCounts(data), cl = Object.keys(cc).sort((a, b) => CONC_RANK.indexOf(a) - CONC_RANK.indexOf(b)), sel = data.conc;
+  const concLbl = c => c === '?' ? 'Türü yazmıyor' : (CONC_FULL[c] || c);
+  const concBar = `<div class="field" style="gap:6px"><span class="label">Mağazada satılan tür</span>
+      <div class="chips">${cl.map(c => `<button class="chip${c === sel ? ' on' : ''}" data-act="priceconc" data-v="${esc(c)}" type="button">${esc(c === '?' ? 'Türü yazmıyor' : c)} <small style="opacity:.7">· ${cc[c]} mağaza</small></button>`).join('')}</div>
+      ${sel === '?' ? '<span class="muted small">Bu ilanlar türü (EDP/EDT…) belirtmiyor; mağazada açıp kontrol et.</span>'
+        : p.conc && sel !== p.conc ? `<span class="muted small">Dikkat: bunlar <b>${esc(concLbl(sel))}</b>; katalogdaki tür ${esc(concLbl(p.conc))}.${cc[p.conc] ? '' : ' Mağazalarda ' + esc(p.conc) + ' bulunamadı.'}</span>`
+        : `<span class="muted small">Sadece <b>${esc(concLbl(sel))}</b> olarak satılan ürünler gösteriliyor.</span>`}</div>`;
+  const sl = document.getElementById('sold-line');
+  if (sl) sl.innerHTML = cl.filter(c => c !== '?').length ? 'Satışta: ' + cl.filter(c => c !== '?').map(c => `<span class="conc">${esc(c)}</span>`).join(' ') : '';
   const ml = priceState.ml && sizes.includes(priceState.ml) ? priceState.ml : pickMl(sizes, 100);
   priceState.ml = ml;
   const rows = Object.entries(data.shops).filter(([, v]) => v.sizes[ml]).map(([k, v]) => ({k, ...v.sizes[ml]})).sort((a, b) => a.p - b.p);
   const missing = data.order.filter(k => !(data.shops[k] && data.shops[k].sizes[ml])).map(k => (STORES[k] || {n: k}).n);
   const rules = SHOP_RULES || {};
-  body.innerHTML = `
-    <div class="row spread" style="align-items:flex-end"><div><span class="muted small">${ml} ml · en ucuz ${esc((STORES[rows[0].k] || {n: rows[0].k}).n)}</span><div class="bigprice">${fmtPrice(rows[0].p)}</div></div>
+  body.innerHTML = `${concBar}
+    <div class="row spread" style="align-items:flex-end"><div><span class="muted small">${sel && sel !== '?' ? esc(sel) + ' · ' : ''}${ml} ml · en ucuz ${esc((STORES[rows[0].k] || {n: rows[0].k}).n)}</span><div class="bigprice">${fmtPrice(rows[0].p)}</div></div>
       <a class="btn sm primary" href="${esc(rows[0].u)}" data-act="extlink">Aç</a></div>
     <div class="sizes">${sizes.map(sz => { const b = bestAt(data, sz); return `<button class="${sz === ml ? 'on' : ''}" data-act="pricesize" data-ml="${sz}" type="button"><b>${sz} ml</b><small>${fmtPrice(b.p)}</small></button>`; }).join('')}</div>
     <div class="list">${rows.map((r, i) => `<div class="item" style="grid-template-columns:minmax(0,1fr) auto auto">
-      <div class="item-body"><span class="item-name" style="font-size:15px">${esc((STORES[r.k] || {n: r.k}).n)} ${concTag(mConc(mFold(r.t)), '')}${i === 0 && rows.length > 1 ? ' <span class="seg-tag N">En ucuz</span>' : ''}${rules[r.k] && rules[r.k].market ? ' <span class="pill">pazar yeri</span>' : ''}</span>
+      <div class="item-body"><span class="item-name" style="font-size:15px">${esc((STORES[r.k] || {n: r.k}).n)} ${sel && sel !== '?' ? concTag(sel, '') : ''}${i === 0 && rows.length > 1 ? ' <span class="seg-tag N">En ucuz</span>' : ''}${rules[r.k] && rules[r.k].market ? ' <span class="pill">pazar yeri</span>' : ''}</span>
         <span class="item-meta">${esc(r.t || '')}</span></div>
       <span class="price">${fmtPrice(r.p)}</span>
       <a class="btn sm" href="${esc(r.u)}" data-act="extlink">Aç</a></div>`).join('')}</div>
@@ -2703,6 +2769,7 @@ function detailHtml(p, o){
         ${p.brand ? `<span class="hero-brand tap" lang="en" data-act="brandgo" data-b="${esc(p.brand)}">${esc(p.brand)} ›</span> ${concTag(o.conc || p.conc, p.name)}` : ''}
         <span class="hero-name">${esc(p.name)}</span>
         ${stats ? `<div class="dstats">${stats}</div>` : ''}
+        <span class="muted small" id="sold-line">${soldLine(p)}</span>
         <div class="bell-row">${bellHtml(p)}${piggyChip(p)}</div>
         ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
       </div>
@@ -2786,7 +2853,7 @@ function rbPool(){
     && (!rb.good || c.r[13] >= 3.9)
     && (!rb.seg || c.r[15] === rb.seg)
     && (!S.gender || c.r[4] === S.gender || c.r[4] === 'U')
-    && (!rb.cat || c.r[12].includes(rb.cat))
+    && (!rb.cat || inCat(c.r[12], rb.cat))
     && (S.global || S.store !== 'boyner' || c.boy));
 }
 function openRandomBuy(){
@@ -2843,7 +2910,7 @@ async function rbPick(){
     <div class="dhead">
       <div class="art tap" data-act="cview" data-cid="${r[0]}">${art(p)}</div>
       <div class="hero-body">
-        <span class="hero-brand" lang="en">${esc(p.brand)} ${concTag(r[14], r[1])} ${segTag(r[15])}</span>
+        <span class="hero-brand" lang="en">${esc(p.brand)} ${catConc(r)} ${segTag(r[15])}</span>
         <span class="hero-name">${esc(p.name)}</span>
         <div class="dstats">${stats}</div>
         <div class="bell-row">${bellHtml(p)}${piggyChip(p)}</div>
@@ -3448,6 +3515,7 @@ document.addEventListener('click', async e => {
     }
     case 'buydel': S.buys = S.buys.filter(b => b.id !== t.dataset.id); save(); closeSheet(); render(); toast('Hatırlatıcı silindi'); break;
     case 'pricesize': if (priceState) { priceState.ml = +t.dataset.ml; drawPrices(); } break;
+    case 'priceconc': if (priceState && priceState.data) { pickConc(priceState.data, t.dataset.v, priceState.p); priceState.ml = null; drawPrices(); } break;
     case 'pricerefresh': if (priceState) { const p = priceState.p; priceMem.clear(); const b = document.getElementById('price-body'); if (b) b.innerHTML = '<span class="muted small">Fiyatlar alınıyor…</span>'; loadPricesInto(p, true); } break;
     case 'addboy': { const d = draft; closeSheet(); draft = d; openSheet(null); break; }
     case 'ccat-g': col.group = t.dataset.g; renderCollection(); break;

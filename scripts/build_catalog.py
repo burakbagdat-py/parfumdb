@@ -284,8 +284,13 @@ def concentration(pid, name, brand, year, parfumo):
     c = conc_of(name)
     if c: return c
     fn = re.sub(r'[^a-z0-9]', '', name.lower())
-    hits = [(abs(y - year) if y and year else 5, c) for n, y, c in parfumo.get(norm_brand(brand), [])
-            if n == fn and (not y or not year or abs(y - year) <= 1)]
+    same = [(y, c) for n, y, c in parfumo.get(norm_brand(brand), []) if n == fn]
+    if len({c for _, c in same}) > 1:
+        # Parfumo lists the same name in several concentrations (Wanted EDT and Wanted EDP): only a matching year decides,
+        # and only when it points to one concentration; otherwise no guess is better than a wrong label
+        dated = {c for y, c in same if y and year and abs(y - year) <= 1}
+        return dated.pop() if len(dated) == 1 else ''
+    hits = [(abs(y - year) if y and year else 5, c) for y, c in same if not y or not year or abs(y - year) <= 1]
     return sorted(hits)[0][1] if hits else ''
 
 # ---------- market segment: N = niş, D = designer, O = Orta Doğu, U = ünlü, M = uygun fiyat ----------
