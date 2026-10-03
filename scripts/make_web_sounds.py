@@ -78,6 +78,22 @@ def fiyat(t):
     out += partials(329.63, t - .3, ((1, 1), (2, .2)), .02, .6) * .4
     return out
 
+def kumbara(t):
+    # coin dropped into a piggy bank (three bright clinks bouncing), then the till opens: a soft thunk and a two-bell "ka-ching"
+    def clink(x, f, a):
+        if x < 0: return 0.0
+        e = min(1, x / .0008) * math.exp(-x / .07)
+        return a * e * (math.sin(2 * math.pi * f * x) + .6 * math.sin(2 * math.pi * f * 1.47 * x) + .35 * math.sin(2 * math.pi * f * 2.13 * x))
+    out = 0
+    for s0, f, a in ((0, 3520, 1), (.11, 3730, .7), (.19, 3420, .5), (.245, 3600, .32), (.28, 3500, .2)):
+        out += clink(t - s0, f, a) * .5
+    x = t - .42
+    if 0 <= x < .12:
+        out += math.sin(2 * math.pi * 95 * x) * math.exp(-x / .03) * .55 + (random.random() * 2 - 1) * math.exp(-x / .015) * .12
+    out += partials(1567.98, t - .46, ((1, 1), (2.76, .18), (5.4, .05)), .002, .45) * .55
+    out += partials(2093.0, t - .54, ((1, 1), (2.76, .18), (5.4, .05)), .002, .55) * .5
+    return out
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     random.seed(3)
@@ -86,4 +102,5 @@ if __name__ == '__main__':
     render('vanilya', 2.2, vanilya, .5)
     render('gumus', 1.8, gumus, .45)
     render('fiyat', 1.8, fiyat, .5)
+    render('kumbara', 1.7, kumbara, .5, 2)
     print('ok')

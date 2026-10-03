@@ -416,6 +416,38 @@ body.sheet-open{overflow:hidden}
 .mac-left.ready b{font-size:20px}
 .mac-sum{background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;font-size:14px}
 .mac-sum b{font-family:var(--f-display);font-weight:var(--dw);font-size:17px}
+/* --- piggy bank --- */
+.bell-row{display:flex;gap:8px;flex-wrap:wrap}
+.pig-ring{position:relative;width:132px;height:132px;flex:none}
+.pig-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.pig-ring .tr{stroke:var(--line)}
+.pig-ring .fg{stroke:var(--accent);transition:stroke-dashoffset .8s cubic-bezier(.2,.8,.2,1)}
+.pig-ring .mid{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}
+.pig-ring b{font-family:var(--f-display);font-weight:var(--dw);font-size:30px;font-variant-numeric:tabular-nums}
+.pig-ring span{font-size:11.5px;color:var(--muted)}
+.pig-top{display:flex;gap:16px;align-items:center}
+.pig-nums{display:flex;flex-direction:column;gap:8px;min-width:0}
+.pig-nums div{display:flex;flex-direction:column}
+.pig-nums b{font-family:var(--f-display);font-weight:var(--dw);font-size:19px;font-variant-numeric:tabular-nums}
+.pig-nums span{font-size:12px;color:var(--muted)}
+.pig-add{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.pig-add button{padding:12px 0;border-radius:14px;border:1px solid var(--line);background:var(--panel-2);color:var(--fg);font-weight:800;font-size:15px;font-variant-numeric:tabular-nums}
+.pig-add button.big{background:var(--grad);color:var(--ink);border-color:transparent}
+.pig-log{display:flex;flex-direction:column;gap:2px;font-size:13px}
+.pig-log div{display:flex;justify-content:space-between;padding:6px 2px;border-top:1px solid var(--line)}
+.pig-log div:first-child{border-top:0}
+.pig-log .neg{color:var(--muted)}
+.coin{position:fixed;z-index:80;width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff6c8,#f2c14e 45%,#b9831f);box-shadow:0 2px 8px rgba(0,0,0,.35);display:grid;place-items:center;font-weight:900;font-size:13px;color:#7a5512;pointer-events:none;animation:coin .75s cubic-bezier(.5,0,.8,.4) forwards}
+@keyframes coin{0%{transform:translateY(0) scale(1) rotateY(0)}70%{opacity:1}100%{transform:translateY(var(--dy)) scale(.55) rotateY(540deg);opacity:0}}
+.pig-ring.pop{animation:pop .4s ease}
+@keyframes pop{50%{transform:scale(1.06)}}
+.pig-cards{display:flex;gap:10px;overflow-x:auto;margin-inline:-16px;padding:2px 16px 4px;scrollbar-width:none}
+.pig-cards::-webkit-scrollbar{display:none}
+.pig-card{flex:none;width:168px;display:flex;flex-direction:column;gap:6px;padding:12px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel);text-align:left;color:var(--fg)}
+.pig-card .nm{font-family:var(--f-display);font-weight:var(--dw);font-size:15px;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pig-card .level{max-width:none}
+.pig-card small{color:var(--muted);font-size:12px}
+.pig-card.full{border-color:var(--accent)}
 /* --- price-watch bell --- */
 .bell{display:inline-flex;align-items:center;gap:7px;padding:5px 11px 5px 7px;border-radius:999px;border:1px solid var(--line);background:var(--panel-2);color:var(--muted);font-size:12px;font-weight:700;width:max-content;max-width:100%}
 .bell svg{width:18px;height:18px;flex:none}
@@ -614,7 +646,7 @@ const STORES = {
 };
 // dl: downloaded by the app at runtime from docs/sounds (no new APK needed); others ship inside the APK
 const SOUNDS = {
-  bb: {n: 'BB İmza', dl: 'bb_yumusak'}, fiyat: {n: 'Fiyat çanı', dl: 'fiyat'}, kadeh: {n: 'Kadeh', dl: 'kadeh'}, vanilya: {n: 'Vanilya arp', dl: 'vanilya'}, gumus: {n: 'Gümüş çan', dl: 'gumus'},
+  bb: {n: 'BB İmza', dl: 'bb_yumusak'}, fiyat: {n: 'Fiyat çanı', dl: 'fiyat'}, kumbara: {n: 'Kumbara (bozuk para + kasa)', dl: 'kumbara'}, kadeh: {n: 'Kadeh', dl: 'kadeh'}, vanilya: {n: 'Vanilya arp', dl: 'vanilya'}, gumus: {n: 'Gümüş çan', dl: 'gumus'},
   kristal: {n: 'Kristal'}, gemi_cani: {n: 'Gemi çanı'}, robot: {n: 'Robot'}, sprey: {n: 'Sprey'}, damla: {n: 'Damla'}, nabiz: {n: 'Nabız'}
 };
 const sname = k => (SOUNDS[k] || {}).n || k;
@@ -711,7 +743,7 @@ function freshState(){
     inv: [], customCats: [],
     week, weekKey: '', source: 'envanter',
     wheelCats: [], wheelGroup: 'Kullanım', lastSpin: null,
-    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', global: false, alarmSound: 'fiyat', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true, buys: [], wears: [], mac: [], macSkip: true, macTime: '10:00', ui: {...UI_DEFAULT}, weather: {on: false, city: 'İstanbul', auto: false, day: ''},
+    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', global: false, alarmSound: 'fiyat', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true, buys: [], wears: [], mac: [], macSkip: true, macTime: '10:00', piggies: [], pigTime: '20:00', pigSound: 'kumbara', ui: {...UI_DEFAULT}, weather: {on: false, city: 'İstanbul', auto: false, day: ''},
     shop: {exact: true, order: ['boyner', 'beymen', 'gratis', 'perfumepoint', 'n11', 'sephora', 'trendyol', 'hepsiburada', 'amazon'], off: ['n11']},
     alarms: [], alarmTime: '12:00', sim: {on: true, cheap: false},
     notif: {reminders: defaultReminders()}
@@ -1080,7 +1112,7 @@ function ensureSounds(){
   if (!NATIVE || !NATIVE.installSound) return Promise.resolve();
   if (ensuring) return ensuring;
   const names = new Set();
-  [...S.notif.reminders, {sound: 'tema'}, {sound: S.alarmSound || 'fiyat'}].forEach(r => { const spec = resolveSound(r); if (spec.startsWith('dl:')) names.add(spec.slice(3)); });
+  [...S.notif.reminders, {sound: 'tema'}, {sound: S.alarmSound || 'fiyat'}, {sound: S.pigSound || 'kumbara'}].forEach(r => { const spec = resolveSound(r); if (spec.startsWith('dl:')) names.add(spec.slice(3)); });
   ensuring = (async () => {
     let got = false;
     for (const n of names) {
@@ -1135,6 +1167,21 @@ function buildPlan(){
     // "at" makes newer apps fire once; older apps use the weekday/time and the page removes it afterwards
     reminders.push({id: 'buy_' + b.id, label: 'Satın alma', at: b.at, h: dt.getHours(), m: dt.getMinutes(), days: [dt.getDay()],
       sound: resolveSound(base), soundName: soundName(base), vib: base.vib !== false, msgs});
+  }
+  const pigs = (S.piggies || []).filter(g => g.remind && g.saved < g.target);
+  if (pigs.length) {
+    const [h, mi] = (S.pigTime || '20:00').split(':').map(Number);
+    const g0 = pigs.slice().sort((a, b) => b.saved / b.target - a.saved / a.target)[0];
+    const msgs = {};
+    for (let d = 0; d < 7; d++) {
+      const g = pigs[d % pigs.length];
+      const step = [200, 500, 1000][d % 3];
+      msgs[d] = [pigs.length === 1
+        ? {t: 'Kumbaraya para at: ' + g.name, b: `%${pigPct(g)} doldu · ${fmtPrice(g.target - g.saved)} kaldı. Bugün ${fmtPrice(step)} atsan ${fmtPrice(Math.max(0, g.target - g.saved - step))} kalır.`}
+        : {t: 'Kumbaralarına para at 🪙', b: pigs.map(x => `${x.name} %${pigPct(x)}`).join(' · ') + ` — en yakını ${g0.name}, ${fmtPrice(g0.target - g0.saved)} kaldı.`}];
+    }
+    reminders.push({id: 'piggy', label: 'Kumbara', h, m: mi, days: [0, 1, 2, 3, 4, 5, 6],
+      sound: resolveSound({sound: S.pigSound || 'kumbara'}), soundName: sname(S.pigSound || 'kumbara'), vib: true, msgs});
   }
   for (const m of S.mac || []) {
     const p = byId(m.pid); if (!p || m.end <= Date.now()) continue;
@@ -1661,6 +1708,7 @@ function renderCollection(){
     ${concChips('cconc', col.conc)}
     ${catFilter('ccat', col.group, col.cats)}
   </section>
+  ${pigCards()}
   <section class="section" id="col-grid"></section>`;
   renderGrid();
 }
@@ -1676,7 +1724,7 @@ function renderGrid(){
       <div class="art">${art(p)}${p.sample ? '<span class="sample-tag">Örnek</span>' : iv ? `<span class="sample-tag">Envanterde · ${iv.ml} ml</span>` : buyOf(p.id) ? `<span class="sample-tag">⏰ ${esc(fmtShort(buyOf(p.id).at))}</span>` : ''}</div>
       <div class="card-body">
         ${p.brand ? `<span class="card-brand" lang="en">${esc(p.brand)}</span>` : ''}
-        <span class="card-name">${esc(p.name)} ${concTag(p.conc, p.name)}${alarmFor(p.name) ? ' <span title="Fiyat takibinde" style="color:var(--accent)">🔔</span>' : ''}</span>
+        <span class="card-name">${esc(p.name)} ${concTag(p.conc, p.name)}${alarmFor(p.name) ? ' <span title="Fiyat takibinde" style="color:var(--accent)">🔔</span>' : ''}${pigFor(p.name) ? ` <span title="Kumbara" style="color:var(--accent);font-size:12px;font-family:var(--f-body)">🐷%${pigPct(pigFor(p.name))}</span>` : ''}</span>
         ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 2).map(famTag).join('')}</div>` : ''}
         <div class="chips" style="gap:4px;margin-top:4px">${mainCats(p).map(c => `<span class="pill">${esc(c)}</span>`).join('')}</div>
       </div>
@@ -1945,10 +1993,124 @@ function bellHtml(p){
   const a = p && alarmFor(p.name);
   return `<button class="bell${a ? ' on' : ''}" data-act="bell" type="button" aria-pressed="${a ? 'true' : 'false'}" aria-label="Fiyat takibi">${BELL_SVG}<span>${a ? 'Fiyat takibi · ≤ ' + fmtPrice(a.target) : 'Fiyat takibi'}</span></button>`;
 }
+const PIG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 11.5a6.5 5.5 0 0 1 12.2-2.6c.9-.9 2.3-1.2 2.3-1.2l-.4 2.6c.6.6 1 1.3 1.2 2.1H21v3h-1.4a6.6 6.6 0 0 1-2.1 2.4V20h-2.6v-1.2a8 8 0 0 1-3.8 0V20H8.5v-2a5.4 5.4 0 0 1-3.5-5"/><path d="M10 7.2h3.6"/><circle cx="15.6" cy="11.3" r=".8" fill="currentColor"/><path d="M5 12.2c-1.3 0-2-.8-2-1.8"/></svg>';
+const pigFor = name => (S.piggies || []).find(g => g.name === name);
+const pigPct = g => Math.min(100, Math.floor(g.saved / g.target * 100));
+function piggyChip(p){
+  const g = p && pigFor(p.name);
+  return `<button class="bell${g ? ' on' : ''}" data-act="pig" type="button" aria-label="Kumbara">${PIG_SVG}<span>${g ? `Kumbara · %${pigPct(g)}` : 'Kumbara'}</span></button>`;
+}
 function refreshBells(){
-  document.querySelectorAll('.bell').forEach(b => { const w = document.createElement('div'); w.innerHTML = bellHtml(currentP); b.replaceWith(w.firstChild); });
+  document.querySelectorAll('.bell-row').forEach(b => { b.innerHTML = bellHtml(currentP) + piggyChip(currentP); });
   if (priceState && document.getElementById('price-body')) drawPrices();
 }
+/* ---------- piggy bank per perfume: save towards its price ---------- */
+function playCoin(){
+  haptic('confirm');
+  try { const a = new Audio('sounds/' + ((SOUNDS[S.pigSound] || {}).dl || 'kumbara') + '.wav'); a.volume = .8; a.play().catch(() => {}); } catch (e) {}
+}
+function coinFx(from){
+  const ring = document.querySelector('.pig-ring'); if (!ring || !from) return;
+  const a = from.getBoundingClientRect(), b = ring.getBoundingClientRect();
+  const c = document.createElement('div'); c.className = 'coin'; c.textContent = '₺';
+  c.style.left = (b.left + b.width / 2 - 15) + 'px'; c.style.top = (a.top - 10) + 'px';
+  c.style.setProperty('--dy', (b.top + b.height / 2 - a.top) + 'px');
+  document.body.appendChild(c); setTimeout(() => c.remove(), 800);
+  setTimeout(() => { ring.classList.remove('pop'); void ring.offsetWidth; ring.classList.add('pop'); }, 600);
+}
+// the price to save for: the cheapest store price found for this perfume (100 ml or the closest size)
+async function pigPrice(p){
+  const same = priceState && priceState.p === p && priceState.data;
+  const d = same ? priceState.data : await fetchMulti(p);
+  const sizes = d ? allSizes(d) : [];
+  if (!sizes.length) return null;
+  const ml = same && priceState.ml && sizes.includes(priceState.ml) ? priceState.ml : pickMl(sizes, 100);
+  const b = bestAt(d, ml);
+  return b ? {price: Math.round(b.p), ml, shop: b.shop} : null;
+}
+let pigDraft = null;
+async function openPigSetup(p){
+  const best = priceState && priceState.p === p && priceState.data ? await pigPrice(p) : null;
+  pigDraft = {p, target: best ? best.price : '', ml: best ? best.ml : 100, shop: best && best.shop};
+  sheetMode = 'pigsetup';
+  const f = openOverlay();
+  const draw = () => {
+    f.innerHTML = `<div class="row spread"><span class="eyebrow">Kumbara kur</span>${closeIcon}</div>
+      ${headHtml(p, 'Bu parfüm için para biriktir; her gün hatırlatayım.')}
+      <div class="field"><label for="pig-target">Hedef tutar (TL)</label>
+        <div class="row" style="flex-wrap:nowrap"><input class="input" id="pig-target" type="number" inputmode="numeric" min="1" placeholder="örn. 6500" value="${esc(pigDraft.target)}" style="flex:1;min-width:0">
+        ${NATIVE ? '<button class="btn sm" data-act="pigfetch" type="button">Güncel fiyat</button>' : ''}</div>
+        <span class="muted small" id="pig-hint">${pigDraft.shop ? `En ucuz: ${esc((STORES[pigDraft.shop] || {n: pigDraft.shop}).n)} · ${pigDraft.ml} ml` : 'Fiyatı bilmiyorsan “Güncel fiyat” mağazalardan bulsun.'}</span></div>
+      <div class="field"><span class="label">Başlangıç (isteğe bağlı)</span>
+        <div class="pig-add">${[0, 200, 500, 1000].map(v => `<button class="${(pigDraft.first || 0) === v ? 'big' : ''}" data-act="pigfirst" data-v="${v}" type="button">${v ? '+' + v : 'Yok'}</button>`).join('')}</div></div>
+      <label class="toggle-row" for="pig-remind0"><span><b>Her gün hatırlat</b><br><span class="muted small">Saat ${esc(S.pigTime)}, kumbara sesiyle</span></span>
+        <span class="switch"><input type="checkbox" id="pig-remind0" checked><span></span></span></label>
+      <div class="row spread"><span></span><button class="btn primary" data-act="pigcreate" type="button">Kumbarayı kur</button></div>`;
+  };
+  draw(); f._draw = draw;
+}
+function pigRing(g){
+  const r = 56, c = 2 * Math.PI * r, pct = pigPct(g);
+  return `<div class="pig-ring"><svg viewBox="0 0 132 132"><circle class="tr" cx="66" cy="66" r="${r}" fill="none" stroke-width="12"/>
+    <circle class="fg" cx="66" cy="66" r="${r}" fill="none" stroke-width="12" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${(c * (1 - pct / 100)).toFixed(1)}"/></svg>
+    <div class="mid"><b>%${pct}</b><span>${g.saved >= g.target ? 'doldu! 🎉' : 'doldu'}</span></div></div>`;
+}
+function openPig(id){
+  const g = (S.piggies || []).find(x => x.id === id); if (!g) return;
+  const p = S.perfumes.find(x => x.name === g.name) || {name: g.name, brand: g.brand, img: g.img, cid: g.cid, conc: g.conc || '', fam: [], top: [], heart: [], base: [], cats: []};
+  sheetMode = 'pig'; delArmed = false;
+  const f = openOverlay(); f.dataset.pig = g.id;
+  const draw = () => {
+    const left = Math.max(0, g.target - g.saved), full = g.saved >= g.target;
+    const days = d => Math.ceil(left / d);
+    f.innerHTML = `<div class="row spread"><span class="eyebrow">Kumbara</span>${closeIcon}</div>
+      ${headHtml(p, `Hedef: <b>${fmtPrice(g.target)}</b>${g.ml ? ' · ' + g.ml + ' ml' : ''}`)}
+      <div class="pig-top">${pigRing(g)}
+        <div class="pig-nums"><div><b>${fmtPrice(g.saved)}</b><span>biriktirdin</span></div>
+          <div><b>${full ? 'Hazır!' : fmtPrice(left)}</b><span>${full ? 'parfümü alabilirsin' : 'kaldı'}</span></div>
+          ${full ? '' : `<span class="muted small">Günde 200 TL ile ${days(200)} gün · 500 TL ile ${days(500)} gün</span>`}</div></div>
+      ${full ? `<div class="row"><button class="btn primary" data-act="pigbuy" data-id="${g.id}" type="button">Mağazada aç</button></div>` : ''}
+      <div class="field"><span class="label">Kumbaraya at</span>
+        <div class="pig-add">${[200, 500, 1000].map(v => `<button data-act="pigadd" data-v="${v}" type="button">+${v}</button>`).join('')}<button class="big" data-act="pigadd" data-v="${Math.max(1, left)}" type="button"${full ? ' disabled' : ''}>Tamamla</button></div>
+        <div class="row" style="flex-wrap:nowrap"><input class="input" id="pig-amt" type="number" inputmode="numeric" min="1" placeholder="Başka tutar" style="flex:1;min-width:0">
+          <button class="btn sm" data-act="pigaddc" type="button">Ekle</button><button class="btn sm ghost" data-act="pigtake" type="button">Çek</button></div></div>
+      ${g.log.length ? `<details class="cg"><summary>Hareketler <small>${g.log.length}</small></summary><div class="pig-log" style="padding:0 12px 10px">${g.log.slice(-30).reverse().map(x => `<div><span class="${x.a < 0 ? 'neg' : ''}">${x.a > 0 ? '+' : '−'}${fmtPrice(Math.abs(x.a))}</span><span class="muted">${esc(fmtShort(x.t))}</span></div>`).join('')}</div></details>` : ''}
+      <details class="cg"><summary>Kumbara ayarları <small>${g.remind ? 'hatırlatma açık' : 'hatırlatma kapalı'}</small></summary>
+        <div style="display:flex;flex-direction:column;gap:12px;padding:4px 12px 14px">
+          <label class="toggle-row" for="pig-remind"><span><b>Her gün hatırlat</b><br><span class="muted small">Kumbaraya para atma bildirimi</span></span>
+            <span class="switch"><input type="checkbox" id="pig-remind"${g.remind ? ' checked' : ''}><span></span></span></label>
+          <label class="toggle-row" for="pig-time"><span><b>Bildirim saati</b><br><span class="muted small">Tüm kumbaralar için</span></span>
+            <input class="input" id="pig-time" type="time" value="${esc(S.pigTime)}" style="width:auto"></label>
+          <div class="field"><span class="label">Bildirim sesi</span>
+            <div class="row" style="flex-wrap:nowrap"><select class="input" id="pig-sound" style="flex:1;min-width:0">${Object.entries(SOUNDS).map(([k, d]) => `<option value="${k}"${(S.pigSound || 'kumbara') === k ? ' selected' : ''}>${esc(d.n)}</option>`).join('')}</select>
+            <button class="btn sm" data-act="pigplay" type="button">Dinle</button></div></div>
+          <div class="field"><label for="pig-tgt">Hedef tutar (TL)</label><input class="input" id="pig-tgt" type="number" inputmode="numeric" min="1" value="${g.target}"></div>
+          <button class="btn sm danger" data-act="pigdel" type="button">${delArmed ? 'Emin misin? Tekrar dokun' : 'Kumbarayı kır (sil)'}</button>
+        </div></details>`;
+  };
+  draw(); f._draw = draw;
+}
+function pigAdd(a, btn){
+  const sheet = document.getElementById('sheet'); const g = sheet && (S.piggies || []).find(x => sheetMode === 'pig' && x.id === sheet.dataset.pig);
+  if (!g || !a) return;
+  if (a < 0 && g.saved + a < 0) { toast('Kumbarada o kadar para yok'); return; }
+  const wasFull = g.saved >= g.target;
+  g.saved = Math.round((g.saved + a) * 100) / 100; g.log.push({t: Date.now(), a});
+  save(); redrawSheet(); refreshPigHosts();
+  if (a > 0) { playCoin(); coinFx(btn); }
+  if (!wasFull && g.saved >= g.target) setTimeout(() => toast(`Kumbara doldu! ${g.name} için ${fmtPrice(g.saved)} biriktirdin 🎉`), 700);
+  else toast(a > 0 ? `+${fmtPrice(a)} · %${pigPct(g)} doldu, ${fmtPrice(Math.max(0, g.target - g.saved))} kaldı` : `${fmtPrice(-a)} çekildi`);
+}
+function refreshPigHosts(){ if (S.tab === 'koleksiyon') renderCollection(); }
+function pigCards(){
+  const list = S.piggies || []; if (!list.length) return '';
+  return `<section class="section"><div class="row spread"><h3>Kumbaralar</h3><span class="muted small">${fmtPrice(list.reduce((a, g) => a + g.saved, 0))} birikti</span></div>
+    <div class="pig-cards">${list.map(g => `<button class="pig-card${g.saved >= g.target ? ' full' : ''}" data-act="pigopen" data-id="${g.id}" type="button">
+      <span class="nm">${esc(g.name)}</span><small lang="en">${esc(g.brand || '')}</small>
+      <div class="level"><i style="width:${pigPct(g)}%"></i></div>
+      <span><b>%${pigPct(g)}</b> <small>· ${g.saved >= g.target ? 'doldu 🎉' : fmtPrice(g.target - g.saved) + ' kaldı'}</small></span></button>`).join('')}</div></section>`;
+}
+
 async function toggleBell(btn){
   const p = currentP; if (!p) return;
   if (!NATIVE || !NATIVE.setPriceWatches) { toast('Fiyat takibi Android uygulamasının son sürümünde çalışır'); return; }
@@ -2504,7 +2666,7 @@ function detailHtml(p, o){
         ${p.brand ? `<span class="hero-brand tap" lang="en" data-act="brandgo" data-b="${esc(p.brand)}">${esc(p.brand)} ›</span> ${concTag(o.conc || p.conc, p.name)}` : ''}
         <span class="hero-name">${esc(p.name)}</span>
         ${stats ? `<div class="dstats">${stats}</div>` : ''}
-        ${bellHtml(p)}
+        <div class="bell-row">${bellHtml(p)}${piggyChip(p)}</div>
         ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
       </div>
     </div>
@@ -2647,7 +2809,7 @@ async function rbPick(){
         <span class="hero-brand" lang="en">${esc(p.brand)} ${concTag(r[14], r[1])} ${segTag(r[15])}</span>
         <span class="hero-name">${esc(p.name)}</span>
         <div class="dstats">${stats}</div>
-        ${bellHtml(p)}
+        <div class="bell-row">${bellHtml(p)}${piggyChip(p)}</div>
         <div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>
       </div>
     </div>
@@ -3038,6 +3200,9 @@ function migrate(s){
   s.inv.forEach(i => { if (!i.added) i.added = Date.now(); });
   if (!Array.isArray(s.buys)) s.buys = [];
   if (!Array.isArray(s.mac)) s.mac = [];
+  if (!Array.isArray(s.piggies)) s.piggies = [];
+  if (!s.pigTime) s.pigTime = '20:00';
+  if (!s.pigSound) s.pigSound = 'kumbara';
   if (s.macSkip === undefined) s.macSkip = true;
   if (!s.macTime) s.macTime = '10:00';
   if (!Array.isArray(s.wears)) s.wears = [];
@@ -3161,6 +3326,47 @@ document.addEventListener('click', async e => {
     case 'buyopen': openBuySheet(t.dataset.id); break;
     case 'openbest': openBest(currentP); break;
     case 'bell': toggleBell(t); break;
+    case 'pig': { const p = currentP; if (!p) break; const g = pigFor(p.name); if (g) openPig(g.id); else openPigSetup(p); break; }
+    case 'pigopen': openPig(t.dataset.id); break;
+    case 'pigfirst': if (pigDraft) { const v = document.getElementById('pig-target').value; pigDraft.target = v; pigDraft.first = +t.dataset.v; redrawSheet(); } break;
+    case 'pigfetch': {
+      if (!pigDraft) break;
+      t.disabled = true; t.textContent = 'Aranıyor…';
+      const b = await pigPrice(pigDraft.p);
+      if (!pigDraft) break;
+      if (b) { Object.assign(pigDraft, {target: b.price, ml: b.ml, shop: b.shop}); redrawSheet(); toast(`En ucuz ${(STORES[b.shop] || {n: b.shop}).n}: ${fmtPrice(b.price)}`); }
+      else { t.disabled = false; t.textContent = 'Güncel fiyat'; toast('Mağazalarda fiyat bulunamadı; tutarı elle yaz'); }
+      break;
+    }
+    case 'pigcreate': {
+      if (!pigDraft) break;
+      const target = Math.round(+document.getElementById('pig-target').value);
+      if (!(target > 0)) { toast('Hedef tutarı yaz'); document.getElementById('pig-target').focus(); break; }
+      const p = pigDraft.p, first = pigDraft.first || 0;
+      if (p.cid && !inCollection(p.cid)) addFromCatalog(p.cid);
+      const g = {id: uid(), name: p.name, brand: p.brand, cid: p.cid || null, img: p.img || '', conc: p.conc || '', ml: pigDraft.ml, target, saved: first,
+        log: first ? [{t: Date.now(), a: first}] : [], remind: document.getElementById('pig-remind0').checked, created: Date.now()};
+      S.piggies.push(g); save(); refreshPigHosts();
+      if (g.remind && NATIVE && !nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission');
+      ensureSounds();
+      openPig(g.id);
+      if (first) { playCoin(); }
+      toast(`Kumbara kuruldu: hedef ${fmtPrice(target)}${g.remind ? ', her gün ' + S.pigTime + "'de hatırlatırım" : ''}`);
+      break;
+    }
+    case 'pigadd': pigAdd(+t.dataset.v, t); break;
+    case 'pigaddc': case 'pigtake': {
+      const v = Math.round(+document.getElementById('pig-amt').value);
+      if (!(v > 0)) { toast('Tutar yaz'); document.getElementById('pig-amt').focus(); break; }
+      pigAdd(act === 'pigtake' ? -v : v, t); break;
+    }
+    case 'pigplay': await ensureSounds(); if (NATIVE && NATIVE.previewSound) nativeCall('previewSound', resolveSound({sound: S.pigSound})); else playCoin(); break;
+    case 'pigbuy': { const g = S.piggies.find(x => x.id === t.dataset.id); const p = g && (S.perfumes.find(x => x.name === g.name) || {name: g.name, brand: g.brand, conc: g.conc}); if (p) openBest(p); break; }
+    case 'pigdel': {
+      if (!delArmed) { delArmed = true; redrawSheet(); break; }
+      const id = document.getElementById('sheet').dataset.pig;
+      S.piggies = S.piggies.filter(x => x.id !== id); save(); closeSheet(); refreshPigHosts(); toast('Kumbara silindi'); break;
+    }
     case 'note': openNoteCard(t.dataset.n, t.dataset.tier); break;
     case 'noteclose': closeNoteCard(); break;
     case 'alplay': await ensureSounds(); nativeCall('previewSound', resolveSound({sound: S.alarmSound || 'fiyat'})); break;
@@ -3349,6 +3555,13 @@ document.addEventListener('change', async e => {
   if (t.id === 'wx-city') { S.weather.city = t.value; WX = null; save(); fetchWeather(true).then(() => renderLook()); }
   if (t.dataset && t.dataset.ui) { S.ui[t.dataset.ui] = t.checked; save(); applyUi(); const sm = document.querySelector('details.cg summary small'); if (sm) sm.textContent = Object.values(S.ui).filter(v => v === true).length + ' açık'; }
   if (t.id === 'wheel-inv') { S.wheelInv = t.checked; save(); renderWheel(); }
+  if (['pig-remind', 'pig-tgt'].includes(t.id)) {
+    const g = S.piggies.find(x => x.id === document.getElementById('sheet').dataset.pig);
+    if (g && t.id === 'pig-remind') { g.remind = t.checked; if (t.checked && NATIVE && !nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission'); save(); toast(t.checked ? 'Her gün ' + S.pigTime + "'de hatırlatırım" : 'Hatırlatma kapandı'); }
+    if (g && t.id === 'pig-tgt' && +t.value > 0) { g.target = Math.round(+t.value); save(); redrawSheet(); refreshPigHosts(); toast('Hedef: ' + fmtPrice(g.target)); }
+  }
+  if (t.id === 'pig-time' && /^\d\d:\d\d$/.test(t.value)) { S.pigTime = t.value; save(); toast('Kumbara hatırlatması: ' + t.value); }
+  if (t.id === 'pig-sound') { S.pigSound = t.value; save(); await ensureSounds(); lastPlan = ''; syncNative(); }
   if (t.id === 'mac-skip') { S.macSkip = t.checked; repairWeek(); save(); }
   if (t.id === 'mac-time' && /^\d\d:\d\d$/.test(t.value)) {
     S.macTime = t.value;
