@@ -473,6 +473,9 @@ body.sheet-open{overflow:hidden}
 .linkbtn{background:none;border:0;color:var(--accent);font-weight:700;font-size:13px;padding:2px 0}
 .conc.sold{background:transparent;border:1px dashed currentColor;opacity:.85}
 #sold-line:empty{display:none}
+.spin-hero{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:center;animation:pop .45s ease}
+.spin-hero .art{border-radius:16px;aspect-ratio:4/5;font-size:20px}
+.dupe-tag{font-size:10.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--grad);color:var(--ink)}
 .sim-why{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .sim-pct{font-size:12px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
 /* --- scent journal --- */
@@ -1387,25 +1390,32 @@ function filteredWheel(){
   const c = S.wheelCats, off = new Set(S.wheelOff);
   return wheelBase().filter(p => !off.has(p.id) && c.every(x => inCat(p.cats, x)));
 }
+let wheelOpen = false;
 function wheelOptions(){
   const inv = invPerfumes().length, base = wheelBase(), off = new Set(S.wheelOff);
-  return `<div class="box" style="gap:10px">
-    <label class="toggle-row" for="wheel-inv"><span><b>Envanter parfümleri</b><br><span class="muted small">${inv ? 'Çarkta sadece elindeki şişeler (' + inv + ')' : 'Envanterin boş; koleksiyon kullanılıyor'}</span></span>
-      <span class="switch"><input type="checkbox" id="wheel-inv"${S.wheelInv ? ' checked' : ''}><span></span></span></label>
+  const fromInv = S.wheelInv && inv > 0;
+  const summary = [fromInv ? 'Envanter' : 'Koleksiyon', ...S.wheelCats].join(' · ');
+  return `<details class="cg" id="wheel-opts"${wheelOpen ? ' open' : ''} style="background:var(--panel)"><summary>Çark ayarları <small>${esc(summary)}</small></summary>
+  <div style="display:flex;flex-direction:column;gap:12px;padding:4px 12px 14px">
+    <div class="field"><span class="label">Çark nereden dönsün</span>
+      <div class="seg"><button class="${fromInv ? 'on' : ''}" data-act="wheelsrc" data-v="inv" type="button"${inv ? '' : ' disabled'}>Envanter (${inv})</button>
+        <button class="${fromInv ? '' : 'on'}" data-act="wheelsrc" data-v="col" type="button">Koleksiyon (${S.perfumes.length})</button></div>
+      ${inv ? '' : '<span class="muted small">Envanterin boş; çark koleksiyondan dönüyor.</span>'}</div>
+    <div class="field"><span class="label">Kategori</span>${catFilter('wcat', S.wheelGroup, S.wheelCats)}</div>
     <details class="cg" id="wheel-list"><summary>Çarktaki parfümler <small>${base.filter(p => !off.has(p.id)).length}/${base.length} işaretli</small></summary>
       <div style="display:flex;flex-direction:column;gap:2px;padding:0 12px 12px">${base.map(p => `<label class="toggle-row" style="padding:6px 0;justify-content:flex-start;gap:10px">
         <input type="checkbox" class="wheel-tick" data-id="${p.id}"${off.has(p.id) ? '' : ' checked'} style="width:20px;height:20px;accent-color:var(--accent);flex:none">
         <span style="min-width:0">${esc(p.name)} <span class="muted small" lang="en">${esc(p.brand)}</span></span></label>`).join('')}</div></details>
-  </div>`;
+  </div></details>`;
 }
 function renderWheel(){
+  const o = document.getElementById('wheel-opts'); if (o) wheelOpen = o.open;
   wheelList = filteredWheel();
   const last = S.lastSpin && byId(S.lastSpin);
   view.innerHTML = `
   <section class="section">
     <div class="row spread"><h2>Ne sıksam?</h2><span class="muted small">${wheelList.length} parfüm</span></div>
     ${wheelOptions()}
-    ${catFilter('wcat', S.wheelGroup, S.wheelCats)}
   </section>
   <section class="section">
     ${wheelList.length ? `
@@ -1431,6 +1441,29 @@ function resultCard(p){
       <div class="row"><button class="btn sm primary" data-act="settoday" data-id="${p.id}" type="button"${isToday ? ' disabled' : ''}>${isToday ? 'Bugünün parfümü' : 'Bugüne ata'}</button>
         <button class="btn sm ghost" data-act="view" data-id="${p.id}" type="button">Koku profili</button></div>
     </div></div>`;
+}
+function showSpinResult(p){
+  sheetMode = 'spin';
+  const f = openOverlay();
+  const isToday = S.week[today()].pid === p.id, iv = invOf(p.id);
+  f.innerHTML = `<div class="row spread"><span class="eyebrow">Çark diyor ki</span>${closeIcon}</div>
+    <div class="spin-hero">
+      <div class="art tap" data-act="view" data-id="${p.id}">${art(p)}</div>
+      <div class="hero-body">
+        ${p.brand ? `<span class="hero-brand" lang="en">${esc(p.brand)} ${concTag((iv || {}).conc || p.conc, p.name)}</span>` : ''}
+        <span class="hero-name" style="font-size:26px">${esc(p.name)}</span>
+        ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
+        ${notesLine(p) ? `<span class="notes-mini">${esc(notesLine(p))}</span>` : ''}
+        ${iv ? `<span class="muted small">Envanterde · ${iv.ml} ml · %${iv.level}</span>` : ''}
+      </div>
+    </div>
+    <div class="row">
+      ${wornToday(p.id) ? '<button class="btn primary" type="button" disabled>Sıktım ✓</button>' : `<button class="btn primary" data-act="wear" data-id="${p.id}" type="button">Sıktım</button>`}
+      <button class="btn" data-act="settoday" data-id="${p.id}" type="button"${isToday ? ' disabled' : ''}>${isToday ? 'Bugünün parfümü' : 'Bugüne ata'}</button>
+    </div>
+    <div class="row spread"><button class="btn sm ghost" data-act="view" data-id="${p.id}" type="button">Koku profili</button>
+      <button class="btn sm" data-act="spinagain" type="button">Tekrar çevir</button></div>`;
+  haptic('confirm');
 }
 function drawWheel(cv){
   if (!cv || !cv.isConnected || !wheelList.length) return;
@@ -1492,6 +1525,7 @@ function spin(){
     const p = wheelList[Math.floor((((-rot) % TAU + TAU) % TAU) / a) % n];
     S.lastSpin = p.id; save();
     const res = document.getElementById('result'); if (res) res.innerHTML = resultCard(p);
+    showSpinResult(p);
     notifyPick(p, 'Çark');
     try { navigator.vibrate && navigator.vibrate([20, 40, 30]); } catch (e) {}
   })(t0);
@@ -2259,6 +2293,23 @@ function openAlarmSheet(){
 
 /* ---------- similar perfumes and cheaper alternatives ---------- */
 const FAM_W = [1, .8, .6, .45, .35];
+// widely known clones (catalog ids): original → its dupes. Shown first and marked, so the best-known answers never move.
+const KNOWN_DUPES = {
+  9828: [34696, 40405, 27352],          // Creed Aventus → Club de Nuit Intense Man, L'Aventure, Supremacy Silver
+  33519: [63062, 78476, 89849],         // Baccarat Rouge 540 → Ana Abiyedh Rouge, Club de Nuit Untold, Baroque Rouge 540
+  62615: [75805],                       // Angels' Share → Khamrah
+  53641: [64948],                       // Oud for Greatness → Bade'e Al Oud Oud for Glory
+  43871: [90273],                       // Delina → Delilah
+  68415: [72821],                       // Sauvage Elixir → Asad
+  31861: [93538],                       // Sauvage → Salvo
+  50757: [70465],                       // Y Eau de Parfum → Fakhar Black
+  30947: [65414],                       // Ultra Male → 9pm
+  84109: [94713],                       // Althaïr → Liquid Brun
+  25967: [78475], 9099: [78475],        // Bleu de Chanel → Club de Nuit Blue Iconic
+  81642: [102026]                       // Le Male Elixir → Club de Nuit Lionheart Man
+};
+const DUPE_OF = {};
+for (const [o, ds] of Object.entries(KNOWN_DUPES)) for (const d of ds) (DUPE_OF[d] = DUPE_OF[d] || []).push(+o);
 // rare notes say more than common ones (oud vs bergamot), and heart/base notes shape a scent more than the opening
 const TIER_W = [.7, 1, 1.15];
 let NOTE_DF = null;
@@ -2309,8 +2360,12 @@ function similarTo(p, cheapOnly){
     let score = pn.norm && c.nv.norm ? ns * .6 + fs * .4 : fs * .75;
     // a men's scent is a weaker match for a women's one and vice versa
     if (p.g && r[4] && p.g !== 'U' && r[4] !== 'U' && p.g !== r[4]) score *= .8;
-    // well-known perfumes win close calls
+    // well-known perfumes win close calls, and current releases are preferred over old, hard-to-find ones
     score *= 1 + Math.min(.08, Math.log10(r[5]) * .02);
+    const y = r[3] || 0;
+    score *= y >= 2020 ? (cheapOnly ? 1.12 : 1.06) : y >= 2015 ? (cheapOnly ? 1.06 : 1.03) : y && y < 2005 ? .93 : 1;
+    if (cheapOnly && y && y < 2010 && r[5] < 2000) continue;
+    if (KNOWN_DUPES[p.cid] && KNOWN_DUPES[p.cid].includes(r[0])) continue;
     if (score > .34) out.push([c, score]);
   }
   out.sort((a, b) => b[1] - a[1] || b[0].r[5] - a[0].r[5]);
@@ -2324,11 +2379,20 @@ function sharedNotes(p, c){
 function simPane(p){
   if (!CAT) { loadCatalog().then(() => { const el = document.querySelector('.dpane[data-pane="sim"]'); if (el) el.innerHTML = simPane(p); }); return '<span class="muted small">Katalog yükleniyor…</span>'; }
   const list = similarTo(p, S.sim.cheap);
-  return `<div class="chips"><button class="chip${S.sim.cheap ? '' : ' on'}" data-act="simcheap" data-v="0" type="button">Benzerler</button><button class="chip${S.sim.cheap ? ' on' : ''}" data-act="simcheap" data-v="1" type="button">Uygun muadiller</button></div>
+  const known = (KNOWN_DUPES[p.cid] || []).map(id => CAT.byId.get(id)).filter(Boolean);
+  const origin = (DUPE_OF[p.cid] || []).map(id => CAT.byId.get(id)).filter(Boolean);
+  const kRow = (c, tag) => `<div class="item">
+      <div class="art tap" data-act="cview" data-cid="${c.r[0]}">${art({name: c.r[1], img: fimg(c.r[0])})}</div>
+      <div class="item-body tap" data-act="cview" data-cid="${c.r[0]}"><span class="item-name">${esc(c.r[1])} ${catConc(c.r)}</span>
+        <span class="item-meta"><span lang="en">${esc(c.r[2])}</span> ${segTag(c.r[15])}${c.r[3] ? ' · ' + c.r[3] : ''}${c.r[13] ? ' · ★ ' + c.r[13].toFixed(1) : ''}</span></div>
+      <span class="dupe-tag">${tag}</span></div>`;
+  const knownHtml = (origin.length ? `<span class="label">Bunun ilham aldığı parfüm</span><div class="list">${origin.map(c => kRow(c, 'Orijinal')).join('')}</div>` : '')
+    + (known.length ? `<span class="label">Bilinen muadiller</span><div class="list">${known.map(c => kRow(c, 'Muadil')).join('')}</div>` : '');
+  return `${knownHtml}<div class="chips"><button class="chip${S.sim.cheap ? '' : ' on'}" data-act="simcheap" data-v="0" type="button">Benzerler</button><button class="chip${S.sim.cheap ? ' on' : ''}" data-act="simcheap" data-v="1" type="button">Uygun muadiller</button></div>
     ${list.length ? `<div class="list">${list.map(([c, sc]) => `<div class="item">
       <div class="art tap" data-act="cview" data-cid="${c.r[0]}">${art({name: c.r[1], img: fimg(c.r[0])})}</div>
       <div class="item-body tap" data-act="cview" data-cid="${c.r[0]}"><span class="item-name">${esc(c.r[1])} ${catConc(c.r)}</span>
-        <span class="item-meta"><span lang="en">${esc(c.r[2])}</span> ${segTag(c.r[15])}${c.r[13] ? ' · ★ ' + c.r[13].toFixed(1) : ''}</span>
+        <span class="item-meta"><span lang="en">${esc(c.r[2])}</span> ${segTag(c.r[15])}${c.r[3] ? ' · ' + c.r[3] : ''}${c.r[13] ? ' · ★ ' + c.r[13].toFixed(1) : ''}</span>
         ${(() => { const sh = sharedNotes(p, c); return sh.length ? `<span class="sim-why">Ortak: ${esc(sh.join(', '))}</span>` : `<div class="fam-line">${c.r[8].slice(0, 2).map(famTag).join('')}</div>`; })()}</div>
       <span class="sim-pct">%${Math.round(Math.min(.99, sc) * 100)}</span></div>`).join('')}</div>`
       : `<div class="empty">${S.sim.cheap ? 'Bu parfüme yakın uygun fiyatlı muadil bulunamadı.' : 'Yeterince benzer parfüm bulunamadı.'}</div>`}
@@ -3430,6 +3494,8 @@ document.addEventListener('click', async e => {
     case 'buyopen': openBuySheet(t.dataset.id); break;
     case 'openbest': openBest(currentP); break;
     case 'bell': toggleBell(t); break;
+    case 'wheelsrc': S.wheelInv = t.dataset.v === 'inv'; save(); renderWheel(); toast(S.wheelInv ? 'Çark envanterden dönüyor' : 'Çark koleksiyondan dönüyor'); break;
+    case 'spinagain': closeSheet(); setTimeout(() => { window.scrollTo({top: 0, behavior: 'smooth'}); spin(); }, 220); break;
     case 'pig': { const p = currentP; if (!p) break; const g = pigFor(p.name); if (g) openPig(g.id); else openPigSetup(p); break; }
     case 'pigopen': openPig(t.dataset.id); break;
     case 'pigfirst': if (pigDraft) { const v = document.getElementById('pig-target').value; pigDraft.target = v; pigDraft.first = +t.dataset.v; redrawSheet(); } break;
@@ -3498,7 +3564,7 @@ document.addEventListener('click', async e => {
       const p = byId(t.dataset.id); if (!p || wornToday(p.id)) break;
       S.wears.push({pid: p.id, t: Date.now()}); if (S.wears.length > 2000) S.wears = S.wears.slice(-2000);
       const it = invOf(p.id); if (it && it.level > 0) it.level = Math.max(0, it.level - 1);
-      save(); render(); toast(p.name + ' günlüğe eklendi'); break;
+      save(); render(); if (sheetMode === 'spin') closeSheet(); toast(p.name + ' günlüğe eklendi'); break;
     }
     case 'cbuy': { const p = inCollection(+t.dataset.cid) || addFromCatalog(t.dataset.cid); if (p) openBuySheet(p.id); break; }
     case 'buypreset': { const i = document.getElementById('buy-at'); if (i) i.value = toLocalInput(+t.dataset.at); document.querySelectorAll('#buy-presets .chip').forEach(c => c.classList.toggle('on', c === t)); break; }
