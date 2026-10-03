@@ -68,6 +68,16 @@ def gumus(t):
     out += math.sin(2 * math.pi * 2637 * t) * env(t - .2, .01, .3) * .05
     return out
 
+def fiyat(t):
+    # price drop: a rising three-note chime (G5 B5 E6) with a light coin shimmer, then a soft confirming low note
+    out = 0
+    for i, f in enumerate((783.99, 987.77, 1318.51)):
+        out += partials(f, t - i * .09, ((1, 1), (2.01, .25), (3.02, .08)), .003, .5) * (.75 + i * .1)
+    for s, f in ((.32, 2637.0), (.38, 3135.96), (.45, 2793.83)):
+        out += math.sin(2 * math.pi * f * (t - s)) * env(t - s, .002, .09) * .12
+    out += partials(329.63, t - .3, ((1, 1), (2, .2)), .02, .6) * .4
+    return out
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     random.seed(3)
@@ -75,4 +85,5 @@ if __name__ == '__main__':
     render('kadeh', 2.2, kadeh, .45, 2)
     render('vanilya', 2.2, vanilya, .5)
     render('gumus', 1.8, gumus, .45)
+    render('fiyat', 1.8, fiyat, .5)
     print('ok')

@@ -126,6 +126,12 @@ public class Bridge {
     }
 
     @JavascriptInterface
+    public void setPriceSound(String spec) {
+        if (!activity.trusted()) return;
+        PriceWatch.setSound(activity, spec);
+    }
+
+    @JavascriptInterface
     public String priceResults() {
         if (!activity.trusted()) return "{}";
         return PriceWatch.results(activity);

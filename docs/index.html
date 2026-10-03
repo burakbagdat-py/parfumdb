@@ -315,7 +315,7 @@ textarea.input{resize:vertical;min-height:70px}
 
 /* sheet */
 .overlay{position:fixed;inset:0;background:rgb(6 4 2 / .72);z-index:40;display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
-.sheet{width:100%;max-width:560px;max-height:92%;overflow:auto;background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px;animation:up .25s ease-out}
+.sheet{width:100%;max-width:560px;max-height:92%;max-height:calc(100dvh - 28px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:24px 24px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:16px;animation:up .25s ease-out}
 @keyframes up{from{transform:translateY(40px);opacity:.5}to{transform:none;opacity:1}}
 @keyframes fade{from{opacity:0}}
 .photo-pick{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:center}
@@ -394,6 +394,17 @@ html.fs-l{zoom:1.08}
 .rb-notes b{color:var(--fg);font-weight:600}
 .wx{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
 .wx b{color:var(--fg);font-variant-numeric:tabular-nums}
+body.sheet-open{overflow:hidden}
+/* sheet children keep their natural height so the sheet scrolls instead of squeezing (and clipping) them */
+.sheet>*,.dpane>*{flex-shrink:0}
+.notecard{position:fixed;left:12px;right:12px;bottom:calc(16px + env(safe-area-inset-bottom,0px));max-width:536px;margin:0 auto;z-index:70;background:var(--panel-2);border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:18px;padding:14px 16px;box-shadow:0 18px 40px rgb(0 0 0 / .5);display:flex;flex-direction:column;gap:8px;animation:snack .22s cubic-bezier(.2,.8,.2,1)}
+.notecard h3{font-size:19px}
+.notecard p{margin:0;font-size:14px;line-height:1.5}
+.note-chip{cursor:pointer}
+.note-chip:active{transform:scale(.95)}
+.brand-row{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border-top:1px solid var(--line);background:none;border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left;color:var(--fg)}
+.brand-row:first-child{border-top:0}
+.brand-av{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--panel-2);font-family:var(--f-display);font-weight:var(--dw);color:var(--hi)}
 /* --- store order, alarms, similar --- */
 .order{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
 .order .o{display:grid;grid-template-columns:24px 1fr auto auto;gap:10px;align-items:center;padding:8px 10px;border-top:1px solid var(--line)}
@@ -572,7 +583,7 @@ const STORES = {
 };
 // dl: downloaded by the app at runtime from docs/sounds (no new APK needed); others ship inside the APK
 const SOUNDS = {
-  bb: {n: 'BB İmza', dl: 'bb_yumusak'}, kadeh: {n: 'Kadeh', dl: 'kadeh'}, vanilya: {n: 'Vanilya arp', dl: 'vanilya'}, gumus: {n: 'Gümüş çan', dl: 'gumus'},
+  bb: {n: 'BB İmza', dl: 'bb_yumusak'}, fiyat: {n: 'Fiyat çanı', dl: 'fiyat'}, kadeh: {n: 'Kadeh', dl: 'kadeh'}, vanilya: {n: 'Vanilya arp', dl: 'vanilya'}, gumus: {n: 'Gümüş çan', dl: 'gumus'},
   kristal: {n: 'Kristal'}, gemi_cani: {n: 'Gemi çanı'}, robot: {n: 'Robot'}, sprey: {n: 'Sprey'}, damla: {n: 'Damla'}, nabiz: {n: 'Nabız'}
 };
 const sname = k => (SOUNDS[k] || {}).n || k;
@@ -669,7 +680,7 @@ function freshState(){
     inv: [], customCats: [],
     week, weekKey: '', source: 'envanter',
     wheelCats: [], wheelGroup: 'Kullanım', lastSpin: null,
-    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true, buys: [], wears: [], ui: {...UI_DEFAULT}, weather: {on: false, city: 'İstanbul', auto: false, day: ''},
+    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', global: false, alarmSound: 'fiyat', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true, buys: [], wears: [], ui: {...UI_DEFAULT}, weather: {on: false, city: 'İstanbul', auto: false, day: ''},
     shop: {exact: true, order: ['boyner', 'beymen', 'sephora', 'trendyol', 'hepsiburada', 'amazon'], off: []},
     alarms: [], alarmTime: '12:00', sim: {on: true, cheap: false},
     notif: {reminders: defaultReminders()}
@@ -1034,7 +1045,7 @@ function ensureSounds(){
   if (!NATIVE || !NATIVE.installSound) return Promise.resolve();
   if (ensuring) return ensuring;
   const names = new Set();
-  [...S.notif.reminders, {sound: 'tema'}].forEach(r => { const spec = resolveSound(r); if (spec.startsWith('dl:')) names.add(spec.slice(3)); });
+  [...S.notif.reminders, {sound: 'tema'}, {sound: S.alarmSound || 'fiyat'}].forEach(r => { const spec = resolveSound(r); if (spec.startsWith('dl:')) names.add(spec.slice(3)); });
   ensuring = (async () => {
     let got = false;
     for (const n of names) {
@@ -1394,23 +1405,100 @@ function spin(){
 }
 
 /* ---------- explore ---------- */
-let ex = {q: '', g: '', boy: false, conc: '', seg: '', cats: [], group: 'Kullanım', limit: 40};
+let ex = {q: '', g: '', boy: false, conc: '', seg: '', cats: [], group: 'Kullanım', limit: 40, mode: 'perf', brand: null, bq: ''};
+let BRANDS = null;
+function brandIndex(){
+  if (BRANDS) return BRANDS;
+  const m = new Map();
+  for (const c of CAT) {
+    const b = c.r[2]; let e = m.get(b);
+    if (!e) { e = {n: b, count: 0, votes: 0, seg: c.r[15], boy: c.boy}; m.set(b, e); }
+    e.count++; e.votes += c.r[5];
+  }
+  BRANDS = [...m.values()].sort((a, b) => b.votes - a.votes);
+  return BRANDS;
+}
+// lines: perfumes of a house that share a meaningful name start form one line ("Le Male Elixir", "Le Male In Blue" → Le Male);
+// filler words never make a line on their own, and a name that starts with the house name needs one more word ("Dior Homme")
+const LINE_STOP = new Set(['le', 'la', 'l', 'les', 'the', 'eau', 'de', 'du', 'des', 'by', 'a', 'an', 'el', 'il', 'un', 'une', 'my', 'mon', 'ma', 'pour', 'for', 'of']);
+function brandLines(brand, items){
+  const all = CAT.filter(c => c.r[2] === brand);
+  const brandW = new Set(fold(brand).split(/[^a-z0-9]+/).filter(Boolean));
+  const keyOf = c => {
+    const w = fold(c.r[1]).replace(/['’]/g, ' ').split(/[^a-z0-9]+/).filter(Boolean);
+    let k = 0;
+    while (k < w.length && LINE_STOP.has(w[k])) k++;
+    if (k < w.length && brandW.has(w[k]) && k + 1 < w.length) k++;
+    return w.slice(0, k + 1).join(' ');
+  };
+  const count = new Map();
+  for (const c of all) { const k = keyOf(c); count.set(k, (count.get(k) || 0) + 1); }
+  const groups = new Map();
+  for (const c of items) {
+    const k0 = keyOf(c), k = count.get(k0) > 1 ? k0 : '#' + c.r[0];
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(c);
+  }
+  return [...groups.entries()].map(([k, list]) => {
+    list.sort((a, b) => a.r[1].length - b.r[1].length || b.r[5] - a.r[5]);
+    const root = list[0], n = k.startsWith('#') ? 0 : k.split(' ').length;
+    // the line's name is the longest word-prefix all its perfumes share ("Miss Dior", not just "Miss")
+    let name = root.r[1];
+    if (n && list.length > 1) {
+      const ws = list.map(c => c.r[1].split(/\s+/));
+      let m = 0; while (ws.every(w => w[m] && fold(w[m]) === fold(ws[0][m]))) m++;
+      name = ws[0].slice(0, Math.max(n, m)).join(' ');
+    } else if (n) name = root.r[1].split(/\s+/).slice(0, n).join(' ');
+    const total = k.startsWith('#') ? 1 : count.get(k);
+    return {r: {name}, list: [root, ...list.slice(1).sort((a, b) => b.r[5] - a.r[5])], total, votes: list.reduce((v, c) => v + c.r[5], 0)};
+  }).sort((a, b) => b.votes - a.votes);
+}
+function renderBrands(){
+  const body = document.getElementById('ex-body'); if (!body || !CAT) return;
+  if (ex.brand) return renderBrandPage();
+  const q = fold(ex.bq);
+  const list = brandIndex().filter(b => !q || fold(b.n).includes(q) || (ALIASES[q] && fold(b.n).includes(fold(ALIASES[q]))));
+  body.innerHTML = `<section class="section">
+    <input class="search" id="br-q" type="search" placeholder="Marka ara (örn. pdm, dior, lattafa)" value="${esc(ex.bq)}" autocomplete="off">
+    <div class="list">${list.slice(0, ex.limit).map(b => `<button class="brand-row" data-act="brandopen" data-b="${esc(b.n)}" type="button">
+      <span class="brand-av">${esc(b.n.charAt(0))}</span>
+      <span class="item-body"><span class="item-name" lang="en">${esc(b.n)}</span><span class="item-meta">${b.count} parfüm ${segTag(b.seg)}${b.boy ? ' <span class="boyner">Boyner</span>' : ''}</span></span>
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><path d="m9 6 6 6-6 6"/></svg></button>`).join('')}</div>
+    ${list.length > ex.limit ? `<button class="btn block" data-act="exmore" type="button">Daha fazla marka</button>` : ''}</section>`;
+}
+function renderBrandPage(){
+  const body = document.getElementById('ex-body');
+  const b = brandIndex().find(x => x.n === ex.brand); if (!b) { ex.brand = null; return renderBrands(); }
+  const items = searchCatalog().filter(c => c.r[2] === ex.brand);
+  const lines = brandLines(ex.brand, items);
+  const bb = BOY_KEYS.get(normBrand(ex.brand));
+  body.innerHTML = `<section class="section">
+    <button class="back" data-act="brandback" type="button" style="margin:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>Markalar</button>
+    <div class="row spread"><h2 lang="en">${esc(b.n)}</h2>${bb ? `<a class="btn sm" href="${esc(bb.u)}" data-act="extlink">Boyner'de gör</a>` : ''}</div>
+    <span class="muted small">${b.count} parfüm · ${lines.length} seri ${segTag(b.seg)}${items.length !== b.count ? ' · filtreyle ' + items.length + ' gösteriliyor' : ''}</span>
+    ${lines.length ? lines.map((g, i) => `<details class="cg" style="background:var(--panel)"${i < 3 ? ' open' : ''}>
+      <summary><span lang="en">${esc(g.r.name)}</span> <small>${g.list.length > 1 ? g.list.length + ' parfüm' : '1 parfüm'}${g.total > g.list.length ? ' / ' + g.total : ''}</small></summary>
+      <div class="list" style="margin:0 8px 8px">${g.list.map(catRow).join('')}</div></details>`).join('')
+      : '<div class="empty">Bu filtrelerle bu markada parfüm yok.</div>'}
+  </section>`;
+}
 const concChips = (act, cur) => `<div class="chips scroll"><button class="chip${cur ? '' : ' on'}" data-act="${act}" data-v="" type="button">Tüm türler</button>${CONCS.map(c => `<button class="chip${cur === c ? ' on' : ''}" data-act="${act}" data-v="${c}" type="button">${c}</button>`).join('')}</div>`;
 function renderExplore(){
   view.innerHTML = `
   <section class="section">
     <div class="row spread"><h2>Keşfet</h2><button class="btn sm primary" data-act="randbuy" type="button">Rastgele parfüm al</button></div>
-    <input class="search" id="ex-q" type="search" placeholder="Parfüm, marka ya da nota ara (örn. vanilya)" value="${esc(ex.q)}" autocomplete="off">
+    <div class="seg"><button class="${ex.mode === 'perf' ? 'on' : ''}" data-act="exmode" data-v="perf" type="button">Parfümler</button><button class="${ex.mode === 'brands' ? 'on' : ''}" data-act="exmode" data-v="brands" type="button">Markalar</button></div>
+    ${ex.mode === 'brands' && !ex.brand ? '' : `<input class="search" id="ex-q" type="search" placeholder="Parfüm, marka ya da nota ara (örn. vanilya)" value="${esc(ex.q)}" autocomplete="off">
     <div class="chips scroll">
       <button class="chip${ex.boy ? ' on' : ''}" data-act="exboy" type="button">Boyner'de</button>
       ${['E','K','U'].map(g => `<button class="chip${ex.g === g ? ' on' : ''}" data-act="exg" data-g="${g}" type="button">${GENDER[g]}</button>`).join('')}
     </div>
     <div class="chips scroll"><button class="chip${ex.seg ? '' : ' on'}" data-act="exseg" data-v="" type="button">Tüm segmentler</button>${Object.entries(SEG).map(([k, v]) => `<button class="chip${ex.seg === k ? ' on' : ''}" data-act="exseg" data-v="${k}" type="button">${v}</button>`).join('')}</div>
     ${concChips('exconc', ex.conc)}
-    ${catFilter('excat', ex.group, ex.cats)}
+    ${catFilter('excat', ex.group, ex.cats)}`}
   </section>
   <div id="ex-body"><div class="list">${'<div class="sk-row"><div class="sk"></div><div class="sk-lines"><div class="sk" style="width:70%"></div><div class="sk" style="width:45%"></div><div class="sk" style="width:55%"></div></div></div>'.repeat(6)}</div></div>`;
-  loadCatalog().then(renderExploreBody)
+  loadCatalog().then(() => ex.mode === 'brands' ? renderBrands() : renderExploreBody())
     .catch(() => { const b = document.getElementById('ex-body'); if (b) b.innerHTML = `<div class="empty">Katalog yüklenemedi. İnternet bağlantını kontrol edip tekrar dene.<br><br><button class="btn sm" data-act="go" data-tab="kesfet" type="button">Tekrar dene</button></div>`; });
 }
 function catRow(c){
@@ -1526,6 +1614,46 @@ function renderGrid(){
     </button>`; }).join('')}</div>`;
 }
 
+/* ---------- note explanations ---------- */
+let NOTES = null;
+async function loadNotes(){
+  if (NOTES) return NOTES;
+  try { const r = await fetch('data/notes.json'); NOTES = await r.json(); } catch (e) { NOTES = {}; }
+  return NOTES;
+}
+function guessNote(n){
+  const f = fold(n);
+  const has = (...w) => w.some(x => f.includes(x));
+  if (has('agac', 'odun', 'sedir', 'sandal', 'ud', 'mese', 'cam')) return 'Odunsu bir not: kuru, sıcak ve ahşap hissi verir; genelde parfümün tabanında kalıcılık sağlar.';
+  if (has('cicek', 'gul', 'yasemin', 'zambak', 'orkide', 'lale', 'menekse', 'sumbul')) return 'Çiçeksi bir not: parfüme yumuşaklık, tazelik ya da romantik bir hava katar.';
+  if (has('biber', 'baharat', 'tarcin', 'karanfil', 'zencefil', 'muskat', 'safran')) return 'Baharatlı bir not: parfüme sıcaklık ve canlılık verir.';
+  if (has('limon', 'portakal', 'mandalina', 'greyfurt', 'narenciye', 'bergamot', 'yuzu')) return 'Narenciye notası: parlak, ferah ve enerjik; genelde açılışta hissedilir, çabuk uçar.';
+  if (has('meyve', 'elma', 'armut', 'kiraz', 'cilek', 'seftali', 'erik', 'uzum', 'mango', 'ananas')) return 'Meyveli bir not: tatlı, sulu ve neşeli bir hava verir.';
+  if (has('vanilya', 'karamel', 'seker', 'cikolata', 'kakao', 'kahve', 'pralin', 'bal', 'sut')) return 'Gurme bir not: yenilebilir bir şeyi çağrıştıran tatlı ve sıcak bir koku.';
+  if (has('misk', 'amber', 'reçine', 'recine', 'balsam', 'tutsu')) return 'Sıcak ve sarmalayıcı bir taban notası; parfümün tende uzun süre kalmasını sağlar.';
+  if (has('deniz', 'su ', 'ozon', 'tuz')) return 'Ferah, sulu bir not: deniz, yağmur ya da temiz hava hissi verir.';
+  if (has('yesil', 'yaprak', 'cimen', 'ot', 'nane', 'adacayi', 'fesleken', 'kekik')) return 'Yeşil ya da aromatik bir not: taze kesilmiş bitki ve ferahlık hissi verir.';
+  return 'Bu notanın kısa açıklaması henüz yok; aşağıdaki parfümlerde nasıl koktuğunu deneyebilirsin.';
+}
+const TIER_INFO = {top: 'Üst nota: ilk 15–30 dakikada hissedilir.', heart: 'Kalp nota: parfümün karakterini 30 dk – 3 saat boyunca taşır.', base: 'Alt nota: saatlerce tende kalan iz.'};
+function closeNoteCard(){ const c = document.getElementById('notecard'); if (c) c.remove(); }
+async function openNoteCard(n, tier){
+  closeNoteCard();
+  const d = await loadNotes();
+  const desc = d[n] || guessNote(n);
+  const fn = fold(n);
+  const with_ = CAT ? CAT.filter(c => c.r[9].concat(c.r[10], c.r[11]).some(x => fold(x) === fn)).slice(0, 6) : [];
+  const total = CAT ? CAT.reduce((k, c) => k + (c.r[9].concat(c.r[10], c.r[11]).some(x => fold(x) === fn) ? 1 : 0), 0) : 0;
+  const el = document.createElement('div'); el.className = 'notecard'; el.id = 'notecard';
+  el.innerHTML = `<div class="row spread"><h3>${esc(n)}</h3><button class="icon-btn" data-act="noteclose" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <p>${esc(desc)}</p>
+    ${tier ? `<span class="muted small">${TIER_INFO[tier]}</span>` : ''}
+    ${with_.length ? `<span class="label">Bu notayı taşıyan popüler parfümler${total ? ' · ' + total.toLocaleString('tr-TR') + ' parfüm' : ''}</span>
+      <div class="chips">${with_.map(c => `<button class="chip" data-act="cview" data-cid="${c.r[0]}" type="button">${esc(c.r[1])}</button>`).join('')}</div>` : ''}`;
+  document.body.appendChild(el);
+  if (!CAT) loadCatalog().catch(() => {});
+}
+
 /* ---------- open the exact product: Boyner first, then the user's store order ---------- */
 let currentP = null;
 const STOP_SLUG = new Set(['ml', 'erkek', 'kadin', 'unisex', 'parfum', 'parfumu', 'edt', 'edp', 'eau', 'de', 'toilette', 'cologne', 'extrait', 'set', 'seti', 'sprey']);
@@ -1582,6 +1710,7 @@ async function openBest(p){
 /* ---------- price alarms (checked daily by the app in the background) ---------- */
 const alarmFor = (name, ml) => S.alarms.find(a => a.name === name && (ml == null || a.ml === ml));
 function syncAlarms(){
+  nativeCall('setPriceSound', resolveSound({sound: S.alarmSound || 'fiyat'}));
   nativeCall('setPriceWatches', JSON.stringify(S.alarms.map(a => ({id: a.id, name: a.name, brand: a.brand, q: a.q, ml: a.ml, target: a.target}))), S.alarmTime);
 }
 function alarmResults(){ try { return JSON.parse(nativeCall('priceResults') || '{}'); } catch (e) { return {}; } }
@@ -1825,6 +1954,7 @@ const parseList = s => String(s).split(/[,;\n]+/).map(x => x.trim()).filter(Bool
 const closeIcon = '<button class="icon-btn" data-act="close" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg></button>';
 function openOverlay(){
   const old = document.getElementById('overlay'); if (old) old.remove();
+  document.body.classList.add('sheet-open'); closeNoteCard();
   const o = document.createElement('div'); o.className = 'overlay'; o.id = 'overlay';
   o.innerHTML = `<form class="sheet" id="sheet" novalidate></form>`;
   document.body.appendChild(o);
@@ -1833,13 +1963,15 @@ function openOverlay(){
 function closeSheet(){
   const o = document.getElementById('overlay');
   if (o) { o.id = ''; o.classList.add('closing'); setTimeout(() => o.remove(), 180); }
+  document.body.classList.remove('sheet-open'); closeNoteCard();
   draft = null; sheetMode = null; priceState = null;
 }
 // drag a sheet down from its top to close it
 let drag = null;
 document.addEventListener('touchstart', e => {
   const sh = e.target.closest('.sheet');
-  if (!sh || sh.scrollTop > 0 || e.target.closest('input,textarea,select,.chips.scroll,.shelf,.sizes')) { drag = null; return; }
+  // only the top strip (handle and title) drags the sheet; everything else scrolls normally
+  if (!sh || sh.scrollTop > 0 || e.touches[0].clientY - sh.getBoundingClientRect().top > 72 || e.target.closest('input,textarea,select')) { drag = null; return; }
   drag = {sh, y: e.touches[0].clientY, dy: 0};
 }, {passive: true});
 document.addEventListener('touchmove', e => {
@@ -1929,9 +2061,12 @@ function drawPrices(){
     ${data.groups.length > 1 ? `<select class="input" id="price-group" aria-label="Ürün">${data.groups.map((x, i) => `<option value="${i}"${x === g ? ' selected' : ''}>${esc(x.label)}${concFromText(x.label) ? ' · ' + concFromText(x.label) : ''}</option>`).join('')}</select>` : `<span class="small">${esc(g.label)}</span>`}
     <div class="row spread" style="align-items:flex-end"><div><span class="muted small">${ml} ml ${concTag(concFromText(g.label))}</span><div class="bigprice">${fmtPrice(cur.price)}</div></div>
       <a class="btn sm primary" href="${esc(cur.url)}" data-act="extlink">Boyner'de aç</a></div>
-    ${NATIVE && NATIVE.setPriceWatches ? (() => { const a = alarmFor(p.name, ml); return a
-      ? `<button class="alarm-chip" data-act="alopen" type="button">🔔 Alarm: ${a.ml} ml ≤ ${fmtPrice(a.target)}</button>`
-      : `<button class="btn sm ghost" data-act="alopen" type="button">🔔 Fiyat düşünce haber ver</button>`; })() : ''}
+    ${(() => { const a = alarmFor(p.name); const ok = NATIVE && NATIVE.setPriceWatches; return `
+      <label class="toggle-row" for="pc-on"><span><b>Fiyat kontrolü</b><br><span class="muted small">${ok ? (a ? `Her gün ${esc(S.alarmTime)} civarı ${a.ml} ml kontrol ediliyor` : 'Açınca her gün kontrol edilir, hedefin altına inince bildirim gelir') : 'Uygulamanın son sürümünde çalışır'}</span></span>
+        <span class="switch"><input type="checkbox" id="pc-on"${a ? ' checked' : ''}${ok ? '' : ' disabled'}><span></span></span></label>
+      ${a ? `<div class="row" style="flex-wrap:nowrap"><span class="small" style="flex:none">Hedef · ${a.ml} ml</span>
+        <input class="input" id="pc-target" type="number" inputmode="numeric" min="1" value="${a.target}" style="flex:1;min-width:0"><span class="small">TL</span>
+        <button class="btn sm ghost" data-act="alopen" type="button">Boyut</button></div>` : ''}`; })()}
     <div class="sizes">${showSizes.map(s => g.sizes[s]
       ? `<button class="${s === ml ? 'on' : ''}" data-act="pricesize" data-ml="${s}" type="button"><b>${s} ml</b><small>${fmtPrice(g.sizes[s].price)}</small></button>`
       : `<button class="na" type="button" disabled><b>${s} ml</b><small>yok</small></button>`).join('')}</div>`;
@@ -1954,7 +2089,7 @@ function detailHtml(p, o){
     <div class="dhead">
       <div class="art">${art(p)}</div>
       <div class="hero-body">
-        ${p.brand ? `<span class="hero-brand" lang="en">${esc(p.brand)} ${concTag(o.conc || p.conc, p.name)}</span>` : ''}
+        ${p.brand ? `<span class="hero-brand tap" lang="en" data-act="brandgo" data-b="${esc(p.brand)}">${esc(p.brand)} ›</span> ${concTag(o.conc || p.conc, p.name)}` : ''}
         <span class="hero-name">${esc(p.name)}</span>
         ${stats ? `<div class="dstats">${stats}</div>` : ''}
         ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
@@ -1964,7 +2099,8 @@ function detailHtml(p, o){
     <div class="seg dtabs">${[['notes', 'Notalar'], ['price', 'Fiyat'], ['info', 'Bilgi'], ...(S.sim.on ? [['sim', 'Benzer']] : [])].map(([k, l]) => `<button class="${dTab === k ? 'on' : ''}" data-act="dtab" data-v="${k}" type="button">${l}</button>`).join('')}</div>
     <div class="dpane" data-pane="notes"${dTab === 'notes' ? '' : ' hidden'}>
       ${notes ? `<div class="pyramid">${TIERS.map(([k, label, when]) => `<div class="tier"><div class="tier-name"><b>${label}</b><span>${when}</span></div>
-        <div class="chips">${p[k].length ? p[k].map(n => `<span class="note-chip">${esc(n)}</span>`).join('') : '<span class="muted small">Yok</span>'}</div></div>`).join('')}</div>`
+        <div class="chips">${p[k].length ? p[k].map(n => `<button class="note-chip" data-act="note" data-n="${esc(n)}" data-tier="${k}" type="button">${esc(n)}</button>`).join('') : '<span class="muted small">Yok</span>'}</div></div>`).join('')}</div>
+        <span class="muted small">Bir notaya dokun, ne koktuğunu anlatsın.</span>`
       : '<div class="empty">Henüz nota eklenmemiş. “Düzenle” ile ekleyebilirsin.</div>'}
       ${p.fam.length > 3 ? `<div class="fam-line">${p.fam.slice(3).map(famTag).join('')}</div>` : ''}
     </div>
@@ -2038,7 +2174,7 @@ function rbPool(){
     && (!rb.seg || c.r[15] === rb.seg)
     && (!S.gender || c.r[4] === S.gender || c.r[4] === 'U')
     && (!rb.cat || c.r[12].includes(rb.cat))
-    && (S.store !== 'boyner' || c.boy));
+    && (S.global || S.store !== 'boyner' || c.boy));
 }
 function openRandomBuy(){
   sheetMode = 'randbuy';
@@ -2049,6 +2185,8 @@ function openRandomBuy(){
       <div class="chips"><button class="chip${rb.seg ? '' : ' on'}" data-act="rbseg" data-v="" type="button">Fark etmez</button>${Object.entries(SEG).map(([k, v]) => `<button class="chip${rb.seg === k ? ' on' : ''}" data-act="rbseg" data-v="${k}" type="button">${v}</button>`).join('')}</div></div>
     <div class="field"><span class="label">Ne için?</span>
       <div class="chips" id="rb-moods">${MOODS.map(c => `<button class="chip${rb.cat === c ? ' on' : ''}" data-act="rbcat" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div></div>
+    <label class="toggle-row" for="rb-global"><span><b>Global katalog</b><br><span class="muted small">${S.global ? 'Dünyadaki tüm parfümler' : 'Türkiye’de bulunan markalar (Boyner)'}</span></span>
+      <span class="switch"><input type="checkbox" id="rb-global"${S.global ? ' checked' : ''}><span></span></span></label>
     <label class="toggle-row" for="rb-good"><span><b>Sadece beğenilenler</b><br><span class="muted small">★ 3,9 ve üstü, en az 1000 oy</span></span>
       <span class="switch"><input type="checkbox" id="rb-good"${rb.good ? ' checked' : ''}><span></span></span></label>
     <div class="row" style="flex-wrap:nowrap">
@@ -2248,6 +2386,8 @@ function renderShop(){
     ${backBtn}
     <h2>Alışveriş</h2>
     <div class="box">
+      <label class="toggle-row" for="set-global"><span><b>Global katalog</b><br><span class="muted small">Açıkken “Rastgele parfüm al” Türkiye’de satılmayanlar dahil dünyadaki tüm parfümlerden seçer.</span></span>
+        <span class="switch"><input type="checkbox" id="set-global"${S.global ? ' checked' : ''}><span></span></span></label>
       <div class="field"><span class="label">Rastgele al için mağaza</span><div class="chips">${Object.entries(STORES).map(([k, s]) => `<button class="chip${S.store === k ? ' on' : ''}" data-act="setstore" data-v="${k}" type="button">${s.n}</button>`).join('')}</div>
         <span class="muted small">${S.store === 'boyner' ? "Boyner seçiliyken sadece Boyner'de satılan markalardan seçilir ve canlı fiyat gösterilir." : 'Seçilen parfüm bu mağazada aranır.'}</span></div>
       <div class="field"><span class="label">Kimin için</span><div class="seg">
@@ -2274,6 +2414,9 @@ function renderShop(){
         ${NATIVE && NATIVE.setPriceWatches ? `
         <span class="muted small">Bir parfümün Fiyat sekmesinde “Fiyat düşünce haber ver”e dokun. Uygulama her gün Boyner fiyatını kontrol eder, hedefin altına inince bildirim gönderir.</span>
         <div class="field"><label for="al-time">Günlük kontrol saati</label><input class="input" type="time" id="al-time" value="${esc(S.alarmTime)}"></div>
+        <div class="field"><label for="al-sound">Fiyat düştüğünde çalacak ses</label>
+          <div class="row" style="flex-wrap:nowrap"><select class="input" id="al-sound" style="flex:1;min-width:0">${Object.entries(SOUNDS).map(([k, d]) => `<option value="${k}"${(S.alarmSound || 'fiyat') === k ? ' selected' : ''}>${esc(d.n)}</option>`).join('')}<option value="default"${S.alarmSound === 'default' ? ' selected' : ''}>Telefonun bildirim sesi</option></select>
+          <button class="btn sm" data-act="alplay" type="button">Dinle</button></div></div>
         ${S.alarms.length ? `<div class="list">${S.alarms.map(a => { const r = alarmResults()[a.id]; return `<div class="item" style="grid-template-columns:minmax(0,1fr) auto">
           <div class="item-body"><span class="item-name">${esc(a.name)}</span>
             <span class="item-meta">${a.ml} ml · hedef ${fmtPrice(a.target)} · başta ${fmtPrice(a.start)}</span>
@@ -2516,6 +2659,7 @@ const updateBtn = (cls, label) => NATIVE && NATIVE.installUpdate
   : `<a class="btn ${cls}" href="${esc(LATEST.url)}" data-act="extlink">${label}</a>`;
 document.addEventListener('click', async e => {
   if (e.target.id === 'overlay') { closeSheet(); return; }
+  if (document.getElementById('notecard') && !e.target.closest('#notecard,[data-act="note"]')) closeNoteCard();
   const t = e.target.closest('[data-act],[data-tab]'); if (!t) return;
   const act = t.dataset.act;
   if (t.matches('.tab,.chip,.seg button,.sizes button,.rate button')) haptic('tick');
@@ -2545,7 +2689,11 @@ document.addEventListener('click', async e => {
     case 'exg': ex.g = ex.g === t.dataset.g ? '' : t.dataset.g; ex.limit = 40; renderExplore(); break;
     case 'excat-g': ex.group = t.dataset.g; renderExplore(); break;
     case 'excat': ex.cats = t.dataset.cat ? toggleIn(ex.cats, t.dataset.cat) : []; ex.limit = 40; renderExplore(); break;
-    case 'exmore': ex.limit += 40; renderExploreBody(); break;
+    case 'exmore': ex.limit += 40; ex.mode === 'brands' ? renderBrands() : renderExploreBody(); break;
+    case 'exmode': ex.mode = t.dataset.v; ex.brand = null; ex.limit = 40; renderExplore(); break;
+    case 'brandopen': ex.brand = t.dataset.b; ex.q = ''; ex.limit = 40; renderExplore(); window.scrollTo(0, 0); break;
+    case 'brandback': ex.brand = null; renderExplore(); break;
+    case 'brandgo': closeSheet(); S.tab = 'kesfet'; ex.mode = 'brands'; ex.brand = t.dataset.b; ex.q = ''; ex.g = ''; ex.conc = ''; ex.seg = ''; ex.cats = []; ex.boy = false; save(); render(); window.scrollTo(0, 0); break;
     case 'exconc': ex.conc = t.dataset.v; ex.limit = 40; renderExplore(); break;
     case 'cconc': col.conc = t.dataset.v; renderCollection(); break;
     case 'invconc': { const it = S.inv.find(i => i.id === t.dataset.iid); if (it) { it.conc = it.conc === t.dataset.v ? '' : t.dataset.v; save(); redrawSheet(); if (S.tab === 'envanter') renderInventory(); } break; }
@@ -2588,6 +2736,9 @@ document.addEventListener('click', async e => {
     case 'appupdate': nativeCall('installUpdate', t.dataset.url); break;
     case 'buyopen': openBuySheet(t.dataset.id); break;
     case 'openbest': openBest(currentP); break;
+    case 'note': openNoteCard(t.dataset.n, t.dataset.tier); break;
+    case 'noteclose': closeNoteCard(); break;
+    case 'alplay': await ensureSounds(); nativeCall('previewSound', resolveSound({sound: S.alarmSound || 'fiyat'})); break;
     case 'shopmove': { const o = S.shop.order, i = o.indexOf(t.dataset.k), j = i + (+t.dataset.d); if (j >= 0 && j < o.length) { [o[i], o[j]] = [o[j], o[i]]; save(); renderShop(); } break; }
     case 'simcheap': S.sim.cheap = t.dataset.v === '1'; save(); { const el = document.querySelector('.dpane[data-pane="sim"]'); if (el && currentP) el.innerHTML = simPane(currentP); } break;
     case 'alopen': openAlarmSheet(); break;
@@ -2725,9 +2876,22 @@ document.addEventListener('change', async e => {
   }
   if (t.id === 'notify-random') { S.notifyRandom = t.checked; save(); }
   if (t.id === 'rb-good') { rb.good = t.checked; rbCount(); }
+  if (t.id === 'rb-global' || t.id === 'set-global') { S.global = t.checked; save(); if (t.id === 'rb-global') openRandomBuy(); else renderShop(); }
   if (t.id === 'shop-exact') { S.shop.exact = t.checked; save(); }
+  if (t.id === 'pc-on' && priceState && priceState.data) {
+    const pp = priceState.p;
+    if (t.checked) {
+      const g = priceState.data.groups[Math.min(priceState.gi, priceState.data.groups.length - 1)], ml = priceState.ml, cur = g.sizes[ml].price;
+      S.alarms.push({id: uid(), name: pp.name, brand: pp.brand, q: storeQuery(pp), ml, target: Math.max(1, Math.round(cur * 0.9 / 50) * 50), start: cur, created: Date.now()});
+      if (NATIVE && !nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission');
+      toast('Fiyat kontrolü açıldı');
+    } else { S.alarms = S.alarms.filter(a => a.name !== pp.name); toast('Fiyat kontrolü kapatıldı'); }
+    save(); syncAlarms(); drawPrices();
+  }
+  if (t.id === 'pc-target' && priceState) { const a = alarmFor(priceState.p.name); const v = Math.round(+t.value); if (a && v > 0) { a.target = v; save(); syncAlarms(); toast('Hedef: ' + fmtPrice(v)); } }
   if (t.dataset && t.dataset.shopk) { const k = t.dataset.shopk; S.shop.off = t.checked ? S.shop.off.filter(x => x !== k) : [...S.shop.off, k]; save(); renderShop(); }
   if (t.id === 'al-time') { S.alarmTime = t.value || '12:00'; save(); syncAlarms(); }
+  if (t.id === 'al-sound') { S.alarmSound = t.value; save(); await ensureSounds(); syncAlarms(); }
   if (t.id === 'sim-on') { S.sim.on = t.checked; save(); }
   if (t.id === 'sim-cheap') { S.sim.cheap = t.checked; save(); }
   if (t.id === 'wx-on') { S.weather.on = t.checked; save(); if (t.checked) fetchWeather(true).then(() => renderLook()); else renderLook(); }
@@ -2768,7 +2932,8 @@ let exT;
 document.addEventListener('input', e => {
   const id = e.target.id;
   if (id === 'col-search') { col.q = e.target.value; renderGrid(); }
-  if (id === 'ex-q') { ex.q = e.target.value; ex.limit = 40; clearTimeout(exT); exT = setTimeout(renderExploreBody, 160); }
+  if (id === 'ex-q') { ex.q = e.target.value; ex.limit = 40; clearTimeout(exT); exT = setTimeout(() => ex.mode === 'brands' ? renderBrandPage() : renderExploreBody(), 160); }
+  if (id === 'br-q') { ex.bq = e.target.value; ex.limit = 40; clearTimeout(exT); exT = setTimeout(() => { renderBrands(); const i = document.getElementById('br-q'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 200); }
   if (id === 'inv-q') { const l = document.getElementById('inv-list'); if (l) l.innerHTML = invPickList(S.perfumes.filter(p => !invOf(p.id)), e.target.value); }
   if (id === 'inv-level') { const s = document.getElementById('inv-lv'); if (s) s.textContent = e.target.value; }
   if (id === 'f-name' && draft) {

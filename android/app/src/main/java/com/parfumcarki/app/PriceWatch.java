@@ -41,6 +41,10 @@ public class PriceWatch extends BroadcastReceiver {
         schedule(c);
     }
 
+    static void setSound(Context c, String spec) {
+        prefs(c).edit().putString("price_sound", spec).apply();
+    }
+
     static String results(Context c) {
         return prefs(c).getString(KEY_RESULTS, "{}");
     }
@@ -127,7 +131,7 @@ public class PriceWatch extends BroadcastReceiver {
                 if (target > 0 && best <= target) {
                     Notifier.show(c, 700 + i, "Fiyat düştü: " + x.optString("name"),
                             x.optString("brand") + " · " + x.optInt("ml", 100) + " ml · " + formatTl(best) + " (hedefin " + formatTl(target) + ")",
-                            "dl:bb_yumusak", true, "Fiyat alarmı");
+                            prefs(c).getString("price_sound", "dl:fiyat"), true, "Fiyat alarmı");
                 }
                 Thread.sleep(1500);
             } catch (Exception ignored) { }
