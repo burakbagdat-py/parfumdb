@@ -49,10 +49,8 @@ jobs:
           BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
           "$BT/zipalign" -p -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk aligned.apk
           # tolerate stray spaces / line breaks from copy-paste; print only lengths, never the values
-          SIGNING_KEY_PASS="$(printf '%s' "$SIGNING_KEY_PASS" | tr -d ' 
-	')"; export SIGNING_KEY_PASS
-          SIGNING_KEY_B64="$(printf '%s' "$SIGNING_KEY_B64" | tr -d ' 
-	')"
+          SIGNING_KEY_PASS="$(printf '%s' "$SIGNING_KEY_PASS" | tr -d '[:space:]')"; export SIGNING_KEY_PASS
+          SIGNING_KEY_B64="$(printf '%s' "$SIGNING_KEY_B64" | tr -d '[:space:]')"
           echo "secret uzunlukları: SIGNING_KEY_B64=${#SIGNING_KEY_B64} SIGNING_KEY_PASS=${#SIGNING_KEY_PASS}"
           if [ -n "$SIGNING_KEY_B64" ]; then
             if ! printf '%s' "$SIGNING_KEY_B64" | base64 -d > "$RUNNER_TEMP/new.p12" 2>/dev/null || [ "$(stat -c%s "$RUNNER_TEMP/new.p12")" -lt 1000 ]; then
