@@ -2200,6 +2200,54 @@ function priceToggle(p, ml){
     ${a ? `<div class="row" style="flex-wrap:nowrap"><span class="small" style="flex:none">Hedef · ${a.ml} ml</span>
       <input class="input" id="pc-target" type="number" inputmode="numeric" min="1" value="${a.target}" style="flex:1;min-width:0"><span class="small">TL</span></div>` : ''}`;
 }
+let dTab = 'notes';
+function miniDots(n){ return `<span class="mini">${[1,2,3,4,5].map(i => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</span>`; }
+function wearInfo(p){
+  const w = (S.wears || []).filter(x => x.pid === p.id);
+  if (!w.length) return '';
+  const last = Math.max(...w.map(x => x.t)), days = Math.floor((Date.now() - last) / 864e5);
+  return `${w.length} kez sıkıldı · son: ${days === 0 ? 'bugün' : days + ' gün önce'}`;
+}
+function detailHtml(p, o){
+  currentP = p;
+  if (dTab === 'sim' && !S.sim.on) dTab = 'notes';
+  const notes = p.top.length || p.heart.length || p.base.length;
+  const stats = [p.rating ? '★ ' + p.rating.toFixed(1) : '', p.lon ? 'Kalıcılık ' + miniDots(p.lon) : '', p.sil ? 'Yayılım ' + miniDots(p.sil) : ''].filter(Boolean).map(x => `<span class="mini">${x}</span>`).join('');
+  return `
+    <div class="row spread"><span class="eyebrow">${o.eyebrow}</span>${closeIcon}</div>
+    <div class="dhead">
+      <div class="art">${art(p)}</div>
+      <div class="hero-body">
+        ${p.brand ? `<span class="hero-brand tap" lang="en" data-act="brandgo" data-b="${esc(p.brand)}">${esc(p.brand)} ›</span> ${concTag(o.conc || p.conc, p.name)}` : ''}
+        <span class="hero-name">${esc(p.name)}</span>
+        ${stats ? `<div class="dstats">${stats}</div>` : ''}
+        ${bellHtml(p)}
+        ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
+      </div>
+    </div>
+    <div class="row">${o.actions}</div>
+    <div class="seg dtabs">${[['notes', 'Notalar'], ['price', 'Fiyat'], ['info', 'Bilgi'], ...(S.sim.on ? [['sim', 'Benzer']] : [])].map(([k, l]) => `<button class="${dTab === k ? 'on' : ''}" data-act="dtab" data-v="${k}" type="button">${l}</button>`).join('')}</div>
+    <div class="dpane" data-pane="notes"${dTab === 'notes' ? '' : ' hidden'}>
+      ${notes ? `<div class="pyramid">${TIERS.map(([k, label, when]) => `<div class="tier"><div class="tier-name"><b>${label}</b><span>${when}</span></div>
+        <div class="chips">${p[k].length ? p[k].map(n => `<button class="note-chip" data-act="note" data-n="${esc(n)}" data-tier="${k}" type="button">${esc(n)}</button>`).join('') : '<span class="muted small">Yok</span>'}</div></div>`).join('')}</div>
+        <span class="muted small">Bir notaya dokun, ne koktuğunu anlatsın.</span>`
+      : '<div class="empty">Henüz nota eklenmemiş. “Düzenle” ile ekleyebilirsin.</div>'}
+      ${p.fam.length > 3 ? `<div class="fam-line">${p.fam.slice(3).map(famTag).join('')}</div>` : ''}
+    </div>
+    <div class="dpane" data-pane="price"${dTab === 'price' ? '' : ' hidden'}>${pricesBox(p)}${storeLinks(p)}</div>
+    ${S.sim.on ? `<div class="dpane" data-pane="sim"${dTab === 'sim' ? '' : ' hidden'}>${dTab === 'sim' ? simPane(p) : ''}</div>` : ''}
+    <div class="dpane" data-pane="info"${dTab === 'info' ? '' : ' hidden'}>
+      <div class="kv">${[
+        ['Tür', o.conc || p.conc ? esc(CONC_FULL[o.conc || p.conc] || o.conc || p.conc) : '—'],
+        ['Cinsiyet', p.g ? GENDER[p.g] : '—'],
+        o.year ? ['Çıkış', o.year] : null,
+        o.votes ? ['Oy', o.votes.toLocaleString('tr-TR')] : null,
+        wearInfo(p) ? ['Günlük', esc(wearInfo(p))] : null,
+        p.note ? ['Not', esc(p.note)] : null
+      ].filter(Boolean).map(([k, v]) => `<span>${k}</span><span>${v}</span>`).join('')}</div>
+      ${p.cats.length ? `<div class="box" style="gap:8px;padding:12px">${catsHtml(p.cats)}</div>` : ''}
+    </div>`;
+}
 function openDetail(p){
   if (!p) return;
   sheetMode = 'detail';
