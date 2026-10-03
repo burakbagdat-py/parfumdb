@@ -288,6 +288,79 @@ def concentration(pid, name, brand, year, parfumo):
             if n == fn and (not y or not year or abs(y - year) <= 1)]
     return sorted(hits)[0][1] if hits else ''
 
+# ---------- market segment: N = niş, D = designer, O = Orta Doğu, U = ünlü, M = uygun fiyat ----------
+# Hand-classified by how the house is generally known; brands not listed get no segment.
+SEGMENTS = {
+    'N': """Amouage|By Kilian|Parfums de Marly|Montale|Xerjoff|Mancera|Maison Francis Kurkdjian|Byredo|Serge Lutens|Creed|
+Etat Libre d'Orange|Diptyque|Frederic Malle Editions de Parfums|Juliette Has A Gun|Penhaligon's|Nishane|Le Labo|Kayali Fragrances|
+Initio Parfums Prives|Memo Paris|L'Artisan Parfumeur|Zoologist Perfumes|Roja Dove|Tiziana Terenzi|Nasomatto|Casamorati 1888|
+Bond No 9|BDK Parfums|Escentric Molecules|Ex Nihilo|Essential Parfums|Atelier Cologne|Vilhelm Parfumerie|Histoires de Parfums|
+Les Liquides Imaginaires|Imaginary Authors|Orto Parisi|Maison Crivelli|Ormonde Jayne|Pierre Guillaume Paris|Goutal|
+Marc-Antoine Barrois|Tauer Perfumes|Goldfield & Banks Australia|M. Micallef|Matière Première|Profumum Roma|Clive Christian|
+Carner Barcelona|Commodity|Stéphane Humbert Lucas 777|Francesca Bianchi|DS&Durga|Lorenzo Pazzaglia|Nicolai Parfumeur Createur|
+Sospiro Perfumes|Nest|Franck Boclet|Attar Collection|Jovoy Paris|Boadicea the Victorious|BORNTOSTANDOUT®|Atelier des Ors|
+Filippo Sorcinelli|Nobile 1942|Akro|Miller Harris|Laboratorio Olfattivo|ZARKOPERFUME|The Different Company|Parfum d'Empire|
+Gritti|The Merchant of Venice|The House of Oud|Floraïku|Atkinsons|Fragrance Du Bois|Mind Games|Laurent Mazzone Parfums|
+Perris Monte Carlo|Kerosene|Room 1015|Masque Milano|Bois 1920|Olfactive Studio|Fugazzi|d'Annam|Frapin|Parfums Dusita|
+Haute Fragrance Company HFC|Une Nuit Nomade|Theodoros Kalotinis|Robert Piguet|MDCI Parfums|Keiko Mecheri|Thameen|Simone Andreoli|
+Le Couvent Maison de Parfum|Ramon Monegal|Fueguia 1833|Houbigant|Electimuss|Heretic Parfum|Olympic Orchids Artisan Perfumes|Lubin|
+BeauFort London|Thomas Kosmala|Caron|Aesop|Arquiste|Mona di Orio|Rosendo Mateu Olfactive Expressions|Ella K Parfums|Jusbox|WIDIAN|
+Kajal|Comme des Garcons|Phlur|Bon Parfumeur|Ellis Brooklyn|Maison Martin Margiela|Acqua di Parma|Hermetica|Henry Jacques|
+Orto Parisi|Puredistance|Sylvaine Delacourte|Parfums MDCI|Arabian Oud|Ojar|Spirit of Kings|Vertus|Maison Tahité|Etro|
+Juliette Has a Gun|Moresque|Roja Parfums|Montabaco|Anatole Lebreton|Rasasi Parfums Privés|Amouage Library""",
+    'D': """Dior|Guerlain|Tom Ford|Yves Saint Laurent|Giorgio Armani|Chanel|Dolce&Gabbana|Versace|Jean Paul Gaultier|Givenchy|Hermès|
+Rabanne|Mugler|Lancôme|Gucci|Prada|Carolina Herrera|Burberry|Bvlgari|Calvin Klein|Narciso Rodriguez|Hugo Boss|Valentino|Lalique|
+Kenzo|Chloé|Viktor&Rolf|Montblanc|Louis Vuitton|Marc Jacobs|Moschino|Ralph Lauren|Nina Ricci|Estée Lauder|Issey Miyake|Cartier|
+Lanvin|Donna Karan|Escada|Salvatore Ferragamo|Lacoste Fragrances|Van Cleef & Arpels|Azzaro|Cacharel|Juicy Couture|Jimmy Choo|
+Trussardi|Lolita Lempicka|Elizabeth Arden|Loewe|Elie Saab|Roberto Cavalli|Zadig & Voltaire|Coach|Davidoff|Diesel|John Varvatos|
+Agent Provocateur|DSQUARED²|Guess|Michael Kors|Rochas|Bentley|Bottega Veneta|Chopard|Molinard|Boucheron|Alfred Dunhill|Sisley|
+Vera Wang|Mercedes-Benz|Balenciaga|Salvador Dali|Shiseido|Karl Lagerfeld|Jil Sander|Masaki Matsushima|Aerin|Oscar de la Renta|Fendi|
+Tous|Eisenberg|Armand Basi|Tommy Hilfiger|Clinique|Mauboussin|Stella McCartney|CoSTUME NATIONAL|Anna Sui|Jacques Bogart|Ferrari|
+Dries Van Noten|S.T. Dupont|Balmain Beauty|Ermenegildo Zegna|Joop!|Grès|Miu Miu|Yohji Yamamoto|Celine|La Perla|Reminiscence|
+Tiffany|Missoni|Baldessarini|Jaguar|Gianfranco Ferre|Ted Lapidus|Halloween|Tocca|Elizabeth and James|Clean|Kenneth Cole|
+Benetton|Emanuel Ungaro|Paco Rabanne|Thierry Mugler|Nautica|Abercrombie & Fitch|Hollister|Dunhill|Givenchy Parfums|Boss|
+Emporio Armani|Armani Privé|Chanel Les Exclusifs|Byblos|Blumarine|Laura Biagiotti|Jean Patou|Patou|Cerruti|Kenzo Parfums""",
+    'O': """Lattafa Perfumes|Armaf|Afnan|French Avenue|Maison Alhambra|Rasasi|Al Haramain Perfumes|Ajmal|Khadlaj Perfumes|Rayhaan|
+Fragrance World|Swiss Arabian|Zimaya|Arabiyat Prestige|MAISON ASRAR|Riiffs Perfumes|PARIS CORNER|Nabeel|Ard Al Zaafaran|Al Rehab|
+Lattafa Pride|Orientica|Emir|Gisada|Alexandria Fragrances|Le Falcone|Asdaaf|Khalis|Al Wataniah|Bait Al Bakhoor|Ahmed Al Maghribi|
+Abdul Samad Al Qurashi|Arabian Oud Perfumes|Anfar|Junaid Perfumes|Surrati|Dkhoon Al Emarat|Ibraheem Al Qurashi""",
+    'U': """Britney Spears|Ariana Grande|Jennifer Lopez|Sarah Jessica Parker|Paris Hilton|Katy Perry|Billie Eilish|Rihanna|Jessica Simpson|
+Beyoncé|David Beckham|Sabrina Carpenter|Christina Aguilera|Lady Gaga|Antonio Banderas|Shakira|Nicki Minaj|Halle Berry|Celine Dion|
+Justin Bieber|Taylor Swift|Kim Kardashian|KKW Fragrance|Kylie Jenner|Cristiano Ronaldo|One Direction|Selena Gomez|Mariah Carey|
+Gwen Stefani|Harajuku Lovers|Usher|Jay-Z|Michael Jordan|Hilary Duff|Carrie Underwood|Tim McGraw|Derek Jeter|Avril Lavigne|
+Kate Moss|Victoria Beckham|Naomi Campbell|Madonna|Kylie Minogue|Cher|Elizabeth Taylor|Pitbull|Kanye West|Zendaya|Charli XCX""",
+    'M': """Zara|Avon|O Boticário|Yves Rocher|Natura|Bath & Body Works|Oriflame|Lush|L'Occitane en Provence|Sol de Janeiro|Granado|
+The Body Shop|Aquolina|Victoria's Secret|Faberlic|Banana Republic|Fragonard|Eudora|L'Erbolario|Phebo|We Pink|Jeanne Arthes|
+The 7 Virtues|Rituals|4711|Korres|Demeter Fragrance|Comptoir Sud Pacifique|Snif|Philosophy|Floral Street|Mexx|
+Tokyo Milk Parfumerie Curiosite|Glossier|Adidas|Police|Liz Claiborne|Perry Ellis|Le Monde Gourmand|Tesori d'Oriente|
+Jacomo|Playboy|Puma|Bourjois|Coty|Revlon|Mary Kay|Dana|Primark|H&M|Mango|Massimo Dutti|Bershka|Pull & Bear|Stradivarius|
+Oysho|Kiko Milano|Flormar|Farmasi|Golden Rose|Morfose|Eyüp Sabri Tuncer|Kalliston|Cotton On|Gap|Old Navy|American Eagle|
+Aéropostale|Bench|Jovan|Coty Inc.|Body Fantasies|Pacifica|Kai|Commodity Goods|Cremo|Dove|Axe|Nivea|Adam Levine|Michael Kors Mass"""
+}
+SEGMENTS['N'] += '|Jo Malone London|Naomi Goodsir|DedCool|Majda Bekkali|Aedes de Venustas|Fragrance One|Milano Fragranze|Skylar|What We Do Is Secret|Hiram Green|The Vagabond Prince|Lorenzo Villoresi|Indult|Maison Mataha|Les Indemodables|Jeroboam|Genyum|Argos'
+SEGMENTS['D'] += '|John Galliano|Ghost|Alaia Paris|Christian Audigier|Max Mara|Alexander McQueen|La Prairie|MAC|Mandarina Duck|Philipp Plein Parfums|Tommy Bahama|Paul Smith'
+SEGMENTS['O'] += '|ALREHAB PERFUMES'
+SEGMENTS['U'] += '|Kylie Cosmetics|Fenty|Sean John'
+SEGMENTS['M'] += "|Bruno Banani|Kiehl's|Nuxe|Pepe Jeans London|RAVE"
+SEG_OF = {}
+for code, names in SEGMENTS.items():
+    for n in names.replace('\n', '').split('|'):
+        n = n.strip()
+        if n: SEG_OF.setdefault(n, code)
+# Tom Ford's Private Blend line is generally counted as niche even though the house is a designer label
+TF_PRIVATE_BLEND = {'oud wood', 'tobacco vanille', 'tuscan leather', 'lost cherry', 'bitter peach', 'neroli portofino', 'noir de noir',
+                    'fucking fabulous', 'soleil blanc', 'rose prick', 'black lacquer', 'oud minerale', 'tobacco oud', 'cafe rose',
+                    'jasmin rouge', 'tuscan leather intense', 'oud wood intense', 'vanille fatale', 'myrrhe mystere', 'fabulous',
+                    'costa azzurra', 'mandarino di amalfi', 'fleur de portofino', 'soleil de feu', 'rose de chine', 'electric cherry',
+                    'cherry smoke', 'ebene fume', 'beau de jour', 'rose de russie', 'velvet orchid', 'santal blush', 'white suede',
+                    'amber absolute', 'oud fleur', 'arabian wood', 'tom ford oud wood'}
+
+def segment(name, brand):
+    if brand == 'Tom Ford':
+        n = re.sub(r'[^a-z ]', '', name.lower().replace('é', 'e').replace('è', 'e'))
+        return 'N' if any(n == x or n.startswith(x + ' ') for x in TF_PRIVATE_BLEND) else 'D'
+    return SEG_OF.get(brand, '')
+
 def norm_brand(s):
     s = s.lower().replace('&', 'and')
     s = re.sub(r'\bparfums?\b|\bperfumes?\b|\bfragrances?\b|\bparis\b', '', s)
@@ -327,6 +400,7 @@ def build_world(src, parfumo):
             int(x['id']), x['name'].strip(), x['brand'].strip(), year, g, votes,
             round(lon), round(sil5), fam, top, mid, base, categories(acc, lon, sil5, votes, rating, year, g), round(rating, 2),
             concentration(int(x['id']), x['name'], x['brand'], year, parfumo),
+            segment(x['name'].strip(), x['brand'].strip()),
         ])
     items.sort(key=lambda i: -i[5])
     return items
@@ -365,6 +439,7 @@ def main():
     parfumo = load_parfumo(sys.argv[sys.argv.index('--parfumo') + 1] if '--parfumo' in sys.argv else None)
     items = build_world(src, parfumo)
     print('with concentration', sum(1 for i in items if i[14]))
+    print('with segment', sum(1 for i in items if i[15]))
     with open(os.path.join(OUT, 'catalog.json'), 'w', encoding='utf-8') as f:
         json.dump({'v': datetime.date.today().isoformat(), 'n': len(items), 'tax': TAXONOMY, 'labels': LABELS, 'items': items}, f, ensure_ascii=False, separators=(',', ':'))
     print('catalog', len(items))

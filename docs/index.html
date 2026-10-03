@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>BB Parfüm Envanteri</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://statics-mp.boyner.com.tr; connect-src 'self' https://api.github.com; media-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://statics-mp.boyner.com.tr; connect-src 'self' https://api.github.com https://api.open-meteo.com; media-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="theme-color" content="#17110d">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -385,6 +385,15 @@ html.amoled:not([data-skin="althair"]){--bg:#000;--panel:#0a0a0a;--panel-2:#1313
 html.no-labels .tab{font-size:0;gap:0}
 html.fs-s{zoom:.93}
 html.fs-l{zoom:1.08}
+/* --- segments, random result, weather --- */
+.seg-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:5px;background:var(--panel-2);color:var(--hi);border:1px solid var(--line);vertical-align:1px}
+.seg-tag.N{background:var(--grad);color:var(--ink);border-color:transparent}
+.rb-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rb-actions .btn{width:100%}
+.rb-notes{font-size:13px;color:var(--muted);line-height:1.45}
+.rb-notes b{color:var(--fg);font-weight:600}
+.wx{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.wx b{color:var(--fg);font-variant-numeric:tabular-nums}
 /* --- scent journal --- */
 .journal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 .jday{aspect-ratio:1;border-radius:8px;background:var(--panel);border:1px solid var(--line);position:relative;overflow:hidden;font-size:10px;color:var(--muted);display:grid;place-items:center;font-variant-numeric:tabular-nums}
@@ -526,6 +535,8 @@ const FAM_CATS = {
 const CONCS = ['EDC','EDT','EDP','Parfum','Extrait','Elixir'];
 const CONC_FULL = {EDC: 'Eau de Cologne', EDT: 'Eau de Toilette', EDP: 'Eau de Parfum', Parfum: 'Parfum', Extrait: 'Extrait de Parfum', Elixir: 'Elixir'};
 const CONC_OLD = {'Eau de Cologne': 'EDC', 'Eau de Toilette': 'EDT', 'Eau de Parfum': 'EDP'};
+const SEG = {N: 'Niş', D: 'Designer', O: 'Orta Doğu', U: 'Ünlü', M: 'Uygun'};
+const segTag = c => c && SEG[c] ? `<span class="seg-tag ${c}">${SEG[c]}</span>` : '';
 const concTag = (c, name) => {
   if (!c) return '';
   if (name) { const n = ' ' + fold(name) + ' '; if (n.includes(' ' + fold(c) + ' ') || n.includes(fold(CONC_FULL[c] || c))) return ''; }
@@ -543,10 +554,10 @@ function concFromText(t){
 }
 const TIERS = [['top','Üst','ilk 15–30 dk'],['heart','Kalp','30 dk – 3 saat'],['base','Alt','3 saatten sonra']];
 const STORES = {
-  boyner: {n: 'Boyner', live: true, url: q => 'https://www.boyner.com.tr/search?q=' + encodeURIComponent(q)},
-  trendyol: {n: 'Trendyol', url: q => 'https://www.trendyol.com/sr?q=' + encodeURIComponent(q)},
-  hepsiburada: {n: 'Hepsiburada', url: q => 'https://www.hepsiburada.com/ara?q=' + encodeURIComponent(q)},
-  amazon: {n: 'Amazon', url: q => 'https://www.amazon.com.tr/s?k=' + encodeURIComponent(q)}
+  boyner: {n: 'Boyner', loc: "Boyner'de", live: true, url: q => 'https://www.boyner.com.tr/search?q=' + encodeURIComponent(q)},
+  trendyol: {n: 'Trendyol', loc: "Trendyol'da", url: q => 'https://www.trendyol.com/sr?q=' + encodeURIComponent(q)},
+  hepsiburada: {n: 'Hepsiburada', loc: "Hepsiburada'da", url: q => 'https://www.hepsiburada.com/ara?q=' + encodeURIComponent(q)},
+  amazon: {n: 'Amazon', loc: "Amazon'da", url: q => 'https://www.amazon.com.tr/s?k=' + encodeURIComponent(q)}
 };
 // dl: downloaded by the app at runtime from docs/sounds (no new APK needed); others ship inside the APK
 const SOUNDS = {
@@ -647,7 +658,7 @@ function freshState(){
     inv: [], customCats: [],
     week, weekKey: '', source: 'envanter',
     wheelCats: [], wheelGroup: 'Kullanım', lastSpin: null,
-    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true, buys: [], wears: [], ui: {...UI_DEFAULT},
+    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true, buys: [], wears: [], ui: {...UI_DEFAULT}, weather: {on: false, city: 'İstanbul', auto: false, day: ''},
     notif: {reminders: defaultReminders()}
   };
 }
@@ -1181,11 +1192,13 @@ function renderWeek(){
         ${p ? `<span class="hero-brand" lang="en">${esc(p.brand || tw.cat)} ${concTag((invOf(p.id) || {}).conc || p.conc, p.name)}</span>
           <p class="hero-name tap" data-act="view" data-id="${p.id}">${esc(p.name)}</p>
           ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
-          <span class="notes-mini">${esc(notesLine(p) || tw.cat)}</span>`
-        : `<p class="hero-name">Parfüm yok</p><span class="muted small">“${esc(tw.cat)}” kategorisinde parfüm bulunamadı. Günün kategorisini değiştir ya da envanterine parfüm ekle.</span>`}
+          <span class="notes-mini">${esc(notesLine(p) || tw.cat)}</span>
+          ${wxLine()}`
+        : `<p class="hero-name">Parfüm yok</p><span class="muted small">“${esc(tw.cat)}” kategorisinde parfüm bulunamadı. Günün kategorisini değiştir ya da envanterine parfüm ekle.</span>${wxLine()}`}
         <div class="hero-actions">
           ${p ? (wornToday(p.id) ? `<button class="btn sm" type="button" disabled>Sıktım ✓</button>` : `<button class="btn sm primary" data-act="wear" data-id="${p.id}" type="button">Sıktım</button>`) : ''}
           <button class="btn sm${p ? '' : ' primary'}" data-act="reroll" data-day="${t}" type="button">Başka öner</button>
+          ${S.weather && S.weather.on && WX ? `<button class="btn sm ghost" data-act="wxpick" type="button">Havaya göre</button>` : ''}
         </div>
       </div>
     </div>
@@ -1368,7 +1381,7 @@ function spin(){
 }
 
 /* ---------- explore ---------- */
-let ex = {q: '', g: '', boy: false, conc: '', cats: [], group: 'Kullanım', limit: 40};
+let ex = {q: '', g: '', boy: false, conc: '', seg: '', cats: [], group: 'Kullanım', limit: 40};
 const concChips = (act, cur) => `<div class="chips scroll"><button class="chip${cur ? '' : ' on'}" data-act="${act}" data-v="" type="button">Tüm türler</button>${CONCS.map(c => `<button class="chip${cur === c ? ' on' : ''}" data-act="${act}" data-v="${c}" type="button">${c}</button>`).join('')}</div>`;
 function renderExplore(){
   view.innerHTML = `
@@ -1379,6 +1392,7 @@ function renderExplore(){
       <button class="chip${ex.boy ? ' on' : ''}" data-act="exboy" type="button">Boyner'de</button>
       ${['E','K','U'].map(g => `<button class="chip${ex.g === g ? ' on' : ''}" data-act="exg" data-g="${g}" type="button">${GENDER[g]}</button>`).join('')}
     </div>
+    <div class="chips scroll"><button class="chip${ex.seg ? '' : ' on'}" data-act="exseg" data-v="" type="button">Tüm segmentler</button>${Object.entries(SEG).map(([k, v]) => `<button class="chip${ex.seg === k ? ' on' : ''}" data-act="exseg" data-v="${k}" type="button">${v}</button>`).join('')}</div>
     ${concChips('exconc', ex.conc)}
     ${catFilter('excat', ex.group, ex.cats)}
   </section>
@@ -1392,7 +1406,7 @@ function catRow(c){
     <div class="art tap" data-act="cview" data-cid="${r[0]}">${art({name: r[1], img: fimg(r[0])})}</div>
     <div class="item-body tap" data-act="cview" data-cid="${r[0]}">
       <span class="item-name">${esc(r[1])} ${concTag(r[14], r[1])}</span>
-      <span class="item-meta"><span lang="en">${esc(r[2])}</span>${c.boy ? ' <span class="boyner">Boyner</span>' : ''} · ${GENDER[r[4]]}${r[13] ? ' · ★ ' + r[13].toFixed(1) : ''}</span>
+      <span class="item-meta"><span lang="en">${esc(r[2])}</span> ${segTag(r[15])}${c.boy ? ' <span class="boyner">Boyner</span>' : ''} · ${GENDER[r[4]]}${r[13] ? ' · ★ ' + r[13].toFixed(1) : ''}</span>
       <div class="fam-line">${r[8].slice(0, 2).map(famTag).join('')}</div>
     </div>
     <button class="icon-btn${owned ? ' added' : ''}" data-act="cadd" data-cid="${r[0]}" type="button" aria-label="${owned ? 'Koleksiyonda' : 'Koleksiyona ekle'}">
@@ -1427,6 +1441,7 @@ function searchCatalog(){
     if (ex.boy && !c.boy) continue;
     if (ex.g && c.r[4] !== ex.g) continue;
     if (ex.conc && c.r[14] !== ex.conc) continue;
+    if (ex.seg && c.r[15] !== ex.seg) continue;
     if (ex.cats.length && !ex.cats.every(x => c.r[12].includes(x))) continue;
     let rank = 0;
     if (tk.length) {
@@ -1441,7 +1456,7 @@ function searchCatalog(){
 }
 function renderExploreBody(){
   const body = document.getElementById('ex-body'); if (!body || !CAT) return;
-  const filtered = ex.q || ex.g || ex.boy || ex.conc || ex.cats.length;
+  const filtered = ex.q || ex.g || ex.boy || ex.conc || ex.seg || ex.cats.length;
   let html = '';
   if (!filtered) {
     const line = CAT.filter(c => skin().line(c.r)).slice(0, 16);
@@ -1496,6 +1511,67 @@ function renderGrid(){
         <div class="chips" style="gap:4px;margin-top:4px">${mainCats(p).map(c => `<span class="pill">${esc(c)}</span>`).join('')}</div>
       </div>
     </button>`; }).join('')}</div>`;
+}
+
+/* ---------- weather-based suggestion (Open-Meteo, no key, no location permission: the user picks a city) ---------- */
+const CITIES = {'İstanbul': [41.01, 28.98], 'Ankara': [39.93, 32.86], 'İzmir': [38.42, 27.14], 'Bursa': [40.19, 29.06], 'Antalya': [36.89, 30.71],
+  'Adana': [37.0, 35.32], 'Konya': [37.87, 32.48], 'Gaziantep': [37.07, 37.38], 'Kayseri': [38.72, 35.48], 'Mersin': [36.81, 34.64],
+  'Eskişehir': [39.78, 30.52], 'Diyarbakır': [37.91, 40.24], 'Samsun': [41.29, 36.33], 'Trabzon': [41.0, 39.72], 'Erzurum': [39.9, 41.27],
+  'Muğla': [37.21, 28.36], 'Bodrum': [37.03, 27.43], 'Kocaeli': [40.77, 29.94], 'Sakarya': [40.69, 30.43], 'Denizli': [37.78, 29.09],
+  'Malatya': [38.35, 38.31], 'Van': [38.49, 43.38], 'Edirne': [41.68, 26.56], 'Çanakkale': [40.15, 26.41], 'Tekirdağ': [40.98, 27.51]};
+let WX = null;
+function wxDesc(code){
+  if (code === 0) return ['açık', '☀'];
+  if (code <= 3) return ['parçalı bulutlu', '⛅'];
+  if (code === 45 || code === 48) return ['sisli', '🌫'];
+  if (code >= 51 && code <= 67 || code >= 80 && code <= 82) return ['yağmurlu', '🌧'];
+  if (code >= 71 && code <= 77 || code === 85 || code === 86) return ['karlı', '❄'];
+  if (code >= 95) return ['fırtınalı', '⛈'];
+  return ['bulutlu', '☁'];
+}
+async function fetchWeather(force){
+  if (!S.weather || !S.weather.on) return null;
+  if (!force && WX && Date.now() - WX.t < 45 * 60e3) return WX;
+  const c = CITIES[S.weather.city] || CITIES['İstanbul'];
+  try {
+    const r = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c[0]}&longitude=${c[1]}&current=temperature_2m,weather_code&timezone=auto`);
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    WX = {t: Date.now(), temp: Math.round(j.current.temperature_2m), code: j.current.weather_code, city: S.weather.city};
+  } catch (e) { WX = null; }
+  return WX;
+}
+function wxCats(w){
+  const t = w.temp, wet = (w.code >= 51 && w.code <= 67) || (w.code >= 80 && w.code <= 82), snow = (w.code >= 71 && w.code <= 77);
+  let cats = t >= 26 ? ['Yaz', 'Fresh', 'Aquatik', 'Narenciye', 'Tatil', 'Gündüz']
+    : t >= 18 ? ['İlkbahar', 'Günlük', 'Yeşil', 'Çiçeksi', 'Dört Mevsim', 'Narenciye']
+    : t >= 10 ? ['Sonbahar', 'Odunsu', 'Baharatlı', 'Dört Mevsim', 'Aromatik']
+    : ['Kış', 'Gurme', 'Amber', 'Vanilyalı', 'Oryantal', 'Baharatlı'];
+  if (wet) cats = [...cats, 'Odunsu', 'Misk', 'İsli'];
+  if (snow) cats = [...cats, 'Kış', 'Gurme'];
+  return cats;
+}
+function wxPick(w){
+  const cats = wxCats(w);
+  const scored = sourcePerfumes().map(p => [p, cats.reduce((n, c) => n + (p.cats.includes(c) ? 1 : 0), 0)]).filter(x => x[1] > 0);
+  if (!scored.length) return null;
+  const best = Math.max(...scored.map(x => x[1]));
+  return pick(scored.filter(x => x[1] >= best - 1).map(x => x[0]));
+}
+function wxLine(){
+  if (!S.weather || !S.weather.on || !WX) return '';
+  const [d, ic] = wxDesc(WX.code);
+  return `<div class="wx">${ic} <span>${esc(WX.city)} <b>${WX.temp}°</b> · ${d}</span></div>`;
+}
+async function weatherBoot(){
+  if (!S.weather || !S.weather.on) return;
+  const w = await fetchWeather(); if (!w) return;
+  const day = dayKey(Date.now());
+  if (S.weather.auto && S.weather.day !== day) {
+    const p = wxPick(w);
+    if (p) { S.week[today()].pid = p.id; S.weather.day = day; save(); }
+  }
+  if (S.tab === 'hafta') render();
 }
 
 /* ---------- buy reminders ---------- */
@@ -1783,7 +1859,7 @@ function openCatalogDetail(cid){
   sheetMode = 'cdetail';
   const r = c.r, p = toPerfume(r), owned = inCollection(r[0]);
   const f = openOverlay();
-  f.innerHTML = detailHtml(p, {eyebrow: 'Katalog' + (c.boy ? ' · <span class="boyner">Boyner</span>' : ''), year: r[3], votes: r[5], actions: `
+  f.innerHTML = detailHtml(p, {eyebrow: 'Katalog ' + segTag(r[15]) + (c.boy ? ' <span class="boyner">Boyner</span>' : ''), year: r[3], votes: r[5], actions: `
       <button class="btn sm primary" data-act="cadd" data-cid="${r[0]}" type="button"${owned ? ' disabled' : ''}>${owned ? 'Koleksiyonda' : 'Koleksiyona ekle'}</button>
       <button class="btn sm" data-act="cbuy" data-cid="${r[0]}" type="button">Almak için hatırlat</button>
       <button class="btn sm" data-act="cinv" data-cid="${r[0]}" type="button"${owned && invOf(owned.id) ? ' disabled' : ''}>${owned && invOf(owned.id) ? 'Envanterde' : 'Elimde var'}</button>`});
@@ -1810,24 +1886,38 @@ function addFromCatalog(cid){
   return p;
 }
 
-/* random buy: asks only the mood; gender and store come from settings */
+/* random buy: segment + mood; gender and store come from settings; the result gets its own one-screen view */
 const MOODS = [...TAX[0][1], 'Seksi', 'İltifat Toplayan', 'Temiz', 'Kör Alım Güvenli', 'Yaz', 'Kış', 'Gece'];
-let rb = {cat: '', rolling: false};
+let rb = {cat: '', seg: '', good: true, rolling: false, cid: null};
+function rbPool(){
+  const owned = new Set(S.inv.map(i => (byId(i.pid) || {}).cid).filter(Boolean));
+  return CAT.filter(c => c.r[5] >= 1000 && !owned.has(c.r[0])
+    && (!rb.good || c.r[13] >= 3.9)
+    && (!rb.seg || c.r[15] === rb.seg)
+    && (!S.gender || c.r[4] === S.gender || c.r[4] === 'U')
+    && (!rb.cat || c.r[12].includes(rb.cat))
+    && (S.store !== 'boyner' || c.boy));
+}
 function openRandomBuy(){
   sheetMode = 'randbuy';
-  const f = openOverlay();
+  const f = document.getElementById('sheet') && sheetMode === 'randbuy' && document.getElementById('overlay') ? document.getElementById('sheet') : openOverlay();
   const st = STORES[S.store];
   f.innerHTML = `<div class="row spread"><h2>Rastgele parfüm al</h2>${closeIcon}</div>
+    <div class="field"><span class="label">Segment</span>
+      <div class="chips"><button class="chip${rb.seg ? '' : ' on'}" data-act="rbseg" data-v="" type="button">Fark etmez</button>${Object.entries(SEG).map(([k, v]) => `<button class="chip${rb.seg === k ? ' on' : ''}" data-act="rbseg" data-v="${k}" type="button">${v}</button>`).join('')}</div></div>
     <div class="field"><span class="label">Ne için?</span>
       <div class="chips" id="rb-moods">${MOODS.map(c => `<button class="chip${rb.cat === c ? ' on' : ''}" data-act="rbcat" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div></div>
+    <label class="toggle-row" for="rb-good"><span><b>Sadece beğenilenler</b><br><span class="muted small">★ 3,9 ve üstü, en az 1000 oy</span></span>
+      <span class="switch"><input type="checkbox" id="rb-good"${rb.good ? ' checked' : ''}><span></span></span></label>
     <div class="row" style="flex-wrap:nowrap">
       <button class="btn block" data-act="rbroll" type="button" style="flex:1">Rastgele mod</button>
       <button class="btn primary block" data-act="rbgo" type="button" style="flex:1">Parfüm seç</button>
     </div>
-    <span class="muted small">${esc(st.n)} · ${S.gender ? GENDER[S.gender] : 'tüm cinsiyetler'} · <button class="back" style="display:inline;margin:0;color:var(--hi)" data-act="gosub" data-sub="alisveris" type="button">ayarlardan değiştir</button></span>
-    <div id="rb-result"></div>`;
-  loadCatalog().catch(() => {});
+    <span class="muted small" id="rb-count"></span>
+    <span class="muted small">${esc(st.n)} · ${S.gender ? GENDER[S.gender] : 'tüm cinsiyetler'} · <button class="back" style="display:inline;margin:0;color:var(--hi)" data-act="gosub" data-sub="alisveris" type="button">ayarlardan değiştir</button></span>`;
+  loadCatalog().then(rbCount).catch(() => {});
 }
+function rbCount(){ const e = document.getElementById('rb-count'); if (e && CAT) e.textContent = rbPool().length.toLocaleString('tr-TR') + ' parfüm arasından seçilecek'; }
 function rbRoll(){
   if (rb.rolling) return;
   const chips = [...document.querySelectorAll('#rb-moods .chip')];
@@ -1835,39 +1925,47 @@ function rbRoll(){
   rb.rolling = true;
   const target = Math.floor(Math.random() * chips.length);
   const steps = chips.length * 2 + target + 1;
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || (S.ui && !S.ui.anim);
   let k = 0;
   const tick = () => {
     chips.forEach(c => c.classList.remove('on'));
     const c = chips[k % chips.length]; c.classList.add('on');
-    try { navigator.vibrate && navigator.vibrate(4); } catch (e) {}
-    if (++k >= steps) {
-      rb.rolling = false; rb.cat = c.dataset.cat;
-      setTimeout(rbPick, 450);
-      return;
-    }
-    const prog = k / steps;
-    setTimeout(tick, reduce ? 0 : 55 + Math.pow(prog, 3) * 420);
+    haptic('tick');
+    if (++k >= steps) { rb.rolling = false; rb.cat = c.dataset.cat; rbCount(); setTimeout(rbPick, 450); return; }
+    setTimeout(tick, reduce ? 0 : 55 + Math.pow(k / steps, 3) * 420);
   };
   tick();
 }
 async function rbPick(){
   try { await loadCatalog(); } catch (e) { toast('Katalog yüklenemedi'); return; }
-  const owned = new Set(S.inv.map(i => (byId(i.pid) || {}).cid).filter(Boolean));
-  const pool = CAT.filter(c => c.r[5] >= 1500 && !owned.has(c.r[0]) && (!S.gender || c.r[4] === S.gender || c.r[4] === 'U') && (!rb.cat || c.r[12].includes(rb.cat)) && (S.store !== 'boyner' || c.boy));
-  const box = document.getElementById('rb-result'); if (!box) return;
-  if (!pool.length) { box.innerHTML = '<div class="empty">Bu seçimlere uyan parfüm bulunamadı.</div>'; return; }
-  const c = pick(pool);
-  const p = toPerfume(c.r), st = STORES[S.store];
-  box.innerHTML = `<div class="box">
-    ${headHtml(p, [rb.cat, GENDER[c.r[4]], c.r[13] ? '★ ' + c.r[13].toFixed(1) : ''].filter(Boolean).join(' · '))}
-    <div class="fam-line">${p.fam.slice(0, 4).map(famTag).join('')}</div>
+  const f = document.getElementById('sheet'); if (!f || sheetMode !== 'randbuy') return;
+  const pool = rbPool();
+  if (!pool.length) { const e = document.getElementById('rb-count'); if (e) e.textContent = 'Bu seçimlere uyan parfüm yok; segmenti ya da modu değiştir.'; return; }
+  let c = pick(pool); if (pool.length > 1 && c.r[0] === rb.cid) c = pick(pool);
+  rb.cid = c.r[0];
+  const r = c.r, p = toPerfume(r), st = STORES[S.store], owned = inCollection(r[0]);
+  const stats = [r[13] ? '★ ' + r[13].toFixed(1) : '', p.lon ? 'Kalıcılık ' + miniDots(p.lon) : '', p.sil ? 'Yayılım ' + miniDots(p.sil) : ''].filter(Boolean).map(x => `<span class="mini">${x}</span>`).join('');
+  f.innerHTML = `<div class="row spread"><button class="back" style="margin:0" data-act="randbuy" type="button">‹ ${esc([rb.seg ? SEG[rb.seg] : '', rb.cat].filter(Boolean).join(' · ') || 'Seçime dön')}</button>${closeIcon}</div>
+    <div class="dhead">
+      <div class="art tap" data-act="cview" data-cid="${r[0]}">${art(p)}</div>
+      <div class="hero-body">
+        <span class="hero-brand" lang="en">${esc(p.brand)} ${concTag(r[14], r[1])} ${segTag(r[15])}</span>
+        <span class="hero-name">${esc(p.name)}</span>
+        <div class="dstats">${stats}</div>
+        <div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>
+      </div>
+    </div>
+    <div class="rb-notes">${[['Üst', p.top], ['Kalp', p.heart], ['Alt', p.base]].filter(x => x[1].length).map(([l, n]) => `<b>${l}:</b> ${esc(n.slice(0, 4).join(', '))}`).join(' · ')}</div>
     <div class="chips">${mainCats(p).map(x => `<span class="pill">${esc(x)}</span>`).join('')}</div>
     ${st.live ? pricesBox(p) : ''}
-    <div class="row"><a class="btn sm primary" href="${esc(st.url(storeQuery(p)))}" data-act="extlink">${st.n}'da aç</a>
-      <button class="btn sm" data-act="cview" data-cid="${c.r[0]}" type="button">Koku profili</button>
-      <button class="btn sm ghost" data-act="rbgo" type="button">Başka seç</button></div></div>`;
-  notifyPick(p, rb.cat || 'Rastgele al');
+    <div class="rb-actions">
+      <button class="btn primary" data-act="cadd" data-cid="${r[0]}" type="button"${owned ? ' disabled' : ''}>${owned ? 'Koleksiyonda ✓' : 'Koleksiyona ekle'}</button>
+      <button class="btn" data-act="cbuy" data-cid="${r[0]}" type="button">Satın almayı planla</button>
+      <a class="btn" href="${esc(st.url(storeQuery(p)))}" data-act="extlink">${st.loc} aç</a>
+      <button class="btn" data-act="rbgo" type="button">Başka seç</button>
+    </div>
+    <button class="btn ghost block" data-act="cview" data-cid="${r[0]}" type="button">Tüm detaylar</button>`;
+  notifyPick(p, [rb.seg ? SEG[rb.seg] : '', rb.cat].filter(Boolean).join(' · ') || 'Rastgele al');
   if (st.live) loadPricesInto(p);
 }
 
@@ -2047,6 +2145,20 @@ function renderLook(){
     </details>
   </section>
   <section class="section">
+    <details class="cg" style="background:var(--panel)"${S.weather.on ? ' open' : ''}>
+      <summary>Havaya göre öneri <small>${S.weather.on ? esc(S.weather.city) : 'kapalı'}</small></summary>
+      <div style="display:flex;flex-direction:column;gap:14px;padding:4px 12px 14px">
+        <label class="toggle-row" for="wx-on"><span><b>Hava durumunu kullan</b><br><span class="muted small">Sıcakta ferah, soğukta sıcak ve gurme, yağmurda odunsu kokular önerilir. Konum izni istemez; şehrini sen seçersin.</span></span>
+          <span class="switch"><input type="checkbox" id="wx-on"${S.weather.on ? ' checked' : ''}><span></span></span></label>
+        <div class="field"><label for="wx-city">Şehir</label><select class="input" id="wx-city">${Object.keys(CITIES).map(c => `<option${c === S.weather.city ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
+        <label class="toggle-row" for="wx-auto"><span><b>Günün parfümünü sabah havaya göre seç</b><br><span class="muted small">Uygulamayı gün içinde ilk açışında bugünün önerisi havaya göre değişir.</span></span>
+          <span class="switch"><input type="checkbox" id="wx-auto"${S.weather.auto ? ' checked' : ''}><span></span></span></label>
+        ${S.weather.on ? (WX ? `<div class="status ok"><i></i><span>${wxDesc(WX.code)[1]} ${esc(WX.city)} şu an ${WX.temp}°, ${wxDesc(WX.code)[0]} → ${esc(wxCats(WX).slice(0, 3).join(', '))}</span></div>` : '<div class="status warn"><i></i><span>Hava durumu alınamadı.</span></div>') : ''}
+        <span class="muted small">Hava verisi: Open-Meteo (ücretsiz, hesap gerektirmez).</span>
+      </div>
+    </details>
+  </section>
+  <section class="section">
     <h2>Görseller</h2>
     <div class="box">
       <div class="toggle-row"><span><b>Arka planı kaldır</b><br><span class="muted small">Şişe fotoğraflarının beyaz zeminini silip şişeyi tek başına gösterir. Kötü görünürse kapat.</span></span>
@@ -2188,6 +2300,7 @@ function migrate(s){
   s.inv.forEach(i => { if (!i.added) i.added = Date.now(); });
   if (!Array.isArray(s.buys)) s.buys = [];
   if (!Array.isArray(s.wears)) s.wears = [];
+  s.weather = {on: false, city: 'İstanbul', auto: false, day: '', ...(s.weather || {})};
   s.ui = {...UI_DEFAULT, ...(s.ui || {})};
   s.wheelCats = (s.wheelCats || []).map(c => OLD_CAT[c] || c);
   if (!s.wheelGroup) s.wheelGroup = 'Kullanım';
@@ -2261,7 +2374,7 @@ document.addEventListener('click', async e => {
       const have = inCollection(+t.dataset.cid);
       if (have) { openDetail(have); break; }
       addFromCatalog(t.dataset.cid);
-      if (sheetMode === 'cdetail') { t.textContent = 'Koleksiyonda'; t.disabled = true; }
+      if (sheetMode === 'cdetail' || sheetMode === 'randbuy') { t.textContent = 'Koleksiyonda ✓'; t.disabled = true; }
       if (S.tab === 'kesfet') renderExploreBody();
       break;
     }
@@ -2274,7 +2387,14 @@ document.addEventListener('click', async e => {
       break;
     }
     case 'randbuy': openRandomBuy(); break;
-    case 'rbcat': if (!rb.rolling) { rb.cat = rb.cat === t.dataset.cat ? '' : t.dataset.cat; document.querySelectorAll('#rb-moods .chip').forEach(c => c.classList.toggle('on', c.dataset.cat === rb.cat)); } break;
+    case 'rbcat': if (!rb.rolling) { rb.cat = rb.cat === t.dataset.cat ? '' : t.dataset.cat; document.querySelectorAll('#rb-moods .chip').forEach(c => c.classList.toggle('on', c.dataset.cat === rb.cat)); rbCount(); } break;
+    case 'rbseg': rb.seg = t.dataset.v; openRandomBuy(); break;
+    case 'wxpick': {
+      const w = await fetchWeather(); if (!w) { toast('Hava durumu alınamadı'); break; }
+      const p = wxPick(w); if (!p) { toast('Bu havaya uyan parfüm bulunamadı'); break; }
+      S.week[today()].pid = p.id; save(); render(); toast(`${w.temp}° ${wxDesc(w.code)[0]}: ${p.name}`); break;
+    }
+    case 'exseg': ex.seg = t.dataset.v; ex.limit = 40; renderExplore(); break;
     case 'rbroll': rbRoll(); break;
     case 'rbgo': if (!rb.rolling) rbPick(); break;
     case 'gosub': S.sub = t.dataset.sub; go('ayarlar'); break;
@@ -2400,6 +2520,10 @@ document.addEventListener('change', async e => {
     S.week[d].pid = rollDay(d, used); save(); render();
   }
   if (t.id === 'notify-random') { S.notifyRandom = t.checked; save(); }
+  if (t.id === 'rb-good') { rb.good = t.checked; rbCount(); }
+  if (t.id === 'wx-on') { S.weather.on = t.checked; save(); if (t.checked) fetchWeather(true).then(() => renderLook()); else renderLook(); }
+  if (t.id === 'wx-auto') { S.weather.auto = t.checked; save(); }
+  if (t.id === 'wx-city') { S.weather.city = t.value; WX = null; save(); fetchWeather(true).then(() => renderLook()); }
   if (t.dataset && t.dataset.ui) { S.ui[t.dataset.ui] = t.checked; save(); applyUi(); const sm = document.querySelector('details.cg summary small'); if (sm) sm.textContent = Object.values(S.ui).filter(v => v === true).length + ' açık'; }
   if (t.id === 'wheel-inv') { S.wheelInv = t.checked; save(); renderWheel(); }
   if (t.classList && t.classList.contains('wheel-tick')) {
@@ -2464,6 +2588,7 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible' || !S) return;
   if (S.weekKey !== weekKey()) { S.weekKey = weekKey(); shuffleWeek(); save(); render(); }
   if (cleanBuys()) { save(); render(); }
+  weatherBoot();
   if (S.tab === 'ayarlar' && S.sub === 'bildirim') renderNotif();
 });
 window.onNativeBack = () => {
@@ -2485,6 +2610,7 @@ window.onNativeBack = () => {
   checkUpdate();
   ensureSounds();
   requestAnimationFrame(() => nativeCall('ready'));
+  weatherBoot();
   if (S.perfumes.some(p => p.cid && !p.conc)) setTimeout(() => loadCatalog().catch(() => {}), 1500);
 })();
 })();

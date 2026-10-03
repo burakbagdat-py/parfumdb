@@ -49,7 +49,14 @@ jobs:
           BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
           "$BT/zipalign" -p -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk aligned.apk
           if [ -n "$SIGNING_KEY_B64" ]; then
-            echo "$SIGNING_KEY_B64" | base64 -d > "$RUNNER_TEMP/new.p12"
+            if ! echo "$SIGNING_KEY_B64" | base64 -d > "$RUNNER_TEMP/new.p12" 2>/dev/null || [ "$(stat -c%s "$RUNNER_TEMP/new.p12")" -lt 1000 ]; then
+              echo "::error::SIGNING_KEY_B64 hatalı. Bu secret'a SIGNING_KEY_B64.txt dosyasının TAMAMI (MII ile başlayan uzun metin) girilmeli."
+              exit 1
+            fi
+            if ! keytool -list -storetype PKCS12 -keystore "$RUNNER_TEMP/new.p12" -storepass:env SIGNING_KEY_PASS >/dev/null 2>&1; then
+              echo "::error::SIGNING_KEY_PASS hatalı ya da eksik. Bu secret'a SIGNING_KEY_PASS.txt dosyasının içeriği girilmeli."
+              exit 1
+            fi
             "$BT/apksigner" rotate --out "$RUNNER_TEMP/lineage.bin" \
               --old-signer --ks android/keystore.p12 --ks-pass pass:parfumcarki --ks-key-alias parfum --set-rollback false \
               --new-signer --ks "$RUNNER_TEMP/new.p12" --ks-pass env:SIGNING_KEY_PASS --ks-key-alias bb
