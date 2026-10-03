@@ -1,5 +1,5 @@
 {
- "v": 1,
+ "v": 2,
  "shops": {
   "boyner": {
    "n": "Boyner",
@@ -26,6 +26,17 @@
    "title": "\\\\\"displayName\\\\\":\\\\\"([^\\\\\"]+)",
    "price": "\\\\\"discountedPrice\\\\\":(\\d+)",
    "fmt": "kurus"
+  },
+  "perfumepoint": {
+   "n": "Perfume Point",
+   "type": "regex",
+   "search": "https://www.perfumepoint.com.tr/arama?q={q}",
+   "split": "class=\"col-6 col-sm-6[^\"]*product-item\"",
+   "url": "href=\"(/[^\"]+)\" class=\"w-100 product-title",
+   "title": "class=\"w-100 product-title text-body\">([^<]+)<",
+   "price": "class=\"product-price\">([0-9.,]+)<",
+   "base": "https://www.perfumepoint.com.tr",
+   "fmt": "tr"
   },
   "n11": {
    "n": "n11",

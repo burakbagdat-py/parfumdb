@@ -114,9 +114,25 @@ public class PriceWatch extends BroadcastReceiver {
                 try {
                     JSONObject rule = rules.getJSONObject(k);
                     boolean boyner = "boyner".equals(rule.optString("type"));
-                    JSONArray items = ShopEngine.search(rule, q, boyner ? ml : 0);
-                    JSONObject sizes = ShopEngine.sizes(items, name, brand, conc, boyner ? ml : 0);
-                    JSONObject hit = sizes.optJSONObject(String.valueOf(ml));
+                    JSONArray qs = x.optJSONArray("qs");
+                    if (qs == null || qs.length() == 0) qs = new JSONArray().put(q);
+                    JSONObject hit = null;
+                    for (int v = 0; v < qs.length() && hit == null; v++) {
+                        JSONArray items;
+                        try {
+                            items = ShopEngine.search(rule, qs.getString(v), boyner ? ml : 0);
+                        } catch (Exception e) {
+                            if ("blocked".equals(e.getMessage())) break;
+                            Thread.sleep(2000);
+                            try {
+                                items = ShopEngine.search(rule, qs.getString(v), boyner ? ml : 0);
+                            } catch (Exception e2) {
+                                continue;
+                            }
+                        }
+                        hit = ShopEngine.sizes(items, name, brand, conc, boyner ? ml : 0).optJSONObject(String.valueOf(ml));
+                        if (hit == null) Thread.sleep(800);
+                    }
                     if (hit != null) {
                         perShop.put(rule.optString("id"), hit.getDouble("p"));
                         if (hit.getDouble("p") < best) {

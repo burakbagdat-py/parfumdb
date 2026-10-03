@@ -328,9 +328,9 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .tabs::before{content:"";position:absolute;left:0;right:0;top:-1px;height:6px;background:var(--pattern);background-size:var(--pattern-size);opacity:.5;pointer-events:none}
 [data-skin="karamel"] .tabs::before,[data-skin="phantom"] .tabs::before,[data-skin="althair"] .tabs::before,[data-skin="layton"] .tabs::before{display:none}
 [data-skin="lemale"] .tabs::before{height:4px;opacity:.35}
-.tabs-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
-.tab{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0 2px;color:var(--muted);font-size:11.5px;font-weight:600}
-.tab .ic{width:60px;height:32px;border-radius:16px;display:grid;place-items:center;transition:background .25s,transform .25s}
+.tabs-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(6,minmax(0,1fr))}
+.tab{background:none;border:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0 2px;color:var(--muted);font-size:clamp(9.5px,2.8vw,11.5px);font-weight:600;letter-spacing:-.1px;white-space:nowrap;min-width:0}
+.tab .ic{width:min(54px,100%);height:32px;border-radius:16px;display:grid;place-items:center;transition:background .25s,transform .25s}
 .tab svg{width:22px;height:22px}
 .tab.on{color:var(--fg)}
 .tab.on .ic{background:color-mix(in srgb,var(--accent) 24%,transparent);color:var(--accent)}
@@ -405,6 +405,17 @@ body.sheet-open{overflow:hidden}
 .brand-row{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border-top:1px solid var(--line);background:none;border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left;color:var(--fg)}
 .brand-row:first-child{border-top:0}
 .brand-av{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--panel-2);font-family:var(--f-display);font-weight:var(--dw);color:var(--hi)}
+/* --- maceration --- */
+.macchip{display:inline-flex;align-items:center;gap:5px;margin-top:5px;padding:4px 10px 4px 7px;border-radius:999px;border:1px solid var(--line);background:var(--panel-2);color:var(--fg);font-size:12px;font-weight:700;width:max-content;max-width:100%}
+.macchip svg{width:15px;height:15px;flex:none}
+.macchip.on{background:color-mix(in srgb,var(--accent) 16%,var(--panel));border-color:color-mix(in srgb,var(--accent) 45%,var(--line));color:var(--accent)}
+.macchip.ready{background:var(--grad);color:var(--ink);border-color:transparent}
+.mac-left{display:flex;flex-direction:column;align-items:center;min-width:46px;line-height:1}
+.mac-left b{font-family:var(--f-display);font-weight:var(--dw);font-size:24px;font-variant-numeric:tabular-nums;color:var(--accent)}
+.mac-left span{font-size:11px;color:var(--muted);margin-top:3px}
+.mac-left.ready b{font-size:20px}
+.mac-sum{background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;font-size:14px}
+.mac-sum b{font-family:var(--f-display);font-weight:var(--dw);font-size:17px}
 /* --- price-watch bell --- */
 .bell{display:inline-flex;align-items:center;gap:7px;padding:5px 11px 5px 7px;border-radius:999px;border:1px solid var(--line);background:var(--panel-2);color:var(--muted);font-size:12px;font-weight:700;width:max-content;max-width:100%}
 .bell svg{width:18px;height:18px;flex:none}
@@ -494,6 +505,7 @@ body.sheet-open{overflow:hidden}
     <button class="tab" data-tab="kesfet" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></span>Keşfet</button>
     <button class="tab" data-tab="koleksiyon" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg></span>Koleksiyon</button>
     <button class="tab" data-tab="envanter" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9.5 3h5v3h-5zM10.5 6v2M13.5 6v2"/><rect x="6" y="8" width="12" height="13" rx="3"/><path d="M6 15h12"/></svg></span>Envanter</button>
+    <button class="tab" data-tab="maserasyon" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6.5 3.5h11M6.5 20.5h11"/><path d="M8 3.5V6a4 4 0 0 0 1.8 3.3L12 11l2.2-1.7A4 4 0 0 0 16 6V3.5M8 20.5V18a4 4 0 0 1 1.8-3.3L12 13l2.2 1.7A4 4 0 0 1 16 18v2.5"/></svg></span>Maserasyon</button>
   </div>
 </nav>
 
@@ -588,6 +600,7 @@ const STORES = {
   beymen: {n: 'Beymen', loc: "Beymen'de", url: q => 'https://www.beymen.com/tr/search?q=' + encodeURIComponent(q)},
   sephora: {n: 'Sephora', loc: "Sephora'da", url: q => 'https://www.sephora.com.tr/arama/?q=' + encodeURIComponent(q)},
   gratis: {n: 'Gratis', loc: "Gratis'te", url: q => 'https://www.gratis.com/search?q=' + encodeURIComponent(q)},
+  perfumepoint: {n: 'Perfume Point', loc: "Perfume Point'te", url: q => 'https://www.perfumepoint.com.tr/arama?q=' + encodeURIComponent(q)},
   n11: {n: 'n11', loc: "n11'de", url: q => 'https://www.n11.com/arama?q=' + encodeURIComponent(q)},
   trendyol: {n: 'Trendyol', loc: "Trendyol'da", url: q => 'https://www.trendyol.com/sr?q=' + encodeURIComponent(q)},
   hepsiburada: {n: 'Hepsiburada', loc: "Hepsiburada'da", url: q => 'https://www.hepsiburada.com/ara?q=' + encodeURIComponent(q)},
@@ -692,8 +705,8 @@ function freshState(){
     inv: [], customCats: [],
     week, weekKey: '', source: 'envanter',
     wheelCats: [], wheelGroup: 'Kullanım', lastSpin: null,
-    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', global: false, alarmSound: 'fiyat', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true, buys: [], wears: [], ui: {...UI_DEFAULT}, weather: {on: false, city: 'İstanbul', auto: false, day: ''},
-    shop: {exact: true, order: ['boyner', 'beymen', 'gratis', 'n11', 'sephora', 'trendyol', 'hepsiburada', 'amazon'], off: ['n11']},
+    tab: 'hafta', sub: null, skin: 'karamel', nobg: true, store: 'boyner', global: false, alarmSound: 'fiyat', gender: '', notifyRandom: true, wheelInv: true, wheelOff: [], bbSound: true, buys: [], wears: [], mac: [], macSkip: true, macTime: '10:00', ui: {...UI_DEFAULT}, weather: {on: false, city: 'İstanbul', auto: false, day: ''},
+    shop: {exact: true, order: ['boyner', 'beymen', 'gratis', 'perfumepoint', 'n11', 'sephora', 'trendyol', 'hepsiburada', 'amazon'], off: ['n11']},
     alarms: [], alarmTime: '12:00', sim: {on: true, cheap: false},
     notif: {reminders: defaultReminders()}
   };
@@ -827,8 +840,8 @@ function groupLabel(title, brand){
   t = t.replace(/\d+\s*ml\b/ig, '').replace(/\b(erkek|kad[ıi]n|unisex)\s+parf[üu]m(ü)?\b/ig, '').replace(/\s+/g, ' ').trim();
   return t;
 }
-async function fetchPrices(p, onProgress){
-  const q = (shortBrand(p.brand) + ' ' + p.name).trim();
+async function fetchPrices(p, onProgress, opt){
+  const q = opt && opt.q || (shortBrand(p.brand) + ' ' + p.name).trim();
   const key = 'price:' + fold(q);
   if (priceMem.has(key)) return priceMem.get(key);
   try { const c = await idbGet(key); if (c && Date.now() - c.t < 12 * 3600e3) { priceMem.set(key, c); return c; } } catch (e) {}
@@ -837,11 +850,13 @@ async function fetchPrices(p, onProgress){
   const brandT = new Set(toks(shortBrand(p.brand)));
   const groups = new Map();
   let ok = 0, blocked = false;
-  const runs = [null, 50, 100, 200];
+  const runs = opt && opt.runs || [null, 50, 100, 200];
   for (let i = 0; i < runs.length; i++) {
     const ml = runs[i];
     onProgress && onProgress(i, runs.length);
-    const res = await nativeAsync('boynerSearch', q, ml ? ml + '-ml' : '');
+    let res = await nativeAsync('boynerSearch', q, ml ? ml + '-ml' : '');
+    // a timeout or dropped connection gets one more try; a rate limit stops the whole run
+    if (!res || (res.error && !res.blocked)) { await sleep(1500); res = await nativeAsync('boynerSearch', q, ml ? ml + '-ml' : ''); }
     if (!res || res.error) { if (res && res.blocked) { blocked = true; break; } continue; }
     ok++;
     for (const it of res.products || []) {
@@ -966,7 +981,9 @@ let S;
 const byId = id => S.perfumes.find(p => p.id === id);
 const inCollection = cid => S.perfumes.find(p => p.cid === cid && !p.sample);
 const invOf = pid => S.inv.find(i => i.pid === pid);
-const invPerfumes = () => S.inv.filter(i => i.level > 0).map(i => byId(i.pid)).filter(Boolean);
+const macOf = iid => (S.mac || []).find(m => m.iid === iid);
+const macResting = iid => { const m = macOf(iid); return !!m && m.end > Date.now(); };
+const invPerfumes = () => S.inv.filter(i => i.level > 0 && !(S.macSkip && macResting(i.id))).map(i => byId(i.pid)).filter(Boolean);
 const usingInv = () => S.source === 'envanter' && invPerfumes().length > 0;
 const sourcePerfumes = () => usingInv() ? invPerfumes() : S.perfumes;
 const today = () => new Date().getDay();
@@ -1113,6 +1130,13 @@ function buildPlan(){
     reminders.push({id: 'buy_' + b.id, label: 'Satın alma', at: b.at, h: dt.getHours(), m: dt.getMinutes(), days: [dt.getDay()],
       sound: resolveSound(base), soundName: soundName(base), vib: base.vib !== false, msgs});
   }
+  for (const m of S.mac || []) {
+    const p = byId(m.pid); if (!p || m.end <= Date.now()) continue;
+    const dt = new Date(m.end), msg = {t: 'Maserasyon bitti: ' + p.name, b: `${m.days} gün dinlendi, artık sıkmaya hazır. Kokusunu bir dene!`};
+    const msgs = {}; for (let d = 0; d < 7; d++) msgs[d] = [msg];
+    reminders.push({id: 'mac_' + m.id, label: 'Maserasyon', at: m.end, h: dt.getHours(), m: dt.getMinutes(), days: [dt.getDay()],
+      sound: resolveSound(base), soundName: soundName(base), vib: base.vib !== false, msgs});
+  }
   return {reminders};
 }
 let lastPlan = '';
@@ -1160,8 +1184,8 @@ function toast(msg){
 
 /* ---------- shared UI ---------- */
 const view = document.getElementById('view');
-const TAB_ORDER = ['hafta', 'cark', 'kesfet', 'koleksiyon', 'envanter', 'ayarlar'];
-const TAB_TITLE = {hafta: 'Bu hafta', cark: 'Çark', kesfet: 'Keşfet', koleksiyon: 'Koleksiyon', envanter: 'Envanter', ayarlar: 'Ayarlar'};
+const TAB_ORDER = ['hafta', 'cark', 'kesfet', 'koleksiyon', 'envanter', 'maserasyon', 'ayarlar'];
+const TAB_TITLE = {hafta: 'Bu hafta', cark: 'Çark', kesfet: 'Keşfet', koleksiyon: 'Koleksiyon', envanter: 'Envanter', maserasyon: 'Maserasyon', ayarlar: 'Ayarlar'};
 let shownTab = null;
 function haptic(kind){ if (S && S.ui && !S.ui.haptic) return; if (NATIVE && NATIVE.haptic) nativeCall('haptic', kind || 'tick'); else try { navigator.vibrate && navigator.vibrate(kind === 'confirm' ? 15 : 6); } catch (e) {} }
 function render(){
@@ -1176,8 +1200,8 @@ function render(){
   }
   const d = DAYS.find(x => x.d === today());
   document.getElementById('today-label').textContent = d.n + ' · ' + new Date().getDate();
-  ({hafta: renderWeek, cark: renderWheel, kesfet: renderExplore, koleksiyon: renderCollection, envanter: renderInventory, ayarlar: renderSettings}[S.tab] || renderWeek)();
-  const fabAct = {koleksiyon: ['go', 'kesfet', 'Katalogdan ekle'], envanter: ['invpick', '', 'Şişe ekle']}[S.tab];
+  ({hafta: renderWeek, cark: renderWheel, kesfet: renderExplore, koleksiyon: renderCollection, envanter: renderInventory, maserasyon: renderMac, ayarlar: renderSettings}[S.tab] || renderWeek)();
+  const fabAct = {koleksiyon: ['go', 'kesfet', 'Katalogdan ekle'], envanter: ['invpick', '', 'Şişe ekle'], maserasyon: ['macpick', '', 'Şişe dinlendir']}[S.tab];
   if (fabAct) {
     const b = document.createElement('button');
     b.className = 'fab'; b.id = 'fab'; b.type = 'button'; b.dataset.act = fabAct[0]; if (fabAct[1]) b.dataset.tab = fabAct[1];
@@ -1674,57 +1698,116 @@ async function loadShops(){
   catch (e) { try { SHOP_RULES = await idbGet('shops'); } catch (e2) {} }
   return SHOP_RULES = SHOP_RULES || {boyner: {n: 'Boyner', type: 'boyner'}};
 }
-const M_STOP = new Set('ml erkek kadin unisex parfum parfumu eau de du la le toilette cologne edt edp extrait spray sprey vapo natural for men women pour homme femme fragrance refillable orijinal yeni new diger christian'.split(' '));
-const M_BAD = new Set('set seti deodorant deo dus shower balm lotion losyon sampuan serum vucut body after sabun kit minyatur miniature refill stick krem hair sac tester decant gift hediye'.split(' '));
+const M_STOP = new Set(('ml erkek kadin unisex parfum parfumu eau de du la le toilette cologne edt edp extrait spray sprey vapo natural for men women pour homme femme '
+  + 'fragrance refillable orijinal orjinal yeni new diger christian ve icin tr gr mens womens ladies bayan bay erkeklere kadinlara perfume parfume vaporisateur vaporizer').split(' '));
+const M_BAD = new Set(('set seti deodorant deo dus shower balm lotion losyon sampuan serum vucut body after sabun kit minyatur miniature refill stick krem hair sac '
+  + 'tester decant gift hediye mist gel jel kolonya').split(' '));
 function mFold(s){ return fold(s).replace(/[^a-z0-9]+/g, ' ').trim(); }
-function mConc(t){
-  t = ' ' + t.replace(/\b(erkek|kadin|unisex) parfum(u)?\b/g, ' ') + ' ';
-  for (const [k, c] of [[' extrait ', 'Extrait'], [' eau de parfum ', 'EDP'], [' edp ', 'EDP'], [' eau de toilette ', 'EDT'], [' edt ', 'EDT'],
-    [' elixir ', 'Elixir'], [' eau de cologne ', 'EDC'], [' cologne ', 'EDC'], [' edc ', 'EDC'], [' parfum ', 'Parfum']]) if (t.includes(k)) return c;
-  return '';
+// "One Million" and "1 Million" are the same name
+const mToks = s => mFold(s).split(' ').filter(Boolean).map(w => w === 'one' ? '1' : w);
+// every concentration a title states, strongest first; a standalone "Parfum" counts, "Eau de Parfum" is EDP
+function mConcs(t){
+  t = ' ' + t.replace(/\b(erkek|kadin|unisex|bayan|bay) parfum(u|leri)?\b/g, ' ') + ' ';
+  const out = [];
+  if (/ extrait /.test(t)) out.push('Extrait');
+  if (/ elixir /.test(t)) out.push('Elixir');
+  const u = t.replace(/ extrait de parfum /g, ' ').replace(/ eau de parfum /g, ' edp ');
+  if (/ parfum /.test(u)) out.push('Parfum');
+  if (/ edp /.test(u)) out.push('EDP');
+  if (/ (eau de toilette|edt) /.test(t)) out.push('EDT');
+  if (/ (eau de cologne|cologne|edc) /.test(t)) out.push('EDC');
+  return out;
+}
+const mConc = t => mConcs(t)[0] || '';
+// a name like "Le Male Le Parfum" already carries a concentration word; only what the title adds on top decides
+function concOK(conc, name, t){
+  if (!conc) return true;
+  const cs = mConcs(t); if (!cs.length) return true;
+  const nc = mConcs(mFold(name));
+  if (nc.includes(conc)) return cs.includes(conc);
+  const rest = cs.filter(c => !nc.includes(c));
+  return !rest.length || rest[0] === conc;
+}
+// brand words plus the shorthands stores use for it (YSL, PDM, D&G…)
+function brandWords(brand){
+  const fb = mFold(brand), fs = mFold(shortBrand(brand));
+  const al = Object.entries(ALIASES).filter(([, v]) => v === fb || v === fs).map(([k]) => mFold(k));
+  return [...new Set([...mToks(brand), ...al.flatMap(x => x.split(' '))])];
 }
 // same rules as the app's ShopEngine: every name word present, no flanker/other-product words, same concentration when known
 function mMatch(p, title){
-  const t = mFold(String(title).split(' - ')[0]), tl = t.split(' '), tt = new Set(tl);
-  const nameT = mFold(p.name).split(' ').filter(w => w && !M_STOP.has(w)), brandT = new Set(mFold(p.brand).split(' '));
+  // Turkish "Parfüm" just means perfume, it is not the Parfum concentration
+  const t = mFold(String(title).split(' - ')[0].replace(/parf[üÜ]m/gi, ' ')), tl = t.split(' ').map(w => w === 'one' ? '1' : w), tt = new Set(tl);
+  let nameT = mToks(p.name).filter(w => !M_STOP.has(w));
+  if (nameT.some(w => w.length > 1)) nameT = nameT.filter(w => w.length > 1);
+  const brandT = new Set(brandWords(p.brand));
   if (!nameT.length || !nameT.every(w => tt.has(w))) return false;
-  if ([...tt].some(w => M_BAD.has(w))) return false;
-  if ([...tt].some(w => w && !nameT.includes(w) && !brandT.has(w) && !M_STOP.has(w) && !/^\d+$/.test(w))) return false;
+  if (tl.some(w => M_BAD.has(w))) return false;
+  if (tl.some(w => w.length > 1 && !nameT.includes(w) && !brandT.has(w) && !M_STOP.has(w) && !/^\d+(ml|gr?|cl)?$/.test(w))) return false;
   const i = tl.indexOf(nameT[0]); if (i > 0 && tl[i - 1] === 'eau' && !mFold(p.name).startsWith('eau')) return false;
-  const tc = mConc(t);
-  return !p.conc || !tc || tc === p.conc;
+  return concOK(p.conc, p.name, t);
 }
+// several ways to write the same search, tried in order until a store finds it
+function queryVariants(p){
+  const ascii = s => String(s).normalize('NFD').replace(/\p{M}/gu, '').replace(/[’'`´]/g, ' ').replace(/&/g, ' ').replace(/\s+/g, ' ').trim();
+  const b = shortBrand(p.brand), n = String(p.name).trim();
+  const v = [`${b} ${n}`, ascii(`${b} ${n}`), p.conc ? `${ascii(b)} ${ascii(n)} ${p.conc}` : '', ascii(n).length >= 4 ? ascii(n) : ''];
+  return [...new Set(v.map(x => x.trim()).filter(Boolean))].slice(0, 3);
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 function mSizes(items, p){
   const best = {}, exact = {};
   for (const it of items || []) {
     if (!(it.p > 0) || !mMatch(p, it.t)) continue;
     const m = /(\d{2,3})\s*ml/i.exec(it.t); const ml = it.ml || (m ? +m[1] : 0); if (!ml) continue;
-    const tgt = p.conc && mConc(mFold(it.t)) === p.conc ? exact : best;
+    const tgt = p.conc && mConcs(mFold(String(it.t).replace(/parf[üÜ]m/gi, ' '))).includes(p.conc) ? exact : best;
     if (!tgt[ml] || tgt[ml].p > it.p) tgt[ml] = {p: it.p, u: it.u, t: it.t};
   }
   return Object.assign(best, exact);
 }
 const mpMem = new Map();
+async function shopTry(rule, k, q){
+  for (let a = 0; a < 2; a++) {
+    const r = await nativeAsync('shopSearch', JSON.stringify({...rule, id: k}), q, 0);
+    if (r && (!r.error || r.blocked)) return r;
+    await sleep(1500);
+  }
+  return {error: 'fail'};
+}
+function boynerGroup(d, p){
+  const gs = d && d.groups || [];
+  return gs.find(g => mMatch(p, g.label)) || (gs[0] && gs[0].extra === 0 ? gs[0] : null);
+}
 async function fetchMulti(p, onProgress){
-  const key = 'mp:' + fold(storeQuery(p)) + ':' + (p.conc || '');
+  const key = 'mp2:' + fold(storeQuery(p)) + ':' + (p.conc || '');
   if (mpMem.has(key)) return mpMem.get(key);
   try { const c = await idbGet(key); if (c && Date.now() - c.t < 12 * 3600e3) { mpMem.set(key, c); return c; } } catch (e) {}
   if (!NATIVE) return null;
   const rules = await loadShops();
   const ids = S.shop.order.filter(k => !S.shop.off.includes(k) && rules[k] && (k === 'boyner' || NATIVE.shopSearch));
+  const qs = queryVariants(p);
   const out = {t: Date.now(), shops: {}, order: ids};
   for (let i = 0; i < ids.length; i++) {
     const k = ids[i];
     onProgress && onProgress(rules[k].n, i, ids.length);
     if (k === 'boyner') {
-      const d = await fetchPrices(p);
-      const g = d && d.groups && d.groups[0];
+      let d = await fetchPrices(p), g = boynerGroup(d, p);
+      for (const q of qs.slice(1)) {
+        if (g || (d && d.blocked)) break;
+        await sleep(600);
+        d = await fetchPrices(p, null, {q, runs: [null, 100]}); g = boynerGroup(d, p);
+      }
       out.shops.boyner = g ? {sizes: Object.fromEntries(Object.entries(g.sizes).map(([ml, v]) => [ml, {p: v.price, u: v.url, t: g.label}]))} : {sizes: {}, blocked: !!(d && d.blocked)};
       continue;
     }
-    const r = await nativeAsync('shopSearch', JSON.stringify({...rules[k], id: k}), storeQuery(p), 0);
-    out.shops[k] = !r || r.error ? {sizes: {}, blocked: !!(r && r.blocked)} : {sizes: mSizes(r.items, p)};
-    await new Promise(res => setTimeout(res, 400));
+    let res = {sizes: {}};
+    for (const q of qs) {
+      const r = await shopTry(rules[k], k, q);
+      if (r.blocked) { res.blocked = true; break; }
+      if (!r.error) { const sz = mSizes(r.items, p); if (Object.keys(sz).length) { res = {sizes: sz, q}; break; } }
+      await sleep(400);
+    }
+    out.shops[k] = res;
   }
   if (Object.values(out.shops).some(x => Object.keys(x.sizes).length)) { mpMem.set(key, out); idbSet(key, out).catch(() => {}); }
   return out;
@@ -1780,7 +1863,7 @@ async function openBest(p){
   for (const k of order) {
     if (k === 'boyner') {
       const d = await fetchPrices(p);
-      const g = d && d.groups && d.groups[0];
+      const g = boynerGroup(d, p);
       if (g) {
         const sizes = Object.keys(g.sizes).map(Number);
         const ml = g.sizes[100] ? 100 : sizes.sort((a, b) => Math.abs(a - 100) - Math.abs(b - 100))[0];
@@ -1838,7 +1921,8 @@ async function syncAlarms(){
   nativeCall('setPriceSound', resolveSound({sound: S.alarmSound || 'fiyat'}));
   const rules = await loadShops();
   const use = S.shop.order.filter(k => rules[k] && !S.shop.off.includes(k)).map(k => ({...rules[k], id: k}));
-  nativeCall('setPriceWatches', JSON.stringify(S.alarms.map(a => ({id: a.id, name: a.name, brand: a.brand, conc: a.conc || '', q: a.q, ml: a.ml, target: a.target, rules: use}))), S.alarmTime);
+  nativeCall('setPriceWatches', JSON.stringify(S.alarms.map(a => ({id: a.id, name: a.name, brand: brandWords(a.brand).join(' '), conc: a.conc || '', q: a.q,
+    qs: queryVariants(a), ml: a.ml, target: a.target, rules: use}))), S.alarmTime);
 }
 function alarmResults(){ try { return JSON.parse(nativeCall('priceResults') || '{}'); } catch (e) { return {}; } }
 function openAlarmSheet(){
@@ -2016,18 +2100,116 @@ function renderInventory(){
   </section>
   <section class="section">
     ${items.length ? `<div class="list">${items.map(({i, p}) => `
-      <button class="item" data-act="invedit" data-iid="${i.id}" type="button">
+      <div class="item" data-act="invedit" data-iid="${i.id}" role="button" tabindex="0">
         <div class="art">${art(p)}</div>
         <div class="item-body"><span class="item-name">${esc(p.name)} ${concTag(i.conc || p.conc, p.name)}</span>
           <span class="item-meta"><span lang="en">${esc(p.brand)}</span> · ${i.ml} ml · %${i.level}${i.level === 0 ? ' · bitti' : ''}</span>
           <span class="item-meta">Eklendi: ${esc(fmtDate(i.added))}</span>
-          <div class="level"><i style="width:${i.level}%"></i></div></div>
+          <div class="level"><i style="width:${i.level}%"></i></div>
+          ${macChip(i)}</div>
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--muted)"><path d="m9 6 6 6-6 6"/></svg>
-      </button>`).join('')}</div>`
+      </div>`).join('')}</div>`
     : `<div class="empty">Envanterin boş. Sağ alttaki + ile koleksiyonundaki parfümlerden elinde olanları ekle.</div>`}
   </section>
   ${profileStats(items)}`;
 }
+/* ---------- maceration: resting a bottle for a week or a month ---------- */
+const HG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6.5 3.5h11M6.5 20.5h11"/><path d="M8 3.5V6a4 4 0 0 0 1.8 3.3L12 11l2.2-1.7A4 4 0 0 0 16 6V3.5M8 20.5V18a4 4 0 0 1 1.8-3.3L12 13l2.2 1.7A4 4 0 0 1 16 18v2.5"/></svg>';
+const MAC_DAYS = [[7, '1 hafta'], [14, '2 hafta'], [30, '1 ay'], [60, '2 ay']];
+const DAY = 864e5;
+const macLeft = m => Math.max(0, Math.ceil((m.end - Date.now()) / DAY));
+const fmtDay = t => new Date(t).toLocaleDateString('tr-TR', {day: 'numeric', month: 'long', weekday: 'long'});
+const durLabel = d => (MAC_DAYS.find(x => x[0] === d) || [0, d + ' gün'])[1];
+function macChip(i){
+  const m = macOf(i.id);
+  if (!m) return `<button class="macchip" data-act="macsend" data-iid="${i.id}" type="button">${HG_SVG}Maserasyona gönder</button>`;
+  if (m.end <= Date.now()) return `<button class="macchip ready" data-act="macedit" data-id="${m.id}" type="button">${HG_SVG}Maserasyon bitti · hazır</button>`;
+  return `<button class="macchip on" data-act="macedit" data-id="${m.id}" type="button">${HG_SVG}Dinleniyor · ${macLeft(m)} gün kaldı</button>`;
+}
+function macRow(m, p){
+  const ready = m.end <= Date.now(), pct = Math.min(100, Math.max(0, Math.round((Date.now() - m.start) / (m.end - m.start) * 100)));
+  const it = S.inv.find(i => i.id === m.iid);
+  return `<button class="item" data-act="macedit" data-id="${m.id}" type="button">
+    <div class="art">${art(p)}</div>
+    <div class="item-body"><span class="item-name">${esc(p.name)} ${concTag(it && it.conc || p.conc, p.name)}</span>
+      <span class="item-meta"><span lang="en">${esc(p.brand)}</span> · ${esc(durLabel(m.days))}</span>
+      <span class="item-meta">${ready ? 'Bitti: ' + esc(fmtDay(m.end)) : esc(new Date(m.start).toLocaleDateString('tr-TR', {day: 'numeric', month: 'short'})) + ' → ' + esc(fmtDay(m.end))}</span>
+      <div class="level"><i style="width:${pct}%"></i></div></div>
+    <div class="mac-left${ready ? ' ready' : ''}">${ready ? '<b>✓</b><span>hazır</span>' : `<b>${macLeft(m)}</b><span>gün</span>`}</div>
+  </button>`;
+}
+function renderMac(){
+  const now = Date.now();
+  const list = (S.mac || []).map(m => ({m, p: byId(m.pid)})).filter(x => x.p);
+  const act = list.filter(x => x.m.end > now).sort((a, b) => a.m.end - b.m.end);
+  const done = list.filter(x => x.m.end <= now).sort((a, b) => b.m.end - a.m.end);
+  view.innerHTML = `
+  <section class="section">
+    <h2>Maserasyon</h2>
+    <span class="muted small">Yeni alınan ya da yeni açılan şişeyi serin, karanlık bir yerde ağzı kapalı dinlendirince alkol keskinliği azalır, notalar oturur; koku genelde daha dolgun ve kalıcı olur. Envanterindeki bir şişeyi gönder, süre bitince sana haber vereyim.</span>
+    <div class="stat"><div><b>${act.length}</b><span>dinleniyor</span></div><div><b>${done.length}</b><span>hazır</span></div><div><b>${act.length ? macLeft(act[0].m) : '–'}</b><span>en yakın · gün</span></div></div>
+  </section>
+  <section class="section">
+    <h3>Dinlenenler</h3>
+    ${act.length ? `<div class="list">${act.map(x => macRow(x.m, x.p)).join('')}</div>`
+      : `<div class="empty">Şu an dinlenen şişe yok.<br><br><button class="btn sm primary" data-act="macpick" type="button">Envanterden şişe gönder</button></div>`}
+  </section>
+  ${done.length ? `<section class="section"><h3>Dinlenmesi bitenler</h3><div class="list">${done.map(x => macRow(x.m, x.p)).join('')}</div>
+    <button class="btn sm ghost" data-act="macclear" type="button">Bitenleri listeden temizle</button></section>` : ''}
+  <section class="section">
+    <div class="box" style="gap:10px">
+      <label class="toggle-row" for="mac-skip"><span><b>Dinlenen şişeleri önerme</b><br><span class="muted small">Haftalık plan, çark ve bildirimler dinlenmesi bitmeyen şişeleri seçmez</span></span>
+        <span class="switch"><input type="checkbox" id="mac-skip"${S.macSkip ? ' checked' : ''}><span></span></span></label>
+      <label class="toggle-row" for="mac-time"><span><b>Bildirim saati</b><br><span class="muted small">Süre bittiği gün bu saatte haber verilir</span></span>
+        <input class="input" id="mac-time" type="time" value="${esc(S.macTime)}" style="width:auto"></label>
+    </div>
+  </section>`;
+}
+function openMacPicker(){
+  sheetMode = 'macpick';
+  const f = openOverlay();
+  const list = S.inv.filter(i => !macOf(i.id)).map(i => ({i, p: byId(i.pid)})).filter(x => x.p);
+  f.innerHTML = `<div class="row spread"><h2>Maserasyona gönder</h2>${closeIcon}</div>
+    ${list.length ? `<div class="list">${list.map(({i, p}) => `<button class="item" data-act="macsend" data-iid="${i.id}" type="button">
+      <div class="art">${art(p)}</div><div class="item-body"><span class="item-name">${esc(p.name)} ${concTag(i.conc || p.conc, p.name)}</span><span class="item-meta"><span lang="en">${esc(p.brand)}</span> · ${i.ml} ml</span></div>
+      ${HG_SVG.replace('<svg ', '<svg width="20" height="20" ')}</button>`).join('')}</div>`
+    : `<div class="empty">${S.inv.length ? 'Envanterindeki bütün şişeler zaten dinleniyor.' : 'Envanterin boş. Önce Envanter sekmesinden şişelerini ekle.'}</div>`}`;
+}
+const isoDay = t => { const d = new Date(t); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+let macDraft = null;
+function macEnd(d){
+  const [h, mi] = (S.macTime || '10:00').split(':').map(Number);
+  const e = new Date(d.day + 'T00:00'); e.setDate(e.getDate() + d.days); e.setHours(h, mi, 0, 0);
+  return e.getTime();
+}
+function openMacSheet(iid, id){
+  const m = id ? (S.mac || []).find(x => x.id === id) : macOf(iid);
+  const it = S.inv.find(i => i.id === (m ? m.iid : iid)); if (!it) return;
+  const p = byId(it.pid); if (!p) return;
+  macDraft = m ? {id: m.id, iid: it.id, days: m.days, day: isoDay(m.start)} : {iid: it.id, days: 30, day: isoDay(Date.now())};
+  sheetMode = 'mac'; delArmed = false;
+  const f = openOverlay();
+  const draw = () => {
+    const end = macEnd(macDraft), ready = end <= Date.now();
+    const done = m && m.end <= Date.now();
+    f.innerHTML = `<div class="row spread"><span class="eyebrow">Maserasyon</span>${closeIcon}</div>
+      ${headHtml(p, esc(p.brand ? it.ml + ' ml şişe' : ''))}
+      <div class="field"><span class="label">Ne kadar dinlensin</span>
+        <div class="rate">${MAC_DAYS.map(([d, n]) => `<button class="${macDraft.days === d ? 'on' : ''}" data-act="macdays" data-v="${d}" type="button">${n}</button>`).join('')}</div></div>
+      <div class="field"><label for="mac-day">Başlangıç günü</label>
+        <input class="input" id="mac-day" type="date" value="${macDraft.day}" max="${isoDay(Date.now())}"></div>
+      <div class="mac-sum"><span class="muted small">${ready ? 'Bu süre zaten dolmuş' : 'Hazır olacağı gün'}</span><b>${esc(fmtDay(end))} · ${esc(S.macTime)}</b>
+        <span class="muted small">${ready ? 'Kaydedersen hemen “hazır” olarak görünür.' : `${macLeft({end})} gün sonra bildirim gelecek.`}</span></div>
+      <div class="row spread">
+        ${m ? `<button class="btn sm danger" data-act="macdel" type="button">${delArmed ? 'Emin misin? Tekrar dokun' : done ? 'Listeden kaldır' : 'Maserasyondan çıkar'}</button>` : '<span></span>'}
+        <button class="btn primary" data-act="macsave" type="button">${m ? (done ? 'Yeniden dinlendir' : 'Güncelle') : 'Maserasyona gönder'}</button>
+      </div>
+      ${NATIVE ? '' : '<span class="muted small">Bildirim Android uygulamasında gelir.</span>'}`;
+  };
+  draw(); f._draw = draw;
+}
+function rerenderMacHosts(){ if (S.tab === 'maserasyon' || S.tab === 'envanter') render(); }
+
 function openInvPicker(){
   sheetMode = 'invpick';
   const f = openOverlay();
@@ -2069,7 +2251,8 @@ function openInvEdit(iid){
       <div class="row spread">
         <button class="btn sm danger" data-act="invdel" data-iid="${it.id}" type="button">${delArmed ? 'Emin misin? Tekrar dokun' : 'Envanterden çıkar'}</button>
         <button class="btn sm" data-act="view" data-id="${p.id}" type="button">Koku profili</button>
-      </div>`;
+      </div>
+      ${macChip(it)}`;
   };
   draw(); f._draw = draw;
 }
@@ -2533,7 +2716,7 @@ function renderShop(){
           <span class="switch"><input type="checkbox" id="shop-exact"${S.shop.exact ? ' checked' : ''}><span></span></span></label>
         <div class="order">${S.shop.order.map((k, i) => `<div class="o${S.shop.off.includes(k) ? ' off' : ''}">
           <b>${i + 1}</b><span><input type="checkbox" data-shopk="${k}"${S.shop.off.includes(k) ? '' : ' checked'} style="accent-color:var(--accent);width:18px;height:18px;vertical-align:-3px"> ${STORES[k].n}
-            <span class="muted small">${['boyner', 'beymen', 'gratis', 'n11'].includes(k) ? '· fiyat + tam ürün' : '· arama sayfası'}${k === 'n11' ? ' · pazar yeri' : ''}</span></span>
+            <span class="muted small">${['boyner', 'beymen', 'gratis', 'perfumepoint', 'n11'].includes(k) ? '· fiyat + tam ürün' : '· arama sayfası'}${k === 'n11' ? ' · pazar yeri' : ''}</span></span>
           <button class="icon-btn" data-act="shopmove" data-k="${k}" data-d="-1" type="button" aria-label="Yukarı"${i === 0 ? ' disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 15 6-6 6 6"/></svg></button>
           <button class="icon-btn" data-act="shopmove" data-k="${k}" data-d="1" type="button" aria-label="Aşağı"${i === S.shop.order.length - 1 ? ' disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button></div>`).join('')}</div>
         <span class="muted small">Boyner, Beymen, Gratis ve n11'de fiyat ve birebir ürün (100 ml öncelikli) aranır; fiyat kontrolü ve çan bunları kullanır. n11 bir pazar yeridir, satıcı fiyatları değişkendir; bu yüzden varsayılan olarak kapalıdır. Sephora, Trendyol, Hepsiburada ve Amazon otomatik aramaya izin vermediği için arama sayfaları açılır.</span>
@@ -2753,10 +2936,19 @@ function migrate(s){
   if (!Array.isArray(s.wheelOff)) s.wheelOff = [];
   s.inv.forEach(i => { if (!i.added) i.added = Date.now(); });
   if (!Array.isArray(s.buys)) s.buys = [];
+  if (!Array.isArray(s.mac)) s.mac = [];
+  if (s.macSkip === undefined) s.macSkip = true;
+  if (!s.macTime) s.macTime = '10:00';
   if (!Array.isArray(s.wears)) s.wears = [];
   s.weather = {on: false, city: 'İstanbul', auto: false, day: '', ...(s.weather || {})};
   s.shop = {exact: true, order: ['boyner', 'beymen', 'sephora', 'trendyol', 'hepsiburada', 'amazon'], off: [], ...(s.shop || {})};
-  Object.keys(STORES).forEach(k => { if (!s.shop.order.includes(k)) { s.shop.order.push(k); if (k === 'n11') s.shop.off.push(k); } });
+  Object.keys(STORES).forEach(k => {
+    if (s.shop.order.includes(k)) return;
+    // new stores slot in after Gratis rather than at the very end
+    const at = s.shop.order.indexOf('gratis');
+    if (k === 'perfumepoint' && at >= 0) s.shop.order.splice(at + 1, 0, k); else s.shop.order.push(k);
+    if (k === 'n11') s.shop.off.push(k);
+  });
   if (!Array.isArray(s.alarms)) s.alarms = [];
   if (!s.alarmTime) s.alarmTime = '12:00';
   s.sim = {on: true, cheap: false, ...(s.sim || {})};
@@ -2921,12 +3113,36 @@ document.addEventListener('click', async e => {
     case 'view': openDetail(byId(t.dataset.id)); break;
     case 'close': closeSheet(); break;
     case 'invpick': openInvPicker(); break;
+    case 'macpick': openMacPicker(); break;
+    case 'macsend': e.stopPropagation(); openMacSheet(t.dataset.iid); break;
+    case 'macedit': openMacSheet(null, t.dataset.id); break;
+    case 'macdays': if (macDraft) { macDraft.days = +t.dataset.v; redrawSheet(); } break;
+    case 'macsave': {
+      if (!macDraft) break;
+      const end = macEnd(macDraft), start = end - macDraft.days * DAY;
+      const old = macDraft.id && S.mac.find(x => x.id === macDraft.id);
+      const again = old && old.end <= Date.now();
+      const it = S.inv.find(i => i.id === macDraft.iid);
+      if (old && again) { old.start = Date.now(); old.end = macEnd({...macDraft, day: isoDay(Date.now())}); old.days = macDraft.days; }
+      else if (old) Object.assign(old, {start, end, days: macDraft.days});
+      else S.mac.push({id: uid(), iid: macDraft.iid, pid: it.pid, days: macDraft.days, start, end});
+      const m = old || S.mac[S.mac.length - 1];
+      repairWeek(); save(); closeSheet(); rerenderMacHosts(); haptic('confirm');
+      if (NATIVE && !nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission');
+      toast(m.end <= Date.now() ? 'Süresi dolmuş; hazır olarak eklendi' : `Maserasyona gönderildi: ${macLeft(m)} gün sonra hazır, o gün bildirim gelecek`);
+      break;
+    }
+    case 'macdel': {
+      if (!delArmed) { delArmed = true; redrawSheet(); break; }
+      S.mac = S.mac.filter(x => x.id !== macDraft.id); repairWeek(); save(); closeSheet(); rerenderMacHosts(); toast('Maserasyondan çıkarıldı'); break;
+    }
+    case 'macclear': S.mac = S.mac.filter(x => x.end > Date.now()); save(); render(); toast('Bitenler temizlendi'); break;
     case 'invadd': case 'invaddp': { const it = addToInv(t.dataset.id, 100); render(); openInvEdit(it.id); toast('Eklendi, şişe boyutunu seç'); break; }
     case 'invedit': openInvEdit(t.dataset.iid); break;
     case 'invml': { const it = S.inv.find(i => i.id === t.dataset.iid); if (it) { it.ml = +t.dataset.v; save(); redrawSheet(); if (S.tab === 'envanter') renderInventory(); } break; }
     case 'invdel': {
       if (!delArmed) { delArmed = true; redrawSheet(); break; }
-      S.inv = S.inv.filter(i => i.id !== t.dataset.iid); repairWeek(); save(); closeSheet(); render(); toast('Envanterden çıkarıldı'); break;
+      S.inv = S.inv.filter(i => i.id !== t.dataset.iid); S.mac = (S.mac || []).filter(m => m.iid !== t.dataset.iid); repairWeek(); save(); closeSheet(); render(); toast('Envanterden çıkarıldı'); break;
     }
     case 'fcat': syncDraft(); draft.cats = toggleIn(draft.cats, t.dataset.cat); drawSheet(); break;
     case 'ffam': syncDraft(); draft.fam = toggleIn(draft.fam, t.dataset.cat); drawSheet(); break;
@@ -3032,6 +3248,15 @@ document.addEventListener('change', async e => {
   if (t.id === 'wx-city') { S.weather.city = t.value; WX = null; save(); fetchWeather(true).then(() => renderLook()); }
   if (t.dataset && t.dataset.ui) { S.ui[t.dataset.ui] = t.checked; save(); applyUi(); const sm = document.querySelector('details.cg summary small'); if (sm) sm.textContent = Object.values(S.ui).filter(v => v === true).length + ' açık'; }
   if (t.id === 'wheel-inv') { S.wheelInv = t.checked; save(); renderWheel(); }
+  if (t.id === 'mac-skip') { S.macSkip = t.checked; repairWeek(); save(); }
+  if (t.id === 'mac-time' && /^\d\d:\d\d$/.test(t.value)) {
+    S.macTime = t.value;
+    // keep each running bottle's day, move only the hour
+    const [h, mi] = t.value.split(':').map(Number);
+    S.mac.forEach(m => { if (m.end > Date.now()) { const e = new Date(m.end); e.setHours(h, mi, 0, 0); m.end = e.getTime(); } });
+    save(); renderMac(); toast('Bildirim saati: ' + t.value);
+  }
+  if (t.id === 'mac-day' && macDraft && t.value) { macDraft.day = t.value; redrawSheet(); }
   if (t.classList && t.classList.contains('wheel-tick')) {
     S.wheelOff = t.checked ? S.wheelOff.filter(x => x !== t.dataset.id) : [...S.wheelOff, t.dataset.id];
     save(); renderWheel();
