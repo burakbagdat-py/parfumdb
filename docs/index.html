@@ -1886,35 +1886,68 @@ async function boynerShop(p, qs){
   }
   return {sizes: {}};
 }
+// all spellings are asked at once; the first one (in order) that finds the perfume wins, so a miss costs one round trip, not three
+// apps before v17 run one request at a time, so there the spellings are tried one after another
+const parallelNet = () => appVersion() >= 17;
 async function storeShop(rule, k, p, qs){
-  let res = {sizes: {}};
-  for (const q of qs) {
-    const r = await shopTry(rule, k, q);
-    if (r.blocked) return {sizes: {}, blocked: true};
-    if (!r.error) { const sz = mSizes(r.items, p); if (Object.keys(sz).length) return {sizes: sz, q}; }
+  if (!parallelNet()) {
+    for (const q of qs) {
+      const r = await shopTry(rule, k, q);
+      if (r.blocked) return {sizes: {}, blocked: true};
+      if (!r.error) { const sz = mSizes(r.items, p); if (Object.keys(sz).length) return {sizes: sz, q}; }
+    }
+    return {sizes: {}};
   }
-  return res;
+  const runs = qs.map(q => shopTry(rule, k, q));
+  for (let i = 0; i < runs.length; i++) {
+    const r = await runs[i];
+    if (r.blocked) return {sizes: {}, blocked: true};
+    if (!r.error) { const sz = mSizes(r.items, p); if (Object.keys(sz).length) return {sizes: sz, q: qs[i]}; }
+  }
+  return {sizes: {}};
 }
 const withTimeout = (pr, ms, v) => Promise.race([pr, new Promise(r => setTimeout(() => r(v), ms))]);
-async function fetchMulti(p, onProgress){
-  const key = 'mp3:' + fold(storeQuery(p)) + ':' + (p.conc || '');
+const mKey = p => 'mp3:' + fold(storeQuery(p)) + ':' + (p.conc || '');
+async function cachedMulti(p){
+  const key = mKey(p);
   if (mpMem.has(key)) return mpMem.get(key);
-  try { const c = await idbGet(key); if (c && Date.now() - c.t < 12 * 3600e3) { mpMem.set(key, c); return c; } } catch (e) {}
-  if (!NATIVE) return null;
-  const rules = await loadShops();
-  const ids = S.shop.order.filter(k => !S.shop.off.includes(k) && rules[k] && (k === 'boyner' || NATIVE.shopSearch));
-  const qs = queryVariants(p);
-  const out = {t: Date.now(), shops: {}, order: ids};
-  let done = 0;
-  // every store at once; a store that hangs is given up after 35 s so it cannot hold the others
-  await Promise.all(ids.map(async k => {
-    const job = k === 'boyner' ? boynerShop(p, qs) : storeShop(rules[k], k, p, qs);
-    out.shops[k] = await withTimeout(job.catch(() => ({sizes: {}})), 35000, {sizes: {}});
-    done++;
-    onProgress && onProgress(rules[k].n, done - 1, ids.length, out);
-  }));
-  if (Object.values(out.shops).some(x => Object.keys(x.sizes).length)) { mpMem.set(key, out); idbSet(key, out).catch(() => {}); }
-  return out;
+  try { const c = await idbGet(key); if (c) { mpMem.set(key, c); return c; } } catch (e) {}
+  return null;
+}
+const mpFlight = new Map();
+// opt.fresh: skip the cache. The same perfume is never searched twice at the same time (detail, bell and piggy bank share one search).
+function fetchMulti(p, onProgress, opt){
+  const key = mKey(p);
+  if (mpFlight.has(key)) { const f = mpFlight.get(key); if (onProgress) f.listeners.push(onProgress); return f.promise; }
+  const listeners = onProgress ? [onProgress] : [];
+  const promise = (async () => {
+    if (!(opt && opt.fresh)) { const c = await cachedMulti(p); if (c && Date.now() - c.t < 12 * 3600e3) return c; }
+    if (!NATIVE) return null;
+    const rules = await loadShops();
+    const ids = S.shop.order.filter(k => !S.shop.off.includes(k) && rules[k] && (k === 'boyner' || NATIVE.shopSearch));
+    const qs = queryVariants(p);
+    const old = await cachedMulti(p);
+    const out = {t: Date.now(), shops: {}, order: ids};
+    let done = 0;
+    const finish = () => {
+      // a store that is rate-limited right now keeps the prices it gave last time
+      if (old) for (const [k, v] of Object.entries(out.shops)) if (!Object.keys(v.sizes).length && old.shops && old.shops[k] && Object.keys(old.shops[k].sizes).length && (v.blocked || v.slow)) out.shops[k] = {...old.shops[k], stale: true};
+      if (Object.values(out.shops).some(x => Object.keys(x.sizes).length)) { mpMem.set(key, out); idbSet(key, out).catch(() => {}); }
+    };
+    // every store at once; the page stops waiting for a slow store after 15 s, its answer is still added when it arrives
+    await Promise.all(ids.map(async k => {
+      const job = (k === 'boyner' ? boynerShop(p, qs) : storeShop(rules[k], k, p, qs)).catch(() => ({sizes: {}}));
+      const r = await withTimeout(job, 15000, null);
+      out.shops[k] = r || {sizes: {}, slow: true};
+      done++;
+      listeners.forEach(f => f(rules[k].n, done - 1, ids.length, out));
+      if (!r) job.then(late => { out.shops[k] = late; finish(); listeners.forEach(f => f(rules[k].n, ids.length, ids.length, out, true)); });
+    }));
+    finish();
+    return out;
+  })().finally(() => mpFlight.delete(key));
+  mpFlight.set(key, {promise, listeners});
+  return promise;
 }
 function bestAt(data, ml){
   let best = null;
@@ -2593,18 +2626,22 @@ function pricesBox(p){
     <div id="price-body">${NATIVE ? '<span class="muted small">Fiyatlar alınıyor…</span>' : `<span class="muted small">Canlı fiyatlar Android uygulamasında görünür.</span> <a href="${esc(STORES.boyner.url(storeQuery(p)))}" target="_blank" rel="noopener">Boyner'de ara</a>`}</div></div>`;
 }
 let priceState = null;
-async function loadPricesInto(p){
+async function loadPricesInto(p, force){
   if (!NATIVE) return;
   const token = {}; priceState = {token, p, gi: 0, ml: null, data: null};
   const meta = () => document.getElementById('price-meta');
-  const data = await fetchMulti(p, (shop, i, n, part) => {
-    if (!priceState || priceState.token !== token) return;
-    // show prices as soon as the first store answers; the rest fill in
-    if (part && i + 1 < n && allSizes(part).length) { priceState.data = part; drawPrices(); }
-    if (meta()) meta().textContent = i + 1 < n ? `${i + 1}/${n} mağaza tamam…` : '';
-  });
-  if (!priceState || priceState.token !== token) return;
-  priceState.data = data;
+  const live = () => priceState && priceState.token === token;
+  // last known prices appear instantly; fresh ones replace them as stores answer
+  const old = force ? null : await cachedMulti(p);
+  if (!live()) return;
+  if (old && allSizes(old).length) { priceState.data = old; drawPrices(); if (Date.now() - old.t < 2 * 3600e3) return; }
+  const data = await fetchMulti(p, (shop, i, n, part, late) => {
+    if (!live()) return;
+    if (part && allSizes(part).length && (late || i + 1 < n)) { priceState.data = part; drawPrices(); }
+    if (meta() && !late) meta().textContent = i + 1 < n ? `${i + 1}/${n} mağaza tamam…${parallelNet() ? '' : ' · hızlı arama için uygulamayı güncelle'}` : '';
+  }, {fresh: !!old || !!force});
+  if (!live()) return;
+  if (data && (allSizes(data).length || !old)) priceState.data = data;
   drawPrices();
 }
 function drawPrices(){
@@ -3411,7 +3448,7 @@ document.addEventListener('click', async e => {
     }
     case 'buydel': S.buys = S.buys.filter(b => b.id !== t.dataset.id); save(); closeSheet(); render(); toast('Hatırlatıcı silindi'); break;
     case 'pricesize': if (priceState) { priceState.ml = +t.dataset.ml; drawPrices(); } break;
-    case 'pricerefresh': if (priceState) { const p = priceState.p; priceMem.clear(); mpMem.clear(); const b = document.getElementById('price-body'); if (b) b.innerHTML = '<span class="muted small">Fiyatlar alınıyor…</span>'; loadPricesInto(p); } break;
+    case 'pricerefresh': if (priceState) { const p = priceState.p; priceMem.clear(); const b = document.getElementById('price-body'); if (b) b.innerHTML = '<span class="muted small">Fiyatlar alınıyor…</span>'; loadPricesInto(p, true); } break;
     case 'addboy': { const d = draft; closeSheet(); draft = d; openSheet(null); break; }
     case 'ccat-g': col.group = t.dataset.g; renderCollection(); break;
     case 'ccat': col.cats = t.dataset.cat ? toggleIn(col.cats, t.dataset.cat) : []; renderCollection(); break;

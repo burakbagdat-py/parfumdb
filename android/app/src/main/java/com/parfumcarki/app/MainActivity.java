@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
     private int soundReqId = -1;
     private Ringtone preview;
     // several stores are searched at the same time
-    private final ExecutorService net = Executors.newFixedThreadPool(5);
+    private final ExecutorService net = Executors.newFixedThreadPool(10);
 
     @Override
     protected void onCreate(Bundle state) {
