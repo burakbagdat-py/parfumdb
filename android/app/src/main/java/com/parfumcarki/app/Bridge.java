@@ -126,6 +126,12 @@ public class Bridge {
     }
 
     @JavascriptInterface
+    public void shopSearch(int reqId, String ruleJson, String query, int ml) {
+        if (!activity.trusted()) return;
+        activity.shopSearch(reqId, ruleJson, query, ml);
+    }
+
+    @JavascriptInterface
     public void setPriceSound(String spec) {
         if (!activity.trusted()) return;
         PriceWatch.setSound(activity, spec);

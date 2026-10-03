@@ -103,40 +103,52 @@ public class PriceWatch extends BroadcastReceiver {
         for (int i = 0; i < w.length(); i++) {
             JSONObject x = w.optJSONObject(i);
             if (x == null) continue;
-            try {
-                String json = MainActivity.fetchBoyner(x.optString("q"), x.optInt("ml", 100) + "-ml");
-                JSONArray ps = new JSONObject(json).optJSONArray("products");
-                if (ps == null) continue;
-                Set<String> need = new HashSet<>();
-                for (String t : fold(x.optString("name")).split(" ")) if (!t.isEmpty() && !SKIP.contains(t)) need.add(t);
-                double best = Double.MAX_VALUE;
-                String url = "";
-                outer:
-                for (int j = 0; j < ps.length(); j++) {
-                    JSONObject p = ps.getJSONObject(j);
-                    String title = " " + fold(p.optString("t")) + " ";
-                    if (!fold(p.optString("c")).contains("parfum")) continue;
-                    for (String bad : NOT_PERFUME) if (title.contains(" " + bad + " ")) continue outer;
-                    for (String t : need) if (!title.contains(" " + t + " ")) continue outer;
-                    double price = Double.parseDouble(p.optString("p", "0").replace(".", "").replace(',', '.'));
-                    if (price > 0 && price < best) {
-                        best = price;
-                        url = "https://www.boyner.com.tr/" + p.optString("u");
+            String name = x.optString("name"), brand = x.optString("brand"), conc = x.optString("conc"), q = x.optString("q");
+            int ml = x.optInt("ml", 100);
+            JSONArray rules = x.optJSONArray("rules");
+            if (rules == null) rules = defaultRules();
+            double best = Double.MAX_VALUE;
+            String bestUrl = "", bestShop = "";
+            JSONObject perShop = new JSONObject();
+            for (int k = 0; k < rules.length(); k++) {
+                try {
+                    JSONObject rule = rules.getJSONObject(k);
+                    boolean boyner = "boyner".equals(rule.optString("type"));
+                    JSONArray items = ShopEngine.search(rule, q, boyner ? ml : 0);
+                    JSONObject sizes = ShopEngine.sizes(items, name, brand, conc, boyner ? ml : 0);
+                    JSONObject hit = sizes.optJSONObject(String.valueOf(ml));
+                    if (hit != null) {
+                        perShop.put(rule.optString("id"), hit.getDouble("p"));
+                        if (hit.getDouble("p") < best) {
+                            best = hit.getDouble("p");
+                            bestUrl = hit.optString("u");
+                            bestShop = rule.optString("n");
+                        }
                     }
-                }
-                if (best == Double.MAX_VALUE) continue;
-                JSONObject r = new JSONObject().put("price", best).put("url", url).put("t", System.currentTimeMillis());
-                res.put(x.optString("id"), r);
+                    Thread.sleep(1200);
+                } catch (Exception ignored) { }
+            }
+            if (best == Double.MAX_VALUE) continue;
+            try {
+                res.put(x.optString("id"), new JSONObject().put("price", best).put("url", bestUrl).put("shop", bestShop)
+                        .put("shops", perShop).put("t", System.currentTimeMillis()));
                 double target = x.optDouble("target", 0);
                 if (target > 0 && best <= target) {
-                    Notifier.show(c, 700 + i, "Fiyat düştü: " + x.optString("name"),
-                            x.optString("brand") + " · " + x.optInt("ml", 100) + " ml · " + formatTl(best) + " (hedefin " + formatTl(target) + ")",
+                    Notifier.show(c, 700 + i, "Fiyat düştü: " + name,
+                            bestShop + " · " + ml + " ml · " + formatTl(best) + " (hedefin " + formatTl(target) + ")",
                             prefs(c).getString("price_sound", "dl:fiyat"), true, "Fiyat alarmı");
                 }
-                Thread.sleep(1500);
             } catch (Exception ignored) { }
         }
         prefs(c).edit().putString(KEY_RESULTS, res.toString()).apply();
+    }
+
+    private static JSONArray defaultRules() {
+        try {
+            return new JSONArray().put(new JSONObject().put("id", "boyner").put("n", "Boyner").put("type", "boyner"));
+        } catch (Exception e) {
+            return new JSONArray();
+        }
     }
 
     private static String formatTl(double v) {

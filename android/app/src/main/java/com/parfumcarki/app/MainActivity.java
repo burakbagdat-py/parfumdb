@@ -298,7 +298,7 @@ public class MainActivity extends Activity {
             if (i < 0) {
                 JSONObject o = new JSONObject();
                 o.put("error", "no-data");
-                o.put("blocked", code == 403 || code == 503 || html.contains("Just a moment"));
+                o.put("blocked", code == 403 || code == 429 || code == 503 || html.contains("Just a moment"));
                 return o.toString();
             }
             int start = html.indexOf('>', i) + 1;
@@ -330,6 +330,31 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
             return "{\"error\":\"" + e.getClass().getSimpleName() + "\"}";
         }
+    }
+
+    static String httpText(String url) throws Exception {
+        HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
+        c.setRequestProperty("User-Agent", UA);
+        c.setRequestProperty("Accept", "text/html,application/xhtml+xml");
+        c.setRequestProperty("Accept-Language", "tr-TR,tr;q=0.9");
+        c.setConnectTimeout(15000);
+        c.setReadTimeout(25000);
+        int code = c.getResponseCode();
+        if (code == 403 || code == 429 || code == 503) throw new IllegalStateException("blocked");
+        if (code >= 400) throw new IllegalStateException("http " + code);
+        return readAll(c.getInputStream());
+    }
+
+    void shopSearch(int reqId, String ruleJson, String query, int ml) {
+        net.execute(() -> {
+            try {
+                JSONArray items = ShopEngine.search(new JSONObject(ruleJson), query, ml);
+                deliver(reqId, new JSONObject().put("items", items).toString());
+            } catch (Exception e) {
+                boolean blocked = "blocked".equals(e.getMessage());
+                deliver(reqId, "{\"error\":\"" + e.getClass().getSimpleName() + "\",\"blocked\":" + blocked + "}");
+            }
+        });
     }
 
     private static String readAll(InputStream in) throws java.io.IOException {

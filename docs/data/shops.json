@@ -1,0 +1,37 @@
+{
+ "v": 1,
+ "shops": {
+  "boyner": {
+   "n": "Boyner",
+   "type": "boyner",
+   "search": "https://www.boyner.com.tr/search?q={q}"
+  },
+  "beymen": {
+   "n": "Beymen",
+   "type": "regex",
+   "search": "https://www.beymen.com/tr/search?q={q}",
+   "split": "<div class=\"o-productCard[ \"]",
+   "url": "href=\"(/tr/p_[^\"]+)\"",
+   "title": "title=\"([^\"]+)\"",
+   "price": "-salePrice\"[^>]*>\\s*([0-9.,]+)",
+   "base": "https://www.beymen.com",
+   "fmt": "tr"
+  },
+  "gratis": {
+   "n": "Gratis",
+   "type": "regex",
+   "search": "https://www.gratis.com/search?q={q}",
+   "split": "\\\\\"shareLink\\\\\":",
+   "url": "^\\\\\"(https://www\\.gratis\\.com/[^\\\\\"]+)",
+   "title": "\\\\\"displayName\\\\\":\\\\\"([^\\\\\"]+)",
+   "price": "\\\\\"discountedPrice\\\\\":(\\d+)",
+   "fmt": "kurus"
+  },
+  "n11": {
+   "n": "n11",
+   "type": "ldjson",
+   "search": "https://www.n11.com/arama?q={q}",
+   "market": true
+  }
+ }
+}
