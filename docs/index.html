@@ -405,6 +405,16 @@ body.sheet-open{overflow:hidden}
 .brand-row{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 12px;border-top:1px solid var(--line);background:none;border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left;color:var(--fg)}
 .brand-row:first-child{border-top:0}
 .brand-av{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--panel-2);font-family:var(--f-display);font-weight:var(--dw);color:var(--hi)}
+/* --- price-watch bell --- */
+.bell{display:inline-flex;align-items:center;gap:7px;padding:5px 11px 5px 7px;border-radius:999px;border:1px solid var(--line);background:var(--panel-2);color:var(--muted);font-size:12px;font-weight:700;width:max-content;max-width:100%}
+.bell svg{width:18px;height:18px;flex:none}
+.bell .fill{display:none}
+.bell.on{background:var(--grad);color:var(--ink);border-color:transparent;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.bell.on .fill{display:block}
+.bell.on .line{display:none}
+.bell.on svg{animation:ring .7s ease-in-out 1;transform-origin:50% 10%}
+.bell.busy{opacity:.6}
+@keyframes ring{0%,100%{transform:rotate(0)}20%{transform:rotate(16deg)}40%{transform:rotate(-14deg)}60%{transform:rotate(9deg)}80%{transform:rotate(-5deg)}}
 /* --- store order, alarms, similar --- */
 .order{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
 .order .o{display:grid;grid-template-columns:24px 1fr auto auto;gap:10px;align-items:center;padding:8px 10px;border-top:1px solid var(--line)}
@@ -1607,7 +1617,7 @@ function renderGrid(){
       <div class="art">${art(p)}${p.sample ? '<span class="sample-tag">Örnek</span>' : iv ? `<span class="sample-tag">Envanterde · ${iv.ml} ml</span>` : buyOf(p.id) ? `<span class="sample-tag">⏰ ${esc(fmtShort(buyOf(p.id).at))}</span>` : ''}</div>
       <div class="card-body">
         ${p.brand ? `<span class="card-brand" lang="en">${esc(p.brand)}</span>` : ''}
-        <span class="card-name">${esc(p.name)} ${concTag(p.conc, p.name)}</span>
+        <span class="card-name">${esc(p.name)} ${concTag(p.conc, p.name)}${alarmFor(p.name) ? ' <span title="Fiyat takibinde" style="color:var(--accent)">🔔</span>' : ''}</span>
         ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 2).map(famTag).join('')}</div>` : ''}
         <div class="chips" style="gap:4px;margin-top:4px">${mainCats(p).map(c => `<span class="pill">${esc(c)}</span>`).join('')}</div>
       </div>
@@ -1708,6 +1718,36 @@ async function openBest(p){
 }
 
 /* ---------- price alarms (checked daily by the app in the background) ---------- */
+const BELL_SVG = '<svg class="line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>'
+  + '<svg class="fill" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 0 0-6 6v6l-2 3h16l-2-3V9a6 6 0 0 0-6-6zM10 20.5a2 2 0 0 0 4 0z"/></svg>';
+function bellHtml(p){
+  const a = p && alarmFor(p.name);
+  return `<button class="bell${a ? ' on' : ''}" data-act="bell" type="button" aria-pressed="${a ? 'true' : 'false'}" aria-label="Fiyat takibi">${BELL_SVG}<span>${a ? 'Fiyat takibi · ≤ ' + fmtPrice(a.target) : 'Fiyat takibi'}</span></button>`;
+}
+function refreshBells(){
+  document.querySelectorAll('.bell').forEach(b => { const w = document.createElement('div'); w.innerHTML = bellHtml(currentP); b.replaceWith(w.firstChild); });
+  if (priceState && document.getElementById('price-body')) drawPrices();
+}
+async function toggleBell(btn){
+  const p = currentP; if (!p) return;
+  if (!NATIVE || !NATIVE.setPriceWatches) { toast('Fiyat takibi Android uygulamasının son sürümünde çalışır'); return; }
+  if (alarmFor(p.name)) {
+    S.alarms = S.alarms.filter(a => a.name !== p.name); save(); syncAlarms(); refreshBells(); toast('Fiyat takibi kapatıldı'); return;
+  }
+  btn.classList.add('busy'); toast("Boyner fiyatı alınıyor…");
+  const same = priceState && priceState.p === p && priceState.data;
+  const d = same ? priceState.data : await fetchPrices(p);
+  const g = d && d.groups && d.groups[same ? Math.min(priceState.gi, d.groups.length - 1) : 0];
+  btn.classList.remove('busy');
+  if (!g) { toast("Boyner'de bulunamadı; fiyat takibi kurulamadı"); return; }
+  const sizes = Object.keys(g.sizes).map(Number);
+  const ml = same && priceState.ml && g.sizes[priceState.ml] ? priceState.ml : (g.sizes[100] ? 100 : sizes.sort((a, b) => Math.abs(a - 100) - Math.abs(b - 100))[0]);
+  const cur = g.sizes[ml].price, target = Math.max(1, Math.round(cur * 0.9 / 50) * 50);
+  S.alarms.push({id: uid(), name: p.name, brand: p.brand, q: storeQuery(p), ml, target, start: cur, created: Date.now()});
+  save(); syncAlarms(); refreshBells(); haptic('confirm');
+  if (!nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission');
+  toast(`Fiyat takibi açık: ${ml} ml şu an ${fmtPrice(cur)}, ${fmtPrice(target)} altına inince haber vereceğim`);
+}
 const alarmFor = (name, ml) => S.alarms.find(a => a.name === name && (ml == null || a.ml === ml));
 function syncAlarms(){
   nativeCall('setPriceSound', resolveSound({sound: S.alarmSound || 'fiyat'}));
@@ -2092,6 +2132,7 @@ function detailHtml(p, o){
         ${p.brand ? `<span class="hero-brand tap" lang="en" data-act="brandgo" data-b="${esc(p.brand)}">${esc(p.brand)} ›</span> ${concTag(o.conc || p.conc, p.name)}` : ''}
         <span class="hero-name">${esc(p.name)}</span>
         ${stats ? `<div class="dstats">${stats}</div>` : ''}
+        ${bellHtml(p)}
         ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
       </div>
     </div>
@@ -2233,6 +2274,7 @@ async function rbPick(){
         <span class="hero-brand" lang="en">${esc(p.brand)} ${concTag(r[14], r[1])} ${segTag(r[15])}</span>
         <span class="hero-name">${esc(p.name)}</span>
         <div class="dstats">${stats}</div>
+        ${bellHtml(p)}
         <div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>
       </div>
     </div>
@@ -2736,6 +2778,7 @@ document.addEventListener('click', async e => {
     case 'appupdate': nativeCall('installUpdate', t.dataset.url); break;
     case 'buyopen': openBuySheet(t.dataset.id); break;
     case 'openbest': openBest(currentP); break;
+    case 'bell': toggleBell(t); break;
     case 'note': openNoteCard(t.dataset.n, t.dataset.tier); break;
     case 'noteclose': closeNoteCard(); break;
     case 'alplay': await ensureSounds(); nativeCall('previewSound', resolveSound({sound: S.alarmSound || 'fiyat'})); break;
@@ -2886,9 +2929,9 @@ document.addEventListener('change', async e => {
       if (NATIVE && !nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission');
       toast('Fiyat kontrolü açıldı');
     } else { S.alarms = S.alarms.filter(a => a.name !== pp.name); toast('Fiyat kontrolü kapatıldı'); }
-    save(); syncAlarms(); drawPrices();
+    save(); syncAlarms(); refreshBells();
   }
-  if (t.id === 'pc-target' && priceState) { const a = alarmFor(priceState.p.name); const v = Math.round(+t.value); if (a && v > 0) { a.target = v; save(); syncAlarms(); toast('Hedef: ' + fmtPrice(v)); } }
+  if (t.id === 'pc-target' && priceState) { const a = alarmFor(priceState.p.name); const v = Math.round(+t.value); if (a && v > 0) { a.target = v; save(); syncAlarms(); refreshBells(); toast('Hedef: ' + fmtPrice(v)); } }
   if (t.dataset && t.dataset.shopk) { const k = t.dataset.shopk; S.shop.off = t.checked ? S.shop.off.filter(x => x !== k) : [...S.shop.off, k]; save(); renderShop(); }
   if (t.id === 'al-time') { S.alarmTime = t.value || '12:00'; save(); syncAlarms(); }
   if (t.id === 'al-sound') { S.alarmSound = t.value; save(); await ensureSounds(); syncAlarms(); }
