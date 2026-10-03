@@ -6,7 +6,7 @@ on:
     paths: ['android/**', '.github/workflows/apk.yml']
   workflow_dispatch:
 
-# Only pushes to main by the repo owner run this; pull requests from forks never do and never see secrets.
+# Only pushes to main by the repo owner run this; pull requests from forks never trigger it and never see secrets.
 permissions:
   contents: write
 
