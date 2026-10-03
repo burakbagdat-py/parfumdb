@@ -56,7 +56,8 @@ public class MainActivity extends Activity {
     private ValueCallback<Uri[]> fileCallback;
     private int soundReqId = -1;
     private Ringtone preview;
-    private final ExecutorService net = Executors.newSingleThreadExecutor();
+    // several stores are searched at the same time
+    private final ExecutorService net = Executors.newFixedThreadPool(5);
 
     @Override
     protected void onCreate(Bundle state) {
@@ -289,8 +290,8 @@ public class MainActivity extends Activity {
             c.setRequestProperty("User-Agent", UA);
             c.setRequestProperty("Accept", "text/html,application/xhtml+xml");
             c.setRequestProperty("Accept-Language", "tr-TR,tr;q=0.9");
-            c.setConnectTimeout(15000);
-            c.setReadTimeout(25000);
+            c.setConnectTimeout(8000);
+            c.setReadTimeout(15000);
             int code = c.getResponseCode();
             InputStream in = code >= 400 ? c.getErrorStream() : c.getInputStream();
             String html = in == null ? "" : readAll(in);
@@ -337,8 +338,8 @@ public class MainActivity extends Activity {
         c.setRequestProperty("User-Agent", UA);
         c.setRequestProperty("Accept", "text/html,application/xhtml+xml");
         c.setRequestProperty("Accept-Language", "tr-TR,tr;q=0.9");
-        c.setConnectTimeout(15000);
-        c.setReadTimeout(25000);
+        c.setConnectTimeout(8000);
+        c.setReadTimeout(15000);
         int code = c.getResponseCode();
         if (code == 403 || code == 429 || code == 503) throw new IllegalStateException("blocked");
         if (code >= 400) throw new IllegalStateException("http " + code);

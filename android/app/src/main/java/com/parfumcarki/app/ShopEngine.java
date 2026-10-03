@@ -133,10 +133,9 @@ final class ShopEngine {
         List<String> cs = concs(t);
         if (cs.isEmpty()) return true;
         List<String> nc = concs(fold(name));
-        if (nc.contains(conc)) return cs.contains(conc);
-        List<String> rest = new ArrayList<>(cs);
-        rest.removeAll(nc);
-        return rest.isEmpty() || rest.get(0).equals(conc);
+        // "Le Male Elixir" is sold as "Le Male Elixir EDP" although it is a Parfum: the name already pins the product
+        if (!nc.isEmpty()) return cs.containsAll(nc);
+        return cs.get(0).equals(conc);
     }
 
     private static List<String> toks(String s) {

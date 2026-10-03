@@ -434,6 +434,12 @@ body.sheet-open{overflow:hidden}
 .order .o.off span{opacity:.45}
 .order .icon-btn{width:32px;height:32px}
 .alarm-chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);border:1px solid color-mix(in srgb,var(--accent) 50%,transparent)}
+.vers:empty{display:none}
+.vers{display:flex;flex-direction:column;gap:6px}
+.vchip{white-space:nowrap}
+.vchip small{opacity:.65;font-weight:600;margin-left:3px}
+.linkbtn{background:none;border:0;color:var(--accent);font-weight:700;font-size:13px;padding:2px 0}
+.sim-why{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .sim-pct{font-size:12px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
 /* --- scent journal --- */
 .journal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
@@ -1457,16 +1463,43 @@ function brandIndex(){
 // lines: perfumes of a house that share a meaningful name start form one line ("Le Male Elixir", "Le Male In Blue" → Le Male);
 // filler words never make a line on their own, and a name that starts with the house name needs one more word ("Dior Homme")
 const LINE_STOP = new Set(['le', 'la', 'l', 'les', 'the', 'eau', 'de', 'du', 'des', 'by', 'a', 'an', 'el', 'il', 'un', 'une', 'my', 'mon', 'ma', 'pour', 'for', 'of']);
+function lineKey(brand, name){
+  const brandW = new Set(fold(brand).split(/[^a-z0-9]+/).filter(Boolean));
+  const w = fold(name).replace(/['’]/g, ' ').split(/[^a-z0-9]+/).filter(Boolean);
+  let k = 0;
+  while (k < w.length && LINE_STOP.has(w[k])) k++;
+  if (k < w.length && brandW.has(w[k]) && k + 1 < w.length) k++;
+  return w.slice(0, k + 1).join(' ');
+}
+let CAT_BY_BRAND = null;
+function catOfBrand(brand){
+  if (!CAT_BY_BRAND) { CAT_BY_BRAND = new Map(); for (const c of CAT) { const k = normBrand(c.r[2]); if (!CAT_BY_BRAND.has(k)) CAT_BY_BRAND.set(k, []); CAT_BY_BRAND.get(k).push(c); } }
+  return CAT_BY_BRAND.get(normBrand(brand)) || [];
+}
+// the other perfumes of this perfume's line: flankers, intense/elixir/absolu versions, editions
+function lineOf(p){
+  if (!CAT || !p || !p.brand) return [];
+  const k = lineKey(p.brand, p.name), self = fold(p.name);
+  if (!k) return [];
+  return catOfBrand(p.brand).filter(c => c.r[0] !== p.cid && fold(c.r[1]) !== self && lineKey(c.r[2], c.r[1]) === k).sort((a, b) => b.r[5] - a.r[5]);
+}
+function versInner(p){
+  const list = lineOf(p);
+  if (!list.length) return '';
+  return `<div class="row spread" style="margin-bottom:-4px"><span class="label">Aynı seriden · ${list.length} versiyon</span>
+      <button class="linkbtn" data-act="brandgo" data-b="${esc(list[0].r[2])}" type="button">Marka ›</button></div>
+    <div class="chips scroll">${list.slice(0, 24).map(c => `<button class="chip vchip" data-act="cview" data-cid="${c.r[0]}" type="button">${esc(c.r[1])}${c.r[14] ? ' <small>' + esc(c.r[14]) + '</small>' : ''}${c.r[3] ? ' <small>' + c.r[3] + '</small>' : ''}</button>`).join('')}</div>`;
+}
+function versHtml(p){
+  if (!CAT) {
+    loadCatalog().then(() => { const el = document.getElementById('vers'); if (el && currentP === p) el.innerHTML = versInner(p); }).catch(() => {});
+    return '<div class="vers" id="vers"></div>';
+  }
+  return `<div class="vers" id="vers">${versInner(p)}</div>`;
+}
 function brandLines(brand, items){
   const all = CAT.filter(c => c.r[2] === brand);
-  const brandW = new Set(fold(brand).split(/[^a-z0-9]+/).filter(Boolean));
-  const keyOf = c => {
-    const w = fold(c.r[1]).replace(/['’]/g, ' ').split(/[^a-z0-9]+/).filter(Boolean);
-    let k = 0;
-    while (k < w.length && LINE_STOP.has(w[k])) k++;
-    if (k < w.length && brandW.has(w[k]) && k + 1 < w.length) k++;
-    return w.slice(0, k + 1).join(' ');
-  };
+  const keyOf = c => lineKey(brand, c.r[1]);
   const count = new Map();
   for (const c of all) { const k = keyOf(c); count.set(k, (count.get(k) || 0) + 1); }
   const groups = new Map();
@@ -1724,9 +1757,9 @@ function concOK(conc, name, t){
   if (!conc) return true;
   const cs = mConcs(t); if (!cs.length) return true;
   const nc = mConcs(mFold(name));
-  if (nc.includes(conc)) return cs.includes(conc);
-  const rest = cs.filter(c => !nc.includes(c));
-  return !rest.length || rest[0] === conc;
+  // "Le Male Elixir" is sold as "Le Male Elixir EDP" at Boyner although it is a Parfum: the name already pins the product
+  if (nc.length) return nc.every(c => cs.includes(c));
+  return cs[0] === conc;
 }
 // brand words plus the shorthands stores use for it (YSL, PDM, D&G…)
 function brandWords(brand){
@@ -1778,8 +1811,45 @@ function boynerGroup(d, p){
   const gs = d && d.groups || [];
   return gs.find(g => mMatch(p, g.label)) || (gs[0] && gs[0].extra === 0 ? gs[0] : null);
 }
+// Boyner titles carry the size ("125 ml", "75ML"), so one search is enough; size-filtered searches only when they don't
+async function boynerItems(q){
+  let res = await nativeAsync('boynerSearch', q, '');
+  if (!res || (res.error && !res.blocked)) { await sleep(1200); res = await nativeAsync('boynerSearch', q, ''); }
+  if (!res || res.error) return {blocked: !!(res && res.blocked), error: true};
+  const items = (res.products || []).filter(it => fold(it.c).includes('parfum'))
+    .map(it => ({t: it.t, u: 'https://www.boyner.com.tr/' + String(it.u).replace(/^\//, ''), p: parsePrice(it.p)}));
+  return {items};
+}
+async function boynerShop(p, qs){
+  for (const q of qs) {
+    const r = await boynerItems(q);
+    if (r.blocked) return {sizes: {}, blocked: true};
+    if (r.error) continue;
+    let sz = mSizes(r.items, p);
+    if (!Object.keys(sz).length && r.items.some(it => mMatch(p, it.t) && !/\d{2,3}\s*ml/i.test(it.t))) {
+      // the perfume is there but its titles have no size: ask Boyner per size
+      for (const ml of [50, 100, 200]) {
+        const x = await nativeAsync('boynerSearch', q, ml + '-ml');
+        if (x && x.products) Object.assign(sz, mSizes(x.products.filter(it => fold(it.c).includes('parfum'))
+          .map(it => ({t: it.t, u: 'https://www.boyner.com.tr/' + String(it.u).replace(/^\//, ''), p: parsePrice(it.p), ml})), p));
+      }
+    }
+    if (Object.keys(sz).length) return {sizes: sz, q};
+  }
+  return {sizes: {}};
+}
+async function storeShop(rule, k, p, qs){
+  let res = {sizes: {}};
+  for (const q of qs) {
+    const r = await shopTry(rule, k, q);
+    if (r.blocked) return {sizes: {}, blocked: true};
+    if (!r.error) { const sz = mSizes(r.items, p); if (Object.keys(sz).length) return {sizes: sz, q}; }
+  }
+  return res;
+}
+const withTimeout = (pr, ms, v) => Promise.race([pr, new Promise(r => setTimeout(() => r(v), ms))]);
 async function fetchMulti(p, onProgress){
-  const key = 'mp2:' + fold(storeQuery(p)) + ':' + (p.conc || '');
+  const key = 'mp3:' + fold(storeQuery(p)) + ':' + (p.conc || '');
   if (mpMem.has(key)) return mpMem.get(key);
   try { const c = await idbGet(key); if (c && Date.now() - c.t < 12 * 3600e3) { mpMem.set(key, c); return c; } } catch (e) {}
   if (!NATIVE) return null;
@@ -1787,28 +1857,14 @@ async function fetchMulti(p, onProgress){
   const ids = S.shop.order.filter(k => !S.shop.off.includes(k) && rules[k] && (k === 'boyner' || NATIVE.shopSearch));
   const qs = queryVariants(p);
   const out = {t: Date.now(), shops: {}, order: ids};
-  for (let i = 0; i < ids.length; i++) {
-    const k = ids[i];
-    onProgress && onProgress(rules[k].n, i, ids.length);
-    if (k === 'boyner') {
-      let d = await fetchPrices(p), g = boynerGroup(d, p);
-      for (const q of qs.slice(1)) {
-        if (g || (d && d.blocked)) break;
-        await sleep(600);
-        d = await fetchPrices(p, null, {q, runs: [null, 100]}); g = boynerGroup(d, p);
-      }
-      out.shops.boyner = g ? {sizes: Object.fromEntries(Object.entries(g.sizes).map(([ml, v]) => [ml, {p: v.price, u: v.url, t: g.label}]))} : {sizes: {}, blocked: !!(d && d.blocked)};
-      continue;
-    }
-    let res = {sizes: {}};
-    for (const q of qs) {
-      const r = await shopTry(rules[k], k, q);
-      if (r.blocked) { res.blocked = true; break; }
-      if (!r.error) { const sz = mSizes(r.items, p); if (Object.keys(sz).length) { res = {sizes: sz, q}; break; } }
-      await sleep(400);
-    }
-    out.shops[k] = res;
-  }
+  let done = 0;
+  // every store at once; a store that hangs is given up after 35 s so it cannot hold the others
+  await Promise.all(ids.map(async k => {
+    const job = k === 'boyner' ? boynerShop(p, qs) : storeShop(rules[k], k, p, qs);
+    out.shops[k] = await withTimeout(job.catch(() => ({sizes: {}})), 35000, {sizes: {}});
+    done++;
+    onProgress && onProgress(rules[k].n, done - 1, ids.length, out);
+  }));
   if (Object.values(out.shops).some(x => Object.keys(x.sizes).length)) { mpMem.set(key, out); idbSet(key, out).catch(() => {}); }
   return out;
 }
@@ -1951,28 +2007,67 @@ function openAlarmSheet(){
 
 /* ---------- similar perfumes and cheaper alternatives ---------- */
 const FAM_W = [1, .8, .6, .45, .35];
+// rare notes say more than common ones (oud vs bergamot), and heart/base notes shape a scent more than the opening
+const TIER_W = [.7, 1, 1.15];
+let NOTE_DF = null;
+function noteDf(){
+  if (NOTE_DF) return NOTE_DF;
+  NOTE_DF = new Map();
+  for (const c of CAT) for (const n of new Set([...c.r[9], ...c.r[10], ...c.r[11]].map(fold))) NOTE_DF.set(n, (NOTE_DF.get(n) || 0) + 1);
+  return NOTE_DF;
+}
+function noteVec(top, heart, base){
+  const df = noteDf(), N = CAT.length, v = new Map();
+  [top, heart, base].forEach((l, t) => l.forEach(n => {
+    const k = fold(n); if (!k) return;
+    const w = Math.log(N / ((df.get(k) || 0) + 1)) * TIER_W[t];
+    if (w > (v.get(k) || 0)) v.set(k, w);
+  }));
+  let nn = 0; for (const w of v.values()) nn += w * w;
+  v.norm = Math.sqrt(nn);
+  return v;
+}
+function famVec(fam){
+  const v = new Map(); fam.slice(0, 6).forEach((f, i) => v.set(f, FAM_W[i] || .25));
+  let nn = 0; for (const w of v.values()) nn += w * w; v.norm = Math.sqrt(nn);
+  return v;
+}
+function cosine(a, b){
+  if (!a.norm || !b.norm) return 0;
+  let d = 0; for (const [k, w] of a) { const x = b.get(k); if (x) d += w * x; }
+  return d / (a.norm * b.norm);
+}
+const catVecs = c => c.nv || (c.nv = noteVec(c.r[9], c.r[10], c.r[11]), c.fv = famVec(c.r[8]), c.nv);
 function similarTo(p, cheapOnly){
   if (!CAT) return [];
-  const fw = new Map(p.fam.map((f, i) => [f, FAM_W[i] || .3]));
-  const notes = new Set([...p.top, ...p.heart, ...p.base].map(fold));
-  if (!fw.size && !notes.size) return [];
-  const brandK = normBrand(p.brand), nameK = fold(p.name);
+  const pn = noteVec(p.top, p.heart, p.base), pf = famVec(p.fam);
+  if (!pn.norm && !pf.norm) return [];
+  const brandK = normBrand(p.brand), line = p.brand ? lineKey(p.brand, p.name) : '';
   const out = [];
   for (const c of CAT) {
     const r = c.r;
-    if (r[0] === p.cid || r[5] < 300) continue;
+    if (r[0] === p.cid || r[5] < 150) continue;
     if (cheapOnly && !(r[15] === 'O' || r[15] === 'M')) continue;
-    if (cheapOnly && normBrand(r[2]) === brandK) continue;
-    if (normBrand(r[2]) === brandK && fold(r[1]).startsWith(nameK)) continue;
-    let fs = 0; r[8].forEach((f, i) => { const w = fw.get(f); if (w) fs += Math.min(w, FAM_W[i] || .3); });
-    let shared = 0, cn = 0;
-    for (const n of [...r[9], ...r[10], ...r[11]]) { cn++; if (notes.has(fold(n))) shared++; }
-    const ns = notes.size && cn ? shared / Math.sqrt(notes.size * cn) : 0;
-    const score = fs / 3.2 * .55 + ns * .45;
-    if (score > .3) out.push([c, score]);
+    const sameBrand = normBrand(r[2]) === brandK;
+    if (cheapOnly && sameBrand) continue;
+    // its own flankers are listed under "Aynı seriden"
+    if (sameBrand && line && lineKey(r[2], r[1]) === line) continue;
+    catVecs(c);
+    const ns = cosine(pn, c.nv), fs = cosine(pf, c.fv);
+    let score = pn.norm && c.nv.norm ? ns * .6 + fs * .4 : fs * .75;
+    // a men's scent is a weaker match for a women's one and vice versa
+    if (p.g && r[4] && p.g !== 'U' && r[4] !== 'U' && p.g !== r[4]) score *= .8;
+    // well-known perfumes win close calls
+    score *= 1 + Math.min(.08, Math.log10(r[5]) * .02);
+    if (score > .34) out.push([c, score]);
   }
   out.sort((a, b) => b[1] - a[1] || b[0].r[5] - a[0].r[5]);
-  return out.slice(0, 8);
+  return out.slice(0, 12);
+}
+// the notes a match shares with this perfume, rarest first: "why is it similar?"
+function sharedNotes(p, c){
+  const pn = noteVec(p.top, p.heart, p.base), names = new Map([...c.r[9], ...c.r[10], ...c.r[11]].map(n => [fold(n), n]));
+  return [...pn.entries()].filter(([k]) => names.has(k)).sort((a, b) => b[1] - a[1]).slice(0, 4).map(([k]) => names.get(k));
 }
 function simPane(p){
   if (!CAT) { loadCatalog().then(() => { const el = document.querySelector('.dpane[data-pane="sim"]'); if (el) el.innerHTML = simPane(p); }); return '<span class="muted small">Katalog yükleniyor…</span>'; }
@@ -1982,10 +2077,10 @@ function simPane(p){
       <div class="art tap" data-act="cview" data-cid="${c.r[0]}">${art({name: c.r[1], img: fimg(c.r[0])})}</div>
       <div class="item-body tap" data-act="cview" data-cid="${c.r[0]}"><span class="item-name">${esc(c.r[1])} ${concTag(c.r[14], c.r[1])}</span>
         <span class="item-meta"><span lang="en">${esc(c.r[2])}</span> ${segTag(c.r[15])}${c.r[13] ? ' · ★ ' + c.r[13].toFixed(1) : ''}</span>
-        <div class="fam-line">${c.r[8].slice(0, 2).map(famTag).join('')}</div></div>
+        ${(() => { const sh = sharedNotes(p, c); return sh.length ? `<span class="sim-why">Ortak: ${esc(sh.join(', '))}</span>` : `<div class="fam-line">${c.r[8].slice(0, 2).map(famTag).join('')}</div>`; })()}</div>
       <span class="sim-pct">%${Math.round(Math.min(.99, sc) * 100)}</span></div>`).join('')}</div>`
       : `<div class="empty">${S.sim.cheap ? 'Bu parfüme yakın uygun fiyatlı muadil bulunamadı.' : 'Yeterince benzer parfüm bulunamadı.'}</div>`}
-    <span class="muted small">Benzerlik, koku ailesi ve notaların örtüşmesine göre hesaplanır.</span>`;
+    <span class="muted small">Benzerlik; notaların (nadir ve kalp/alt notalar daha ağır basar) ve ana akorların örtüşmesine göre hesaplanır. Aynı serinin versiyonları üstte “Aynı seriden” bölümünde.</span>`;
 }
 
 /* ---------- weather-based suggestion (Open-Meteo, no key, no location permission: the user picks a city) ---------- */
@@ -2340,7 +2435,12 @@ async function loadPricesInto(p){
   if (!NATIVE) return;
   const token = {}; priceState = {token, p, gi: 0, ml: null, data: null};
   const meta = () => document.getElementById('price-meta');
-  const data = await fetchMulti(p, (shop, i, n) => { if (priceState && priceState.token === token && meta()) meta().textContent = `${shop} · ${i + 1}/${n}`; });
+  const data = await fetchMulti(p, (shop, i, n, part) => {
+    if (!priceState || priceState.token !== token) return;
+    // show prices as soon as the first store answers; the rest fill in
+    if (part && i + 1 < n && allSizes(part).length) { priceState.data = part; drawPrices(); }
+    if (meta()) meta().textContent = i + 1 < n ? `${i + 1}/${n} mağaza tamam…` : '';
+  });
   if (!priceState || priceState.token !== token) return;
   priceState.data = data;
   drawPrices();
@@ -2409,6 +2509,7 @@ function detailHtml(p, o){
       </div>
     </div>
     <div class="row">${o.actions}</div>
+    ${versHtml(p)}
     <div class="seg dtabs">${[['notes', 'Notalar'], ['price', 'Fiyat'], ['info', 'Bilgi'], ...(S.sim.on ? [['sim', 'Benzer']] : [])].map(([k, l]) => `<button class="${dTab === k ? 'on' : ''}" data-act="dtab" data-v="${k}" type="button">${l}</button>`).join('')}</div>
     <div class="dpane" data-pane="notes"${dTab === 'notes' ? '' : ' hidden'}>
       ${notes ? `<div class="pyramid">${TIERS.map(([k, label, when]) => `<div class="tier"><div class="tier-name"><b>${label}</b><span>${when}</span></div>
