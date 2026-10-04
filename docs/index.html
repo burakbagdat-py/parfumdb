@@ -381,7 +381,7 @@ html.compact .item .art{width:44px;height:54px}
 html.compact .grid{gap:8px}
 html.compact .card-body{padding:8px 10px}
 html.compact .day{padding:7px 12px}
-html.amoled:not([data-skin="althair"]){--bg:#000;--panel:#0a0a0a;--panel-2:#131313}
+html.amoled:not([data-skin="althair"]):not([data-mode="light"]){--bg:#000;--panel:#0a0a0a;--panel-2:#131313}
 html.no-labels .tab{font-size:0;gap:0}
 html.fs-s{zoom:.93}
 html.fs-l{zoom:1.08}
@@ -536,6 +536,111 @@ body.sheet-open{overflow:hidden}
 [data-skin="layton"] .mono{background:var(--panel-2);color:var(--accent);box-shadow:inset 1px 1px 0 rgb(255 255 255 / .14),inset -1px -1px 0 rgb(0 0 0 / .55)}
 [data-skin="layton"] .eyebrow{letter-spacing:.24em}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ============ Scandal: a Paris cabaret after midnight. Rose, plum and champagne gold; arches, fishnet, a floating dock.
+   Two moods: Nuit (dark, default) and Jour (light, html[data-mode="light"]). ============ */
+[data-skin="scandal"]{
+  --bg:#12070d;--panel:#1d0c16;--panel-2:#2a1220;--line:#4a2338;--fg:#fbe9ee;--muted:#c79aad;
+  --accent:#ff6f9f;--accent-2:#e2b56c;--hi:#eec585;--ink:#2a0716;--danger:#ff8a7a;--ok:#8ad6a0;
+  --grad:linear-gradient(118deg,#ffc2d5 0%,#ff6f9f 44%,#cf3f79 100%);
+  --gold:linear-gradient(118deg,#f6dfae 0%,#e2b56c 50%,#b9853a 100%);
+  --glow:rgb(255 111 159 / .36);--shade:rgb(0 0 0 / .6);
+  --f-display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;--f-body:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --dw:500;--dt:none;--dls:-.015em;
+  --pattern:repeating-linear-gradient(45deg,var(--accent-2) 0 1px,transparent 1px 9px),repeating-linear-gradient(-45deg,var(--accent-2) 0 1px,transparent 1px 9px);--pattern-size:auto;
+  --r:26px;--btn-r:999px;--chip-r:999px;--btn-tt:uppercase;--btn-ls:.13em;color-scheme:dark;
+  background:radial-gradient(120% 55% at 88% -8%,rgb(255 111 159 / .24),transparent 62%),radial-gradient(90% 45% at -12% 16%,rgb(226 181 108 / .15),transparent 60%),radial-gradient(120% 60% at 50% 115%,rgb(207 63 121 / .2),transparent 60%),var(--bg);
+  background-attachment:fixed;
+}
+[data-skin="scandal"][data-mode="light"]{
+  --bg:#fbf0ee;--panel:#fffaf8;--panel-2:#f8e6e6;--line:#edccd1;--fg:#33101f;--muted:#8d6070;
+  --accent:#c81e5c;--accent-2:#b0843a;--hi:#a5164a;--ink:#fff6f8;--danger:#b3261e;--ok:#2f7d4a;
+  --grad:linear-gradient(118deg,#ea4c86 0%,#c81e5c 52%,#8f1444 100%);
+  --gold:linear-gradient(118deg,#d9b36a 0%,#b0843a 55%,#8a6223 100%);
+  --glow:rgb(200 30 92 / .24);--shade:rgb(120 30 60 / .28);color-scheme:light;
+  background:radial-gradient(120% 55% at 88% -8%,rgb(234 76 134 / .2),transparent 62%),radial-gradient(90% 45% at -12% 16%,rgb(176 132 58 / .16),transparent 60%),radial-gradient(120% 60% at 50% 115%,rgb(234 76 134 / .12),transparent 60%),var(--bg);
+  background-attachment:fixed;
+}
+[data-skin="scandal"] body{background:transparent}
+/* fishnet over the whole stage, fading out towards the bottom */
+[data-skin="scandal"] body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--pattern);opacity:.07;
+  -webkit-mask-image:linear-gradient(180deg,#000 0,transparent 62%);mask-image:linear-gradient(180deg,#000 0,transparent 62%)}
+[data-skin="scandal"] .top{background:color-mix(in srgb,var(--bg) 78%,transparent)}
+[data-skin="scandal"] .mono{border-radius:50%;font-style:italic;font-weight:600;font-size:16px;background:var(--grad);box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--accent-2),0 10px 22px -8px var(--glow)}
+[data-skin="scandal"] .logo h1{font-style:italic;font-size:21px;font-weight:500}
+[data-skin="scandal"] .logo small{letter-spacing:.24em;font-size:10px;color:var(--accent-2)}
+[data-skin="scandal"] :is(h2,h3,.hero-name,.card-name,.item-name,.bar-title,.dinfo .pn,.dname span,.bigprice,.auth-score){font-style:italic}
+[data-skin="scandal"] h2{font-size:30px;line-height:1.05}
+[data-skin="scandal"] h3{font-size:21px}
+[data-skin="scandal"] .eyebrow{letter-spacing:.3em;font-size:10px;color:var(--accent-2)}
+[data-skin="scandal"] .eyebrow::before{content:"";display:inline-block;width:18px;height:1px;background:var(--accent-2);vertical-align:middle;margin-right:8px}
+[data-skin="scandal"] .label{letter-spacing:.2em;color:var(--accent-2)}
+/* panels: soft blush wash, gold hairline, deep shadow */
+[data-skin="scandal"] :is(.hero,.card,.box,.list,.week,.rem,.prices,.menu,.result,.stat div,.pig-card,.mac-sum,details.cg,.note,.empty){
+  border-color:color-mix(in srgb,var(--accent-2) 30%,var(--line));
+  background:linear-gradient(165deg,color-mix(in srgb,var(--accent) 9%,var(--panel)),var(--panel) 58%);
+  box-shadow:0 22px 44px -30px var(--shade),inset 0 1px 0 rgb(255 255 255 / .07)}
+[data-skin="scandal"] .hero{border-radius:34px;padding:16px;grid-template-columns:132px minmax(0,1fr)}
+[data-skin="scandal"] .hero::after{height:100%;opacity:.06;-webkit-mask-image:linear-gradient(90deg,transparent 30%,#000);mask-image:linear-gradient(90deg,transparent 30%,#000)}
+[data-skin="scandal"] .hero-name{font-size:30px;line-height:1.02}
+[data-skin="scandal"] .hero-brand,[data-skin="scandal"] .card-brand{letter-spacing:.22em;font-size:10.5px;color:var(--accent-2)}
+/* every bottle sits in an arched alcove */
+[data-skin="scandal"] .art{border-radius:999px 999px 16px 16px;background:radial-gradient(90% 60% at 50% 70%,var(--glow),transparent 70%),var(--panel-2);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent-2) 45%,transparent)}
+[data-skin="scandal"] .card{border-radius:999px 999px 26px 26px;padding:8px 8px 0}
+[data-skin="scandal"] .card .art{border-radius:999px 999px 14px 14px}
+[data-skin="scandal"] .card-body{align-items:center;text-align:center;padding:10px 6px 14px}
+[data-skin="scandal"] .card-body :is(.fam-line,.chips,.row){justify-content:center}
+[data-skin="scandal"] .sample-tag{left:50%;top:14px;transform:translateX(-50%)}
+[data-skin="scandal"] .item .art,[data-skin="scandal"] .day .art{border-radius:999px 999px 8px 8px}
+[data-skin="scandal"] .ph{background:radial-gradient(90% 60% at 50% 30%,color-mix(in srgb,var(--accent) 60%,transparent),transparent 70%),linear-gradient(170deg,color-mix(in srgb,var(--accent-2) 40%,var(--panel)),var(--panel))}
+/* buttons: small caps, gold hairline; the primary one catches the light */
+[data-skin="scandal"] .btn{background:transparent;border-color:color-mix(in srgb,var(--accent-2) 55%,transparent);font-size:11px;font-weight:700;padding:12px 18px}
+[data-skin="scandal"] .btn.sm{font-size:10px;padding:9px 13px}
+[data-skin="scandal"] .btn.primary{background:var(--grad);border-color:transparent;position:relative;overflow:hidden;box-shadow:0 12px 26px -10px var(--glow),inset 0 1px 0 rgb(255 255 255 / .4)}
+[data-skin="scandal"] .btn.primary::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 35%,rgb(255 255 255 / .55) 50%,transparent 65%);transform:translateX(-120%);animation:sc-sheen 4.5s ease-in-out infinite}
+@keyframes sc-sheen{0%,62%{transform:translateX(-120%)}82%,100%{transform:translateX(120%)}}
+html.no-anim[data-skin="scandal"] .btn.primary::after{animation:none}
+[data-skin="scandal"] .btn.danger{border-color:color-mix(in srgb,var(--danger) 55%,transparent)}
+[data-skin="scandal"] .icon-btn{background:transparent;border-color:color-mix(in srgb,var(--accent-2) 50%,transparent);color:var(--accent-2)}
+[data-skin="scandal"] .chip{border-color:color-mix(in srgb,var(--accent-2) 35%,var(--line));font-size:12px;letter-spacing:.03em;padding:7px 14px}
+[data-skin="scandal"] .chip.on{background:var(--grad);border-color:transparent;color:var(--ink);box-shadow:0 8px 18px -10px var(--glow)}
+[data-skin="scandal"] .chip.grp.on{background:var(--gold);color:#2a1a05}
+[data-skin="scandal"] .seg{border-radius:999px;border-color:color-mix(in srgb,var(--accent-2) 30%,var(--line));background:color-mix(in srgb,var(--panel) 70%,transparent)}
+[data-skin="scandal"] .seg button{border-radius:999px;letter-spacing:.06em}
+[data-skin="scandal"] .seg button.on{background:var(--grad);color:var(--ink);box-shadow:0 6px 14px -8px var(--glow)}
+[data-skin="scandal"] .search,[data-skin="scandal"] .input{border-color:color-mix(in srgb,var(--accent-2) 35%,var(--line));background:color-mix(in srgb,var(--panel) 80%,transparent)}
+[data-skin="scandal"] .bell.on{background:var(--gold);color:#2a1a05}
+[data-skin="scandal"] .level{height:4px}
+[data-skin="scandal"] .stat b,[data-skin="scandal"] .pig-ring b,[data-skin="scandal"] .mac-left b{font-style:italic;font-weight:500}
+[data-skin="scandal"] .day.today{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 22%,transparent),transparent 75%)}
+[data-skin="scandal"] .pointer{border-top-color:var(--accent-2)}
+[data-skin="scandal"] .wheel-wrap canvas{box-shadow:0 0 0 6px var(--bg),0 0 0 7px var(--accent-2),0 30px 70px -20px var(--glow)}
+/* the bar becomes a floating dock; the current tab is a raised lipstick-red button */
+[data-skin="scandal"] .tabs{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:536px;margin-inline:auto;border:1px solid color-mix(in srgb,var(--accent-2) 40%,var(--line));border-radius:30px;padding:7px 6px;
+  background:color-mix(in srgb,var(--panel) 86%,transparent);box-shadow:0 22px 44px -16px var(--shade),inset 0 1px 0 rgb(255 255 255 / .08)}
+[data-skin="scandal"] .tabs::before{display:none}
+[data-skin="scandal"] .tab{font-size:0;gap:0;padding:0;justify-content:center;min-height:46px;letter-spacing:.16em;text-transform:uppercase}
+[data-skin="scandal"] .tab .ic{width:44px;height:44px;border-radius:50%}
+[data-skin="scandal"] .tab.on{font-size:8.5px;gap:3px;color:var(--accent-2);margin-top:-22px}
+[data-skin="scandal"] .tab.on .ic{background:var(--grad);color:var(--ink);box-shadow:0 0 0 4px var(--bg),0 0 0 5px var(--accent-2),0 14px 24px -8px var(--glow)}
+html.no-labels[data-skin="scandal"] .tab.on{font-size:0;margin-top:-14px}
+[data-skin="scandal"] .fab{bottom:calc(104px + env(safe-area-inset-bottom,0px));border-radius:50%;box-shadow:0 0 0 4px var(--bg),0 0 0 5px var(--accent-2),0 16px 30px -10px var(--glow)}
+[data-skin="scandal"] .toast{bottom:calc(104px + env(safe-area-inset-bottom,0px));border-radius:999px;text-align:center}
+[data-skin="scandal"] .app{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))}
+[data-skin="scandal"] .sheet{border-radius:38px 38px 0 0;border-color:color-mix(in srgb,var(--accent-2) 45%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 10%,var(--panel)),var(--panel) 34%)}
+[data-skin="scandal"] .overlay{background:rgb(18 4 11 / .74)}
+[data-skin="scandal"] .conc{border-color:color-mix(in srgb,var(--accent-2) 60%,transparent);color:var(--accent-2)}
+[data-skin="scandal"] .coin{background:radial-gradient(circle at 35% 30%,#fff3d0,#e2b56c 45%,#a8742c)}
+/* Jour: the same room in daylight */
+[data-skin="scandal"][data-mode="light"] :is(.hero,.card,.box,.list,.week,.rem,.prices,.menu,.result,.stat div,.pig-card,.mac-sum,details.cg,.note,.empty){box-shadow:0 18px 36px -26px var(--shade),inset 0 1px 0 #fff}
+[data-skin="scandal"][data-mode="light"] .fam{color:hsl(var(--fh) 55% 28%);background:hsl(var(--fh) 60% 50% / .12);border-color:hsl(var(--fh) 50% 45% / .35)}
+[data-skin="scandal"][data-mode="light"] .fam::before{background:hsl(var(--fh) 60% 45%)}
+[data-skin="scandal"][data-mode="light"] .boyner{background:#33101f;color:#fff6f8}
+[data-skin="scandal"][data-mode="light"] .overlay{background:rgb(90 20 50 / .4)}
+[data-skin="scandal"][data-mode="light"] .art img.cut{filter:drop-shadow(0 10px 12px rgb(140 30 70 / .28))}
+[data-skin="scandal"][data-mode="light"] .ph span{color:#fff6f8}
+[data-skin="scandal"][data-mode="light"] body::before{opacity:.1}
+[data-skin="scandal"][data-mode="light"] .bell.on,[data-skin="scandal"][data-mode="light"] .chip.grp.on{color:#fffaf0}
 </style>
 </head>
 <body>
@@ -660,6 +765,8 @@ const STORES = {
 };
 // dl: downloaded by the app at runtime from docs/sounds (no new APK needed); others ship inside the APK
 const SOUNDS = {
+  sc_kadife: {n: 'Scandal · Kadife', dl: 'sc_kadife'}, sc_sampanya: {n: 'Scandal · Şampanya', dl: 'sc_sampanya'}, sc_topuk: {n: 'Scandal · Topuk', dl: 'sc_topuk'},
+  sc_muzik: {n: 'Scandal · Müzik kutusu', dl: 'sc_muzik'}, sc_altin: {n: 'Scandal · Altın', dl: 'sc_altin'},
   bb: {n: 'BB İmza', dl: 'bb_yumusak'}, fiyat: {n: 'Fiyat çanı', dl: 'fiyat'}, kumbara: {n: 'Kumbara (bozuk para + kasa)', dl: 'kumbara'}, kadeh: {n: 'Kadeh', dl: 'kadeh'}, vanilya: {n: 'Vanilya arp', dl: 'vanilya'}, gumus: {n: 'Gümüş çan', dl: 'gumus'},
   kristal: {n: 'Kristal'}, gemi_cani: {n: 'Gemi çanı'}, robot: {n: 'Robot'}, sprey: {n: 'Sprey'}, damla: {n: 'Damla'}, nabiz: {n: 'Nabız'}
 };
@@ -706,7 +813,15 @@ const SKINS = {
     wheel: ['#c3c9d6','#111a30','#9a8fd8','#17213b','#e8ecf4','#26324f'],
     wheelText: ['#0a1122','#e8ecf4','#0a1122','#e8ecf4','#0a1122','#e8ecf4'], rim: '#c3c9d6', hub: ['#f3f5f9','#8e97ab'],
     shelf: 'Parfums de Marly koleksiyonu', line: r => /marly/i.test(r[2]),
-    swatch: 'linear-gradient(135deg,#0a1122 0 50%,#c3c9d6 50% 75%,#9a8fd8 75%)', chip: '#c3c9d6'}
+    swatch: 'linear-gradient(135deg,#0a1122 0 50%,#c3c9d6 50% 75%,#9a8fd8 75%)', chip: '#c3c9d6'},
+  scandal: {n: 'Scandal', sub: 'Gece yarısı Paris · gül, mürdüm, şampanya altını · açık ve karanlık', bar: '#12070d', barLight: '#fbf0ee', greet: 'Bu gecenin skandalı', greetLight: 'Bugünün skandalı', sound: 'sc_kadife',
+    fonts: 'family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..800&family=DM+Sans:opsz,wght@9..40,400..700',
+    wheel: ['#ff6f9f','#2a1220','#e2b56c','#4a1630','#ffc2d5','#12070d'],
+    wheelText: ['#2a0716','#fbe9ee','#2a1a05','#ffc2d5','#2a0716','#e2b56c'], rim: '#e2b56c', hub: ['#f6dfae','#b9853a'],
+    wheelLight: ['#c81e5c','#fffaf8','#b0843a','#f8e6e6','#ea4c86','#f3d9c4'],
+    wheelTextLight: ['#fff6f8','#33101f','#fffaf0','#8f1444','#fff6f8','#33101f'],
+    shelf: 'Skandal yaratanlar', line: r => /gaultier/i.test(r[2]) && /scandal/i.test(r[1]) || (r[12].includes('Seksi') && r[12].includes('Gece') && r[5] > 9000),
+    swatch: 'linear-gradient(135deg,#12070d 0 34%,#ff6f9f 34% 58%,#e2b56c 58% 70%,#fbf0ee 70%)', chip: '#ff6f9f'}
 };
 const SAMPLE_ROWS = [
 [99116,"Eros Najim","Versace",2024,"E",2133,4,3,["Sıcak baharatlı","Karamel","Narenciye","Ud","Aromatik"],["Karamel","İtalyan mandalinası"],["Kakule","Ud"],["Tütsü","Paçuli","Vetiver"],["Günlük","Date","Ofis","Kış","Gece","Narenciye","Aromatik","Tatlı","Gurme","Amber","Baharatlı","Ud","Oryantal","Seksi","Orta","Erkek"],3.92],
@@ -803,9 +918,15 @@ function save(){
 
 /* ---------- skins ---------- */
 const loadedFonts = new Set(['karamel']);
+const sysLight = matchMedia('(prefers-color-scheme: light)');
+// only Scandal has two moods; "auto" follows the phone
+const lightMode = () => S.skin === 'scandal' && (S.mode === 'light' || (S.mode !== 'dark' && sysLight.matches));
+sysLight.addEventListener && sysLight.addEventListener('change', () => { if (S && S.skin === 'scandal' && S.mode !== 'light' && S.mode !== 'dark') { applySkin(); render(); } });
 function applySkin(){
   const k = SKINS[S.skin] ? S.skin : 'karamel';
   document.documentElement.dataset.skin = k;
+  const light = lightMode();
+  if (light) document.documentElement.dataset.mode = 'light'; else delete document.documentElement.dataset.mode;
   if (!loadedFonts.has(k)) {
     loadedFonts.add(k);
     const l = document.createElement('link'); l.rel = 'stylesheet';
@@ -813,11 +934,25 @@ function applySkin(){
     l.onload = () => drawWheel(document.getElementById('wheel'));
     document.head.appendChild(l);
   }
-  document.querySelector('meta[name=theme-color]').content = SKINS[k].bar;
-  nativeCall('setBars', SKINS[k].bar);
+  const bar = light && SKINS[k].barLight || SKINS[k].bar;
+  document.querySelector('meta[name=theme-color]').content = bar;
+  nativeCall('setBars', bar);
 }
-const skin = () => SKINS[S.skin] || SKINS.karamel;
+const skin = () => {
+  const k = SKINS[S.skin] || SKINS.karamel;
+  return k.wheelLight && lightMode() ? {...k, wheel: k.wheelLight, wheelText: k.wheelTextLight, greet: k.greetLight || k.greet, rim: '#b0843a'} : k;
+};
 const UI_DEFAULT = {fullscreen: false, anim: true, haptic: true, blur: true, amoled: false, compact: false, labels: true, fs: 'm'};
+function scandalSounds(on){
+  if (on) {
+    S.notif.reminders.forEach(r => { if (r.sound === 'bb' || /^sc_/.test(r.sound)) r.sound = 'tema'; });
+    S.alarmSound = 'sc_altin'; S.pigSound = 'sc_sampanya';
+  } else {
+    if (/^sc_/.test(S.alarmSound)) S.alarmSound = 'fiyat';
+    if (/^sc_/.test(S.pigSound)) S.pigSound = 'kumbara';
+    S.notif.reminders.forEach(r => { if (/^sc_/.test(r.sound)) r.sound = 'tema'; });
+  }
+}
 function applyUi(){
   const u = S.ui, c = document.documentElement.classList;
   c.toggle('no-anim', !u.anim); c.toggle('no-blur', !u.blur); c.toggle('amoled', !!u.amoled);
@@ -1124,10 +1259,10 @@ function soundName(r){
 }
 // downloads the sounds the current reminders use; afterwards the plan is re-sent so channels pick them up
 let ensuring = null;
-function ensureSounds(){
+function ensureSounds(extra){
   if (!NATIVE || !NATIVE.installSound) return Promise.resolve();
-  if (ensuring) return ensuring;
-  const names = new Set();
+  if (ensuring) return extra ? ensuring.then(() => ensureSounds(extra)) : ensuring;
+  const names = new Set(extra || []);
   [...S.notif.reminders, {sound: 'tema'}, {sound: S.alarmSound || 'fiyat'}, {sound: S.pigSound || 'kumbara'}].forEach(r => { const spec = resolveSound(r); if (spec.startsWith('dl:')) names.add(spec.slice(3)); });
   ensuring = (async () => {
     let got = false;
@@ -3255,6 +3390,15 @@ function renderLook(){
         <div class="sw" style="background:${s.swatch}"><i style="background:${s.chip}"></i></div>
         <div class="t"><b>${esc(s.n)}</b><small>${esc(s.sub)}</small><small>Ses: ${esc(sname(s.sound))}</small></div>
       </button>`).join('')}</div>
+    ${S.skin === 'scandal' ? `<div class="box" style="gap:12px">
+      <div class="field"><span class="label">Scandal modu</span>
+        <div class="seg">${[['auto', 'Otomatik'], ['light', 'Jour · açık'], ['dark', 'Nuit · karanlık']].map(([k, l]) => `<button class="${(S.mode || 'auto') === k ? 'on' : ''}" data-act="scmode" data-v="${k}" type="button">${l}</button>`).join('')}</div>
+        <span class="muted small">Otomatik, telefonun açık/karanlık ayarını izler.</span></div>
+      <div class="field"><span class="label">Scandal ses seti</span>
+        <div class="chips">${['sc_kadife', 'sc_sampanya', 'sc_topuk', 'sc_muzik', 'sc_altin'].map(k => `<button class="chip" data-act="scplay" data-v="${k}" type="button">▶ ${esc(sname(k).replace('Scandal · ', ''))}</button>`).join('')}</div>
+        <span class="muted small">Kadife: hatırlatıcılar · Altın: fiyat düştü · Şampanya: kumbara. Dokunup dinle; set temayı seçince kendiliğinden uygulandı.</span>
+        <div class="row"><button class="btn sm" data-act="scset" type="button">Seti yeniden uygula</button></div></div>
+    </div>` : ''}
     <p class="muted small">Tema; renkleri, yazı tipini, çarkı, karşılama yazısını, Keşfet'teki seçkiyi ve “Temanın sesi” seçili hatırlatıcıların sesini değiştirir.</p>
   </section>
   <section class="section">
@@ -3709,7 +3853,21 @@ document.addEventListener('click', async e => {
       if (S.lastSpin === draft.id) S.lastSpin = null;
       repairWeek(); save(); closeSheet(); render(); toast('Silindi'); break;
     case 'sub': S.sub = t.dataset.sub || null; save(); render(); window.scrollTo(0, 0); break;
-    case 'skin': S.skin = t.dataset.v; applySkin(); save(); renderLook(); ensureSounds(); toast(skin().n + ' teması'); break;
+    case 'skin': {
+      const was = S.skin; S.skin = t.dataset.v;
+      // entering Scandal brings its sound set along; leaving it puts the usual price and piggy sounds back
+      if (S.skin === 'scandal' && was !== 'scandal') scandalSounds(true);
+      if (was === 'scandal' && S.skin !== 'scandal') scandalSounds(false);
+      applySkin(); save(); renderLook(); ensureSounds().then(() => { if (NATIVE && NATIVE.setPriceSound) syncAlarms(); }); toast(skin().n + ' teması'); break;
+    }
+    case 'scmode': S.mode = t.dataset.v; applySkin(); save(); renderLook(); break;
+    case 'scset': scandalSounds(true); save(); await ensureSounds(); if (NATIVE && NATIVE.setPriceSound) syncAlarms(); lastPlan = ''; syncNative(); toast('Scandal ses seti uygulandı'); break;
+    case 'scplay': {
+      const k = t.dataset.v;
+      if (NATIVE && NATIVE.previewSound) { await ensureSounds([k]); nativeCall('previewSound', 'dl:' + k); }
+      else try { new Audio('sounds/' + k + '.wav').play().catch(() => {}); } catch (e) {}
+      break;
+    }
     case 'rmcat': {
       const c = t.dataset.cat;
       if (armed !== 'cat-' + c) { armed = 'cat-' + c; renderCats(); break; }
