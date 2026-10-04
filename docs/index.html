@@ -475,6 +475,14 @@ body.sheet-open{overflow:hidden}
 #sold-line:empty{display:none}
 .spin-hero{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:center;animation:pop .45s ease}
 .spin-hero .art{border-radius:16px;aspect-ratio:4/5;font-size:20px}
+.auth-step{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;align-items:start}
+.auth-step .n{width:28px;height:28px;border-radius:50%;background:var(--grad);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:13px}
+.auth-step b{display:block;margin-bottom:2px}
+.auth-step p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.45}
+.auth-check{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.4}
+.auth-check:first-child{border-top:0}
+.auth-check input{width:20px;height:20px;accent-color:var(--accent);flex:none;margin-top:1px}
+.auth-score{font-family:var(--f-display);font-weight:var(--dw);font-size:18px}
 .dupe-tag{font-size:10.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--grad);color:var(--ink)}
 .sim-why{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .sim-pct{font-size:12px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
@@ -645,6 +653,7 @@ const STORES = {
   gratis: {n: 'Gratis', loc: "Gratis'te", url: q => 'https://www.gratis.com/search?q=' + encodeURIComponent(q)},
   perfumepoint: {n: 'Perfume Point', loc: "Perfume Point'te", url: q => 'https://www.perfumepoint.com.tr/arama?q=' + encodeURIComponent(q)},
   n11: {n: 'n11', loc: "n11'de", url: q => 'https://www.n11.com/arama?q=' + encodeURIComponent(q)},
+  pazarama: {n: 'Pazarama', loc: "Pazarama'da", url: q => 'https://www.pazarama.com/arama?q=' + encodeURIComponent(q)},
   trendyol: {n: 'Trendyol', loc: "Trendyol'da", url: q => 'https://www.trendyol.com/sr?q=' + encodeURIComponent(q)},
   hepsiburada: {n: 'Hepsiburada', loc: "Hepsiburada'da", url: q => 'https://www.hepsiburada.com/ara?q=' + encodeURIComponent(q)},
   amazon: {n: 'Amazon', loc: "Amazon'da", url: q => 'https://www.amazon.com.tr/s?k=' + encodeURIComponent(q)}
@@ -2120,12 +2129,66 @@ function catConc(r){
   const k = S.soldConc && S.soldConc[r[0]];
   return k && k.length ? k.map(c => `<span class="conc sold" title="Mağazalarda bu türde satılıyor">${esc(c)}</span>`).join(' ') : '';
 }
+/* ---------- is my bottle genuine? brand verification pages that really exist + the checks anyone can do ---------- */
+const SHIELD_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5.5c0 4.3 2.9 7.6 7 9.5 4.1-1.9 7-5.2 7-9.5V6z"/><path d="m9 12 2.2 2.2L15.2 10"/></svg>';
+// only pages that were opened and checked; "how" is what the brand itself says to do
+const AUTH_BRANDS = [
+  {m: /^lattafa/, n: 'Lattafa', url: 'https://verify.lattafa.com', btn: 'Lattafa doğrulama sayfası',
+    how: 'Kutudaki 3 boyutlu hologram güvenlik etiketini bul. Sayfayı aç, “Open Camera” ile etiketteki kodu okut; sayfa ürünün orijinal olup olmadığını söyler. Adres çubuğunda verify.lattafa.com yazdığından emin ol (sahte kutularda sahte siteye giden QR olabiliyor).'},
+  {m: /^afnan/, n: 'Afnan', url: 'https://afnan.com/pages/authenticity', btn: 'Afnan orijinallik sayfası',
+    how: 'Afnan’ın resmi sitesindeki orijinallik sayfası. Kutudaki güvenlik etiketini/kodu bu sayfadaki yönergelere göre doğrula; QR seni afnan.com dışında bir adrese götürüyorsa şüphelen.'},
+  {m: /^(xerjoff|casamorati)/, n: 'Xerjoff', url: 'https://www.xerjoff.com/blogs/our-world/authenticity', btn: 'Xerjoff orijinallik sayfası',
+    how: 'Mart 2025’ten itibaren üretilen şişelerde Certilogo NFC etiketi var: telefonunun NFC’si açıkken şişedeki etikete dokundur, açılan sayfa orijinalliği doğrular. Daha eski üretimlerde bu etiket yoktur; parti kodu ve satıcıya bak.'}
+];
+const BRAND_SITES = [[/^armaf/, 'https://www.armaf.ae'], [/^rasasi/, 'https://www.rasasi.com'], [/^ajmal/, 'https://www.ajmal.com'], [/^swiss ?arabian/, 'https://swissarabian.com'],
+  [/^parfums de marly/, 'https://parfums-de-marly.com'], [/^creed/, 'https://www.creedfragrances.co.uk'], [/^amouage/, 'https://amouage.com'],
+  [/^fragrance world/, 'https://fragranceworld.ae'], [/^paris corner/, 'https://pariscorner.ae'], [/^nishane/, 'https://nishane.com'], [/^al haramain/, 'https://ahp.alharamainperfumes.com']];
+const AUTH_CHECKS = [
+  ['seller', 'Yetkili satıcıdan aldım (Boyner, Beymen, Sephora, Gratis, markanın kendi mağazası gibi) ve faturası var'],
+  ['price', 'Fiyat piyasanın çok altında değildi (yarı fiyatına “orijinal” çoğunlukla sahtedir)'],
+  ['batch', 'Kutunun altındaki parti kodu ile şişenin altındaki/arkasındaki kod birebir aynı'],
+  ['date', 'Parti kodu, kod sorgulama sitesinde mantıklı bir üretim tarihi veriyor'],
+  ['box', 'Kutu baskısı net: yazım hatası, kayık yazı, soluk renk yok; jelatin düzgün ve sıkı'],
+  ['bottle', 'Şişe camı pürüzsüz, yazılar düzgün ve silinmiyor; kapak tam oturuyor, ağır ve kaliteli'],
+  ['spray', 'Sprey ince ve eşit püskürtüyor; içteki hortum ince, şeffaf ve dibe kadar uzanıyor'],
+  ['juice', 'Sıvının rengi mağazadaki testerla aynı; içinde tortu, bulanıklık yok'],
+  ['scent', 'Koku testerla aynı gelişiyor ve kalıcılığı beklenen gibi (ilk dakikada keskin alkol kokup kaybolmuyor)']
+];
+const authFor = p => AUTH_BRANDS.find(b => b.m.test(fold(p.brand || '')));
+function authChip(p){
+  const st = p && S.auth && S.auth[p.name], n = st ? st.length : 0;
+  return `<button class="bell${n >= 7 ? ' on' : ''}" data-act="auth" type="button" aria-label="Orijinallik testi">${SHIELD_SVG}<span>${n ? `Orijinallik · ${n}/${AUTH_CHECKS.length}` : 'Orijinallik'}</span></button>`;
+}
+function openAuth(p){
+  if (!p) return;
+  sheetMode = 'auth';
+  const f = openOverlay(); f.dataset.pname = p.name;
+  const b = authFor(p), site = (BRAND_SITES.find(x => x[0].test(fold(p.brand || ''))) || [])[1];
+  const seg = (CAT && p.cid && CAT.byId.get(p.cid) || {r: []}).r[15];
+  const draw = () => {
+    const st = new Set(S.auth && S.auth[p.name] || []);
+    const n = st.size, verdict = !n ? 'Kendi şişen için aşağıdakileri işaretle' : n >= 8 ? 'Büyük olasılıkla orijinal' : n >= 6 ? 'Orijinal olma ihtimali yüksek' : n >= 4 ? 'Emin değilim; eksik kalanlara dikkat' : 'Henüz az işaret var; hepsini kontrol et, çoğu tutmuyorsa şüphelen';
+    let k = 0;
+    const step = (t, html) => `<div class="auth-step"><span class="n">${++k}</span><div><b>${t}</b>${html}</div></div>`;
+    f.innerHTML = `<div class="row spread"><span class="eyebrow">Orijinallik testi</span>${closeIcon}</div>
+      ${headHtml(p, 'Şişen gerçek mi? Sırayla kontrol et.')}
+      ${b ? step(`${esc(b.n)} resmi doğrulama`, `<p>${esc(b.how)}</p><div class="row" style="margin-top:8px"><a class="btn sm primary" href="${b.url}" data-act="extlink">${esc(b.btn)}</a></div>`)
+          : step('Markanın resmi doğrulaması', `<p>${esc(p.brand || 'Bu marka')} için çevrim içi bir kod doğrulama sayfası bilmiyorum; kutuda QR/hologram varsa okut ve açılan adresin markanın kendi sitesi olduğuna bak. Emin olamazsan markanın müşteri hizmetlerine parti kodunu ve fotoğrafı gönder.</p>${site ? `<div class="row" style="margin-top:8px"><a class="btn sm" href="${site}" data-act="extlink">${esc(p.brand)} resmi sitesi</a></div>` : ''}`)}
+      ${step('Parti (batch) kodunu sorgula', `<p>Kutunun altında ve şişenin altında/arkasında basılı ya da kazınmış 4–8 haneli kod olur. İkisi aynı olmalı. Kodu aşağıdaki sitelerde markayı seçip gir: üretim tarihini gösterir. Kod tanınmıyorsa ya da tarih saçmaysa (çıkış yılından önce gibi) şüphelen.</p>
+        <div class="row" style="margin-top:8px"><a class="btn sm" href="https://www.checkfresh.com" data-act="extlink">CheckFresh</a><a class="btn sm" href="https://checkcosmetic.net" data-act="extlink">CheckCosmetic</a></div>`)}
+      ${step('Nereden aldığına bak', `<p>${seg === 'O' ? 'Orta Doğu markalarında sahteler çok yaygın: kutudaki hologram/QR etiketi olmayan ya da kazınmış ürünlerden uzak dur.' : seg === 'N' ? 'Niş parfümlerde en güvenlisi markanın kendi sitesi ve yetkili butiklerdir; “tester”, “kutusuz”, “outlet” ilanlarının çoğu sahtedir.' : 'Yetkili zincirlerden (Boyner, Beymen, Sephora, Gratis) alınan ürün orijinaldir.'} Pazar yerlerinde (n11, Pazarama, Trendyol, Hepsiburada) satıcının kim olduğuna bak: mağazanın kendisi ya da yetkili distribütör değilse risk yüksek.</p>`)}
+      ${step('Şişeni kontrol et', `<div class="row spread" style="margin:4px 0 6px"><span class="auth-score">${n}/${AUTH_CHECKS.length}</span><span class="muted small">${verdict}</span></div>
+        <div>${AUTH_CHECKS.map(([id, t]) => `<label class="auth-check"><input type="checkbox" class="auth-tick" data-id="${id}"${st.has(id) ? ' checked' : ''}><span>${t}</span></label>`).join('')}</div>`)}
+      <span class="muted small">Bu liste kesin bir ekspertiz değildir; iyi yapılmış sahteler birçok işareti geçebilir. En güvenilir kanıt yetkili satıcı faturası ve markanın kendi doğrulamasıdır.</span>`;
+  };
+  draw(); f._draw = draw;
+}
 function piggyChip(p){
   const g = p && pigFor(p.name);
   return `<button class="bell${g ? ' on' : ''}" data-act="pig" type="button" aria-label="Kumbara">${PIG_SVG}<span>${g ? `Kumbara · %${pigPct(g)}` : 'Kumbara'}</span></button>`;
 }
 function refreshBells(){
-  document.querySelectorAll('.bell-row').forEach(b => { b.innerHTML = bellHtml(currentP) + piggyChip(currentP); });
+  document.querySelectorAll('.bell-row').forEach(b => { b.innerHTML = bellHtml(currentP) + piggyChip(currentP) + authChip(currentP); });
   if (priceState && document.getElementById('price-body')) drawPrices();
 }
 /* ---------- piggy bank per perfume: save towards its price ---------- */
@@ -2834,7 +2897,7 @@ function detailHtml(p, o){
         <span class="hero-name">${esc(p.name)}</span>
         ${stats ? `<div class="dstats">${stats}</div>` : ''}
         <span class="muted small" id="sold-line">${soldLine(p)}</span>
-        <div class="bell-row">${bellHtml(p)}${piggyChip(p)}</div>
+        <div class="bell-row">${bellHtml(p)}${piggyChip(p)}${authChip(p)}</div>
         ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
       </div>
     </div>
@@ -2977,7 +3040,7 @@ async function rbPick(){
         <span class="hero-brand" lang="en">${esc(p.brand)} ${catConc(r)} ${segTag(r[15])}</span>
         <span class="hero-name">${esc(p.name)}</span>
         <div class="dstats">${stats}</div>
-        <div class="bell-row">${bellHtml(p)}${piggyChip(p)}</div>
+        <div class="bell-row">${bellHtml(p)}${piggyChip(p)}${authChip(p)}</div>
         <div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>
       </div>
     </div>
@@ -3147,7 +3210,7 @@ function renderShop(){
           <span class="switch"><input type="checkbox" id="shop-exact"${S.shop.exact ? ' checked' : ''}><span></span></span></label>
         <div class="order">${S.shop.order.map((k, i) => `<div class="o${S.shop.off.includes(k) ? ' off' : ''}">
           <b>${i + 1}</b><span><input type="checkbox" data-shopk="${k}"${S.shop.off.includes(k) ? '' : ' checked'} style="accent-color:var(--accent);width:18px;height:18px;vertical-align:-3px"> ${STORES[k].n}
-            <span class="muted small">${['boyner', 'beymen', 'gratis', 'perfumepoint', 'n11'].includes(k) ? '· fiyat + tam ürün' : '· arama sayfası'}${k === 'n11' ? ' · pazar yeri' : ''}</span></span>
+            <span class="muted small">${['boyner', 'beymen', 'gratis', 'perfumepoint', 'n11', 'pazarama'].includes(k) ? '· fiyat + tam ürün' : '· arama sayfası'}${k === 'n11' || k === 'pazarama' ? ' · pazar yeri' : ''}</span></span>
           <button class="icon-btn" data-act="shopmove" data-k="${k}" data-d="-1" type="button" aria-label="Yukarı"${i === 0 ? ' disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 15 6-6 6 6"/></svg></button>
           <button class="icon-btn" data-act="shopmove" data-k="${k}" data-d="1" type="button" aria-label="Aşağı"${i === S.shop.order.length - 1 ? ' disabled' : ''}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg></button></div>`).join('')}</div>
         <span class="muted small">Boyner, Beymen, Gratis ve n11'de fiyat ve birebir ürün (100 ml öncelikli) aranır; fiyat kontrolü ve çan bunları kullanır. n11 bir pazar yeridir, satıcı fiyatları değişkendir; bu yüzden varsayılan olarak kapalıdır. Sephora, Trendyol, Hepsiburada ve Amazon otomatik aramaya izin vermediği için arama sayfaları açılır.</span>
@@ -3381,7 +3444,7 @@ function migrate(s){
     // new stores slot in after Gratis rather than at the very end
     const at = s.shop.order.indexOf('gratis');
     if (k === 'perfumepoint' && at >= 0) s.shop.order.splice(at + 1, 0, k); else s.shop.order.push(k);
-    if (k === 'n11') s.shop.off.push(k);
+    if (k === 'n11' || k === 'pazarama') s.shop.off.push(k);
   });
   if (!Array.isArray(s.alarms)) s.alarms = [];
   if (!s.alarmTime) s.alarmTime = '12:00';
@@ -3494,6 +3557,7 @@ document.addEventListener('click', async e => {
     case 'buyopen': openBuySheet(t.dataset.id); break;
     case 'openbest': openBest(currentP); break;
     case 'bell': toggleBell(t); break;
+    case 'auth': openAuth(currentP); break;
     case 'wheelsrc': S.wheelInv = t.dataset.v === 'inv'; save(); renderWheel(); toast(S.wheelInv ? 'Çark envanterden dönüyor' : 'Çark koleksiyondan dönüyor'); break;
     case 'spinagain': closeSheet(); setTimeout(() => { window.scrollTo({top: 0, behavior: 'smooth'}); spin(); }, 220); break;
     case 'pig': { const p = currentP; if (!p) break; const g = pigFor(p.name); if (g) openPig(g.id); else openPigSetup(p); break; }
@@ -3733,6 +3797,13 @@ document.addEventListener('change', async e => {
   }
   if (t.id === 'pig-time' && /^\d\d:\d\d$/.test(t.value)) { S.pigTime = t.value; save(); toast('Kumbara hatırlatması: ' + t.value); }
   if (t.id === 'pig-sound') { S.pigSound = t.value; save(); await ensureSounds(); lastPlan = ''; syncNative(); }
+  if (t.classList && t.classList.contains('auth-tick')) {
+    const name = document.getElementById('sheet').dataset.pname;
+    S.auth = S.auth || {};
+    const set = new Set(S.auth[name] || []); if (t.checked) set.add(t.dataset.id); else set.delete(t.dataset.id);
+    if (set.size) S.auth[name] = [...set]; else delete S.auth[name];
+    save(); const sc = document.getElementById('sheet').scrollTop; redrawSheet(); document.getElementById('sheet').scrollTop = sc;
+  }
   if (t.id === 'mac-skip') { S.macSkip = t.checked; repairWeek(); save(); }
   if (t.id === 'mac-time' && /^\d\d:\d\d$/.test(t.value)) {
     S.macTime = t.value;

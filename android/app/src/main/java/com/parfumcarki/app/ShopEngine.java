@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  */
 final class ShopEngine {
     private static final String[] HOSTS = {"boyner.com.tr", "beymen.com", "gratis.com", "n11.com", "sephora.com.tr",
-            "trendyol.com", "hepsiburada.com", "amazon.com.tr", "rossmann.com.tr", "watsons.com.tr", "perfumepoint.com.tr"};
+            "trendyol.com", "hepsiburada.com", "amazon.com.tr", "rossmann.com.tr", "watsons.com.tr", "perfumepoint.com.tr", "pazarama.com"};
     static final Set<String> STOP = new HashSet<>(Arrays.asList(("ml erkek kadin unisex parfum parfumu eau de du la le toilette cologne "
             + "edt edp extrait spray sprey vapo natural for men women pour homme femme fragrance refillable orijinal orjinal yeni new diger christian "
             + "ve icin tr gr mens womens ladies bayan bay erkeklere kadinlara perfume parfume vaporisateur vaporizer").split(" ")));

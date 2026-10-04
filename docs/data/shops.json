@@ -1,5 +1,5 @@
 {
- "v": 2,
+ "v": 3,
  "shops": {
   "boyner": {
    "n": "Boyner",
@@ -42,6 +42,18 @@
    "n": "n11",
    "type": "ldjson",
    "search": "https://www.n11.com/arama?q={q}",
+   "market": true
+  },
+  "pazarama": {
+   "n": "Pazarama",
+   "type": "regex",
+   "search": "https://www.pazarama.com/arama?q={q}",
+   "split": "data-testid=\"listing-product-card-grid\"",
+   "url": "<a href=\"(/[^\"]+-p-\\d+)\"",
+   "title": "title=\"([^\"]+)\"",
+   "price": "price-sale-price\"[^>]*>\\s*([0-9.,]+)",
+   "base": "https://www.pazarama.com",
+   "fmt": "tr",
    "market": true
   }
  }
