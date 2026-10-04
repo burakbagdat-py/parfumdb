@@ -220,6 +220,27 @@ public class Bridge {
         activity.runOnUiThread(() -> activity.openExternal(url));
     }
 
+    /** The system share sheet with a text (the card's link). */
+    @JavascriptInterface
+    public void shareText(String text) {
+        if (!activity.trusted()) return;
+        activity.runOnUiThread(() -> activity.shareText(text));
+    }
+
+    /** QR code for a text as "size;0101…" row by row, or "" when it cannot be made. Drawn by the page. */
+    @JavascriptInterface
+    public String qr(String text) {
+        if (!activity.trusted()) return "";
+        return MainActivity.qr(text);
+    }
+
+    /** Saves a part of the screen (CSS pixels of a viewport vw wide) as a picture and opens the share sheet with it. */
+    @JavascriptInterface
+    public void shareShot(double x, double y, double w, double h, double vw) {
+        if (!activity.trusted()) return;
+        activity.runOnUiThread(() -> activity.shareShot(x, y, w, h, vw));
+    }
+
     @JavascriptInterface
     public String saveBackup(String json) {
         if (!activity.trusted()) return "";

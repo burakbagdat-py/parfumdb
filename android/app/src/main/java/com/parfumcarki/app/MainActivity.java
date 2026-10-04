@@ -332,6 +332,62 @@ public class MainActivity extends Activity {
         }
     }
 
+    void shareText(String text) {
+        try {
+            startActivity(Intent.createChooser(new Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text), "Paylaş"));
+        } catch (Exception e) {
+            Toast.makeText(this, "Paylaşılamadı", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    static String qr(String text) {
+        try {
+            com.google.zxing.qrcode.encoder.ByteMatrix m = com.google.zxing.qrcode.encoder.Encoder
+                    .encode(text, com.google.zxing.qrcode.decoder.ErrorCorrectionLevel.L).getMatrix();
+            StringBuilder b = new StringBuilder(m.getWidth() * m.getHeight() + 8).append(m.getWidth()).append(';');
+            for (int y = 0; y < m.getHeight(); y++) for (int x = 0; x < m.getWidth(); x++) b.append(m.get(x, y) == 1 ? '1' : '0');
+            return b.toString();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /** The page shows the card alone on the screen and says where it is; that rectangle becomes a PNG in Pictures and is shared. */
+    void shareShot(double x, double y, double w, double h, double vw) {
+        boolean ok = false;
+        try {
+            if (Build.VERSION.SDK_INT < 29) {
+                Toast.makeText(this, "Görsel paylaşımı Android 10 ve sonrasında çalışır", Toast.LENGTH_LONG).show();
+                return;
+            }
+            float k = (float) (web.getWidth() / vw);
+            android.graphics.Bitmap full = android.graphics.Bitmap.createBitmap(web.getWidth(), web.getHeight(), android.graphics.Bitmap.Config.ARGB_8888);
+            android.graphics.Canvas cv = new android.graphics.Canvas(full);
+            cv.translate(-web.getScrollX(), -web.getScrollY());
+            web.draw(cv);
+            int px = Math.max(0, Math.round((float) x * k)), py = Math.max(0, Math.round((float) y * k));
+            int pw = Math.min(full.getWidth() - px, Math.round((float) w * k)), ph = Math.min(full.getHeight() - py, Math.round((float) h * k));
+            if (pw <= 0 || ph <= 0) throw new IllegalStateException("empty");
+            android.graphics.Bitmap cut = android.graphics.Bitmap.createBitmap(full, px, py, pw, ph);
+            ContentValues v = new ContentValues();
+            v.put(MediaStore.Images.Media.DISPLAY_NAME, "bb-kartvizit-" + new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.US).format(new Date()) + ".png");
+            v.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
+            v.put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/BB Parfum");
+            Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, v);
+            if (uri == null) throw new IllegalStateException("insert failed");
+            try (OutputStream os = getContentResolver().openOutputStream(uri)) {
+                cut.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, os);
+            }
+            Intent send = new Intent(Intent.ACTION_SEND).setType("image/png").putExtra(Intent.EXTRA_STREAM, uri).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            startActivity(Intent.createChooser(send, "Kartviziti paylaş"));
+            ok = true;
+        } catch (Exception e) {
+            Toast.makeText(this, "Görsel kaydedilemedi", Toast.LENGTH_SHORT).show();
+        } finally {
+            web.evaluateJavascript("window.onNativeShot && window.onNativeShot(" + ok + ")", null);
+        }
+    }
+
     void setBars(String hex) {
         try {
             int col = Color.parseColor(hex);

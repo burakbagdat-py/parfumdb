@@ -161,13 +161,13 @@ public class BatchDialogActivity extends Activity implements CodeScanner.Listene
         typeRow.setOrientation(LinearLayout.HORIZONTAL);
         typeRow.setGravity(Gravity.CENTER_VERTICAL);
         in = new EditText(this);
-        in.setHint("Parti kodu, ör. 2K01");
+        in.setHint("Kod ya da tarih: 2K01, 05/2023");
         in.setHintTextColor(muted);
         in.setTextColor(fg);
         in.setTextSize(18);
         in.setSingleLine(true);
         in.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        in.setFilters(new InputFilter[]{new InputFilter.LengthFilter(14), new InputFilter.AllCaps()});
+        in.setFilters(new InputFilter[]{new InputFilter.LengthFilter(16), new InputFilter.AllCaps()});
         in.setImeOptions(EditorInfo.IME_ACTION_DONE);
         in.setBackground(box(field, soft, 14));
         in.setPadding(dp(14), dp(11), dp(14), dp(11));
@@ -307,7 +307,7 @@ public class BatchDialogActivity extends Activity implements CodeScanner.Listene
         head.setText("Kodu yaz ya da okut");
         head.setTextColor(fg);
         res.setTextColor(muted);
-        res.setText("Parti kodunu yaz: marka seçmene gerek yok, kodun düzeninden hangi gruba ait olduğunu bulurum. QR ya da barkod için “okut”a dokun.");
+        res.setText("Parti kodunu yaz: marka seçmene gerek yok, kodun düzeninden hangi gruba ait olduğunu bulurum. Kutuda üretim tarihi yazıyorsa onu yaz (05/2023). QR ya da barkod için “okut”a dokun.");
         keyboard(true);
     }
 

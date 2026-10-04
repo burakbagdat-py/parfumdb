@@ -545,6 +545,41 @@ body.sheet-open{overflow:hidden}
 [data-skin="layton"] .eyebrow{letter-spacing:.24em}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
+/* ---------- personal card ---------- */
+.vcard{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;gap:14px;padding:22px 20px 16px;border-radius:30px;background:var(--card);border:1px solid var(--edge);box-shadow:var(--lift)}
+.vcard::before{content:"";position:absolute;z-index:-1;right:-32%;top:-30%;width:92%;aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 34%,transparent),transparent);pointer-events:none}
+.vc-top{display:flex;align-items:center;gap:14px}
+.vc-av{width:74px;height:74px;border-radius:50%;flex:none;overflow:hidden;display:grid;place-items:center;background:var(--grad);color:var(--ink);font-family:var(--f-display);font-weight:700;font-size:26px}
+.vc-av img{width:100%;height:100%;object-fit:cover;display:block}
+.vc-id{display:flex;flex-direction:column;gap:3px;min-width:0}
+.vc-name{font-family:var(--f-display);font-weight:var(--dw);text-transform:var(--dt);letter-spacing:var(--dls);font-size:26px;line-height:1.1;overflow-wrap:anywhere}
+.vc-title{font-size:13.5px;color:var(--muted);line-height:1.3}
+.vc-bio{margin:0;font-size:14.5px;line-height:1.45;overflow-wrap:anywhere}
+.vc-label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.vc-perf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px}
+.vc-p{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-width:0}
+.vc-p .art{width:100%;aspect-ratio:4/5;border-radius:16px;background:var(--fill)}
+.vc-p span{font-size:12.5px;font-weight:600;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vc-p small{font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.vc-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.vc-link{display:grid;grid-template-columns:34px minmax(0,1fr);column-gap:10px;align-items:center;padding:8px 12px 8px 8px;border-radius:16px;background:var(--fill);color:var(--fg);text-decoration:none;min-width:0}
+.vc-link:last-child:nth-child(odd){grid-column:1 / -1}
+.vc-link i{grid-row:1 / span 2;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--tint);color:var(--hi);font-style:normal;font-weight:800;font-size:11px;letter-spacing:0}
+.vc-link span{font-size:13.5px;font-weight:600;line-height:1.2}
+.vc-link small{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vc-foot{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);letter-spacing:.04em;padding-top:10px;border-top:1px solid var(--hair)}
+.vc-shot{position:fixed;inset:0;z-index:90;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px 16px;overflow:auto}
+.vc-shot .vcard{width:100%;max-width:380px;flex:none}
+.card-row{display:grid;grid-template-columns:116px minmax(0,1fr) auto;gap:8px;align-items:center}
+.card-row .input{padding-inline:10px}
+.card-row .bad{border-color:var(--danger)}
+.qr-box{align-self:center;width:min(100%,300px);aspect-ratio:1;padding:12px;border-radius:20px;background:#fff}
+.qr-box svg{width:100%;height:100%;display:block}
+.top-acts{display:flex;gap:8px;flex:none}
+html.premium .lt{padding-right:108px}
+.setnav{position:sticky;top:60px;z-index:20;padding-block:8px;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+html.no-blur .setnav{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--bg)}
+html.premium[data-dock="top"] .setnav{top:calc(140px + env(safe-area-inset-top,0px))}
 /* ---------- the Today page: a scent card for the day, other candidates, what is going on, the week as a ribbon ---------- */
 :root{--card:var(--panel);--edge:var(--line);--fill:var(--panel-2);--hair:var(--line);--tint:color-mix(in srgb,var(--accent) 18%,transparent);--lift:none}
 .td-hello{display:flex;flex-direction:column;gap:3px}
@@ -614,8 +649,6 @@ body.sheet-open{overflow:hidden}
 .td-row{display:flex;gap:10px;flex-wrap:wrap}
 .td-row .btn{flex:1;justify-content:center}
 .td-wait .item{grid-template-columns:52px minmax(0,1fr) auto}
-html.premium[data-finish="aero"] .td-hero{backdrop-filter:blur(22px) saturate(1.2);-webkit-backdrop-filter:blur(22px) saturate(1.2)}
-html.no-blur.premium[data-finish="aero"] .td-hero{backdrop-filter:none;-webkit-backdrop-filter:none}
 html.premium .td-hero .hero-name{font-size:29px}
 html.premium .td-acts .btn{padding-inline:8px;gap:7px;white-space:nowrap;font-size:14.5px}
 html.premium .td-acts .btn:first-child{font-size:16.5px;min-height:56px}
@@ -654,8 +687,10 @@ html.premium[data-mode="light"]{--shade:rgb(40 45 60 / .24);--fill:color-mix(in 
 html.premium[data-finish="aero"]{--card:color-mix(in srgb,var(--panel) 52%,transparent);--edge:color-mix(in srgb,#fff 12%,transparent);--bar:color-mix(in srgb,var(--panel-2) 62%,transparent);
   --fill:color-mix(in srgb,var(--fg) 11%,transparent);--lift:inset 0 1px 0 color-mix(in srgb,#fff 16%,transparent),0 18px 40px -30px var(--shade);
   --grad:linear-gradient(180deg,color-mix(in srgb,var(--accent) 80%,#fff),var(--accent));--pshadow:inset 0 1px 0 rgb(255 255 255 / .42),0 12px 26px -14px color-mix(in srgb,var(--accent) 75%,transparent);
-  background:radial-gradient(62% 40% at 8% 0%,color-mix(in srgb,var(--accent) 42%,transparent),transparent 72%),radial-gradient(58% 38% at 108% 30%,color-mix(in srgb,var(--accent-2) 34%,transparent),transparent 72%),radial-gradient(90% 46% at 36% 110%,color-mix(in srgb,var(--accent) 28%,transparent),transparent 72%),var(--bg);
-  background-attachment:fixed}
+  background:radial-gradient(62% 40% at 8% 0%,color-mix(in srgb,var(--accent) 42%,transparent),transparent 72%),radial-gradient(58% 38% at 108% 30%,color-mix(in srgb,var(--accent-2) 34%,transparent),transparent 72%),radial-gradient(90% 46% at 36% 110%,color-mix(in srgb,var(--accent) 28%,transparent),transparent 72%),var(--bg)}
+html.premium[data-finish="aero"]{background:var(--bg)}
+html.premium[data-finish="aero"] body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:radial-gradient(62% 40% at 8% 0%,color-mix(in srgb,var(--accent) 42%,transparent),transparent 72%),radial-gradient(58% 38% at 108% 30%,color-mix(in srgb,var(--accent-2) 34%,transparent),transparent 72%),radial-gradient(90% 46% at 36% 110%,color-mix(in srgb,var(--accent) 28%,transparent),transparent 72%)}
 html.premium[data-finish="aero"][data-mode="light"]{--card:rgb(255 255 255 / .6);--edge:rgb(255 255 255 / .9);--bar:rgb(255 255 255 / .68);--fill:color-mix(in srgb,var(--fg) 8%,transparent);
   --lift:inset 0 1px 0 #fff,0 18px 40px -30px var(--shade)}
 html.premium[data-finish="aero"] body{background:transparent}
@@ -770,7 +805,6 @@ html.premium .bell.on svg{color:var(--accent);animation:none}
 
 /* --- today: the bottle on a stage, its name under it, the main button as wide as the card --- */
 html.premium .hero{display:flex;flex-direction:column;align-items:center;gap:0;padding:26px 18px 18px;border-radius:32px;text-align:center}
-html.premium[data-finish="aero"] .hero{backdrop-filter:blur(22px) saturate(1.2);-webkit-backdrop-filter:blur(22px) saturate(1.2)}
 html.premium .hero>.art{width:166px;aspect-ratio:4/5;border-radius:26px;background:transparent;margin-bottom:18px}
 html.premium .hero>.art .ph.stage{inset:-28%;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 26%,transparent),transparent)}
 html.premium .hero>.art{overflow:visible}
@@ -1009,7 +1043,10 @@ html.premium[data-dock="right"].dock-hidden #dock-show svg{rotate:-90deg}
   <header class="top">
     <div class="logo"><span class="mono">BB</span><div><h1 class="disp">Parfüm Envanteri</h1><small id="today-label"></small></div></div>
     <span class="bar-title" id="bar-title"></span>
-    <button class="icon-btn" data-tab="ayarlar" type="button" aria-label="Ayarlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    <div class="top-acts">
+      <button class="icon-btn" data-act="gosub" data-sub="kart" type="button" aria-label="Kartvizitim"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 19.5c1-3.6 3.8-5.4 7.2-5.4s6.2 1.8 7.2 5.4"/></svg></button>
+      <button class="icon-btn" data-tab="ayarlar" type="button" aria-label="Ayarlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
   </header>
   <div class="lt"><small id="lt-date"></small><strong class="disp" id="lt-title"></strong></div>
   <div id="update-slot"></div>
@@ -1665,7 +1702,7 @@ function art(p){
   if (p && p.img) {
     const img = S.nobg && NATIVE && /^https?:/.test(p.img)
       ? `<img data-nobg="${esc(p.img)}" data-l="${esc(name.trim().charAt(0).toUpperCase())}" class="nb" alt="">`
-      : `<img src="${esc(p.img)}" data-src0="${/^https?:/.test(p.img) ? esc(p.img) : ''}" data-l="${esc(name.trim().charAt(0).toUpperCase())}" alt="" loading="lazy" onerror="imgFail(this)">`;
+      : `<img src="${esc(p.img)}" data-src0="${/^https?:/.test(p.img) ? esc(p.img) : ''}" data-l="${esc(name.trim().charAt(0).toUpperCase())}" alt="" loading="lazy" decoding="async" onerror="imgFail(this)">`;
     return `<div class="ph stage"></div>` + img;
   }
   return `<div class="ph"><span>${esc(name.trim().charAt(0).toUpperCase())}</span></div>`;
@@ -1867,7 +1904,25 @@ const PTITLE = {hafta: 'Bugün', cark: 'Çark', kesfet: 'Keşfet', koleksiyon: '
 const TAB_TITLE = {hafta: 'Bu hafta', cark: 'Çark', kesfet: 'Keşfet', koleksiyon: 'Koleksiyon', envanter: 'Envanter', maserasyon: 'Maserasyon', ayarlar: 'Ayarlar'};
 let shownTab = null;
 function haptic(kind){ if (S && S.ui && !S.ui.haptic) return; if (NATIVE && NATIVE.haptic) nativeCall('haptic', kind || 'tick'); else try { navigator.vibrate && navigator.vibrate(kind === 'confirm' ? 15 : 6); } catch (e) {} }
+const errLog = () => { try { return JSON.parse(localStorage.getItem('bb_errs') || '[]'); } catch (e) { return []; } };
+function logErr(where, e){
+  try {
+    const l = errLog();
+    l.unshift({t: Date.now(), w: where, m: String(e && e.message || e).slice(0, 200), s: String(e && e.stack || '').split('\n').slice(1, 3).join(' ').trim().slice(0, 260)});
+    localStorage.setItem('bb_errs', JSON.stringify(l.slice(0, 20)));
+  } catch (x) {}
+}
+window.addEventListener('error', e => logErr('hata', e.error || e.message));
+window.addEventListener('unhandledrejection', e => logErr('işlem', e.reason));
 function render(){
+  try { renderNow(); }
+  catch (e) {
+    logErr('ekran: ' + (S && S.tab) + (S && S.sub ? '/' + S.sub : ''), e);
+    view.innerHTML = `<section class="section"><div class="empty">Bu sayfa açılırken bir şey ters gitti. Verilerin duruyor.<br><br>
+      <button class="btn sm primary" data-act="go" data-tab="hafta" type="button">Bugün’e dön</button> <button class="btn sm" data-act="gosub" data-sub="uygulama" type="button">Hata kaydı</button></div></section>`;
+  }
+}
+function renderNow(){
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
   document.getElementById('bar-title').textContent = (PR() ? PTITLE : TAB_TITLE)[S.tab] || '';
   document.getElementById('lt-title').textContent = PTITLE[S.tab] || '';
@@ -2940,64 +2995,115 @@ const OFFICIAL_HOSTS = [[/^lattafa/, ['lattafa.com']], [/^afnan/, ['afnan.com']]
   [/^creed/, ['creedfragrances.co.uk', 'creedboutique.com', 'creedfragrance.com']], [/^amouage/, ['amouage.com']], [/^fragrance world/, ['fragranceworld.ae']],
   [/^paris corner/, ['pariscorner.ae']], [/^nishane/, ['nishane.com']], [/^al haramain/, ['alharamainperfumes.com']]];
 // batch-code layouts I am sure about; other houses are not guessed
-const yearDay = {fmt: /^\d{4}[A-Z0-9]{0,6}$/, hint: '4 rakamla başlar: 1. rakam yılın son hanesi, sonraki üçü yılın kaçıncı günü (ör. 3123 → 2023’ün 123. günü)',
-  dec: c => { const d = +c.slice(1, 4); return d >= 1 && d <= 366 ? {y: +c[0], doy: d} : null; }};
-const BATCH_RULES = [
-  {n: 'LVMH (Dior, Guerlain, Givenchy, Kenzo)', m: /^(dior|christian dior|guerlain|givenchy|kenzo)/, fmt: /^\d[A-HJ-M]\d{2}$/, hint: '4 karakter: rakam + harf + 2 rakam (ör. 2K01). Rakam yılın son hanesi, harf ay (A=Ocak … M=Aralık, I kullanılmaz)',
-    dec: c => ({y: +c[0], m: 'ABCDEFGHJKLM'.indexOf(c[1]) + 1})},
-  {n: 'Puig (Jean Paul Gaultier, Rabanne, Carolina Herrera, Nina Ricci)', m: /^(jean paul gaultier|rabanne|paco rabanne|carolina herrera|nina ricci)/, ...yearDay},
-  {n: 'Coty (Hugo Boss, Gucci, Burberry, Calvin Klein, Chloé, Davidoff, Marc Jacobs)', m: /^(hugo boss|boss|gucci|burberry|calvin klein|chloe|davidoff|marc jacobs)/, ...yearDay},
-  {n: 'Estée Lauder (Tom Ford, Jo Malone, Kilian, Le Labo, Frederic Malle)', m: /^(tom ford|jo malone|by kilian|kilian|le labo|frederic malle|estee lauder|aerin|clinique)/, fmt: /^[A-Z][1-9ABC]\d$/,
-    hint: '3 karakter: harf + ay + yıl (ör. A83 → Ağustos, yılın son hanesi 3). Ay: 1–9, A=Ekim, B=Kasım, C=Aralık',
-    dec: c => ({y: +c[2], m: '123456789ABC'.indexOf(c[1]) + 1})}
-];
+// Batch-code layouts. The "sure" ones are long documented. The others were worked out from the sample codes that the reference
+// sites show for each manufacturer and are labelled as an estimate. A house whose code carries no date (Chanel) gets no invented one.
 const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
-function decodeBatch(p, raw){
-  const code = String(raw).toUpperCase().replace(/[^A-Z0-9]/g, '');
-  if (code.length < 3 || code.length > 12) return {cls: 'bad', h: 'Bu bir parti koduna benzemiyor', t: 'Parti kodu genelde 3–10 harf/rakamdır ve kutunun altına basılı, şişenin altına kazınmış ya da basılmıştır. Barkodun altındaki 13 haneli sayı parti kodu değildir.'};
-  p = p || {name: '', brand: ''};
-  let rule = BATCH_RULES.find(r => r.m.test(fold(p.brand || '')));
-  const launch = (CAT && p.cid && CAT.byId.get(p.cid) || {r: []}).r[3] || p.year || 0;
-  if (!p.brand) {
-    const valid = r => { if (!r.fmt.test(code)) return false; const d = r.dec(code); return !!d && (d.m === undefined || !!d.m); };
-    rule = BATCH_RULES.find(valid);
-    if (!rule) return {cls: 'warn', code, h: 'Bildiğim düzenlere uymuyor', links: true,
-      t: 'Çözebildiğim düzenler: LVMH (ör. 2K01), Estée Lauder (ör. A83), Puig ve Coty (ör. 3123). Başka bir markanın kodu olabilir ya da 0/O, 1/I karışmış olabilir. Markayı yazarsan o markaya göre de bakarım.'};
-    if (rule.dec === yearDay.dec) rule = {...rule, n: 'Puig ya da Coty (JPG, Rabanne, C. Herrera, Hugo Boss, Gucci, Burberry…)'};
-  }
-  if (!rule) return {cls: 'warn', code, h: 'Kod kaydedildi; bu markanın kod düzenini ben çözemiyorum',
-    t: `${esc(p.brand || 'Bu marka')} için parti kodu düzenini güvenle bilmiyorum, o yüzden tarih uydurmuyorum. Kodu kopyaladım: CheckFresh ya da CheckCosmetic’te markayı seçip yapıştır. Asıl kontrol: kutudaki kod ile şişedeki kod birebir aynı mı?`, links: true};
-  if (!rule.fmt.test(code)) return {cls: 'bad', code, h: 'Kod bu markanın düzenine uymuyor',
-    t: `${esc(rule.n)} kodları şöyle olur: ${esc(rule.hint)}. Yanlış okumuş olabilirsin (0 ile O, 1 ile I karışır); doğru yazdıysan bu ciddi bir şüphe işaretidir.`, links: true};
-  const d = rule.dec(code);
-  if (!d || (d.m !== undefined && !d.m)) return {cls: 'bad', code, h: 'Kod geçerli bir tarih vermiyor', t: 'Karakterler doğru yerde ama gün/ay değeri mümkün değil. Kodu tekrar kontrol et.', links: true};
+const LOREAL_Y = 'ABCDEFGHJKLMNPRSTUVWXYZ';   // A = 2004 … T = 2020, U = 2021, V = 2022 … (I, O and Q are not used)
+const yearDay = {fmt: /^\d{4}[A-Z0-9]{0,6}$/, hint: '4 rakamla başlar: 1. rakam yılın son hanesi, sonraki üçü yılın kaçıncı günü (ör. 3123 → 2023’ün 123. günü)',
+  dec: c => { const d = +c.slice(1, 4); return d >= 1 && d <= 366 ? {y: +c[0], doy: d} : null; },
+  read: (c, y, d) => `${c[0]} → ${y} · ${c.slice(1, 4)} → yılın ${d.doy}. günü${c.length > 4 ? ' · ' + c.slice(4) + ' → parti/hat no' : ''}`};
+const BATCH_RULES = [
+  {n: 'LVMH (Dior, Guerlain, Givenchy, Kenzo)', m: /^(dior|christian dior|guerlain|givenchy|kenzo)/, fmt: /^\d[A-HJ-NP-Z]\d{2}$/, sure: true,
+    hint: '4 karakter: rakam + harf + 2 rakam (ör. 2K01). Rakam yılın son hanesi, harf ay (A–M ya da N–Z, sırayla Ocak–Aralık; I ve O kullanılmaz)',
+    dec: c => ({y: +c[0], m: ('ABCDEFGHJKLM'.indexOf(c[1]) + 1) || ('NPQRSTUVWXYZ'.indexOf(c[1]) + 1)}),
+    read: (c, y, d) => `${c[0]} → ${y} · ${c[1]} → ${MONTHS[d.m - 1]} · ${c.slice(2)} → parti/hat no`},
+  {n: 'L’Oréal (Armani, YSL, Lancôme, Valentino, Prada, Azzaro, Mugler, Viktor&Rolf, Margiela)', sure: true,
+    m: /^(giorgio armani|emporio armani|armani|yves saint laurent|lancome|valentino|prada|azzaro|mugler|thierry mugler|viktor rolf|maison margiela|maison martin margiela|diesel|ralph lauren|cacharel|biotherm|l oreal|loreal)/,
+    fmt: /^[A-Z0-9]{2}[A-HJ-NPR-Z][1-9ONDABC][A-Z0-9]{0,5}$/,
+    hint: 'ör. 38U60OG: ilk iki karakter fabrika, üçüncü harf yıl (T=2020, U=2021, V=2022, W=2023, X=2024, Y=2025), dördüncü karakter ay (1–9, O=Ekim, N=Kasım, D=Aralık)',
+    dec: c => { const yi = LOREAL_Y.indexOf(c[2]), mi = ('123456789'.indexOf(c[3]) + 1) || {O: 10, A: 10, N: 11, B: 11, D: 12, C: 12}[c[3]]; return yi < 0 || !mi ? null : {year: 2004 + yi, cycle: LOREAL_Y.length, m: mi}; },
+    read: (c, y, d) => `${c.slice(0, 2)} → fabrika · ${c[2]} → ${y} · ${c[3]} → ${MONTHS[d.m - 1]}${c.length > 4 ? ' · ' + c.slice(4) + ' → parti no' : ''}`},
+  {n: 'Estée Lauder (Tom Ford, Jo Malone, Kilian, Le Labo, Frederic Malle)', m: /^(tom ford|jo malone|by kilian|kilian|le labo|frederic malle|editions de parfums|estee lauder|aerin|clinique|aramis)/, fmt: /^[A-Z][1-9ABC]\d$/, sure: true,
+    hint: '3 karakter: harf + ay + yıl (ör. A83 → Ağustos, yılın son hanesi 3). Ay: 1–9, A=Ekim, B=Kasım, C=Aralık',
+    dec: c => ({y: +c[2], m: '123456789ABC'.indexOf(c[1]) + 1}),
+    read: (c, y, d) => `${c[0]} → fabrika · ${c[1]} → ${MONTHS[d.m - 1]} · ${c[2]} → ${y}`},
+  {n: 'EuroItalia (Versace, Moschino, Missoni)', m: /^(versace|moschino|missoni)/, fmt: /^\d{7}$/,
+    hint: '7 rakam (ör. 2111304): ilk iki rakam yıl, sonraki üçü yılın kaçıncı günü',
+    dec: c => { const yy = +c.slice(0, 2), d = +c.slice(2, 5); return yy >= 10 && 2000 + yy <= new Date().getFullYear() && d >= 1 && d <= 366 ? {year: 2000 + yy, doy: d} : null; },
+    read: (c, y, d) => `${c.slice(0, 2)} → ${y} · ${c.slice(2, 5)} → yılın ${d.doy}. günü · ${c.slice(5)} → parti no`},
+  {n: 'Puig (Jean Paul Gaultier, Rabanne, Carolina Herrera, Nina Ricci)', m: /^(jean paul gaultier|rabanne|paco rabanne|carolina herrera|nina ricci|prada|valentino|antonio banderas|benetton)/, sure: true, ...yearDay},
+  {n: 'Coty (Hugo Boss, Gucci, Burberry, Calvin Klein, Chloé, Davidoff, Lacoste, Marc Jacobs)', m: /^(hugo boss|boss|gucci|burberry|calvin klein|chloe|davidoff|marc jacobs|lacoste|tiffany|miu miu|bottega veneta|jil sander|joop|escada)/, sure: true, ...yearDay},
+  {n: 'Shiseido (Issey Miyake, Narciso Rodriguez, Dolce&Gabbana, Zadig&Voltaire)', m: /^(issey miyake|narciso rodriguez|shiseido|dolce gabbana|zadig voltaire|serge lutens|elie saab|jean paul gaultier)/, ...yearDay,
+    hint: '4 rakam + 2 harf (ör. 9322MM): 1. rakam yılın son hanesi, sonraki üçü yılın kaçıncı günü'},
+  {n: 'Hermès', m: /^hermes/, ...yearDay, fmt: /^\d{5}$/, hint: '5 rakam (ör. 03284): 1. rakam yılın son hanesi, sonraki üçü yılın kaçıncı günü'},
+  {n: 'Maison Francis Kurkdjian', m: /^(maison francis kurkdjian|francis kurkdjian)/, fmt: /^\d{5}$/, own: true,
+    hint: '5 rakam (ör. 21196): ilk iki rakam yıl, sonraki üçü yılın kaçıncı günü',
+    dec: c => { const yy = +c.slice(0, 2), d = +c.slice(2, 5); return 2000 + yy <= new Date().getFullYear() && d >= 1 && d <= 366 ? {year: 2000 + yy, doy: d} : null; },
+    read: (c, y, d) => `${c.slice(0, 2)} → ${y} · ${c.slice(2, 5)} → yılın ${d.doy}. günü`},
+  {n: 'Creed', m: /^creed/, fmt: /^L?[A-Z]\d{4}[A-Z]\d{2}[A-Z0-9]{0,2}$/, own: true,
+    hint: 'ör. A4220C01N: harf, iki rakam koku numarası, sonraki iki rakam yıl (20 → 2020)',
+    dec: c => { const x = c.replace(/^L(?=[A-Z])/, ''), yy = +x.slice(3, 5); return 2000 + yy <= new Date().getFullYear() ? {year: 2000 + yy, onlyYear: true} : null; },
+    read: (c, y) => `koku numarasından sonraki iki rakam → ${y}`}
+];
+// houses whose code cannot be turned into a date, and why
+const BATCH_NODATE = [[/^chanel/, 'Chanel kodu (4 hane) tarihi doğrudan yazmaz: ilk iki hane her ay bir artan bir sayaçtır ve yaklaşık 8 yılda bir başa döner, bu yüzden yalnız koddan yıl söylenemez. Uydurma tarih göstermiyorum.'],
+  [/^(lattafa|armaf|afnan|rasasi|al haramain|ajmal|swiss arabian|maison alhambra|fragrance world|paris corner|ard al zaafaran|nishane|zara)/, 'Bu marka üretim ve son kullanma tarihini kutunun altına açıkça yazar (MFG / EXP ya da Ür. T.). O tarihi buraya yaz (ör. 05/2023), yaş ve tazelik raporunu çıkarayım.']];
+// a date printed on the box and typed as it is: 05/2023, 2023-05, 28.02.2020
+function typedDate(raw){
+  const cy = new Date().getFullYear(), ok = (y, m, d) => y >= 1990 && y <= cy && m >= 1 && m <= 12 && (!d || (d >= 1 && d <= 31)) ? {y, m, d: d || 0} : null;
+  let m = /(?:^|\D)(\d{1,2})[./-](\d{1,2})[./-](\d{4}|\d{2})(?:\D|$)/.exec(raw); if (m) return ok(+m[3] < 100 ? 2000 + +m[3] : +m[3], +m[2], +m[1]);
+  m = /(?:^|\D)(\d{1,2})[./-](\d{4})(?:\D|$)/.exec(raw); if (m) return ok(+m[2], +m[1]);
+  m = /(?:^|\D)(\d{4})[./-](\d{1,2})(?:\D|$)/.exec(raw); if (m) return ok(+m[1], +m[2]);
+  return null;
+}
+// the report for a production date, however it was found
+function batchReport(o){
+  const {code, y, mo, day, launch, read, group, prevY, sure, onlyYear} = o;
   const now = new Date(), cy = now.getFullYear();
-  let y = cy - ((cy - d.y) % 10 + 10) % 10;                       // the latest year ending in that digit
-  const mo = d.m !== undefined ? d.m : new Date(y, 0, d.doy).getMonth() + 1;
-  if (y === cy && mo > now.getMonth() + 1) y -= 10;               // not in the future
-  const day = d.doy ? new Date(y, 0, d.doy).getDate() + ' ' : '';
-  const when = `${MONTHS[mo - 1]} ${y}`, age = (cy - y) * 12 + (now.getMonth() + 1 - mo);
-  // production report: how the code reads, how old the bottle is, how long it should stay at its best
-  const ageTxt = (age >= 12 ? Math.floor(age / 12) + ' yıl ' : '') + (age % 12) + ' ay';
-  const prevY = y - 10, best = new Date(y + 5, mo - 1, 1), left = (best.getFullYear() - cy) * 12 + (best.getMonth() - now.getMonth());
-  const read = d.doy ? `${code[0]} → ${y} · ${code.slice(1, 4)} → yılın ${d.doy}. günü${code.length > 4 ? ' · ' + code.slice(4) + ' → parti/hat no' : ''}`
-    : rule.fmt.source.startsWith('^[A-Z]') ? `${code[0]} → fabrika · ${code[1]} → ${MONTHS[mo - 1]} · ${code[2]} → ${y}`
-    : `${code[0]} → ${y} · ${code[1]} → ${MONTHS[mo - 1]} · ${code.slice(2)} → parti/hat no`;
+  const when = onlyYear ? String(y) : `${MONTHS[mo - 1]} ${y}`, age = (cy - y) * 12 + (now.getMonth() + 1 - (onlyYear ? 6 : mo));
+  const ageTxt = onlyYear ? `yaklaşık ${cy - y} yıl` : (age >= 12 ? Math.floor(age / 12) + ' yıl ' : '') + (age % 12) + ' ay';
+  const best = new Date(y + 5, (onlyYear ? 6 : mo) - 1, 1), left = (best.getFullYear() - cy) * 12 + (best.getMonth() - now.getMonth());
   const report = [
-    ['Üretim tarihi', `<b>${day}${when}</b>`],
+    ['Üretim tarihi', `<b>${day ? day + ' ' : ''}${when}</b>`],
     ['Şişenin yaşı', ageTxt + (age < 6 ? ' · çok yeni üretim' : age <= 36 ? ' · taze' : age <= 60 ? ' · olgun' : ' · eski stok')],
-    ['Kodun okunuşu', esc(read)],
-    ['Marka grubu', esc(rule.n)],
+    read ? ['Kodun okunuşu', esc(read)] : null,
+    group ? ['Marka grubu', esc(group)] : null,
+    sure === false ? ['Güven', 'orta: bu düzen üreticinin örnek kodlarından çıkarıldı; emin olmak için CheckFresh ile karşılaştır'] : null,
     ['Parfümün çıkışı', launch ? `${launch} · ${y >= launch ? 'üretim tarihiyle uyumlu ✓' : 'üretim tarihi bundan ÖNCE ✗'}` : 'katalogda yok'],
-    ['Diğer olası yıl', `${MONTHS[mo - 1]} ${prevY}${launch && prevY < launch ? ' · parfüm o zaman yoktu, elendi' : ' · yılın son hanesi 10 yılda bir tekrar eder; şişe çok eskiyse bu olabilir'}`],
+    prevY ? ['Diğer olası yıl', `${MONTHS[mo - 1]} ${prevY}${launch && prevY < launch ? ' · parfüm o zaman yoktu, elendi' : ' · yılın son hanesi 10 yılda bir tekrar eder; şişe çok eskiyse bu olabilir'}`] : null,
     ['En iyi hali', left > 0 ? `yaklaşık ${MONTHS[best.getMonth()]} ${best.getFullYear()}’e kadar (kapalı şişe ~5 yıl) · ${left >= 12 ? Math.floor(left / 12) + ' yıl ' : ''}${left % 12} ay var` : '5 yılı geçmiş: serin ve karanlıkta saklandıysa hâlâ iyi olabilir, üst notalar zayıflamış olabilir'],
     ['Açtıktan sonra', 'en iyi 2–3 yıl içinde; ışıktan ve sıcaktan uzak tut'],
     ['Maserasyon', age >= 2 ? `üretimden beri ${ageTxt} geçmiş; şişe zaten dinlenmiş, ekstra bekletmen gerekmez` : 'çok yeni üretim: birkaç hafta dinlendirmek kokuyu oturtabilir']
-  ];
+  ].filter(Boolean);
   if (launch && y < launch) return {cls: 'bad', code, report, h: `Üretim tarihi ${when} çıkıyor, ama bu parfüm ${launch}’de çıktı`,
-    t: 'Kod, parfümün piyasaya çıkışından önceki bir tarihi gösteriyor. Kodu doğru yazdıysan bu ürün büyük olasılıkla sahte (ya da kod başka bir ürüne ait).', links: true};
-  return {cls: age > 60 ? 'warn' : 'good', code, report, h: `Üretim: ${when} · ${age < 12 ? age + ' aylık' : Math.floor(age / 12) + ' yıllık'}`,
-    t: `Kod ${esc(rule.n)} düzenine uyuyor${launch ? ` ve parfümün çıkış yılıyla (${launch}) çelişmiyor` : ''}. ${age > 60 ? 'Beş yıldan eski: orijinal olabilir ama eski stoktur, koku değişmiş olabilir. ' : ''}Yılın son hanesi 10 yılda bir tekrar eder; tarih en yakın uygun yıla göre tahmindir. Şimdi kutudaki ve şişedeki kodun aynı olduğunu kontrol et.`, links: true};
+    t: 'Tarih, parfümün piyasaya çıkışından önce. Kodu doğru yazdıysan bu ürün büyük olasılıkla sahte (ya da kod başka bir ürüne ait).', links: true};
+  return {cls: age > 60 ? 'warn' : 'good', code, report, links: true,
+    h: `Üretim: ${when} · ${onlyYear ? cy - y + ' yıllık' : age < 12 ? age + ' aylık' : Math.floor(age / 12) + ' yıllık'}`,
+    t: `${group ? `Kod ${esc(group)} düzenine uyuyor` : 'Kutuda yazan tarih'}${launch ? ` ve parfümün çıkış yılıyla (${launch}) çelişmiyor` : ''}. ${age > 60 ? 'Beş yıldan eski: orijinal olabilir ama eski stoktur. ' : ''}Kutudaki ve şişedeki kodun aynı olduğuna da bak.`};
+}
+function decodeBatch(p, raw){
+  p = p || {name: '', brand: ''};
+  const launch = (CAT && p.cid && CAT.byId.get(p.cid) || {r: []}).r[3] || p.year || 0;
+  const td = typedDate(String(raw));
+  if (td) return batchReport({code: String(raw).trim(), y: td.y, mo: td.m, day: td.d, launch});
+  const code = String(raw).toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (code.length < 3 || code.length > 12) return {cls: 'bad', h: 'Bu bir parti koduna benzemiyor', t: 'Parti kodu genelde 3–10 harf/rakamdır ve kutunun altına basılı, şişenin altına kazınmış ya da basılmıştır. Barkodun altındaki 13 haneli sayı parti kodu değildir. Kutuda tarih yazıyorsa onu da yazabilirsin (ör. 05/2023).'};
+  const fb = mFold(p.brand || '');
+  const valid = r => { if (!r.fmt.test(code)) return null; const d = r.dec(code); return d && (d.m === undefined || d.m) ? d : null; };
+  const mine = fb ? BATCH_RULES.filter(r => r.m.test(fb)) : [];
+  // a house can have had more than one maker (Prada: Puig, then L'Oréal): the layout the code fits decides
+  let rule = mine.find(valid) || null, guessed = false;
+  if (!rule && !mine.length) {
+    const nd = fb && BATCH_NODATE.find(x => x[0].test(fb));
+    if (nd) return {cls: 'warn', code, h: 'Bu markanın kodu tarih vermiyor', t: nd[1] + ' Kutudaki kod ile şişedeki kod birebir aynı mı, ona bak.', links: true};
+    rule = BATCH_RULES.find(r => !r.own && valid(r)); guessed = !!fb;
+    if (!rule) return {cls: 'warn', code, h: fb ? 'Kod kaydedildi; bu markanın kod düzenini çözemiyorum' : 'Bildiğim düzenlere uymuyor', links: true,
+      t: `Çözebildiğim düzenler: LVMH (2K01), L’Oréal (38U60OG), Estée Lauder (A83), Puig, Coty, Shiseido ve Hermès (3123…), EuroItalia (2111304). ${fb ? esc(p.brand) + ' bunlardan birine uymuyor; tarih uydurmuyorum.' : 'Markayı yazarsan o markaya göre de bakarım.'} Kutuda üretim tarihi yazıyorsa onu yaz (ör. 05/2023); yoksa kodu CheckFresh’te dene. 0/O ve 1/I karışmış olabilir.`};
+    if (!fb && rule.dec === yearDay.dec) rule = {...rule, n: 'Puig, Coty, Shiseido ya da Hermès (yıl hanesi + yılın günü)'};
+  }
+  if (!rule) return {cls: 'bad', code, h: 'Kod bu markanın düzenine uymuyor',
+    t: `${esc(mine[0].n)} kodları şöyle olur: ${esc(mine[0].hint)}. Yanlış okumuş olabilirsin (0 ile O, 1 ile I karışır); doğru yazdıysan bu ciddi bir şüphe işaretidir.`, links: true};
+  const d = valid(rule);
+  const now = new Date(), cy = now.getFullYear(), cm = now.getMonth() + 1;
+  let y;
+  if (d.year) { y = d.year; while (d.cycle && y + d.cycle <= cy) y += d.cycle; }
+  else y = cy - ((cy - d.y) % 10 + 10) % 10;                      // the latest year ending in that digit
+  const mo = d.onlyYear ? 1 : d.m !== undefined ? d.m : new Date(y, 0, d.doy).getMonth() + 1;
+  if (!d.onlyYear && y === cy && mo > cm) y -= d.year ? (d.cycle || 0) : 10;   // not in the future
+  if (y > cy || (!d.onlyYear && y === cy && mo > cm)) return {cls: 'bad', code, h: 'Kod gelecekte bir tarih veriyor', t: 'Kodu tekrar kontrol et; 0/O ve 1/I karışmış olabilir.', links: true};
+  const day = d.doy ? new Date(y, 0, d.doy).getDate() : 0;
+  return batchReport({code, y, mo, day, launch, onlyYear: d.onlyYear, read: rule.read(code, y, d), group: rule.n + (guessed ? ` — ${p.brand} bu grupta kayıtlı değil, düzen koddan tanındı` : ''),
+    prevY: d.year ? 0 : y - 10, sure: rule.sure && !guessed ? true : false});
 }
 const GS1 = [[0, 139, 'ABD / Kanada'], [300, 379, 'Fransa'], [400, 440, 'Almanya'], [450, 459, 'Japonya'], [490, 499, 'Japonya'], [500, 509, 'Birleşik Krallık'], [540, 549, 'Belçika / Lüksemburg'],
   [628, 628, 'Suudi Arabistan'], [629, 629, 'Birleşik Arap Emirlikleri'], [690, 699, 'Çin'], [730, 739, 'İsveç'], [760, 769, 'İsviçre'], [800, 839, 'İtalya'], [840, 849, 'İspanya'],
@@ -3123,9 +3229,9 @@ function openBatchQuick(quiet){
     f.innerHTML = `<div class="row spread"><span class="eyebrow">Batch kontrol</span>${closeIcon}</div>
       <h2>Parti kodu ve üretim raporu</h2>
       <div class="field"><label for="batch-in">Parti (batch) kodu</label>
-        <div class="row" style="flex-wrap:nowrap"><input class="input" id="batch-in" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="14" placeholder="ör. 2K01" value="${esc(old ? old.value : '')}" style="flex:1;min-width:0;text-transform:uppercase">
+        <div class="row" style="flex-wrap:nowrap"><input class="input" id="batch-in" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="16" placeholder="ör. 2K01 ya da 05/2023" value="${esc(old ? old.value : '')}" style="flex:1;min-width:0;text-transform:uppercase">
           <button class="btn primary" data-act="batchgo" type="button">Test et</button></div>
-        <span class="muted small">Marka seçmene gerek yok: kodun düzeninden hangi gruba ait olduğunu bulurum. Kod kutunun ve şişenin altında, 3–10 karakter.</span></div>
+        <span class="muted small">Marka seçmene gerek yok: kodun düzeninden hangi gruba ait olduğunu bulurum. Kod kutunun ve şişenin altında, 3–10 karakter. Kutuda üretim tarihi açıkça yazıyorsa (MFG 05/2023) onu yaz.</span></div>
       ${scanResHtml(scan.res)}
       ${!scan.res && S.lastBatch ? `<div class="scan-res ${S.lastBatch.cls}"><span class="label">Son kontrol</span><b class="h">${esc(S.lastBatch.h)}</b><span>${esc(S.lastBatch.name)} · <code>${esc(S.lastBatch.code)}</code> · ${esc(fmtShort(S.lastBatch.t))}</span></div>` : ''}
       <div class="field"><label for="bq-q">Parfüm ya da marka (isteğe bağlı)</label>
@@ -3187,7 +3293,7 @@ function renderLogos(){
   const can = NATIVE && NATIVE.setAppIcon, cur = can ? nativeCall('appIcon') || 'classic' : 'classic', lb = S.lastBatch;
   view.innerHTML = `
   <section class="section">
-    ${backBtn}
+    ${setNav()}
     <h2>Uygulama logosu</h2>
     <div class="logos">${Object.entries(LOGOS).map(([k, l]) => `<button class="logo-opt${cur === k ? ' on' : ''}" data-act="seticon" data-v="${k}" type="button">
       ${logoSvg(k)}<b>${esc(l.n)}</b><small>${esc(l.sub)}</small>${cur === k ? '<span class="prem-tag" style="align-self:center">Seçili</span>' : S.skin === k ? '<span class="prem-tag" style="align-self:center">Temana uygun</span>' : ''}</button>`).join('')}</div>
@@ -3241,7 +3347,7 @@ function openAuth(p){
           <div class="row" style="margin-top:8px"><button class="btn sm" data-act="scanstop" type="button">Kamerayı kapat</button><span class="muted small">Kodu çerçevenin içine getir</span></div>`
         : `<div class="row" style="margin-top:8px"><button class="btn sm primary" data-act="scanstart" type="button">QR / barkod okut</button>
           <label class="btn sm file-label">Fotoğraftan oku<input id="scan-file" type="file" accept="image/*"></label></div>`}
-        <div class="row" style="flex-wrap:nowrap;margin-top:8px"><input class="input" id="batch-in" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="14" placeholder="Parti kodu (ör. 2K01)" value="${esc(saved.batch || '')}" style="flex:1;min-width:0;text-transform:uppercase">
+        <div class="row" style="flex-wrap:nowrap;margin-top:8px"><input class="input" id="batch-in" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="16" placeholder="Parti kodu ya da tarih (2K01, 05/2023)" value="${esc(saved.batch || '')}" style="flex:1;min-width:0;text-transform:uppercase">
           <button class="btn sm" data-act="batchgo" type="button">Test et</button></div>
         <div style="margin-top:8px">${scanResHtml(scan.res)}</div>`)}
       ${step('Parti (batch) kodunu sorgula', `<p>Kutunun altında ve şişenin altında/arkasında basılı ya da kazınmış 4–8 haneli kod olur. İkisi aynı olmalı. Kodu aşağıdaki sitelerde markayı seçip gir: üretim tarihini gösterir. Kod tanınmıyorsa ya da tarih saçmaysa (çıkış yılından önce gibi) şüphelen.</p>
@@ -3808,16 +3914,27 @@ let draft = null, delArmed = false, sheetMode = null;
 const listStr = a => a.join(', ');
 const parseList = s => String(s).split(/[,;\n]+/).map(x => x.trim()).filter(Boolean);
 const closeIcon = '<button class="icon-btn" data-act="close" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg></button>';
+// A window opened on top of a perfume page (alarm, piggy bank, authenticity, edit, another perfume) goes back to that page when it
+// closes, at the place it was scrolled to. pageFn reopens the page now on screen; under holds the pages waiting below.
+let pageFn = null, under = [];
 function openOverlay(){
-  const old = document.getElementById('overlay'); if (old) old.remove();
+  const old = document.getElementById('overlay');
+  if (old && pageFn) { const sh = old.querySelector('.sheet'), fn = pageFn, top = sh ? sh.scrollTop : 0;
+    under.push(() => { if (fn() === false) return false; const n = document.getElementById('sheet'); if (n) n.scrollTop = top; }); if (under.length > 6) under.shift(); }
+  else if (!old) under = [];
+  pageFn = null;
+  if (old) old.remove();
   document.body.classList.add('sheet-open'); closeNoteCard();
   const o = document.createElement('div'); o.className = 'overlay'; o.id = 'overlay';
   o.innerHTML = `<form class="sheet" id="sheet" novalidate></form>`;
   document.body.appendChild(o);
   return o.firstChild;
 }
-function closeSheet(){
+function closeSheet(all){
   stopScan();
+  pageFn = null;
+  if (all === true) under = [];
+  while (under.length) { draft = null; priceState = null; if (under.pop()() !== false) return; }
   const o = document.getElementById('overlay');
   if (o) { o.id = ''; o.classList.add('closing'); setTimeout(() => o.remove(), 180); }
   document.body.classList.remove('sheet-open'); closeNoteCard();
@@ -4011,6 +4128,7 @@ function openDetail(p){
   if (!p) return;
   sheetMode = 'detail';
   const f = openOverlay();
+  pageFn = () => { const q = byId(p.id); if (!q) return false; openDetail(q); };
   const isToday = S.week[today()].pid === p.id;
   const iv = invOf(p.id);
   f.innerHTML = detailHtml(p, {eyebrow: 'Koku profili', conc: iv && iv.conc, actions: `
@@ -4026,6 +4144,7 @@ function openCatalogDetail(cid){
   sheetMode = 'cdetail';
   const r = c.r, p = toPerfume(r), owned = inCollection(r[0]);
   const f = openOverlay();
+  pageFn = () => openCatalogDetail(cid);
   f.innerHTML = detailHtml(p, {eyebrow: 'Katalog ' + segTag(r[15]) + (c.boy ? ' <span class="boyner">Boyner</span>' : ''), year: r[3], votes: r[5], actions: `
       <button class="btn sm primary" data-act="cadd" data-cid="${r[0]}" type="button"${owned ? ' disabled' : ''}>${owned ? 'Koleksiyonda' : 'Koleksiyona ekle'}</button>
       ${dBtn('', IC.clock, 'Almak için hatırlat', 'Hatırlat', `data-act="cbuy" data-cid="${r[0]}"`)}
@@ -4244,6 +4363,138 @@ function saveDraft(){
   toast(i >= 0 ? 'Güncellendi' : 'Koleksiyona eklendi');
 }
 
+/* ---------- personal card: who you are, where to find you, the perfumes you wear; shared as a link, a picture or a QR code ---------- */
+const hUrl = base => v => { const h = String(v).trim().replace(/^https?:\/\/[^/]+\//i, '').replace(/^@/, '').replace(/[/?#].*$/, ''); return /^[\w.\-]{1,40}$/.test(h) ? base + h : ''; };
+// only these kinds of link can be on a card, and each is built here: a card never carries a ready-made address except an https web site
+const CARD_LINKS = {
+  instagram: {n: 'Instagram', i: 'IG', ph: 'kullanıcı adın', mk: hUrl('https://instagram.com/')},
+  tiktok: {n: 'TikTok', i: 'TT', ph: 'kullanıcı adın', mk: hUrl('https://www.tiktok.com/@')},
+  x: {n: 'X', i: 'X', ph: 'kullanıcı adın', mk: hUrl('https://x.com/')},
+  youtube: {n: 'YouTube', i: 'YT', ph: 'kanal adın', mk: hUrl('https://www.youtube.com/@')},
+  facebook: {n: 'Facebook', i: 'f', ph: 'profil adın', mk: hUrl('https://www.facebook.com/')},
+  telegram: {n: 'Telegram', i: 'TG', ph: 'kullanıcı adın', mk: hUrl('https://t.me/')},
+  whatsapp: {n: 'WhatsApp', i: 'WA', ph: '90 5xx xxx xx xx', mk: v => { const d = String(v).replace(/\D/g, ''); return d.length >= 8 && d.length <= 15 ? 'https://wa.me/' + d : ''; }},
+  mail: {n: 'E-posta', i: '@', ph: 'ad@ornek.com', mk: v => /^[^\s@<>"'`]+@[^\s@<>"'`]+\.[a-z]{2,}$/i.test(String(v).trim()) ? 'mailto:' + String(v).trim() : ''},
+  web: {n: 'Web sitesi', i: 'www', ph: 'ornek.com', mk: v => { try { const t = String(v).trim(), u = new URL(/^https?:\/\//i.test(t) ? t.replace(/^http:/i, 'https:') : 'https://' + t); return t && u.protocol === 'https:' && u.hostname.includes('.') ? u.href : ''; } catch (e) { return ''; } }}
+};
+const card = () => (S.card = S.card || {name: '', title: '', bio: '', photo: '', links: [], perfumes: []});
+const cardShown = l => l.k === 'web' ? String(l.v).trim().replace(/^https?:\/\//i, '').replace(/\/$/, '') : l.k === 'mail' || l.k === 'whatsapp' ? String(l.v).trim() : '@' + String(l.v).trim().replace(/^@/, '');
+const cardInitials = n => (String(n || '').trim() || 'BB').split(/\s+/).slice(0, 2).map(w => w.charAt(0).toUpperCase()).join('');
+function cardHtml(){
+  const c = card(), ps = c.perfumes.map(byId).filter(Boolean).slice(0, 6);
+  const links = c.links.map(l => ({...l, d: CARD_LINKS[l.k], u: CARD_LINKS[l.k] ? CARD_LINKS[l.k].mk(l.v) : ''})).filter(l => l.u);
+  return `<div class="vcard">
+    <div class="vc-top"><div class="vc-av">${c.photo ? `<img src="${esc(c.photo)}" alt="">` : `<span>${esc(cardInitials(c.name))}</span>`}</div>
+      <div class="vc-id"><b class="vc-name">${esc(c.name || 'Adın')}</b>${c.title ? `<span class="vc-title">${esc(c.title)}</span>` : ''}</div></div>
+    ${c.bio ? `<p class="vc-bio">${esc(c.bio)}</p>` : ''}
+    ${ps.length ? `<span class="vc-label">İmza kokularım</span><div class="vc-perf">${ps.map(p => `<div class="vc-p"><div class="art">${art(p)}</div><span>${esc(p.name)}</span><small lang="en">${esc(p.brand || '')}</small></div>`).join('')}</div>` : ''}
+    ${links.length ? `<div class="vc-links">${links.map(l => `<a class="vc-link" href="${esc(l.u)}"${/^https:/.test(l.u) ? ' data-act="extlink"' : ''}><i>${l.d.i}</i><span>${l.d.n}</span><small>${esc(cardShown(l))}</small></a>`).join('')}</div>` : ''}
+    <div class="vc-foot"><span>BB Parfüm Envanteri</span><span>${S.perfumes.length} parfüm · ${S.inv.length} şişe</span></div>
+  </div>`;
+}
+function renderCard(){
+  const c = card(), ps = c.perfumes.map(byId).filter(Boolean);
+  view.innerHTML = `
+  <section class="section">
+    ${setNav()}
+    <h2>Kartvizitim</h2>
+    <div id="vcard-host">${cardHtml()}</div>
+    <div class="td-row">
+      <button class="btn primary" data-act="cardshare" type="button" style="flex:1 1 100%">Bağlantıyı paylaş</button>
+      <button class="btn" data-act="cardimg" type="button">Görsel olarak paylaş</button>
+      <button class="btn" data-act="cardqr" type="button">QR kodu</button>
+    </div>
+    <span class="muted small">Bağlantıyı açan kişi kartını tarayıcıda görür; uygulama gerekmez. Bilgiler bağlantının kendi içinde taşınır, hiçbir sunucuya yüklenmez. Fotoğrafın yalnızca görselde yer alır, bağlantıda baş harflerin görünür.</span>
+  </section>
+  <section class="section"><h3>Bilgilerin</h3>
+    <div class="box">
+      <div class="row" style="flex-wrap:nowrap"><div class="vc-av" style="width:56px;height:56px;font-size:20px">${c.photo ? `<img src="${esc(c.photo)}" alt="">` : `<span>${esc(cardInitials(c.name))}</span>`}</div>
+        <label class="btn sm file-label">Fotoğraf seç<input id="card-photo" type="file" accept="image/*"></label>
+        ${c.photo ? '<button class="btn sm ghost" data-act="cardnophoto" type="button">Kaldır</button>' : ''}</div>
+      <div class="field"><label for="card-name">Ad</label><input class="input card-f" id="card-name" data-f="name" maxlength="60" value="${esc(c.name)}" placeholder="Adın ya da takma adın" autocomplete="off"></div>
+      <div class="field"><label for="card-title">Alt başlık</label><input class="input card-f" id="card-title" data-f="title" maxlength="80" value="${esc(c.title)}" placeholder="ör. Parfüm tutkunu · İstanbul" autocomplete="off"></div>
+      <div class="field"><label for="card-bio">Kısa tanıtım</label><textarea class="input card-f" id="card-bio" data-f="bio" maxlength="240" rows="3" placeholder="Hangi kokuları seversin, ne arıyorsun?">${esc(c.bio)}</textarea></div>
+    </div>
+  </section>
+  <section class="section"><div class="row spread"><h3>Bağlantıların</h3><button class="btn sm" data-act="cardaddlink" type="button">Bağlantı ekle</button></div>
+    ${c.links.length ? `<div class="box" style="gap:10px">${c.links.map((l, i) => `<div class="card-row">
+        <select class="input card-k" data-i="${i}" aria-label="Bağlantı türü">${Object.entries(CARD_LINKS).map(([k, d]) => `<option value="${k}"${k === l.k ? ' selected' : ''}>${d.n}</option>`).join('')}</select>
+        <input class="input card-v${l.v && !(CARD_LINKS[l.k] && CARD_LINKS[l.k].mk(l.v)) ? ' bad' : ''}" data-i="${i}" value="${esc(l.v)}" placeholder="${esc((CARD_LINKS[l.k] || {ph: ''}).ph)}" maxlength="80" autocapitalize="off" autocomplete="off" spellcheck="false">
+        <button class="icon-btn" data-act="cardrmlink" data-i="${i}" type="button" aria-label="Bağlantıyı sil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>`).join('')}
+        <span class="muted small">Yalnızca kullanıcı adını yaz; adresi ben kurarım. Kırmızı çerçeve: yazdığın geçerli değil, kartta görünmez.</span></div>`
+      : '<div class="empty">Instagram, TikTok, WhatsApp, e-posta ya da web siteni ekle.</div>'}
+  </section>
+  <section class="section"><div class="row spread"><h3>İmza kokuların</h3><button class="btn sm" data-act="cardpick" type="button">Parfüm seç (${ps.length}/6)</button></div>
+    ${ps.length ? `<div class="chips">${ps.map(p => `<button class="chip on" data-act="cardtoggle" data-id="${p.id}" type="button">${esc(p.name)}<span class="x">×</span></button>`).join('')}</div>`
+      : '<div class="empty">Koleksiyonundan en çok kullandığın parfümleri seç; kartında fotoğraflarıyla görünür.</div>'}
+  </section>`;
+}
+let cardT = 0;
+const cardRefresh = () => { clearTimeout(cardT); cardT = setTimeout(() => { const h = document.getElementById('vcard-host'); if (h) h.innerHTML = cardHtml(); }, 160); };
+document.addEventListener('input', e => {
+  const t = e.target; if (!t.classList) return;
+  if (t.classList.contains('card-f')) { card()[t.dataset.f] = t.value; save(); cardRefresh(); }
+  if (t.classList.contains('card-v')) { const l = card().links[+t.dataset.i]; if (l) { l.v = t.value; t.classList.toggle('bad', !!l.v && !(CARD_LINKS[l.k] && CARD_LINKS[l.k].mk(l.v))); save(); cardRefresh(); } }
+});
+document.addEventListener('change', async e => {
+  const t = e.target; if (!t.classList) return;
+  if (t.classList.contains('card-k')) { const l = card().links[+t.dataset.i]; if (l) { l.k = t.value; save(); renderCard(); } }
+  if (t.id === 'card-photo' && t.files && t.files[0]) {
+    try { card().photo = await resizeImage(t.files[0]); save(); renderCard(); } catch (err) { toast('Bu fotoğraf açılamadı, başka bir tane dene'); }
+  }
+});
+function openCardPick(){
+  sheetMode = 'cardpick';
+  const f = openOverlay();
+  const draw = () => { const c = card(); f.innerHTML = `<div class="row spread"><h2>İmza kokuların</h2>${closeIcon}</div>
+    <span class="muted small">En çok 6 parfüm; seçtiğin sırayla görünür.</span>
+    ${S.perfumes.length ? `<div class="list">${S.perfumes.map(p => { const i = c.perfumes.indexOf(p.id); return `<button class="item" data-act="cardtoggle" data-id="${p.id}" type="button">
+      <div class="art">${art(p)}</div><div class="item-body"><span class="item-name">${esc(p.name)}</span><span class="item-meta" lang="en">${esc(p.brand || '')}</span></div>
+      <span class="pill"${i >= 0 ? ' style="background:var(--accent);color:var(--ink);border-color:transparent"' : ''}>${i >= 0 ? (i + 1) + '. seçili' : 'seç'}</span></button>`; }).join('')}</div>`
+      : '<div class="empty">Koleksiyonun boş. Önce Keşfet’ten parfüm ekle.</div>'}`; };
+  draw(); f._draw = draw;
+}
+// everything the card shows travels inside the link itself (after the #), so nothing is uploaded anywhere
+function cardLink(){
+  const c = card(), cs = getComputedStyle(document.documentElement), v = k => hex6(cs.getPropertyValue(k));
+  const data = {n: c.name.trim().slice(0, 60), t: c.title.trim().slice(0, 80), b: c.bio.trim().slice(0, 240),
+    l: c.links.filter(l => CARD_LINKS[l.k] && CARD_LINKS[l.k].mk(l.v)).slice(0, 8).map(l => [l.k, String(l.v).trim().slice(0, 80)]),
+    p: c.perfumes.map(byId).filter(Boolean).slice(0, 6).map(p => [p.name.slice(0, 60), (p.brand || '').slice(0, 40), p.cid || 0]),
+    c: [v('--bg'), v('--panel'), v('--fg'), v('--muted'), v('--accent'), v('--ink')], s: [S.perfumes.length, S.inv.length]};
+  let bin = ''; new TextEncoder().encode(JSON.stringify(data)).forEach(x => { bin += String.fromCharCode(x); });
+  const base = /^https?:/.test(location.protocol) ? location.origin + location.pathname.replace(/[^/]*$/, '') : 'https://burakbagdat-py.github.io/parfumdb/';
+  return base + 'kart.html#' + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+async function cardShare(){
+  const c = card(), url = cardLink(), txt = (c.name.trim() ? c.name.trim() + ' · ' : '') + 'parfüm kartvizitim\n' + url;
+  if (NATIVE && NATIVE.shareText) { nativeCall('shareText', txt); return; }
+  if (navigator.share) { try { await navigator.share({title: 'Kartvizitim', text: txt}); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
+  try { await navigator.clipboard.writeText(url); toast('Bağlantı panoya kopyalandı'); } catch (e) { toast('Kopyalanamadı'); }
+}
+// the picture: the card alone on the screen, photographed by the app
+function openCardShot(){
+  if (!NATIVE || !NATIVE.shareShot) { toast('Görsel paylaşımı uygulamanın yeni sürümüyle (v28) gelir; şimdilik bağlantıyı paylaşabilirsin'); return; }
+  const el = document.createElement('div'); el.className = 'vc-shot'; el.id = 'vc-shot';
+  el.innerHTML = cardHtml() + `<div class="row"><button class="btn primary" data-act="cardshotgo" type="button">Görseli paylaş</button><button class="btn" data-act="cardshotx" type="button">Vazgeç</button></div>`;
+  document.body.appendChild(el);
+}
+window.onNativeShot = ok => { const el = document.getElementById('vc-shot'); if (el) el.remove(); if (ok) toast('Görsel galeriye de kaydedildi (Pictures/BB Parfum)'); };
+function openCardQr(){
+  const url = cardLink(), raw = NATIVE && NATIVE.qr ? String(nativeCall('qr', url) || '') : '';
+  sheetMode = 'cardqr';
+  const f = openOverlay();
+  let svg = '';
+  if (raw.includes(';')) {
+    const [n, bits] = raw.split(';'), N = +n; let d = '';
+    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (bits[y * N + x] === '1') { let w = 1; while (x + w < N && bits[y * N + x + w] === '1') w++; d += `M${x} ${y}h${w}v1h-${w}z`; x += w - 1; }
+    svg = `<svg viewBox="-2 -2 ${N + 4} ${N + 4}" shape-rendering="crispEdges" role="img" aria-label="Kartvizit QR kodu"><path d="${d}" fill="#000"/></svg>`;
+  }
+  f.innerHTML = `<div class="row spread"><h2>Kartvizit QR kodu</h2>${closeIcon}</div>
+    ${svg ? `<div class="qr-box">${svg}</div><span class="muted small">Karşındaki kişi telefonunun kamerasıyla okutunca kartın onun tarayıcısında açılır.</span>`
+      : '<div class="empty">QR kodunu uygulamanın yeni sürümü (v28) çizer. Bağlantıyı paylaşabilir ya da kopyalayabilirsin.</div>'}
+    <div class="row acts"><button class="btn" data-act="cardcopy" type="button">Bağlantıyı kopyala</button><button class="btn primary" data-act="cardshare" type="button">Paylaş</button></div>`;
+}
+
 /* ---------- settings ---------- */
 let armed = '', importText = '';
 const ICONS = {
@@ -4268,6 +4519,7 @@ function renderSettings(){
   if (S.sub === 'uygulama') return renderAbout();
   if (S.sub === 'alisveris') return renderShop();
   if (S.sub === 'logo') return renderLogos();
+  if (S.sub === 'kart') return renderCard();
   view.innerHTML = `
   <section class="section">
     <h2 class="pt">Ayarlar</h2>
@@ -4276,17 +4528,20 @@ function renderSettings(){
       <button data-act="sub" data-sub="bildirim" type="button"><span class="mi">${ICONS.bell}</span><span><b>Bildirimler ve sesler</b><small>${esc(notifSummary())}</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="alisveris" type="button"><span class="mi">${ICONS.bag}</span><span><b>Alışveriş</b><small>${esc(STORES[S.store].n)} · ${S.gender ? GENDER[S.gender] : 'tüm cinsiyetler'}</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="kategori" type="button"><span class="mi">${ICONS.tag}</span><span><b>Kategoriler</b><small>${TAX_LABELS.length} genel${S.customCats.length ? ' + ' + S.customCats.length + ' kendi' : ''}</small></span>${ICONS.chev}</button>
+      <button data-act="sub" data-sub="kart" type="button"><span class="mi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="3.5" y="5.5" width="17" height="13" rx="3"/><circle cx="9" cy="11" r="2"/><path d="M6 15.5c.6-1.3 1.7-2 3-2s2.4.7 3 2M14.5 10h3.5M14.5 13.5h3.5"/></svg></span><span><b>Kartvizitim</b><small>${esc(card().name || 'Sosyal medya, imza kokular, paylaşılabilir bağlantı')}</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="logo" type="button"><span class="mi">${SHIELD_SVG.replace(/<path.*<\/svg>/, '<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M9 9h3a1.5 1.5 0 0 1 0 3H9zM9 12h3.4a1.6 1.6 0 0 1 0 3.2H9z"/></svg>')}</span><span><b>Logo ve widget</b><small>${Object.keys(LOGOS).length} logo · batch widget’ı</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="yedek" type="button"><span class="mi">${ICONS.box}</span><span><b>Yedek</b><small>${S.perfumes.length} parfüm · ${S.inv.length} şişe</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="uygulama" type="button"><span class="mi">${ICONS.phone}</span><span><b>Uygulama</b><small>${NATIVE ? 'Sürüm ' + esc(nativeCall('versionName') || '') : 'Android APK ve güncellemeler'}</small></span>${ICONS.chev}</button>
     </div>
   </section>`;
 }
+const SET_TABS = [['gorunum', 'Tema'], ['bildirim', 'Bildirim'], ['alisveris', 'Alışveriş'], ['kategori', 'Kategori'], ['kart', 'Kartvizit'], ['logo', 'Logo ve widget'], ['yedek', 'Yedek'], ['uygulama', 'Uygulama']];
+const setNav = () => `<div class="chips scroll setnav"><button class="chip" data-act="sub" data-sub="" type="button" aria-label="Ayarlar listesi">‹ Ayarlar</button>${SET_TABS.map(([k, l]) => `<button class="chip${S.sub === k ? ' on' : ''}" data-act="sub" data-sub="${k}" type="button">${l}</button>`).join('')}</div>`;
 const backBtn = '<button class="back" data-act="sub" data-sub="" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>Ayarlar</button>';
 function renderShop(){
   view.innerHTML = `
   <section class="section">
-    ${backBtn}
+    ${setNav()}
     <h2>Alışveriş</h2>
     <div class="box">
       <label class="toggle-row" for="set-global"><span><b>Global katalog</b><br><span class="muted small">Açıkken “Rastgele parfüm al” Türkiye’de satılmayanlar dahil dünyadaki tüm parfümlerden seçer.</span></span>
@@ -4343,7 +4598,7 @@ function renderShop(){
 function renderLook(){
   view.innerHTML = `
   <section class="section">
-    ${backBtn}
+    ${setNav()}
     <h2>Tema</h2>
     <div class="skins">${Object.entries(SKINS).map(([k, s]) => `
       <button class="skin${S.skin === k ? ' on' : ''}" data-act="skin" data-v="${k}" type="button">
@@ -4416,7 +4671,7 @@ function renderNotif(){
     : `<div class="status warn"><i></i><span style="flex:1">Bildirim izni kapalı.</span><button class="btn sm primary" data-act="perm" type="button">İzin ver</button></div>`;
   view.innerHTML = `
   <section class="section">
-    ${backBtn}
+    ${setNav()}
     <div class="row spread"><h2>Bildirimler</h2>${NATIVE ? '<button class="btn sm" data-act="testnotif" type="button">Deneme gönder</button>' : ''}</div>
     ${status}
     ${S.notif.reminders.map(remCard).join('')}
@@ -4466,7 +4721,7 @@ function remPreview(r){
 function renderCats(){
   view.innerHTML = `
   <section class="section">
-    ${backBtn}
+    ${setNav()}
     <h2>Kategoriler</h2>
     <p class="muted small">Katalogdaki her parfüm, Fragrantica kullanıcılarının oylarına (akorlar, puan, kalıcılık, yayılım) göre genel olarak nasıl tanınıyorsa bu gruplara otomatik yerleşir. Kendi parfümlerinin kategorilerini “Düzenle”den istediğin gibi değiştirebilirsin.</p>
     ${TAX.map(([g, ls]) => `<div class="box" style="gap:8px"><b>${esc(g)}</b><div class="chips">${ls.map(c => `<span class="pill">${esc(c)}</span>`).join('')}</div></div>`).join('')}
@@ -4486,7 +4741,7 @@ function renderBackup(){
   const imgs = S.perfumes.filter(p => p.img && p.img.startsWith('data:')).length;
   view.innerHTML = `
   <section class="section">
-    ${backBtn}
+    ${setNav()}
     <h2>Yedek</h2>
     <div class="box">
       <span class="muted small">Veriler bu telefonda duruyor (${S.perfumes.length} parfüm, ${S.inv.length} şişe, ${imgs} fotoğraf). Telefon değiştirmeden ya da uygulamayı silmeden önce yedek al.</span>
@@ -4510,7 +4765,7 @@ function renderAbout(){
   const rel = ri ? `https://github.com/${ri.owner}/${ri.repo}/releases/latest` : '';
   view.innerHTML = `
   <section class="section">
-    ${backBtn}
+    ${setNav()}
     <h2>Uygulama</h2>
     <div class="box">
       ${NATIVE ? `<span>Yüklü sürüm: <b>${esc(nativeCall('versionName') || '')}</b></span>
@@ -4519,6 +4774,12 @@ function renderAbout(){
       : `<span class="muted small">Bildirimler ve canlı fiyatlar için Android uygulamasını kur. APK'yı telefonda indirip açman yeterli.</span>
         ${rel ? `<a class="btn primary" href="${esc(LATEST ? LATEST.url : rel)}" target="_blank" rel="noopener">APK'yı indir</a>` : ''}`}
     </div>
+    ${errLog().length ? `<details class="cg" style="background:var(--panel)"><summary>Hata kaydı <small>${errLog().length} kayıt</small></summary>
+      <div style="display:flex;flex-direction:column;gap:8px;padding:4px 12px 14px">
+        <span class="muted small">Uygulama bir yerde takılırsa burada görünür. Kopyalayıp bana gönderirsen neyin bozulduğunu görürüm; içinde parfüm ya da kişisel bilgi yok.</span>
+        ${errLog().slice(0, 8).map(x => `<span class="small"><b>${esc(fmtShort(x.t))}</b> · ${esc(x.w)}: ${esc(x.m)}</span>`).join('')}
+        <div class="row"><button class="btn sm" data-act="errcopy" type="button">Kopyala</button><button class="btn sm ghost" data-act="errclear" type="button">Temizle</button></div>
+      </div></details>` : ''}
     <div class="box"><span class="muted small">Parfüm verileri: Fragrantica topluluk verilerinden derlenen açık bir veri seti. Fiyatlar boyner.com.tr'den, sen bir parfümü açtığında telefonundan alınır.</span></div>
   </section>`;
 }
@@ -4583,7 +4844,7 @@ const toggleIn = (arr, v) => arr.includes(v) ? arr.filter(x => x !== v) : [...ar
 const redrawSheet = () => { const f = document.getElementById('sheet'); if (f && f._draw) f._draw(); };
 
 /* ---------- events ---------- */
-function go(tab){ S.tab = tab; armed = ''; if (tab !== 'ayarlar') S.sub = null; closeSheet(); save(); render(); window.scrollTo(0, 0); }
+function go(tab){ S.tab = tab; armed = ''; if (tab !== 'ayarlar') S.sub = null; closeSheet(true); save(); render(); window.scrollTo(0, 0); }
 const updateBtn = (cls, label) => NATIVE && NATIVE.installUpdate
   ? `<button class="btn ${cls}" data-act="appupdate" data-url="${esc(LATEST.url)}" type="button">${label}</button>`
   : `<a class="btn ${cls}" href="${esc(LATEST.url)}" data-act="extlink">${label}</a>`;
@@ -4624,7 +4885,7 @@ document.addEventListener('click', async e => {
     case 'exmode': ex.mode = t.dataset.v; ex.brand = null; ex.limit = 40; renderExplore(); break;
     case 'brandopen': ex.brand = t.dataset.b; ex.q = ''; ex.limit = 40; renderExplore(); window.scrollTo(0, 0); break;
     case 'brandback': ex.brand = null; renderExplore(); break;
-    case 'brandgo': closeSheet(); S.tab = 'kesfet'; ex.mode = 'brands'; ex.brand = t.dataset.b; ex.q = ''; ex.g = ''; ex.conc = ''; ex.seg = ''; ex.cats = []; ex.boy = false; save(); render(); window.scrollTo(0, 0); break;
+    case 'brandgo': closeSheet(true); S.tab = 'kesfet'; ex.mode = 'brands'; ex.brand = t.dataset.b; ex.q = ''; ex.g = ''; ex.conc = ''; ex.seg = ''; ex.cats = []; ex.boy = false; save(); render(); window.scrollTo(0, 0); break;
     case 'exconc': ex.conc = t.dataset.v; ex.limit = 40; renderExplore(); break;
     case 'cconc': col.conc = t.dataset.v; renderCollection(); break;
     case 'cfilt': col.fopen = !col.fopen; renderCollection(); break;
@@ -4707,7 +4968,7 @@ document.addEventListener('click', async e => {
       redrawSheet(); haptic(scan.res.cls === 'good' ? 'confirm' : 'tick'); break;
     }
     case 'wheelsrc': S.wheelInv = t.dataset.v === 'inv'; save(); renderWheel(); toast(S.wheelInv ? 'Çark envanterden dönüyor' : 'Çark koleksiyondan dönüyor'); break;
-    case 'spinagain': closeSheet(); setTimeout(() => { window.scrollTo({top: 0, behavior: 'smooth'}); spin(); }, 220); break;
+    case 'spinagain': closeSheet(true); setTimeout(() => { window.scrollTo({top: 0, behavior: 'smooth'}); spin(); }, 220); break;
     case 'pig': { const p = currentP; if (!p) break; const g = pigFor(p.name); if (g) openPig(g.id); else openPigSetup(p); break; }
     case 'pigopen': openPig(t.dataset.id); break;
     case 'pigfirst': if (pigDraft) { const v = document.getElementById('pig-target').value; pigDraft.target = v; pigDraft.first = +t.dataset.v; redrawSheet(); } break;
@@ -4802,6 +5063,23 @@ document.addEventListener('click', async e => {
     case 'edit': openSheet(byId(t.dataset.id)); break;
     case 'view': openDetail(byId(t.dataset.id)); break;
     case 'close': closeSheet(); break;
+    case 'cardshare': await cardShare(); break;
+    case 'cardcopy': try { await navigator.clipboard.writeText(cardLink()); toast('Bağlantı panoya kopyalandı'); } catch (e) { toast('Kopyalanamadı'); } break;
+    case 'cardimg': openCardShot(); break;
+    case 'cardshotx': { const el = document.getElementById('vc-shot'); if (el) el.remove(); break; }
+    case 'cardshotgo': { const el = document.querySelector('#vc-shot .vcard'); if (!el) break; const r = el.getBoundingClientRect(); t.disabled = true;
+      nativeCall('shareShot', r.left, r.top, r.width, r.height, window.innerWidth); setTimeout(() => window.onNativeShot(false), 6000); break; }
+    case 'cardqr': openCardQr(); break;
+    case 'cardpick': openCardPick(); break;
+    case 'cardaddlink': { const c = card(); if (c.links.length >= 8) { toast('En çok 8 bağlantı'); break; } const used = new Set(c.links.map(l => l.k)); c.links.push({k: Object.keys(CARD_LINKS).find(k => !used.has(k)) || 'web', v: ''}); save(); renderCard();
+      const ins = document.querySelectorAll('.card-v'); if (ins.length) ins[ins.length - 1].focus(); break; }
+    case 'cardrmlink': card().links.splice(+t.dataset.i, 1); save(); renderCard(); break;
+    case 'cardnophoto': card().photo = ''; save(); renderCard(); break;
+    case 'cardtoggle': { const c = card(), id = t.dataset.id, i = c.perfumes.indexOf(id);
+      if (i >= 0) c.perfumes.splice(i, 1); else if (c.perfumes.length >= 6) { toast('En çok 6 parfüm'); break; } else c.perfumes.push(id);
+      save(); if (sheetMode === 'cardpick') redrawSheet(); if (S.tab === 'ayarlar' && S.sub === 'kart') renderCard(); break; }
+    case 'errcopy': try { await navigator.clipboard.writeText(JSON.stringify({v: appVersion(), ua: navigator.userAgent, skin: S.skin, errs: errLog()})); toast('Hata kaydı panoya kopyalandı'); } catch (e) { toast('Kopyalanamadı'); } break;
+    case 'errclear': try { localStorage.removeItem('bb_errs'); } catch (e) {} renderAbout(); break;
     case 'invpick': openInvPicker(); break;
     case 'macpick': openMacPicker(); break;
     case 'macsend': e.stopPropagation(); openMacSheet(t.dataset.iid); break;
@@ -4855,8 +5133,9 @@ document.addEventListener('click', async e => {
       S.buys = S.buys.filter(b => b.pid !== draft.id);
       S.wears = S.wears.filter(w => w.pid !== draft.id);
       if (S.lastSpin === draft.id) S.lastSpin = null;
-      repairWeek(); save(); closeSheet(); render(); toast('Silindi'); break;
-    case 'sub': S.sub = t.dataset.sub || null; save(); render(); window.scrollTo(0, 0); break;
+      repairWeek(); save(); closeSheet(true); render(); toast('Silindi'); break;
+    case 'sub': { S.sub = t.dataset.sub || null; save(); render(); window.scrollTo(0, 0);
+      const on = document.querySelector('.setnav .chip.on'); if (on) on.scrollIntoView({inline: 'center', block: 'nearest'}); break; }
     case 'skin': {
       const was = S.skin; S.skin = t.dataset.v;
       // entering Scandal brings its sound set along; leaving it puts the usual price and piggy sounds back
