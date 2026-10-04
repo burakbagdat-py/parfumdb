@@ -488,6 +488,7 @@ body.sheet-open{overflow:hidden}
 .scan-box::after{content:"";position:absolute;inset:18% 12%;border:2px solid rgb(255 255 255 / .85);border-radius:14px;box-shadow:0 0 0 999px rgb(0 0 0 / .35);pointer-events:none}
 .scan-res{border:1px solid var(--line);border-radius:14px;padding:11px 13px;font-size:13.5px;line-height:1.45;display:flex;flex-direction:column;gap:6px;background:var(--panel-2)}
 .scan-res.good{border-color:var(--ok)} .scan-res.bad{border-color:var(--danger)} .scan-res.warn{border-color:var(--accent-2)}
+.kv.rep{font-size:13px;gap:6px 12px}
 .scan-res b.h{font-size:14.5px}
 .scan-res code{font-family:ui-monospace,monospace;font-size:13px;word-break:break-all}
 .dupe-tag{font-size:10.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--grad);color:var(--ink)}
@@ -648,6 +649,176 @@ html.no-labels[data-skin="scandal"] .tab.on{font-size:0;margin-top:-14px}
 [data-skin="scandal"][data-mode="light"] .ph span{color:#fff6f8}
 [data-skin="scandal"][data-mode="light"] body::before{opacity:.1}
 [data-skin="scandal"][data-mode="light"] .bell.on,[data-skin="scandal"][data-mode="light"] .chip.grp.on{color:#fffaf0}
+
+/* ============ Premium shell (Scandal, Malachite): the same app on a different floor plan.
+   Centered hero, quick actions, a swipeable week, every row its own card, full-page perfume view, tile settings, bigger touch targets. ============ */
+.quick{display:none}
+.quick-sec{display:none}
+html.premium .quick-sec{display:flex}
+html.premium body{font-size:15.5px}
+html.premium .section{gap:16px;margin-bottom:34px}
+html.premium .top{padding:16px 16px 12px}
+html.premium .logo .mono{display:none}
+html.premium .logo div{display:flex;flex-direction:column-reverse;gap:3px}
+html.premium .logo h1{font-size:27px;line-height:1}
+html.premium .bar-title{left:16px}
+html.premium .icon-btn{width:44px;height:44px}
+html.premium .btn{min-height:46px}
+html.premium .btn.sm{min-height:38px}
+html.premium .chip{min-height:36px;display:inline-flex;align-items:center}
+html.premium .search{padding:15px 20px;font-size:16px}
+html.premium .app{padding-bottom:calc(124px + env(safe-area-inset-bottom,0px))}
+html.premium .fab{bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+html.premium .toast{bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+/* home: the perfume of the day takes the stage */
+html.premium .hero{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;padding:24px 18px 22px;gap:16px}
+html.premium .hero .art{width:min(56%,210px)}
+html.premium .hero-body{align-items:center;gap:8px}
+html.premium .hero-name{font-size:33px}
+html.premium .hero :is(.fam-line,.hero-actions){justify-content:center}
+html.premium .hero-actions{margin-top:8px}
+html.premium .quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+html.premium .quick button{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 4px 12px;border-radius:20px;border:1px solid color-mix(in srgb,var(--accent-2) 30%,var(--line));background:var(--panel);color:var(--fg);font-size:11.5px;font-weight:600;line-height:1.15}
+html.premium .quick .qi{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:var(--ink)}
+html.premium .quick svg{width:21px;height:21px}
+html.premium .quick button:active{transform:scale(.96)}
+/* the week becomes a row of cards to swipe through */
+html.premium .week{flex-direction:row;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border:0;background:none;box-shadow:none;border-radius:0;margin-inline:-16px;padding:4px 16px 12px}
+html.premium .week::-webkit-scrollbar{display:none}
+html.premium .day{flex:none;width:142px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:9px;padding:14px 10px 12px;border:1px solid color-mix(in srgb,var(--accent-2) 28%,var(--line));border-radius:24px;background:var(--panel);scroll-snap-align:start;position:relative}
+html.premium .day:first-child{border-top:1px solid color-mix(in srgb,var(--accent-2) 28%,var(--line))}
+html.premium .day.today{border-color:var(--accent);background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 20%,var(--panel)),var(--panel) 70%)}
+html.premium .day .dname{flex-direction:row;gap:6px;align-items:baseline}
+html.premium .day .art{width:86px;height:108px}
+html.premium .day .dinfo{align-items:center;width:100%}
+html.premium .dinfo .pn{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:15px;line-height:1.15;min-height:2.3em}
+html.premium .day .icon-btn{position:absolute;top:8px;right:8px;width:30px;height:30px;border:0;background:transparent}
+html.premium .day .icon-btn svg{width:15px;height:15px}
+/* every row is its own card */
+html.premium .list{background:none;border:0;box-shadow:none;gap:10px;overflow:visible;border-radius:0}
+html.premium .list>.item{border:1px solid color-mix(in srgb,var(--accent-2) 26%,var(--line));border-radius:22px;background:var(--panel);padding:12px 14px}
+html.premium .list>.item .art{width:58px;height:72px}
+html.premium .grid{gap:14px;padding-bottom:26px}
+html.premium .grid>.card:nth-child(even){margin-top:26px;margin-bottom:-26px}
+/* settings as tiles */
+html.premium .menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;border:0;background:none;box-shadow:none;overflow:visible}
+html.premium .menu button{grid-template-columns:minmax(0,1fr);gap:10px;align-content:start;padding:16px;min-height:132px;border:1px solid color-mix(in srgb,var(--accent-2) 28%,var(--line));border-radius:24px;background:var(--panel)}
+html.premium .menu button>svg:last-child{display:none}
+html.premium .menu .mi{width:44px;height:44px;border-radius:50%;background:var(--grad)}
+html.premium .menu .mi svg{color:var(--ink)}
+/* a perfume opens as a full page with a centered portrait and underline tabs */
+html.premium .sheet:has(.dhead){height:100dvh;max-height:100dvh;border-radius:0;border:0;padding-top:calc(16px + env(safe-area-inset-top,0px))}
+html.premium .dhead{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;gap:12px}
+html.premium .dhead .art{width:min(42%,170px)}
+html.premium .dhead .hero-body{align-items:center}
+html.premium .dhead .hero-name{font-size:29px}
+html.premium .dhead :is(.bell-row,.fam-line,.dstats){justify-content:center}
+html.premium .sheet:has(.dhead)>.row:not(.spread){justify-content:center}
+html.premium .dtabs{border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0;gap:0;background:var(--panel);box-shadow:none;top:calc(-16px - env(safe-area-inset-top,0px))}
+html.premium .dtabs button{border-radius:0;padding:13px 4px;font-size:13px;letter-spacing:.04em}
+html.premium .dtabs button.on{background:none;color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
+html.premium .tier{grid-template-columns:minmax(0,1fr);gap:8px}
+html.premium .dpane .tier{grid-template-columns:minmax(0,1fr)}
+html.premium .tier-name{flex-direction:row;align-items:baseline;gap:8px}
+html.premium .skins{grid-template-columns:minmax(0,1fr)}
+html.premium .skin{flex-direction:row;align-items:stretch}
+html.premium .skin .sw{width:96px;height:auto;min-height:84px;flex:none}
+.prem-tag{font-size:9.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid currentColor;color:var(--accent-2);align-self:flex-start}
+
+/* ============ Malachite: quiet luxury. Banded green stone, brushed brass, ivory; emerald-cut frames, straight lines.
+   Two moods: Noir (dark, default) and Ivoire (light). ============ */
+[data-skin="malachite"]{
+  --bg:#06100d;--panel:#0c1a15;--panel-2:#12261f;--line:#21433a;--fg:#eaf3ec;--muted:#93b3a4;
+  --accent:#2fc08a;--accent-2:#c9a45c;--hi:#dcbd7c;--ink:#03140d;--danger:#f08a78;--ok:#7fd9a8;
+  --grad:linear-gradient(120deg,#86e6bf 0%,#2fc08a 46%,#0f7d58 100%);
+  --gold:linear-gradient(120deg,#ecd9a6 0%,#c9a45c 52%,#96712f 100%);
+  --glow:rgb(47 192 138 / .3);--shade:rgb(0 0 0 / .62);
+  --f-display:"Instrument Serif","Cormorant Garamond",Georgia,serif;--f-body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --dw:400;--dt:none;--dls:-.005em;
+  --pattern:repeating-radial-gradient(circle at 18% 120%,var(--accent) 0 1.5px,transparent 1.5px 12px),repeating-radial-gradient(circle at 96% -14%,var(--accent) 0 1.5px,transparent 1.5px 15px);--pattern-size:auto;
+  --r:16px;--btn-r:12px;--chip-r:10px;--btn-tt:none;--btn-ls:.01em;color-scheme:dark;
+  --cut:polygon(13px 0,calc(100% - 13px) 0,100% 13px,100% calc(100% - 13px),calc(100% - 13px) 100%,13px 100%,0 calc(100% - 13px),0 13px);
+  background:radial-gradient(110% 50% at 0% -6%,rgb(47 192 138 / .2),transparent 62%),radial-gradient(90% 45% at 108% 30%,rgb(201 164 92 / .12),transparent 60%),var(--bg);
+  background-attachment:fixed;
+}
+[data-skin="malachite"][data-mode="light"]{
+  --bg:#f2f0e5;--panel:#fcfbf5;--panel-2:#e8eadb;--line:#ced6c0;--fg:#10261d;--muted:#5c7367;
+  --accent:#0f7a55;--accent-2:#96762f;--hi:#0b6245;--ink:#f6fbf4;--danger:#b3372a;--ok:#1f7a4c;
+  --grad:linear-gradient(120deg,#25a577 0%,#0f7a55 50%,#0a5840 100%);
+  --gold:linear-gradient(120deg,#cdb06c 0%,#96762f 55%,#735820 100%);
+  --glow:rgb(15 122 85 / .2);--shade:rgb(30 60 45 / .26);color-scheme:light;
+  background:radial-gradient(110% 50% at 0% -6%,rgb(15 122 85 / .16),transparent 62%),radial-gradient(90% 45% at 108% 30%,rgb(150 118 47 / .14),transparent 60%),var(--bg);
+  background-attachment:fixed;
+}
+[data-skin="malachite"] body{background:transparent}
+[data-skin="malachite"] body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--pattern);opacity:.09;
+  -webkit-mask-image:linear-gradient(200deg,#000 0,transparent 55%,transparent 70%,#000 130%);mask-image:linear-gradient(200deg,#000 0,transparent 55%,transparent 70%,#000 130%)}
+[data-skin="malachite"] .top{background:color-mix(in srgb,var(--bg) 80%,transparent)}
+[data-skin="malachite"] .logo h1{font-size:31px;letter-spacing:-.01em}
+[data-skin="malachite"] .logo small{letter-spacing:.2em;font-size:10px;color:var(--accent-2)}
+[data-skin="malachite"] h2{font-size:33px;line-height:1.02}
+[data-skin="malachite"] h3{font-size:24px}
+[data-skin="malachite"] :is(.hero-name,.card-name,.item-name,.dinfo .pn){letter-spacing:-.005em}
+[data-skin="malachite"] .hero-name{font-size:36px;line-height:1}
+[data-skin="malachite"] .card-name{font-size:19px}
+[data-skin="malachite"] .item-name{font-size:19px}
+[data-skin="malachite"] .eyebrow{letter-spacing:.24em;font-size:10px;color:var(--accent-2)}
+[data-skin="malachite"] .eyebrow::before{content:"◆";font-size:7px;vertical-align:middle;margin-right:8px;color:var(--accent)}
+[data-skin="malachite"] .label{letter-spacing:.18em;color:var(--accent-2)}
+[data-skin="malachite"] .hero-brand,[data-skin="malachite"] .card-brand{letter-spacing:.2em;font-size:10.5px;color:var(--accent-2)}
+/* panels: brass double hairline, like an inlaid box */
+[data-skin="malachite"] :is(.hero,.card,.box,.rem,.prices,.result,.stat div,.pig-card,.mac-sum,details.cg,.note,.empty,.day,.list>.item,.menu button,.quick button){
+  border-color:color-mix(in srgb,var(--accent-2) 38%,var(--line));
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 6%,var(--panel)),var(--panel) 60%);
+  box-shadow:inset 0 0 0 3px var(--panel),inset 0 0 0 4px color-mix(in srgb,var(--accent-2) 16%,transparent),0 20px 40px -30px var(--shade)}
+[data-skin="malachite"] .hero{border-radius:18px}
+[data-skin="malachite"] .hero::before{display:none}
+[data-skin="malachite"] .hero::after{height:100%;opacity:.07}
+[data-skin="malachite"] :is(.day,.list>.item,.menu button,.quick button){border-radius:16px}
+/* emerald-cut frames for every bottle */
+[data-skin="malachite"] .art{border-radius:0;clip-path:var(--cut);background:radial-gradient(80% 60% at 50% 75%,var(--glow),transparent 70%),var(--panel-2)}
+[data-skin="malachite"] .item .art,[data-skin="malachite"] .day .art{--cut:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px)}
+[data-skin="malachite"] .card{border-radius:16px;padding:7px 7px 0}
+[data-skin="malachite"] .ph{background:radial-gradient(90% 60% at 50% 30%,color-mix(in srgb,var(--accent) 55%,transparent),transparent 70%),linear-gradient(170deg,color-mix(in srgb,var(--accent-2) 35%,var(--panel)),var(--panel))}
+[data-skin="malachite"] .btn{font-weight:600;font-size:14px;background:color-mix(in srgb,var(--panel-2) 70%,transparent);border-color:color-mix(in srgb,var(--accent-2) 45%,var(--line))}
+[data-skin="malachite"] .btn.primary{background:var(--grad);border-color:transparent;box-shadow:inset 0 0 0 1px rgb(255 255 255 / .22),0 12px 24px -12px var(--glow)}
+[data-skin="malachite"] .icon-btn{border-radius:12px;background:transparent;border-color:color-mix(in srgb,var(--accent-2) 45%,var(--line));color:var(--accent-2)}
+[data-skin="malachite"] .chip{border-color:color-mix(in srgb,var(--accent-2) 30%,var(--line))}
+[data-skin="malachite"] .chip.on{background:var(--accent);border-color:transparent;color:var(--ink)}
+[data-skin="malachite"] .chip.grp.on{background:var(--gold);color:#221803}
+[data-skin="malachite"] .seg{border-radius:12px;border-color:color-mix(in srgb,var(--accent-2) 30%,var(--line))}
+[data-skin="malachite"] .seg button.on{background:var(--accent);color:var(--ink);box-shadow:none}
+[data-skin="malachite"] .search,[data-skin="malachite"] .input{border-radius:12px;border-color:color-mix(in srgb,var(--accent-2) 32%,var(--line))}
+[data-skin="malachite"] .bell{border-radius:10px}
+[data-skin="malachite"] .bell.on{background:var(--gold);color:#221803}
+[data-skin="malachite"] .quick .qi,[data-skin="malachite"] .menu .mi{border-radius:0;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)}
+[data-skin="malachite"] .level{height:4px;border-radius:0}
+[data-skin="malachite"] .pointer{border-top-color:var(--accent-2)}
+[data-skin="malachite"] .wheel-wrap canvas{box-shadow:0 0 0 5px var(--bg),0 0 0 6px var(--accent-2),0 30px 70px -22px var(--glow)}
+[data-skin="malachite"] .conc{border-color:color-mix(in srgb,var(--accent-2) 60%,transparent);color:var(--accent-2);border-radius:4px}
+/* dock: a brass-edged slab; every label stays readable, the current tab gets a brass bar */
+[data-skin="malachite"] .tabs{left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:540px;margin-inline:auto;border:1px solid color-mix(in srgb,var(--accent-2) 45%,var(--line));border-radius:18px;padding:7px 6px 6px;
+  background:color-mix(in srgb,var(--panel) 90%,transparent);box-shadow:0 22px 44px -16px var(--shade),inset 0 1px 0 rgb(255 255 255 / .07)}
+[data-skin="malachite"] .tabs::before{display:none}
+[data-skin="malachite"] .tab{position:relative;font-size:9.5px;letter-spacing:.02em;gap:3px;padding:3px 0 1px}
+[data-skin="malachite"] .tab .ic{width:46px;height:30px;border-radius:9px}
+[data-skin="malachite"] .tab.on{color:var(--fg)}
+[data-skin="malachite"] .tab.on .ic{background:var(--grad);color:var(--ink)}
+[data-skin="malachite"] .tab.on::before{content:"";position:absolute;top:-8px;width:24px;height:3px;border-radius:0 0 3px 3px;background:var(--gold)}
+[data-skin="malachite"] .fab{border-radius:16px;box-shadow:0 0 0 3px var(--bg),0 0 0 4px var(--accent-2),0 16px 30px -10px var(--glow)}
+[data-skin="malachite"] .toast{border-radius:12px}
+[data-skin="malachite"] .sheet{border-radius:22px 22px 0 0;border-color:color-mix(in srgb,var(--accent-2) 45%,var(--line));background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 8%,var(--panel)),var(--panel) 30%)}
+[data-skin="malachite"] .overlay{background:rgb(3 12 9 / .76)}
+[data-skin="malachite"][data-mode="light"] .fam{color:hsl(var(--fh) 55% 26%);background:hsl(var(--fh) 60% 50% / .12);border-color:hsl(var(--fh) 50% 45% / .35)}
+[data-skin="malachite"][data-mode="light"] .fam::before{background:hsl(var(--fh) 60% 42%)}
+[data-skin="malachite"][data-mode="light"] .boyner{background:#10261d;color:#f6fbf4}
+[data-skin="malachite"][data-mode="light"] .overlay{background:rgb(20 50 38 / .42)}
+[data-skin="malachite"][data-mode="light"] .art img.cut{filter:drop-shadow(0 10px 12px rgb(20 60 40 / .28))}
+[data-skin="malachite"][data-mode="light"] .ph span{color:#f6fbf4}
+[data-skin="malachite"][data-mode="light"] :is(.bell.on,.chip.grp.on){color:#fffdf5}
+[data-skin="malachite"][data-mode="light"] :is(.hero,.card,.box,.rem,.prices,.result,.stat div,.pig-card,.mac-sum,details.cg,.note,.empty,.day,.list>.item,.menu button,.quick button){box-shadow:inset 0 0 0 3px var(--panel),inset 0 0 0 4px color-mix(in srgb,var(--accent-2) 22%,transparent),0 16px 34px -26px var(--shade)}
+/* Scandal keeps its own skin on the shared premium pieces */
+[data-skin="scandal"] :is(.day,.list>.item,.menu button,.quick button){background:linear-gradient(165deg,color-mix(in srgb,var(--accent) 9%,var(--panel)),var(--panel) 58%);box-shadow:0 22px 44px -30px var(--shade),inset 0 1px 0 rgb(255 255 255 / .07)}
 </style>
 </head>
 <body>
@@ -772,6 +943,8 @@ const STORES = {
 };
 // dl: downloaded by the app at runtime from docs/sounds (no new APK needed); others ship inside the APK
 const SOUNDS = {
+  mal_canak: {n: 'Malachite · Çanak', dl: 'mal_canak'}, mal_kalimba: {n: 'Malachite · Kalimba', dl: 'mal_kalimba'}, mal_damla: {n: 'Malachite · Damla', dl: 'mal_damla'},
+  mal_piyano: {n: 'Malachite · Keçe piyano', dl: 'mal_piyano'}, mal_pirinc: {n: 'Malachite · Pirinç', dl: 'mal_pirinc'},
   sc_kadife: {n: 'Scandal · Kadife', dl: 'sc_kadife'}, sc_sampanya: {n: 'Scandal · Şampanya', dl: 'sc_sampanya'}, sc_topuk: {n: 'Scandal · Topuk', dl: 'sc_topuk'},
   sc_muzik: {n: 'Scandal · Müzik kutusu', dl: 'sc_muzik'}, sc_altin: {n: 'Scandal · Altın', dl: 'sc_altin'},
   bb: {n: 'BB İmza', dl: 'bb_yumusak'}, fiyat: {n: 'Fiyat çanı', dl: 'fiyat'}, kumbara: {n: 'Kumbara (bozuk para + kasa)', dl: 'kumbara'}, kadeh: {n: 'Kadeh', dl: 'kadeh'}, vanilya: {n: 'Vanilya arp', dl: 'vanilya'}, gumus: {n: 'Gümüş çan', dl: 'gumus'},
@@ -821,14 +994,26 @@ const SKINS = {
     wheelText: ['#0a1122','#e8ecf4','#0a1122','#e8ecf4','#0a1122','#e8ecf4'], rim: '#c3c9d6', hub: ['#f3f5f9','#8e97ab'],
     shelf: 'Parfums de Marly koleksiyonu', line: r => /marly/i.test(r[2]),
     swatch: 'linear-gradient(135deg,#0a1122 0 50%,#c3c9d6 50% 75%,#9a8fd8 75%)', chip: '#c3c9d6'},
-  scandal: {n: 'Scandal', sub: 'Gece yarısı Paris · gül, mürdüm, şampanya altını · açık ve karanlık', bar: '#12070d', barLight: '#fbf0ee', greet: 'Bu gecenin skandalı', greetLight: 'Bugünün skandalı', sound: 'sc_kadife',
+  scandal: {premium: true, rimLight: '#b0843a', modes: ['Jour · açık', 'Nuit · karanlık'],
+    set: {rem: 'sc_kadife', price: 'sc_altin', pig: 'sc_sampanya', all: ['sc_kadife', 'sc_sampanya', 'sc_topuk', 'sc_muzik', 'sc_altin'], note: 'Kadife: hatırlatıcılar · Altın: fiyat düştü · Şampanya: kumbara.'},
+    n: 'Scandal', sub: 'Gece yarısı Paris · gül, mürdüm, şampanya altını · açık ve karanlık', bar: '#12070d', barLight: '#fbf0ee', greet: 'Bu gecenin skandalı', greetLight: 'Bugünün skandalı', sound: 'sc_kadife',
     fonts: 'family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..800&family=DM+Sans:opsz,wght@9..40,400..700',
     wheel: ['#ff6f9f','#2a1220','#e2b56c','#4a1630','#ffc2d5','#12070d'],
     wheelText: ['#2a0716','#fbe9ee','#2a1a05','#ffc2d5','#2a0716','#e2b56c'], rim: '#e2b56c', hub: ['#f6dfae','#b9853a'],
     wheelLight: ['#c81e5c','#fffaf8','#b0843a','#f8e6e6','#ea4c86','#f3d9c4'],
     wheelTextLight: ['#fff6f8','#33101f','#fffaf0','#8f1444','#fff6f8','#33101f'],
     shelf: 'Skandal yaratanlar', line: r => /gaultier/i.test(r[2]) && /scandal/i.test(r[1]) || (r[12].includes('Seksi') && r[12].includes('Gece') && r[5] > 9000),
-    swatch: 'linear-gradient(135deg,#12070d 0 34%,#ff6f9f 34% 58%,#e2b56c 58% 70%,#fbf0ee 70%)', chip: '#ff6f9f'}
+    swatch: 'linear-gradient(135deg,#12070d 0 34%,#ff6f9f 34% 58%,#e2b56c 58% 70%,#fbf0ee 70%)', chip: '#ff6f9f'},
+  malachite: {premium: true, rimLight: '#96762f', modes: ['Ivoire · açık', 'Noir · karanlık'],
+    set: {rem: 'mal_canak', price: 'mal_pirinc', pig: 'mal_kalimba', all: ['mal_canak', 'mal_kalimba', 'mal_damla', 'mal_piyano', 'mal_pirinc'], note: 'Çanak: hatırlatıcılar · Pirinç: fiyat düştü · Kalimba: kumbara.'},
+    n: 'Malachite', sub: 'Sakin lüks · damarlı yeşil taş, pirinç, fildişi · açık ve karanlık', bar: '#06100d', barLight: '#f2f0e5', greet: 'Bugünün seçimi', greetLight: 'Bugünün seçimi', sound: 'mal_canak',
+    fonts: 'family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700',
+    wheel: ['#2fc08a','#0c1a15','#c9a45c','#12261f','#86e6bf','#06100d'],
+    wheelText: ['#03140d','#eaf3ec','#221803','#86e6bf','#03140d','#c9a45c'], rim: '#c9a45c', hub: ['#ecd9a6','#96712f'],
+    wheelLight: ['#0f7a55','#fcfbf5','#96762f','#e8eadb','#25a577','#d9dcc6'],
+    wheelTextLight: ['#f6fbf4','#10261d','#fffdf5','#0b6245','#f6fbf4','#10261d'],
+    shelf: 'Yeşil ve odunsu seçki', line: r => (r[12].includes('Yeşil') || r[12].includes('Odunsu')) && r[12].includes('Yüksek Puanlı') && r[5] > 6000,
+    swatch: 'linear-gradient(135deg,#06100d 0 34%,#2fc08a 34% 58%,#c9a45c 58% 70%,#f2f0e5 70%)', chip: '#2fc08a'}
 };
 const SAMPLE_ROWS = [
 [99116,"Eros Najim","Versace",2024,"E",2133,4,3,["Sıcak baharatlı","Karamel","Narenciye","Ud","Aromatik"],["Karamel","İtalyan mandalinası"],["Kakule","Ud"],["Tütsü","Paçuli","Vetiver"],["Günlük","Date","Ofis","Kış","Gece","Narenciye","Aromatik","Tatlı","Gurme","Amber","Baharatlı","Ud","Oryantal","Seksi","Orta","Erkek"],3.92],
@@ -927,13 +1112,15 @@ function save(){
 const loadedFonts = new Set(['karamel']);
 const sysLight = matchMedia('(prefers-color-scheme: light)');
 // only Scandal has two moods; "auto" follows the phone
-const lightMode = () => S.skin === 'scandal' && (S.mode === 'light' || (S.mode !== 'dark' && sysLight.matches));
-sysLight.addEventListener && sysLight.addEventListener('change', () => { if (S && S.skin === 'scandal' && S.mode !== 'light' && S.mode !== 'dark') { applySkin(); render(); } });
+const twoMoods = () => !!(SKINS[S.skin] && SKINS[S.skin].barLight);
+const lightMode = () => twoMoods() && (S.mode === 'light' || (S.mode !== 'dark' && sysLight.matches));
+sysLight.addEventListener && sysLight.addEventListener('change', () => { if (S && twoMoods() && S.mode !== 'light' && S.mode !== 'dark') { applySkin(); render(); } });
 function applySkin(){
   const k = SKINS[S.skin] ? S.skin : 'karamel';
   document.documentElement.dataset.skin = k;
   const light = lightMode();
   if (light) document.documentElement.dataset.mode = 'light'; else delete document.documentElement.dataset.mode;
+  document.documentElement.classList.toggle('premium', !!SKINS[k].premium);
   if (!loadedFonts.has(k)) {
     loadedFonts.add(k);
     const l = document.createElement('link'); l.rel = 'stylesheet';
@@ -947,17 +1134,20 @@ function applySkin(){
 }
 const skin = () => {
   const k = SKINS[S.skin] || SKINS.karamel;
-  return k.wheelLight && lightMode() ? {...k, wheel: k.wheelLight, wheelText: k.wheelTextLight, greet: k.greetLight || k.greet, rim: '#b0843a'} : k;
+  return k.wheelLight && lightMode() ? {...k, wheel: k.wheelLight, wheelText: k.wheelTextLight, greet: k.greetLight || k.greet, rim: k.rimLight || k.rim} : k;
 };
 const UI_DEFAULT = {fullscreen: false, anim: true, haptic: true, blur: true, amoled: false, compact: false, labels: true, fs: 'm'};
-function scandalSounds(on){
-  if (on) {
-    S.notif.reminders.forEach(r => { if (r.sound === 'bb' || /^sc_/.test(r.sound)) r.sound = 'tema'; });
-    S.alarmSound = 'sc_altin'; S.pigSound = 'sc_sampanya';
+// a premium theme brings its own sound set; leaving it puts the usual sounds back
+const SET_RX = /^(sc_|mal_)/;
+function themeSounds(on){
+  const set = on && SKINS[S.skin] && SKINS[S.skin].set;
+  if (set) {
+    S.notif.reminders.forEach(r => { if (r.sound === 'bb' || SET_RX.test(r.sound)) r.sound = 'tema'; });
+    S.alarmSound = set.price; S.pigSound = set.pig;
   } else {
-    if (/^sc_/.test(S.alarmSound)) S.alarmSound = 'fiyat';
-    if (/^sc_/.test(S.pigSound)) S.pigSound = 'kumbara';
-    S.notif.reminders.forEach(r => { if (/^sc_/.test(r.sound)) r.sound = 'tema'; });
+    if (SET_RX.test(S.alarmSound)) S.alarmSound = 'fiyat';
+    if (SET_RX.test(S.pigSound)) S.pigSound = 'kumbara';
+    S.notif.reminders.forEach(r => { if (SET_RX.test(r.sound)) r.sound = 'tema'; });
   }
 }
 function applyUi(){
@@ -1474,6 +1664,12 @@ function renderWeek(){
       </div>
     </div>
   </section>
+  <section class="section quick-sec"><div class="quick">
+    <button data-tab="cark" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17M6 6l12 12M18 6 6 18"/></svg></span>Çarkı çevir</button>
+    <button data-act="randbuy" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/><circle cx="9" cy="15" r="1.2" fill="currentColor"/></svg></span>Rastgele al</button>
+    <button data-tab="kesfet" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></span>Parfüm bul</button>
+    <button data-tab="ayarlar" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span>Ayarlar</button>
+  </div></section>
   ${sampleNote() ? `<section class="section">${sampleNote()}</section>` : ''}
   <section class="section">
     <div class="row spread"><h2>Bu hafta</h2>
@@ -2332,10 +2528,28 @@ function decodeBatch(p, raw){
   let y = cy - ((cy - d.y) % 10 + 10) % 10;                       // the latest year ending in that digit
   const mo = d.m !== undefined ? d.m : new Date(y, 0, d.doy).getMonth() + 1;
   if (y === cy && mo > now.getMonth() + 1) y -= 10;               // not in the future
+  const day = d.doy ? new Date(y, 0, d.doy).getDate() + ' ' : '';
   const when = `${MONTHS[mo - 1]} ${y}`, age = (cy - y) * 12 + (now.getMonth() + 1 - mo);
-  if (launch && y < launch) return {cls: 'bad', code, h: `Üretim tarihi ${when} çıkıyor, ama bu parfüm ${launch}’de çıktı`,
+  // production report: how the code reads, how old the bottle is, how long it should stay at its best
+  const ageTxt = (age >= 12 ? Math.floor(age / 12) + ' yıl ' : '') + (age % 12) + ' ay';
+  const prevY = y - 10, best = new Date(y + 5, mo - 1, 1), left = (best.getFullYear() - cy) * 12 + (best.getMonth() - now.getMonth());
+  const read = d.doy ? `${code[0]} → ${y} · ${code.slice(1, 4)} → yılın ${d.doy}. günü${code.length > 4 ? ' · ' + code.slice(4) + ' → parti/hat no' : ''}`
+    : rule.fmt.source.startsWith('^[A-Z]') ? `${code[0]} → fabrika · ${code[1]} → ${MONTHS[mo - 1]} · ${code[2]} → ${y}`
+    : `${code[0]} → ${y} · ${code[1]} → ${MONTHS[mo - 1]} · ${code.slice(2)} → parti/hat no`;
+  const report = [
+    ['Üretim tarihi', `<b>${day}${when}</b>`],
+    ['Şişenin yaşı', ageTxt + (age < 6 ? ' · çok yeni üretim' : age <= 36 ? ' · taze' : age <= 60 ? ' · olgun' : ' · eski stok')],
+    ['Kodun okunuşu', esc(read)],
+    ['Marka grubu', esc(rule.n)],
+    ['Parfümün çıkışı', launch ? `${launch} · ${y >= launch ? 'üretim tarihiyle uyumlu ✓' : 'üretim tarihi bundan ÖNCE ✗'}` : 'katalogda yok'],
+    ['Diğer olası yıl', `${MONTHS[mo - 1]} ${prevY}${launch && prevY < launch ? ' · parfüm o zaman yoktu, elendi' : ' · yılın son hanesi 10 yılda bir tekrar eder; şişe çok eskiyse bu olabilir'}`],
+    ['En iyi hali', left > 0 ? `yaklaşık ${MONTHS[best.getMonth()]} ${best.getFullYear()}’e kadar (kapalı şişe ~5 yıl) · ${left >= 12 ? Math.floor(left / 12) + ' yıl ' : ''}${left % 12} ay var` : '5 yılı geçmiş: serin ve karanlıkta saklandıysa hâlâ iyi olabilir, üst notalar zayıflamış olabilir'],
+    ['Açtıktan sonra', 'en iyi 2–3 yıl içinde; ışıktan ve sıcaktan uzak tut'],
+    ['Maserasyon', age >= 2 ? `üretimden beri ${ageTxt} geçmiş; şişe zaten dinlenmiş, ekstra bekletmen gerekmez` : 'çok yeni üretim: birkaç hafta dinlendirmek kokuyu oturtabilir']
+  ];
+  if (launch && y < launch) return {cls: 'bad', code, report, h: `Üretim tarihi ${when} çıkıyor, ama bu parfüm ${launch}’de çıktı`,
     t: 'Kod, parfümün piyasaya çıkışından önceki bir tarihi gösteriyor. Kodu doğru yazdıysan bu ürün büyük olasılıkla sahte (ya da kod başka bir ürüne ait).', links: true};
-  return {cls: age > 60 ? 'warn' : 'good', code, h: `Üretim: ${when} · ${age < 12 ? age + ' aylık' : Math.floor(age / 12) + ' yıllık'}`,
+  return {cls: age > 60 ? 'warn' : 'good', code, report, h: `Üretim: ${when} · ${age < 12 ? age + ' aylık' : Math.floor(age / 12) + ' yıllık'}`,
     t: `Kod ${esc(rule.n)} düzenine uyuyor${launch ? ` ve parfümün çıkış yılıyla (${launch}) çelişmiyor` : ''}. ${age > 60 ? 'Beş yıldan eski: orijinal olabilir ama eski stoktur, koku değişmiş olabilir. ' : ''}Yılın son hanesi 10 yılda bir tekrar eder; tarih en yakın uygun yıla göre tahmindir. Şimdi kutudaki ve şişedeki kodun aynı olduğunu kontrol et.`, links: true};
 }
 const GS1 = [[0, 139, 'ABD / Kanada'], [300, 379, 'Fransa'], [400, 440, 'Almanya'], [450, 459, 'Japonya'], [490, 499, 'Japonya'], [500, 509, 'Birleşik Krallık'], [540, 549, 'Belçika / Lüksemburg'],
@@ -2412,6 +2626,7 @@ async function scanPhoto(p, file){
 function scanResHtml(r){
   if (!r) return '';
   return `<div class="scan-res ${r.cls}"><b class="h">${r.cls === 'good' ? '✓ ' : r.cls === 'bad' ? '⚠ ' : ''}${esc(r.h)}</b>${r.code ? `<code>${esc(r.code)}</code>` : ''}<span>${r.t}</span>
+    ${r.report ? `<span class="label" style="margin-top:4px">Üretim raporu</span><div class="kv rep">${r.report.map(([k, v]) => `<span>${k}</span><span>${v}</span>`).join('')}</div>` : ''}
     ${r.url || r.links ? `<div class="row">${r.url ? `<a class="btn sm primary" href="${esc(r.url)}" data-act="extlink">Sayfayı aç</a>` : ''}${r.links ? '<a class="btn sm" href="https://www.checkfresh.com" data-act="extlink">CheckFresh</a><a class="btn sm" href="https://checkcosmetic.net" data-act="extlink">CheckCosmetic</a>' : ''}</div>` : ''}</div>`;
 }
 function authChip(p){
@@ -3525,18 +3740,18 @@ function renderLook(){
     <div class="skins">${Object.entries(SKINS).map(([k, s]) => `
       <button class="skin${S.skin === k ? ' on' : ''}" data-act="skin" data-v="${k}" type="button">
         <div class="sw" style="background:${s.swatch}"><i style="background:${s.chip}"></i></div>
-        <div class="t"><b>${esc(s.n)}</b><small>${esc(s.sub)}</small><small>Ses: ${esc(sname(s.sound))}</small></div>
+        <div class="t">${s.premium ? '<span class="prem-tag">Premium</span>' : ''}<b>${esc(s.n)}</b><small>${esc(s.sub)}</small><small>Ses: ${esc(sname(s.sound))}</small></div>
       </button>`).join('')}</div>
-    ${S.skin === 'scandal' ? `<div class="box" style="gap:12px">
-      <div class="field"><span class="label">Scandal modu</span>
-        <div class="seg">${[['auto', 'Otomatik'], ['light', 'Jour · açık'], ['dark', 'Nuit · karanlık']].map(([k, l]) => `<button class="${(S.mode || 'auto') === k ? 'on' : ''}" data-act="scmode" data-v="${k}" type="button">${l}</button>`).join('')}</div>
+    ${skin().set ? `<div class="box" style="gap:12px">
+      <div class="field"><span class="label">${esc(skin().n)} modu</span>
+        <div class="seg">${[['auto', 'Otomatik'], ['light', skin().modes[0]], ['dark', skin().modes[1]]].map(([k, l]) => `<button class="${(S.mode || 'auto') === k ? 'on' : ''}" data-act="scmode" data-v="${k}" type="button">${l}</button>`).join('')}</div>
         <span class="muted small">Otomatik, telefonun açık/karanlık ayarını izler.</span></div>
-      <div class="field"><span class="label">Scandal ses seti</span>
-        <div class="chips">${['sc_kadife', 'sc_sampanya', 'sc_topuk', 'sc_muzik', 'sc_altin'].map(k => `<button class="chip" data-act="scplay" data-v="${k}" type="button">▶ ${esc(sname(k).replace('Scandal · ', ''))}</button>`).join('')}</div>
-        <span class="muted small">Kadife: hatırlatıcılar · Altın: fiyat düştü · Şampanya: kumbara. Dokunup dinle; set temayı seçince kendiliğinden uygulandı.</span>
+      <div class="field"><span class="label">${esc(skin().n)} ses seti</span>
+        <div class="chips">${skin().set.all.map(k => `<button class="chip" data-act="scplay" data-v="${k}" type="button">▶ ${esc(sname(k).split(' · ')[1] || sname(k))}</button>`).join('')}</div>
+        <span class="muted small">${esc(skin().set.note)} Dokunup dinle; set temayı seçince kendiliğinden uygulandı.</span>
         <div class="row"><button class="btn sm" data-act="scset" type="button">Seti yeniden uygula</button></div></div>
     </div>` : ''}
-    <p class="muted small">Tema; renkleri, yazı tipini, çarkı, karşılama yazısını, Keşfet'teki seçkiyi ve “Temanın sesi” seçili hatırlatıcıların sesini değiştirir.</p>
+    <p class="muted small">Tema; renkleri, yazı tipini, çarkı, karşılama yazısını, Keşfet'teki seçkiyi ve “Temanın sesi” seçili hatırlatıcıların sesini değiştirir. <b>Premium</b> temalar ayrıca uygulamanın yerleşimini de değiştirir.</p>
   </section>
   <section class="section">
     <details class="cg" open style="background:var(--panel)">
@@ -4001,12 +4216,11 @@ document.addEventListener('click', async e => {
     case 'skin': {
       const was = S.skin; S.skin = t.dataset.v;
       // entering Scandal brings its sound set along; leaving it puts the usual price and piggy sounds back
-      if (S.skin === 'scandal' && was !== 'scandal') scandalSounds(true);
-      if (was === 'scandal' && S.skin !== 'scandal') scandalSounds(false);
+      if (S.skin !== was) themeSounds(!!SKINS[S.skin].set);
       applySkin(); save(); renderLook(); ensureSounds().then(() => { if (NATIVE && NATIVE.setPriceSound) syncAlarms(); }); toast(skin().n + ' teması'); break;
     }
     case 'scmode': S.mode = t.dataset.v; applySkin(); save(); renderLook(); break;
-    case 'scset': scandalSounds(true); save(); await ensureSounds(); if (NATIVE && NATIVE.setPriceSound) syncAlarms(); lastPlan = ''; syncNative(); toast('Scandal ses seti uygulandı'); break;
+    case 'scset': themeSounds(true); save(); await ensureSounds(); if (NATIVE && NATIVE.setPriceSound) syncAlarms(); lastPlan = ''; syncNative(); toast(skin().n + ' ses seti uygulandı'); break;
     case 'scplay': {
       const k = t.dataset.v;
       if (NATIVE && NATIVE.previewSound) { await ensureSounds([k]); nativeCall('previewSound', 'dl:' + k); }

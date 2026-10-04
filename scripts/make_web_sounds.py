@@ -160,6 +160,49 @@ def sc_altin(t):
     out += partials(138.59, t - .5, ((1, 1), (2, .25)), .03, 1.0) * .32
     return out
 
+# ---------- Malachite set: a quiet stone room, brass and water ----------
+def mal_canak(t):
+    # "Bowl": a struck singing bowl, two close partials beating slowly, long tail
+    def bowl(x, f, a, d):
+        if x < 0: return 0.0
+        return a * min(1, x / .004) * math.exp(-x / d) * (math.sin(2 * math.pi * f * x) + .8 * math.sin(2 * math.pi * (f * 1.006) * x))
+    return bowl(t, 261.63, 1, 1.6) + bowl(t, 261.63 * 2.71, .34, 1.0) + bowl(t, 261.63 * 5.18, .1, .5) + bowl(t - .9, 392.0, .3, 1.1)
+
+KALIMBA = ((1, 1.0), (2.0, .12), (5.9, .18), (9.2, .04))
+
+def mal_kalimba(t):
+    # "Kalimba": four thumb-piano notes, E pentatonic, the last one left ringing
+    out = 0
+    for i, (s0, f) in enumerate(((0, 659.25), (.16, 493.88), (.32, 739.99), (.56, 987.77))):
+        out += partials(f, t - s0, KALIMBA, .002, .55 if i < 3 else 1.0) * (.85 if i < 3 else 1)
+    return out
+
+def mal_damla(t):
+    # "Drop": two water drops in a stone basin (quick upward chirps), then the ripple as a soft fifth
+    out = 0
+    for s0, f0, a in ((0, 900, 1), (.21, 1250, .7)):
+        x = t - s0
+        if 0 <= x < .12: out += a * math.sin(2 * math.pi * (f0 + 5200 * x) * x) * math.exp(-x / .028) * min(1, x / .002)
+    out += partials(329.63, t - .42, ((1, 1), (2, .15)), .03, 1.1) * .4 + partials(493.88, t - .47, ((1, 1), (2, .12)), .03, 1.0) * .3
+    return out
+
+FELT = ((1, 1.0), (2, .42), (3, .16), (4, .06))
+
+def mal_piyano(t):
+    # "Felt piano": a muted upright, three slow notes resolving upward
+    out = 0
+    for s0, f, a in ((0, 196.0, .9), (.02, 293.66, .6), (.5, 369.99, .8), (1.0, 440.0, .9), (1.02, 587.33, .5)):
+        out += partials(f, t - s0, FELT, .012, .95) * a
+    return out
+
+def mal_pirinc(t):
+    # "Brass": a small brass chime tree brushed upward and one warm bell; good news
+    out = 0
+    for i, f in enumerate((783.99, 987.77, 1174.66, 1479.98, 1760.0, 2349.32)):
+        out += partials(f, t - i * .07, ((1, 1), (2.76, .2), (5.4, .06)), .002, .6) * (.5 + i * .07)
+    out += partials(392.0, t - .5, ((1, 1), (2, .35), (3, .1)), .01, 1.1) * .5
+    return out
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     random.seed(3)
@@ -175,4 +218,9 @@ if __name__ == '__main__':
     render('sc_topuk', 2.2, sc_topuk, .52, 2, (.19, .14))
     render('sc_muzik', 2.9, sc_muzik, .42, 2, (.23, .3))
     render('sc_altin', 2.2, sc_altin, .46, 2, (.21, .22))
+    render('mal_canak', 3.0, mal_canak, .5, 3, (.31, .2))
+    render('mal_kalimba', 2.2, mal_kalimba, .5, 2, (.24, .22))
+    render('mal_damla', 2.0, mal_damla, .5, 2, (.27, .25))
+    render('mal_piyano', 2.6, mal_piyano, .5, 4, (.3, .15))
+    render('mal_pirinc', 2.3, mal_pirinc, .44, 2, (.2, .2))
     print('ok')
