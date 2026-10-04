@@ -595,6 +595,7 @@ body.sheet-open{overflow:hidden}
 /* the press-and-hold menu: plain rows, no icon column */
 .qmenu .menu button,html.premium .qmenu .menu button{grid-template-columns:minmax(0,1fr) auto;padding:13px 16px;min-height:52px}
 .qmenu .menu small{display:block;margin-top:1px}
+.qmenu .menu button.danger b{color:var(--danger)}
 .avoid .chips{gap:6px}
 html.premium .lt{padding-right:108px}
 .setnav{position:sticky;top:60px;z-index:20;padding-block:8px;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
@@ -5261,12 +5262,11 @@ document.addEventListener('click', async e => {
     case 'rmimg': syncDraft(); draft.img = ''; drawSheet(); break;
     case 'delete':
       if (!delArmed) { syncDraft(); delArmed = true; drawSheet(); break; }
-      S.perfumes = S.perfumes.filter(p => p.id !== draft.id);
-      S.inv = S.inv.filter(i => i.pid !== draft.id);
-      S.buys = S.buys.filter(b => b.pid !== draft.id);
-      S.wears = S.wears.filter(w => w.pid !== draft.id);
-      if (S.lastSpin === draft.id) S.lastSpin = null;
-      repairWeek(); save(); closeSheet(true); render(); toast('Silindi'); break;
+      removePerfume(draft.id); closeSheet(true); render(); toast('Silindi'); break;
+    // from the press-and-hold menu: the first tap asks, the second deletes
+    case 'qdel': {
+      if (t.dataset.armed !== '1') { t.dataset.armed = '1'; t.querySelector('b').textContent = 'Emin misin? Silmek için tekrar dokun'; haptic('tick'); break; }
+      const p = byId(t.dataset.id); removePerfume(t.dataset.id); closeSheet(true); render(); toast((p ? p.name : 'Parfüm') + ' silindi'); break; }
     case 'sub': { S.sub = t.dataset.sub || null; save(); render(); window.scrollTo(0, 0);
       const on = document.querySelector('.setnav .chip.on'); if (on) on.scrollIntoView({inline: 'center', block: 'nearest'}); break; }
     case 'skin': {
@@ -5476,6 +5476,19 @@ document.addEventListener('keydown', e => {
 document.addEventListener('change', e => { if (e.target.id === 'avoid-in' && noteNames().includes(e.target.value) && avoidAdd(e.target.value)) avoidRedraw(); });
 
 // ---------- press and hold: the quick menu of whatever is under the finger ----------
+// a perfume leaves the collection together with everything that hangs on it
+function removePerfume(id){
+  const bottles = new Set(S.inv.filter(i => i.pid === id).map(i => i.id));
+  S.perfumes = S.perfumes.filter(p => p.id !== id);
+  S.inv = S.inv.filter(i => i.pid !== id);
+  S.mac = (S.mac || []).filter(m => m.pid !== id && !bottles.has(m.iid));
+  S.buys = (S.buys || []).filter(b => b.pid !== id);
+  S.wears = (S.wears || []).filter(w => w.pid !== id);
+  S.wheelOff = S.wheelOff.filter(x => x !== id);
+  if (S.card) { S.card.perfumes = (S.card.perfumes || []).filter(x => x !== id); S.card.wish = (S.card.wish || []).filter(x => x !== id); }
+  if (S.lastSpin === id) S.lastSpin = null;
+  repairWeek(); save();
+}
 function quickFor(el){
   const a = el.dataset.act, d = el.dataset;
   if (a === 'cview' || a === 'cadd') { const c = CAT && CAT.byId.get(+d.cid); if (!c) return null; const have = inCollection(c.r[0]); return have ? {p: have} : {c}; }
@@ -5504,7 +5517,8 @@ function openQuick(q){
     if (!iv) rows.push(row(`data-act="buyopen" data-id="${p.id}"`, buyOf(p.id) ? 'Alım hatırlatıcısını düzenle' : 'Almak için hatırlat'));
     rows.push(row(`data-act="cardtoggle" data-kind="perfumes" data-id="${p.id}"`, inCard ? 'Kartvizitten çıkar' : 'Kartvizite ekle', 'İmza kokuların'));
     rows.push(row(`data-act="wheeltoggle" data-id="${p.id}"`, off ? 'Çarka geri koy' : 'Çarktan çıkar'));
-    rows.push(row(`data-act="edit" data-id="${p.id}"`, 'Düzenle', 'Ad, fotoğraf, notalar, kategoriler; silme de burada'));
+    rows.push(row(`data-act="edit" data-id="${p.id}"`, 'Düzenle', 'Ad, fotoğraf, notalar, kategoriler'));
+    rows.push(`<button class="danger" data-act="qdel" data-id="${p.id}" type="button"><span><b>Koleksiyondan sil</b><small>${iv ? 'Envanterdeki şişesi, günlüğü ve hatırlatıcısı da silinir' : 'Günlüğü ve hatırlatıcısı da silinir'}</small></span></button>`);
   } else if (c) {
     const r = c.r; name = r[1]; brand = r[2]; img = {name: r[1], img: fimg(r[0])};
     rows.push(row(`data-act="cadd" data-cid="${r[0]}"`, 'Koleksiyona ekle'));
@@ -5536,10 +5550,12 @@ document.addEventListener('pointerdown', e => {
 });
 document.addEventListener('pointermove', e => { if (hold && Math.hypot(e.clientX - hold.x, e.clientY - hold.y) > 10) holdOff(); }, {passive: true});
 ['pointerup', 'pointercancel', 'scroll'].forEach(n => document.addEventListener(n, holdOff, {passive: true, capture: true}));
+// some phones send no tap after a long press: the guard below must not wait for one and eat the next real tap
+document.addEventListener('pointerup', () => { if (holdFired) setTimeout(() => { holdFired = false; }, 350); }, {passive: true, capture: true});
 // the finger lifting after a hold must not count as a tap on the menu that just opened
 document.addEventListener('click', e => { if (holdFired) { holdFired = false; e.stopImmediatePropagation(); e.preventDefault(); } }, true);
 // a choice in the quick menu that opens nothing itself closes the menu
-document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.qmenu .menu button')) setTimeout(() => { if (sheetMode === 'quick') closeSheet(true); }, 0); });
+document.addEventListener('click', e => { const b = e.target.closest && e.target.closest('.qmenu .menu button'); if (b && b.dataset.act !== 'qdel') setTimeout(() => { if (sheetMode === 'quick') closeSheet(true); }, 0); });
 
 /* ---------- boot ---------- */
 (async () => {
