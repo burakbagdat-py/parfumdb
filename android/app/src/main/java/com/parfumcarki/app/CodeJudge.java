@@ -44,15 +44,14 @@ final class CodeJudge {
                 r.kind = "Parti kodu";
                 r.code = b.code;
                 r.head = b.head;
-                r.body = b.report;
+                r.body = b.report.split("\n\n")[0];
                 return r;
             }
         }
         Rep r = new Rep();
         r.code = text.length() > 60 ? text.substring(0, 60) + "…" : text;
         r.head = "Kod okundu, ama bir adres ya da barkod değil";
-        r.body = "İçeriği: " + (text.length() > 200 ? text.substring(0, 200) + "…" : text)
-                + "\n\nMarka doğrulama etiketleri genelde bir web adresi açar; bu bir seri numarası ya da ürün kodu olabilir.";
+        r.body = "İçeriği: " + (text.length() > 200 ? text.substring(0, 200) + "…" : text);
         return r;
     }
 
@@ -72,13 +71,13 @@ final class CodeJudge {
             ok = (10 - sum % 10) % 10 == c.charAt(7) - '0';
         } else {
             r.head = "Barkod okundu";
-            r.body = "Barkod: " + digits + "\nBu barkod türü ülke ve sağlama bilgisi taşımıyor. Parti kodunu elle yazarak devam et.";
+            r.body = "Barkod: " + digits;
             return r;
         }
         if (!ok) {
             r.tone = BAD;
             r.head = "Barkodun sağlama hanesi yanlış";
-            r.body = "Barkod: " + digits + "\nGerçek bir ürün barkodunda son hane hesapla tutar. Tutmuyorsa barkod uydurulmuş olabilir; kamera yanlış okumuş da olabilir, bir kez daha okut.";
+            r.body = "Barkod: " + digits + "\nSağlama hanesi: tutmuyor";
             return r;
         }
         String land = "";
@@ -90,8 +89,7 @@ final class CodeJudge {
         r.body = "Barkod: " + digits
                 + "\nSağlama hanesi: tutuyor"
                 + (land.isEmpty() ? "" : "\nBarkodu alan firma: " + land + " kayıtlı (önek " + c.substring(0, 3) + ")")
-                + (china ? "\n\nTanınmış parfüm evlerinin barkodu Çin önekiyle (690–699) başlamaz; bu güçlü bir sahtelik işaretidir."
-                : "\n\nBu, barkodun düzgün olduğunu gösterir. Sahteciler gerçek barkodu kopyalayabildiği için tek başına kanıt değildir; kutudaki parti kodunu da yazıp üretim tarihine bak.");
+                + (china ? "\nParfüm evlerinin barkodu Çin önekiyle (690–699) başlamaz." : "");
         return r;
     }
 
@@ -129,19 +127,20 @@ final class CodeJudge {
         r.kind = "Kare kod";
         r.code = lot.isEmpty() ? bar.code : lot;
         r.tone = bar.tone;
-        StringBuilder b = new StringBuilder(bar.body.split("\n\n")[0]);
-        if (!lot.isEmpty()) b.append("\nParti kodu: ").append(lot);
-        if (!made.isEmpty()) b.append("\nÜretim: ").append(date(made));
-        if (!exp.isEmpty()) b.append("\nSon kullanma: ").append(date(exp));
-        if (!serial.isEmpty()) b.append("\nSeri no: ").append(serial);
+        // a date written in the code comes first; otherwise the date the batch code itself gives away
         BatchCodec.Result dec = lot.isEmpty() ? null : BatchCodec.read(lot);
-        if (dec != null && dec.ok) {
-            r.head = dec.head;
-            b.append("\n\n").append(dec.report);
-        } else {
-            r.head = bar.tone == BAD ? bar.head : lot.isEmpty() ? bar.head : "Parti kodu: " + lot;
-            b.append("\n\nKare kodun içindeki parti kodu, kutuya ve şişeye basılı kodla aynı olmalı.");
-        }
+        StringBuilder b = new StringBuilder();
+        if (!made.isEmpty()) b.append("Üretim tarihi: ").append(date(made)).append('\n');
+        if (!exp.isEmpty()) b.append("Son kullanma: ").append(date(exp)).append('\n');
+        if (!lot.isEmpty()) b.append("Parti kodu: ").append(lot).append('\n');
+        if (!serial.isEmpty()) b.append("Seri no: ").append(serial).append('\n');
+        b.append(bar.body);
+        if (made.isEmpty() && dec != null && dec.ok) b.append("\n\n").append(dec.report.split("\n\n")[0]);
+        r.head = bar.tone == BAD ? bar.head
+                : !made.isEmpty() ? "Üretim: " + date(made)
+                : dec != null && dec.ok ? dec.head
+                : !exp.isEmpty() ? "Son kullanma: " + date(exp)
+                : !lot.isEmpty() ? "Parti kodu: " + lot : bar.head;
         r.body = b.toString();
         return r;
     }
@@ -173,14 +172,12 @@ final class CodeJudge {
         if (!house.isEmpty()) {
             r.tone = GOOD;
             r.head = "QR resmi adrese gidiyor: " + house;
-            r.body = "Adres: " + host + "\nBu, " + house + " için bildiğim resmi alan adı."
-                    + "\n\nSayfayı açıp doğrulamayı tamamla; sayfa “orijinal” demeden ürünü orijinal sayma.";
+            r.body = "Adres: " + host + "\n" + house + " için bildiğim resmi alan adı.";
         } else {
             r.head = "QR şu adrese gidiyor: " + (host.isEmpty() ? "okunamadı" : host);
             r.body = "Adres: " + (text.length() > 160 ? text.substring(0, 160) + "…" : text)
-                    + "\nBu adres, bildiğim resmi doğrulama adresleri arasında yok."
-                    + "\n\nMarkanın kendi sitesi mi (marka-adı.com gibi)? Kısaltılmış, alakasız ya da garip bir adresse güvenme: sahte kutularda “orijinal” diyen sahte doğrulama sayfalarına giden QR’lar yaygın."
-                    + (https ? "" : "\nAdres güvenli bağlantı (https) kullanmıyor; buradan açmıyorum.");
+                    + "\nBildiğim resmi doğrulama adresleri arasında yok."
+                    + (https ? "" : "\nGüvenli bağlantı (https) değil; buradan açmıyorum.");
         }
         return r;
     }

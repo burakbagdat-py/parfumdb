@@ -545,6 +545,83 @@ body.sheet-open{overflow:hidden}
 [data-skin="layton"] .eyebrow{letter-spacing:.24em}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
+/* ---------- the Today page: a scent card for the day, other candidates, what is going on, the week as a ribbon ---------- */
+:root{--card:var(--panel);--edge:var(--line);--fill:var(--panel-2);--hair:var(--line);--tint:color-mix(in srgb,var(--accent) 18%,transparent);--lift:none}
+.td-hello{display:flex;flex-direction:column;gap:3px}
+.td-hello b{font-family:var(--f-display);font-weight:var(--dw);text-transform:var(--dt);letter-spacing:var(--dls);font-size:21px;line-height:1.2}
+.td-hello span{font-size:13.5px;color:var(--muted);line-height:1.4}
+.td-hero{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:30px;background:var(--card);border:1px solid var(--edge);box-shadow:var(--lift)}
+.td-hero::before{content:"";position:absolute;z-index:-1;right:-24%;top:14%;width:86%;aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,hsl(var(--fh,30) 62% 56% / .4),transparent);pointer-events:none}
+.td-hero::after{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:var(--pattern);background-size:var(--pattern-size);opacity:.5;pointer-events:none}
+.td-tags{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.td-tag{font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;background:var(--fill);color:var(--fg);white-space:nowrap}
+.td-tag.q{color:var(--muted);font-weight:600}
+.td-hero .hero-name{font-size:28px;margin-top:-6px}
+.td-body{display:grid;grid-template-columns:minmax(0,1fr) 43%;gap:12px;align-items:center}
+.td-steps{display:flex;flex-direction:column}
+.td-step{position:relative;padding:0 0 13px 21px}
+.td-step::before{content:"";position:absolute;left:2px;top:5px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.td-step::after{content:"";position:absolute;left:6px;top:17px;bottom:-2px;width:1px;background:color-mix(in srgb,var(--fg) 22%,transparent)}
+.td-step:nth-child(2)::before{opacity:.72}
+.td-step:nth-child(3)::before{opacity:.46}
+.td-step:last-child{padding-bottom:0}
+.td-step:last-child::after{display:none}
+.td-step small{display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.td-step span{font-size:14px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.td-hero .art.td-bottle{aspect-ratio:4/5;border-radius:24px;background:transparent;rotate:4deg;font-size:22px}
+.td-hero .td-bottle .ph.stage{background:none}
+.td-meta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12.5px;color:var(--muted);align-items:center}
+.td-meta .mini{display:inline-flex;gap:3px;align-items:center;margin-left:4px}
+.td-meta .mini i{width:7px;height:7px;border-radius:2px;background:color-mix(in srgb,var(--fg) 18%,transparent)}
+.td-meta .mini i.on{background:var(--accent)}
+.td-acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.td-acts .btn{justify-content:center;min-height:46px;padding-inline:10px;white-space:nowrap}
+.td-acts .btn:first-child{grid-column:1 / -1;min-height:54px;font-size:16px}
+.td-acts .btn:last-child:nth-child(2){grid-column:1 / -1}
+.td-acts .bi,.td-row .bi{display:block;width:18px;height:18px;flex:none}
+.td-alt{display:flex;gap:12px;overflow-x:auto;margin-inline:-16px;padding:2px 16px 4px;scrollbar-width:none}
+.td-alt::-webkit-scrollbar{display:none}
+.td-alt button{flex:none;width:78px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:0;border:0;background:none;color:var(--fg);font-size:12px;line-height:1.2;text-align:center}
+.td-alt .art{width:70px;height:86px;border-radius:20px;background:var(--card);border:1px solid var(--edge)}
+.td-alt span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.td-quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.td-quick button{display:flex;flex-direction:column;align-items:center;gap:8px;padding:0;border:0;background:none;color:var(--muted);font-size:12.5px;font-weight:600;line-height:1.15}
+.td-quick .qi{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:var(--card);border:1px solid var(--edge);box-shadow:var(--lift);color:var(--fg);transition:transform .12s}
+.td-quick button:active .qi{transform:scale(.93)}
+.td-quick svg{width:22px;height:22px}
+.td-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.td-tile{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;min-width:0;padding:14px;border-radius:24px;background:var(--card);border:1px solid var(--edge);box-shadow:var(--lift);color:var(--fg);transition:transform .12s}
+.td-tile:active{transform:scale(.97)}
+.td-tile:last-child:nth-child(odd){grid-column:1 / -1}
+.td-tile .ti{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:var(--tint);color:var(--hi);margin-bottom:6px}
+.td-tile .ti svg{width:19px;height:19px}
+.td-tile b{font-family:var(--f-display);font-weight:var(--dw);font-size:23px;line-height:1.1;font-variant-numeric:tabular-nums}
+.td-tile span{font-size:13.5px;line-height:1.25}
+.td-tile small{font-size:12px;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.td-tile .level{max-width:none;margin-top:6px}
+.td-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;padding:6px;border-radius:26px;background:var(--card);border:1px solid var(--edge);box-shadow:var(--lift)}
+.td-day{display:flex;flex-direction:column;align-items:center;gap:5px;padding:9px 0 6px;border:0;border-radius:20px;background:none;color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;min-width:0;transition:background .2s}
+.td-day b{font-family:var(--f-display);font-weight:var(--dw);font-size:17px;color:var(--fg);letter-spacing:0;line-height:1;font-variant-numeric:tabular-nums}
+.td-day .art{width:32px;height:40px;border-radius:10px;font-size:8px}
+.td-day::after{content:"";width:5px;height:5px;border-radius:50%}
+.td-day.now::after{background:var(--accent)}
+.td-day.now b{color:var(--accent)}
+.td-day.on{background:var(--tint);color:var(--fg)}
+.td-pick{display:grid;grid-template-columns:66px minmax(0,1fr) auto;gap:14px;align-items:center;padding:14px;border-radius:26px;background:var(--card);border:1px solid var(--edge);box-shadow:var(--lift)}
+.td-pick .art{width:66px;height:82px;border-radius:18px}
+.td-pick .pn{font-family:var(--f-display);font-weight:var(--dw);text-transform:var(--dt);letter-spacing:var(--dls);font-size:17px;line-height:1.2;overflow-wrap:anywhere}
+.td-pick .dinfo{gap:5px}
+.td-row{display:flex;gap:10px;flex-wrap:wrap}
+.td-row .btn{flex:1;justify-content:center}
+.td-wait .item{grid-template-columns:52px minmax(0,1fr) auto}
+html.premium[data-finish="aero"] .td-hero{backdrop-filter:blur(22px) saturate(1.2);-webkit-backdrop-filter:blur(22px) saturate(1.2)}
+html.no-blur.premium[data-finish="aero"] .td-hero{backdrop-filter:none;-webkit-backdrop-filter:none}
+html.premium .td-hero .hero-name{font-size:29px}
+html.premium .td-acts .btn{padding-inline:8px;gap:7px;white-space:nowrap;font-size:14.5px}
+html.premium .td-acts .btn:first-child{font-size:16.5px;min-height:56px}
+html.premium .td-day .art{border-radius:10px}
+html.premium[data-mode="light"] .td-hero::before{background:radial-gradient(closest-side,hsl(var(--fh,30) 62% 60% / .34),transparent)}
+
 /* ============ Premium themes, third edition. A different app, not a recoloured one:
    large titles, one product stage per screen, three ranks of button (filled, quiet, text) and every main action in the thumb's reach.
    Two surfaces: Mat (flat, solid) and Aero (frosted glass over soft colour). ============ */
@@ -1848,54 +1925,91 @@ function catOptions(sel){
     .map(([n, ls]) => `<optgroup label="${esc(n)}">${ls.map(c => `<option value="${esc(c)}"${c === sel ? ' selected' : ''}>${esc(c)}</option>`).join('')}</optgroup>`).join('');
 }
 
-/* ---------- week ---------- */
+/* ---------- today ---------- */
+let wkSel = null;   // the day opened in the week ribbon
+const helloTxt = () => { const h = new Date().getHours(); return h < 6 ? 'İyi geceler' : h < 12 ? 'Günaydın' : h < 18 ? 'İyi günler' : h < 23 ? 'İyi akşamlar' : 'İyi geceler'; };
+const lastWorn = pid => { let t = 0; for (const w of S.wears || []) if (w.pid === pid && w.t > t) t = w.t; return t; };
+const agoTxt = t => { const d = Math.round((new Date().setHours(0, 0, 0, 0) - new Date(t).setHours(0, 0, 0, 0)) / 864e5); return d <= 0 ? 'bugün' : d === 1 ? 'dün' : d < 60 ? d + ' gün önce' : Math.floor(d / 30) + ' ay önce'; };
+// what is going on right now, as tiles; a tile exists only when it has something to say
+function todayTiles(){
+  const now = Date.now(), out = [];
+  const tile = (attrs, icon, big, text, small, extra) => `<button class="td-tile" ${attrs} type="button"><span class="ti">${icon}</span><b>${big}</b><span>${text}</span>${small ? `<small>${small}</small>` : ''}${extra || ''}</button>`;
+  const mac = (S.mac || []).filter(m => byId(m.pid)), rest = mac.filter(m => m.end > now).sort((a, b) => a.end - b.end), ready = mac.filter(m => m.end <= now);
+  if (ready.length) out.push(tile('data-tab="maserasyon"', HG_SVG, ready.length, 'şişe dinlendi, hazır', esc(byId(ready[0].pid).name)));
+  else if (rest.length) out.push(tile('data-tab="maserasyon"', HG_SVG, macLeft(rest[0]) + ' gün', rest.length > 1 ? rest.length + ' şişe dinleniyor' : 'sonra hazır', esc(byId(rest[0].pid).name)));
+  const pig = (S.piggies || []).filter(g => g.saved < g.target).sort((a, b) => pigPct(b) - pigPct(a))[0];
+  if (pig) out.push(tile(`data-act="pigopen" data-id="${pig.id}"`, PIG_SVG, '%' + pigPct(pig), fmtPrice(pig.target - pig.saved) + ' kaldı', esc(pig.name), `<div class="level"><i style="width:${pigPct(pig)}%"></i></div>`));
+  const low = S.inv.filter(i => i.level > 0 && i.level <= 20 && byId(i.pid));
+  if (low.length) out.push(tile('data-tab="envanter"', IC.bottle, low.length, 'şişe bitmek üzere', esc(low.map(i => byId(i.pid).name).join(', '))));
+  const buy = (S.buys || []).filter(b => b.at > now && byId(b.pid)).sort((a, b) => a.at - b.at)[0];
+  if (buy) out.push(tile(`data-act="buyopen" data-id="${buy.pid}"`, IC.clock, esc(new Date(buy.at).toLocaleDateString('tr-TR', {day: 'numeric', month: 'short'})), 'almayı planladın', esc(byId(buy.pid).name)));
+  if (S.alarms.length) out.push(tile('data-act="gosub" data-sub="alisveris"', ICONS.bell, S.alarms.length, 'fiyat takibinde', esc(S.alarms.map(a => a.name).join(', '))));
+  if (S.lastBatch) out.push(tile('data-act="batchq"', SHIELD_SVG, esc(S.lastBatch.code), esc(S.lastBatch.h), 'Son kod kontrolü'));
+  return out;
+}
 function renderWeek(){
-  const t = today(); const tw = S.week[t]; const p = tw.pid && byId(tw.pid);
+  const t = today(), tw = S.week[t], p = tw.pid && byId(tw.pid);
+  if (wkSel == null || !S.week[wkSel]) wkSel = t;
+  const iv = p && invOf(p.id), lw = p ? lastWorn(p.id) : 0, worn = p ? (S.wears || []).filter(w => w.pid === p.id).length : 0;
+  const wx = S.weather && S.weather.on && WX ? WX : null;
+  const steps = p ? [['Açılış', p.top], ['Kalp', p.heart], ['İz', p.base]].filter(x => x[1].length) : [];
+  const alts = p ? poolFor(tw.cat).filter(x => x.id !== p.id).sort((a, b) => lastWorn(a.id) - lastWorn(b.id)).slice(0, 8) : [];
+  const tiles = todayTiles();
+  const sw = S.week[wkSel], sp = sw.pid && byId(sw.pid), sd = DAYS.find(x => x.d === wkSel);
+  const pool = sourcePerfumes().filter(x => !p || x.id !== p.id);
+  const wait = (S.wears || []).length && pool.length > 1 ? pool.map(x => [x, lastWorn(x.id)]).sort((a, b) => a[1] - b[1]).slice(0, 3) : [];
   view.innerHTML = `
   <section class="section">
-    <span class="eyebrow pt">${esc(skin().greet)}</span>
-    <div class="hero">
-      <div class="art${p ? ' tap' : ''}"${p ? ` data-act="view" data-id="${p.id}"` : ''}>${art(p)}</div>
-      <div class="hero-body">
-        ${p ? `<span class="hero-brand" lang="en">${esc(p.brand || tw.cat)} ${concTag((invOf(p.id) || {}).conc || p.conc, p.name)}</span>
-          <p class="hero-name tap" data-act="view" data-id="${p.id}">${esc(p.name)}</p>
-          ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
-          <span class="notes-mini">${esc(notesLine(p) || tw.cat)}</span>
-          ${wxLine()}`
-        : `<p class="hero-name">Parfüm yok</p><span class="muted small">“${esc(tw.cat)}” kategorisinde parfüm bulunamadı. Günün kategorisini değiştir ya da envanterine parfüm ekle.</span>${wxLine()}`}
-        <div class="hero-actions">
-          ${p ? (wornToday(p.id) ? `<button class="btn sm" type="button" disabled>${IC.check}${PR() ? 'Bugün sıkıldı' : 'Sıktım ✓'}</button>` : `<button class="btn sm primary" data-act="wear" data-id="${p.id}" type="button">${IC.check}${PR() ? 'Bugün bunu sıktım' : 'Sıktım'}</button>`) : ''}
-          <button class="btn sm${p ? '' : ' primary'}" data-act="reroll" data-day="${t}" type="button">${IC.swap}Başka öner</button>
-          ${S.weather && S.weather.on && WX ? `<button class="btn sm${PR() ? '' : ' ghost'}" data-act="wxpick" type="button">${IC.cloud}Havaya göre</button>` : ''}
-        </div>
+    <div class="td-hello"><b>${helloTxt()}</b>
+      ${wx ? `<span>${wxDesc(wx.code)[1]} ${esc(wx.city)} ${wx.temp}°, ${wxDesc(wx.code)[0]}. Bugün ${esc(wxCats(wx).slice(0, 3).join(', ').toLocaleLowerCase('tr-TR'))} kokular yakışır.</span>`
+        : `<span>${p ? 'Bugünün kokusu hazır.' : 'Bugün için bir koku seçelim.'}</span>`}</div>
+    <article class="td-hero"${p && p.fam.length ? ` style="--fh:${famHue(p.fam[0])}"` : ''}>
+      <div class="td-tags"><span class="td-tag">${esc(tw.cat === ANY ? 'Günün kokusu' : tw.cat + ' günü')}</span>${iv ? `<span class="td-tag q">${iv.ml} ml · %${iv.level}</span>` : ''}</div>
+      ${p ? `<span class="hero-brand" lang="en">${esc(p.brand || '')} ${concTag((iv || {}).conc || p.conc, p.name)}</span>
+      <p class="hero-name tap" data-act="view" data-id="${p.id}">${esc(p.name)}</p>
+      <div class="td-body">
+        ${steps.length ? `<div class="td-steps">${steps.map(([l, n]) => `<div class="td-step"><small>${l}</small><span>${esc(n.slice(0, 3).join(' · '))}</span></div>`).join('')}</div>`
+          : `<div class="fam-line">${p.fam.slice(0, 4).map(famTag).join('') || '<span class="muted small">Nota bilgisi yok</span>'}</div>`}
+        <div class="art td-bottle tap" data-act="view" data-id="${p.id}">${art(p)}</div>
       </div>
-    </div>
+      <div class="td-meta">${p.lon ? `<span>Kalıcılık${miniDots(p.lon)}</span>` : ''}${p.sil ? `<span>Yayılım${miniDots(p.sil)}</span>` : ''}<span>${worn ? `${worn} kez sıktın · son: ${agoTxt(lw)}` : 'Henüz hiç sıkmadın'}</span></div>`
+      : `<p class="hero-name">Parfüm yok</p><span class="muted small">“${esc(tw.cat)}” kategorisinde parfüm bulunamadı. Aşağıdan bugünün kategorisini değiştir ya da envanterine parfüm ekle.</span>`}
+      <div class="td-acts">
+        ${p ? (wornToday(p.id) ? `<button class="btn" type="button" disabled>${IC.check}Bugün sıkıldı</button>` : `<button class="btn primary" data-act="wear" data-id="${p.id}" type="button">${IC.check}Bugün bunu sıktım</button>`) : ''}
+        <button class="btn${p ? '' : ' primary'}" data-act="reroll" data-day="${t}" type="button">${IC.swap}Başka öner</button>
+        ${wx ? `<button class="btn" data-act="wxpick" type="button">${IC.cloud}Havaya göre</button>` : ''}
+      </div>
+    </article>
   </section>
-  <section class="section quick-sec"><div class="quick">
+  ${alts.length ? `<section class="section"><div class="row spread"><h3>Bugün için diğer adaylar</h3><span class="muted small">dokun, bugüne al</span></div>
+    <div class="td-alt">${alts.map(x => `<button data-act="settoday" data-id="${x.id}" type="button"><div class="art">${art(x)}</div><span>${esc(x.name)}</span></button>`).join('')}</div></section>` : ''}
+  <section class="section"><div class="td-quick">
     <button data-tab="cark" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17M6 6l12 12M18 6 6 18"/></svg></span>Çarkı çevir</button>
     <button data-act="randbuy" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/><circle cx="9" cy="15" r="1.2" fill="currentColor"/></svg></span>Rastgele al</button>
     <button data-tab="kesfet" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></span>Parfüm bul</button>
-<button data-act="batchq" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5.5c0 4.3 2.9 7.6 7 9.5 4.1-1.9 7-5.2 7-9.5V6z"/><path d="m9 12 2.2 2.2L15.2 10"/></svg></span>Batch kontrol</button>
+    <button data-act="batchq" type="button"><span class="qi">${SHIELD_SVG}</span>Kod kontrol</button>
   </div></section>
   ${sampleNote() ? `<section class="section">${sampleNote()}</section>` : ''}
+  ${tiles.length ? `<section class="section"><h2>Şu an</h2><div class="td-tiles">${tiles.join('')}</div></section>` : ''}
   <section class="section">
-    <div class="row spread"><h2>Bu hafta</h2>
-      <button class="btn sm" data-act="shuffle" type="button">Haftayı karıştır</button></div>
-    ${sourceSeg()}
-    <div class="week">
-      ${DAYS.map(({d,s}) => { const w = S.week[d]; const q = w.pid && byId(w.pid); return `
-      <div class="day${d === t ? ' today' : ''}">
-        <div class="dname"><b>${s}</b><span>${dateOf(d)}</span></div>
-        <div class="art${q ? ' tap' : ''}"${q ? ` data-act="view" data-id="${q.id}"` : ''}>${art(q)}</div>
-        <div class="dinfo">
-          ${q ? `<span class="pn tap" data-act="view" data-id="${q.id}">${esc(q.name)}</span>` : `<span class="none">Uygun parfüm yok</span>`}
-          <select class="sel" id="wk-${d}" data-act="daycat" data-day="${d}" aria-label="${s} kategorisi">${catOptions(w.cat)}</select>
-        </div>
-        <button class="icon-btn" data-act="reroll" data-day="${d}" type="button" aria-label="${s} için başka öner">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg></button>
-      </div>`; }).join('')}
+    <div class="row spread"><h2>Bu hafta</h2><button class="btn sm" data-act="shuffle" type="button">Haftayı karıştır</button></div>
+    <div class="td-week">${DAYS.map(({d, s: sn}) => { const q = S.week[d].pid && byId(S.week[d].pid); return `<button class="td-day${d === wkSel ? ' on' : ''}${d === t ? ' now' : ''}" data-act="wksel" data-day="${d}" type="button" aria-label="${sn} ${dateOf(d)}${q ? ', ' + esc(q.name) : ''}">${sn}<b>${dateOf(d)}</b><div class="art">${art(q)}</div></button>`; }).join('')}</div>
+    <div class="td-pick">
+      <div class="art${sp ? ' tap' : ''}"${sp ? ` data-act="view" data-id="${sp.id}"` : ''}>${art(sp)}</div>
+      <div class="dinfo">
+        <span class="muted small">${esc(sd.n)}${wkSel === t ? ' · bugün' : ''}</span>
+        ${sp ? `<span class="pn tap" data-act="view" data-id="${sp.id}">${esc(sp.name)}</span>` : `<span class="none">Uygun parfüm yok</span>`}
+        <select class="sel" id="wk-${wkSel}" data-act="daycat" data-day="${wkSel}" aria-label="${esc(sd.n)} kategorisi">${catOptions(sw.cat)}</select>
+      </div>
+      <button class="icon-btn" data-act="reroll" data-day="${wkSel}" type="button" aria-label="${esc(sd.n)} için başka öner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></svg></button>
     </div>
+    ${sourceSeg()}
   </section>
+  ${wait.length ? `<section class="section td-wait"><div class="row spread"><h2>Sıra bekleyenler</h2><span class="muted small">en uzun süredir sıkmadıkların</span></div>
+    <div class="list">${wait.map(([x, lt]) => `<div class="item"><div class="art tap" data-act="view" data-id="${x.id}">${art(x)}</div>
+      <div class="item-body tap" data-act="view" data-id="${x.id}"><span class="item-name">${esc(x.name)}</span><span class="item-meta">${lt ? 'Son: ' + agoTxt(lt) : 'Hiç sıkmadın'}</span></div>
+      <button class="btn sm" data-act="settoday" data-id="${x.id}" type="button">Bugüne al</button></div>`).join('')}</div></section>` : ''}
   ${journalHtml()}`;
 }
 const dayKey = t => { const d = new Date(t); return d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate(); };
@@ -2799,17 +2913,37 @@ function judgeBarcode(p, digits){
   let ok = false;
   if (/^\d{13}$/.test(c)) { let sum = 0; for (let i = 0; i < 12; i++) sum += +c[i] * (i % 2 ? 3 : 1); ok = (10 - sum % 10) % 10 === +c[12]; }
   else if (/^\d{8}$/.test(c)) { let sum = 0; for (let i = 0; i < 7; i++) sum += +c[i] * (i % 2 ? 1 : 3); ok = (10 - sum % 10) % 10 === +c[7]; }
-  else return {cls: 'warn', code: digits, h: 'Barkod okundu', t: 'Bu barkod türü ülke/sağlama bilgisi taşımıyor. Kutudaki parti kodunu elle girerek devam et.'};
-  if (!ok) return {cls: 'bad', code: digits, h: 'Barkodun sağlama hanesi yanlış', t: 'Gerçek bir ürün barkodunda son hane hesapla tutar. Tutmuyorsa barkod uydurulmuş olabilir (ya da kamera yanlış okudu: bir kez daha okut).'};
+  else return {cls: 'warn', code: digits, h: 'Barkod okundu', t: ''};
+  if (!ok) return {cls: 'bad', code: digits, h: 'Barkodun sağlama hanesi yanlış', t: 'Sağlama hanesi tutmuyor.'};
   const pre = +c.slice(0, 3), g = c.length === 13 && GS1.find(x => pre >= x[0] && pre <= x[1]);
   const odd = !!g && g[2] === 'Çin';
   return {cls: odd ? 'bad' : 'good', code: digits, h: odd ? 'Barkod Çin’de kayıtlı bir firmaya ait' : 'Barkod geçerli' + (g ? ' · ' + g[2] : ''),
-    t: (odd ? 'Tanınmış parfüm evlerinin barkodu Çin önekiyle (690–699) başlamaz; bu güçlü bir sahtelik işaretidir. '
-      : `Sağlama hanesi tutuyor${g ? `; barkodu alan firma ${g[2]} kayıtlı` : ''}. `) + 'Bu, barkodun düzgün olduğunu gösterir; sahteciler gerçek barkodu kopyalayabildiği için tek başına kanıt değildir.'};
+    t: odd ? 'Parfüm evlerinin barkodu Çin önekiyle (690–699) başlamaz.' : `Sağlama hanesi tutuyor${g ? `; barkodu alan firma ${g[2]} kayıtlı` : ''}.`};
+}
+// GS1 square code on the box: (01) product number, (10) batch, (11) production, (17) expiry, (21) serial. A date in it is shown first.
+function judgeGs1(p, raw){
+  const s = raw.replace(/^\](d2|C1|Q3)/, '').replace(/^\u001d/, '');
+  if (!/^01\d{14}/.test(s)) return null;
+  const o = {}; let i = 0;
+  while (i + 2 <= s.length) {
+    if (s[i] === '\u001d') { i++; continue; }
+    const ai = s.slice(i, i + 2); i += 2;
+    if (ai === '01') { o.gtin = s.slice(i, i + 14); i += 14; }
+    else if (['17', '15', '11', '13'].includes(ai) && /^\d{6}/.test(s.slice(i))) { o[ai === '17' || ai === '15' ? 'exp' : 'made'] = s.slice(i, i + 6); i += 6; }
+    else if (ai === '10' || ai === '21') { let e = s.indexOf('\u001d', i); if (e < 0) e = s.length; o[ai === '10' ? 'lot' : 'serial'] = s.slice(i, e); i = e; }
+    else break;
+  }
+  const day = x => { const m = +x.slice(2, 4), d = +x.slice(4, 6); return m >= 1 && m <= 12 ? new Date(2000 + +x.slice(0, 2), m - 1, d || 1).toLocaleDateString('tr-TR', d ? {day: 'numeric', month: 'long', year: 'numeric'} : {month: 'long', year: 'numeric'}) : x; };
+  const bar = judgeBarcode(p, o.gtin.replace(/^0/, ''));
+  const dec = o.lot && !o.made ? decodeBatch(p, o.lot) : null;
+  const report = [o.made && ['Üretim tarihi', esc(day(o.made))], o.exp && ['Son kullanma', esc(day(o.exp))], o.lot && ['Parti kodu', esc(o.lot)], o.serial && ['Seri no', esc(o.serial)],
+    ['Barkod', esc(bar.code)], ...(dec && dec.report ? dec.report : [])].filter(Boolean);
+  return {cls: bar.cls === 'bad' ? 'bad' : 'good', code: o.lot || bar.code, report,
+    h: bar.cls === 'bad' ? bar.h : o.made ? 'Üretim: ' + day(o.made) : dec && dec.report ? dec.h : o.exp ? 'Son kullanma: ' + day(o.exp) : o.lot ? 'Parti kodu: ' + o.lot : bar.h, t: bar.t};
 }
 function judgeQr(p, text){
   let u = null; try { u = new URL(text); } catch (e) {}
-  if (!u || !/^https?:$/.test(u.protocol)) return /^\d{8,14}$/.test(text) ? judgeBarcode(p, text) : {cls: 'warn', code: text.slice(0, 120), h: 'Kod okundu ama bir web adresi değil', t: 'Bu kodun içinde bağlantı yok. Marka doğrulama etiketleri genelde bir web adresi açar; bu bir seri numarası olabilir.'};
+  if (!u || !/^https?:$/.test(u.protocol)) return judgeGs1(p, text) || (/^\d{8,14}$/.test(text) ? judgeBarcode(p, text) : {cls: 'warn', code: text.slice(0, 120), h: 'Kod okundu ama bir web adresi değil', t: ''});
   const host = u.hostname.replace(/^www\./, ''), fb = fold(p.brand || '');
   const mine = (OFFICIAL_HOSTS.find(x => x[0].test(fb)) || [])[1];
   const any = OFFICIAL_HOSTS.find(x => x[1].some(h => host === h || host.endsWith('.' + h)));
@@ -4364,6 +4498,7 @@ document.addEventListener('click', async e => {
     case 'go': go(t.dataset.tab); break;
     case 'extlink': if (NATIVE) { e.preventDefault(); nativeCall('openUrl', t.getAttribute('href')); } break;
     case 'shuffle': shuffleWeek(); save(); render(); toast('Hafta yeniden karıştırıldı'); break;
+    case 'wksel': wkSel = +t.dataset.day; renderWeek(); break;
     case 'source': S.source = t.dataset.v; shuffleWeek(); save(); render(); break;
     case 'reroll': {
       const d = +t.dataset.day; const used = new Set(DAYS.filter(x => x.d !== d).map(x => S.week[x.d].pid).filter(Boolean));
@@ -4379,7 +4514,7 @@ document.addEventListener('click', async e => {
     case 'wcat-g': S.wheelGroup = t.dataset.g; save(); renderWheel(); break;
     case 'wcat': S.wheelCats = t.dataset.cat ? toggleIn(S.wheelCats, t.dataset.cat) : []; save(); renderWheel(); break;
     case 'spin': spin(); break;
-    case 'settoday': S.week[today()].pid = t.dataset.id; save(); t.textContent = 'Bugünün parfümü'; t.disabled = true; if (S.tab === 'hafta') render(); toast('Bugünün parfümü ayarlandı'); break;
+    case 'settoday': S.week[today()].pid = t.dataset.id; save(); t.textContent = 'Bugünün parfümü'; t.disabled = true; if (S.tab === 'hafta') { render(); if (!document.getElementById('overlay')) window.scrollTo({top: 0, behavior: 'smooth'}); } toast('Bugünün parfümü ayarlandı'); break;
     case 'exboy': ex.boy = !ex.boy; ex.limit = 40; renderExplore(); break;
     case 'exg': ex.g = ex.g === t.dataset.g ? '' : t.dataset.g; ex.limit = 40; renderExplore(); break;
     case 'excat-g': ex.group = t.dataset.g; renderExplore(); break;
