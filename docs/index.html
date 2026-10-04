@@ -592,6 +592,10 @@ body.sheet-open{overflow:hidden}
 .vc-sw button{width:38px;height:38px;border-radius:50%;border:2px solid transparent;background:var(--sw);padding:0;box-shadow:inset 0 0 0 2px var(--panel)}
 .vc-sw button.on{border-color:var(--fg)}
 .top-acts{display:flex;gap:8px;flex:none}
+/* the press-and-hold menu: plain rows, no icon column */
+.qmenu .menu button,html.premium .qmenu .menu button{grid-template-columns:minmax(0,1fr) auto;padding:13px 16px;min-height:52px}
+.qmenu .menu small{display:block;margin-top:1px}
+.avoid .chips{gap:6px}
 html.premium .lt{padding-right:108px}
 .setnav{position:sticky;top:60px;z-index:20;padding-block:8px;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 html.no-blur .setnav{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--bg)}
@@ -1445,7 +1449,7 @@ const IC = {
   down: bi('<path d="m6 9 6 6 6-6"/>')
 };
 // search field with the filter button beside it; the filters themselves open underneath
-const filtBar = (id, ph, val, n, open, act) => `<div class="sbar"><label class="sfield">${IC.search}<input class="search" id="${id}" type="search" placeholder="${esc(ph)}" value="${esc(val)}" autocomplete="off"></label>
+const filtBar = (id, ph, val, n, open, act) => `<div class="sbar"><label class="sfield">${IC.search}<input class="search" id="${id}" type="search" enterkeyhint="search" placeholder="${esc(ph)}" value="${esc(val)}" autocomplete="off"></label>
   <button class="icon-btn fbtn${open ? ' on' : ''}" data-act="${act}" type="button" aria-label="Filtreler" aria-expanded="${!!open}">${IC.sliders}${n ? `<b>${n}</b>` : ''}</button></div>`;
 const offChip = (act, attr, label) => `<button class="chip on" data-act="${act}" ${attr} type="button">${esc(label)}<span class="x">×</span></button>`;
 const UI_DEFAULT = {fullscreen: false, anim: true, haptic: true, blur: true, amoled: false, compact: false, labels: true, fs: 'm', dock: 'bottom', dockHidden: false};
@@ -2375,23 +2379,59 @@ function renderBrandPage(){
       : '<div class="empty">Bu filtrelerle bu markada parfüm yok.</div>'}
   </section>`;
 }
+// Notes and scent families the user does not want to be offered: search, shelves, random pick and "similar" leave them out.
+const avoidList = () => (S.avoid = S.avoid || []);
+const avoidKeys = () => avoidList().map(x => fold(x)).filter(Boolean);
+const avoidedRow = (c, keys) => keys.some(k => c.nkey.includes(k));
+let avoidShow = false;   // "show them anyway" for the search on screen
+let NOTE_NAMES = null;   // the commonest notes and all families, offered while typing
+function noteNames(){
+  if (NOTE_NAMES || !CAT) return NOTE_NAMES || Object.keys(FAM_HUE);
+  const n = new Map();
+  for (const c of CAT) for (const t of [c.r[9], c.r[10], c.r[11]]) for (const x of t) n.set(x, (n.get(x) || 0) + 1);
+  return NOTE_NAMES = [...new Set([...Object.keys(FAM_HUE), ...[...n.entries()].sort((a, b) => b[1] - a[1]).slice(0, 260).map(x => x[0])])];
+}
+function avoidBox(){
+  const a = avoidList();
+  return `<div class="field avoid"><span class="label">İçermesin</span>
+    ${a.length ? `<div class="chips">${a.map(x => `<button class="chip on" data-act="avoidrm" data-n="${esc(x)}" type="button">${esc(x)}<span class="x">×</span></button>`).join('')}</div>` : ''}
+    <div class="row" style="flex-wrap:nowrap"><input class="input" id="avoid-in" list="avoid-list" type="text" enterkeyhint="done" placeholder="ör. lavanta, tütün, vanilya" autocomplete="off" autocapitalize="off" style="flex:1;min-width:0">
+      <button class="btn sm" data-act="avoidadd" type="button">Ekle</button></div>
+    <datalist id="avoid-list">${noteNames().map(x => `<option value="${esc(x)}">`).join('')}</datalist>
+    <span class="muted small">${a.length ? 'Notasında ya da koku ailesinde bunlar geçen parfümler aramada, raflarda, rastgele seçimde ve benzerlerde önerilmez.' : 'Sevmediğin bir notayı yaz; onu içeren parfümler sana önerilmez.'}</span></div>`;
+}
+function avoidAdd(v){
+  v = String(v || '').trim().replace(/\s+/g, ' ').slice(0, 30); if (v.length < 2) return false;
+  const a = avoidList(), names = noteNames(), hit = names.find(x => fold(x) === fold(v));
+  v = hit || v.charAt(0).toLocaleUpperCase('tr-TR') + v.slice(1);
+  if (a.some(x => fold(x) === fold(v))) return false;
+  if (a.length >= 20) { toast('En çok 20 nota'); return false; }
+  a.push(v); save(); return true;
+}
+function avoidRedraw(){
+  ex.limit = 40;
+  if (sheetMode === 'randbuy' && document.getElementById('rb-moods')) openRandomBuy();
+  else if (S.tab === 'kesfet' && !document.getElementById('overlay')) renderExplore();
+  const nc = document.getElementById('notecard'); if (nc && nc.dataset.n) openNoteCard(nc.dataset.n, nc.dataset.tier || '');
+}
 const concChips = (act, cur) => `<div class="chips scroll"><button class="chip${cur ? '' : ' on'}" data-act="${act}" data-v="" type="button">Tüm türler</button>${CONCS.map(c => `<button class="chip${cur === c ? ' on' : ''}" data-act="${act}" data-v="${c}" type="button">${c}</button>`).join('')}</div>`;
 function renderExplore(){
-  const n = (ex.boy ? 1 : 0) + (ex.g ? 1 : 0) + (ex.seg ? 1 : 0) + (ex.conc ? 1 : 0) + ex.cats.length;
+  const n = (ex.boy ? 1 : 0) + (ex.g ? 1 : 0) + (ex.seg ? 1 : 0) + (ex.conc ? 1 : 0) + ex.cats.length + avoidList().length;
   const filters = `<div class="chips scroll">
       <button class="chip${ex.boy ? ' on' : ''}" data-act="exboy" type="button">Boyner'de</button>
       ${['E','K','U'].map(g => `<button class="chip${ex.g === g ? ' on' : ''}" data-act="exg" data-g="${g}" type="button">${GENDER[g]}</button>`).join('')}
     </div>
     <div class="chips scroll"><button class="chip${ex.seg ? '' : ' on'}" data-act="exseg" data-v="" type="button">Tüm segmentler</button>${Object.entries(SEG).map(([k, v]) => `<button class="chip${ex.seg === k ? ' on' : ''}" data-act="exseg" data-v="${k}" type="button">${v}</button>`).join('')}</div>
     ${concChips('exconc', ex.conc)}
-    ${catFilter('excat', ex.group, ex.cats)}`;
+    ${catFilter('excat', ex.group, ex.cats)}
+    ${avoidBox()}`;
   if (PR()) {
     view.innerHTML = `
   <section class="section">
     <div class="seg"><button class="${ex.mode === 'perf' ? 'on' : ''}" data-act="exmode" data-v="perf" type="button">Parfümler</button><button class="${ex.mode === 'brands' ? 'on' : ''}" data-act="exmode" data-v="brands" type="button">Markalar</button></div>
     ${ex.mode === 'brands' && !ex.brand ? '' : filtBar('ex-q', 'Parfüm, marka ya da nota ara', ex.q, n, ex.fopen, 'exfilt')
       + (ex.fopen ? `<div class="fpanel">${filters}${n ? '<button class="btn sm ghost" data-act="exclear" type="button" style="align-self:flex-start;padding-inline:4px">Filtreleri temizle</button>' : ''}</div>`
-        : n ? `<div class="chips scroll">${ex.boy ? offChip('exboy', '', 'Boyner’de') : ''}${ex.g ? offChip('exg', `data-g="${ex.g}"`, GENDER[ex.g]) : ''}${ex.seg ? offChip('exseg', 'data-v=""', SEG[ex.seg]) : ''}${ex.conc ? offChip('exconc', 'data-v=""', ex.conc) : ''}${ex.cats.map(c => offChip('excat', `data-cat="${esc(c)}"`, c)).join('')}</div>` : '')}
+        : n ? `<div class="chips scroll">${ex.boy ? offChip('exboy', '', 'Boyner’de') : ''}${ex.g ? offChip('exg', `data-g="${ex.g}"`, GENDER[ex.g]) : ''}${ex.seg ? offChip('exseg', 'data-v=""', SEG[ex.seg]) : ''}${ex.conc ? offChip('exconc', 'data-v=""', ex.conc) : ''}${ex.cats.map(c => offChip('excat', `data-cat="${esc(c)}"`, c)).join('')}${avoidList().map(x => offChip('avoidrm', `data-n="${esc(x)}"`, x + ' yok')).join('')}</div>` : '')}
   </section>
   <div id="ex-body"><div class="list">${'<div class="sk-row"><div class="sk"></div><div class="sk-lines"><div class="sk" style="width:70%"></div><div class="sk" style="width:45%"></div><div class="sk" style="width:55%"></div></div></div>'.repeat(6)}</div></div>`;
   } else
@@ -2406,7 +2446,8 @@ function renderExplore(){
     </div>
     <div class="chips scroll"><button class="chip${ex.seg ? '' : ' on'}" data-act="exseg" data-v="" type="button">Tüm segmentler</button>${Object.entries(SEG).map(([k, v]) => `<button class="chip${ex.seg === k ? ' on' : ''}" data-act="exseg" data-v="${k}" type="button">${v}</button>`).join('')}</div>
     ${concChips('exconc', ex.conc)}
-    ${catFilter('excat', ex.group, ex.cats)}`}
+    ${catFilter('excat', ex.group, ex.cats)}
+    ${avoidBox()}`}
   </section>
   <div id="ex-body"><div class="list">${'<div class="sk-row"><div class="sk"></div><div class="sk-lines"><div class="sk" style="width:70%"></div><div class="sk" style="width:45%"></div><div class="sk" style="width:55%"></div></div></div>'.repeat(6)}</div></div>`;
   loadCatalog().then(() => ex.mode === 'brands' ? renderBrands() : renderExploreBody())
@@ -2446,9 +2487,11 @@ function expandQuery(q){
 }
 // one- and two-letter words ("y", "le") must match a whole word, longer ones may match inside a word
 const hasTok = (k, t) => t.length <= 2 ? (' ' + k + ' ').includes(' ' + t + ' ') : k.includes(t);
+let avoidHidden = 0;
 function searchCatalog(){
   const tk = expandQuery(ex.q);
-  const out = [];
+  const out = [], av = avoidShow ? [] : avoidKeys();
+  avoidHidden = 0;
   for (const c of CAT) {
     if (ex.boy && !c.boy) continue;
     if (ex.g && c.r[4] !== ex.g && !(c.r[4] === 'U' && ex.g !== 'U')) continue;
@@ -2461,6 +2504,7 @@ function searchCatalog(){
       else if (tk.every(t => hasTok(c.key, t) || hasTok(c.nkey, t))) rank = 1;
       else continue;
     }
+    if (av.length && avoidedRow(c, av)) { avoidHidden++; continue; }
     out.push([c, rank]);
   }
   out.sort((a, b) => (a[1] - b[1]) || ((b[0].boy ? 1 : 0) - (a[0].boy ? 1 : 0)) || (b[0].r[5] - a[0].r[5]));
@@ -2471,7 +2515,7 @@ function renderExploreBody(){
   const filtered = ex.q || ex.g || ex.boy || ex.conc || ex.seg || ex.cats.length;
   let html = '';
   if (!filtered) {
-    const line = CAT.filter(c => skin().line(c.r)).slice(0, 16);
+    const av0 = avoidKeys(), line = CAT.filter(c => skin().line(c.r) && !(av0.length && avoidedRow(c, av0))).slice(0, 16);
     if (line.length) html += `<section class="section"><h3>${esc(skin().shelf)}</h3>
       <div class="shelf">${line.map(c => `<button class="card" data-act="cview" data-cid="${c.r[0]}" type="button">
         <div class="art">${art({name: c.r[1], img: fimg(c.r[0])})}</div>
@@ -2485,6 +2529,7 @@ function renderExploreBody(){
   const res = searchCatalog();
   html += `<section class="section"><div class="row spread"><h3>${filtered ? res.length.toLocaleString('tr-TR') + ' sonuç' : 'Popüler parfümler'}</h3>
     <span class="muted small">${CAT.length.toLocaleString('tr-TR')} parfüm · Boyner önce</span></div>
+    ${avoidHidden || avoidShow && avoidList().length ? `<span class="muted small">${avoidShow ? 'Elediğin notaları içerenler de gösteriliyor.' : `${avoidHidden.toLocaleString('tr-TR')} parfüm gizlendi: içinde ${esc(avoidList().join(', '))} var.`} <button class="linkbtn" data-act="avoidshow" type="button">${avoidShow ? 'Yine gizle' : 'Yine de göster'}</button></span>` : ''}
     ${res.length ? `<div class="list">${res.slice(0, ex.limit).map(catRow).join('')}</div>` : `<div class="empty">Sonuç yok. Yazımı kontrol et ya da filtreleri kaldır.</div>`}
     ${res.length > ex.limit ? `<button class="btn block" data-act="exmore" type="button">Daha fazla göster</button>` : ''}
     </section>`;
@@ -2520,7 +2565,7 @@ function renderGrid(){
   const g = document.getElementById('col-grid');
   if (!S.perfumes.length) { g.innerHTML = `<div class="empty">Henüz parfüm yok. Keşfet'ten ara ve tek dokunuşla ekle: görseli, notaları ve kategorileri otomatik gelir.</div>`; return; }
   if (!list.length) { g.innerHTML = `<div class="empty">Bu filtreye uyan parfüm yok.</div>`; return; }
-  g.innerHTML = `<div class="grid">${list.map(p => { const iv = invOf(p.id); return `
+  g.innerHTML = `${S.tipHold ? '' : '<span class="muted small">İpucu: bir parfüme basılı tut, hızlı menüsü açılsın (bugüne al, sıktım, fiyatlar, şişe…).</span>'}<div class="grid">${list.map(p => { const iv = invOf(p.id); return `
     <button class="card" data-act="view" data-id="${p.id}" type="button">
       <div class="art">${art(p)}${p.sample ? '<span class="sample-tag">Örnek</span>' : iv ? `<span class="sample-tag">Envanterde · ${iv.ml} ml</span>` : buyOf(p.id) ? `<span class="sample-tag">⏰ ${esc(fmtShort(buyOf(p.id).at))}</span>` : ''}</div>
       <div class="card-body">
@@ -2562,10 +2607,12 @@ async function openNoteCard(n, tier){
   const fn = fold(n);
   const with_ = CAT ? CAT.filter(c => c.r[9].concat(c.r[10], c.r[11]).some(x => fold(x) === fn)).slice(0, 6) : [];
   const total = CAT ? CAT.reduce((k, c) => k + (c.r[9].concat(c.r[10], c.r[11]).some(x => fold(x) === fn) ? 1 : 0), 0) : 0;
-  const el = document.createElement('div'); el.className = 'notecard'; el.id = 'notecard';
+  const el = document.createElement('div'); el.className = 'notecard'; el.id = 'notecard'; el.dataset.n = n; el.dataset.tier = tier || '';
+  const avoided = avoidList().some(x => fold(x) === fn);
   el.innerHTML = `<div class="row spread"><h3>${esc(n)}</h3><button class="icon-btn" data-act="noteclose" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
     <p>${esc(desc)}</p>
     ${tier ? `<span class="muted small">${TIER_INFO[tier]}</span>` : ''}
+    <div class="row"><button class="btn sm${avoided ? '' : ' ghost'}" data-act="${avoided ? 'avoidrm' : 'avoidadd'}" data-n="${esc(avoided ? avoidList().find(x => fold(x) === fn) : n)}" type="button">${avoided ? 'Öneriliyor olsun (elemeyi kaldır)' : 'Bu notayı içerenleri önerme'}</button></div>
     ${with_.length ? `<span class="label">Bu notayı taşıyan popüler parfümler${total ? ' · ' + total.toLocaleString('tr-TR') + ' parfüm' : ''}</span>
       <div class="chips">${with_.map(c => `<button class="chip" data-act="cview" data-cid="${c.r[0]}" type="button">${esc(c.r[1])}</button>`).join('')}</div>` : ''}`;
   document.body.appendChild(el);
@@ -3603,8 +3650,9 @@ function similarTo(p, cheapOnly){
   const pn = noteVec(p.top, p.heart, p.base), pf = famVec(p.fam);
   if (!pn.norm && !pf.norm) return [];
   const brandK = normBrand(p.brand), line = p.brand ? lineKey(p.brand, p.name) : '';
-  const out = [];
+  const out = [], av = avoidKeys();
   for (const c of CAT) {
+    if (av.length && avoidedRow(c, av)) continue;
     const r = c.r;
     if (r[0] === p.cid || r[5] < 150) continue;
     if (cheapOnly && !(r[15] === 'O' || r[15] === 'M')) continue;
@@ -3935,6 +3983,8 @@ const closeIcon = '<button class="icon-btn" data-act="close" type="button" aria-
 let pageFn = null, under = [];
 function openOverlay(){
   const old = document.getElementById('overlay');
+  // a result was tapped while the keyboard was up: it closes with the tap, no extra "back"
+  const ae = document.activeElement; if (ae && ae.blur && /^(INPUT|TEXTAREA)$/.test(ae.tagName) && !ae.closest('.sheet')) ae.blur();
   if (old && pageFn) { const sh = old.querySelector('.sheet'), fn = pageFn, top = sh ? sh.scrollTop : 0;
     under.push(() => { if (fn() === false) return false; const n = document.getElementById('sheet'); if (n) n.scrollTop = top; }); if (under.length > 6) under.shift(); }
   else if (!old) under = [];
@@ -4093,8 +4143,8 @@ function miniDots(n){ return `<span class="mini">${[1,2,3,4,5].map(i => `<i clas
 function wearInfo(p){
   const w = (S.wears || []).filter(x => x.pid === p.id);
   if (!w.length) return '';
-  const last = Math.max(...w.map(x => x.t)), days = Math.floor((Date.now() - last) / 864e5);
-  return `${w.length} kez sıkıldı · son: ${days === 0 ? 'bugün' : days + ' gün önce'}`;
+  const last = Math.max(...w.map(x => x.t));
+  return `${w.length} kez sıkıldı · son: ${agoTxt(last)}`;
 }
 // one action of the perfume page: the full label in the classic row, a short one under an icon in the premium toolbar
 const dBtn = (cls, icon, lg, st, attrs) => `<button class="btn sm${cls ? ' ' + cls : ''}" ${attrs} type="button">${icon}<span class="lg">${lg}</span><span class="st">${st}</span></button>`;
@@ -4120,11 +4170,18 @@ function detailHtml(p, o){
     ${versHtml(p)}
     <div class="seg dtabs">${[['notes', 'Notalar'], ['price', 'Fiyat'], ['info', 'Bilgi'], ...(S.sim.on ? [['sim', 'Benzer']] : [])].map(([k, l]) => `<button class="${dTab === k ? 'on' : ''}" data-act="dtab" data-v="${k}" type="button">${l}</button>`).join('')}</div>
     <div class="dpane" data-pane="notes"${dTab === 'notes' ? '' : ' hidden'}>
-      ${notes ? `<div class="pyramid">${TIERS.map(([k, label, when]) => `<div class="tier"><div class="tier-name"><b>${label}</b><span>${when}</span></div>
-        <div class="chips">${p[k].length ? p[k].map(n => `<button class="note-chip" data-act="note" data-n="${esc(n)}" data-tier="${k}" type="button">${esc(n)}</button>`).join('') : '<span class="muted small">Yok</span>'}</div></div>`).join('')}</div>
-        <span class="muted small">Bir notaya dokun, ne koktuğunu anlatsın.</span>`
+      ${p.fam.length ? `<div class="field" style="gap:8px"><span class="label">Ana akorlar · baskın olandan başlayarak</span><div class="fam-line">${p.fam.map(famTag).join('')}</div></div>` : ''}
+      ${notes ? (() => {
+        // a brand that publishes one plain list of notes gets one list, not a pyramid with two empty steps
+        const tiers = TIERS.filter(([k]) => p[k].length), chip = (n, k) => `<button class="note-chip" data-act="note" data-n="${esc(n)}" data-tier="${k}" type="button">${esc(n)}</button>`;
+        const count = p.top.length + p.heart.length + p.base.length;
+        return `<div class="pyramid">${tiers.length === 1
+          ? `<div class="tier"><div class="tier-name"><b>Notalar</b><span>marka sırasız açıklıyor</span></div><div class="chips">${p[tiers[0][0]].map(n => chip(n, '')).join('')}</div></div>`
+          : tiers.map(([k, label, when]) => `<div class="tier"><div class="tier-name"><b>${label}</b><span>${when}</span></div><div class="chips">${p[k].map(n => chip(n, k)).join('')}</div></div>`).join('')}</div>
+        <span class="muted small">Bir notaya dokun, ne koktuğunu anlatsın.${count <= 5 ? ` Markanın bu parfüm için açıkladığı nota listesi kısa (${count} nota); kokunun genel havasını yukarıdaki akorlar anlatır.` : ''}
+          <a href="https://www.fragrantica.com/search/?query=${encodeURIComponent((shortBrand(p.brand) + ' ' + p.name).trim())}" data-act="extlink">Fragrantica’da bak</a></span>`;
+      })()
       : '<div class="empty">Henüz nota eklenmemiş. “Düzenle” ile ekleyebilirsin.</div>'}
-      ${p.fam.length > 3 ? `<div class="fam-line">${p.fam.slice(3).map(famTag).join('')}</div>` : ''}
     </div>
     <div class="dpane" data-pane="price"${dTab === 'price' ? '' : ' hidden'}>${pricesBox(p)}${storeLinks(p)}</div>
     ${S.sim.on ? `<div class="dpane" data-pane="sim"${dTab === 'sim' ? '' : ' hidden'}>${dTab === 'sim' ? simPane(p) : ''}</div>` : ''}
@@ -4143,6 +4200,8 @@ function detailHtml(p, o){
 function openDetail(p){
   if (!p) return;
   sheetMode = 'detail';
+  const cr = CAT && p.cid && CAT.byId.get(p.cid);
+  if (cr) { let more = false; [['fam', 8], ['top', 9], ['heart', 10], ['base', 11]].forEach(([k, i]) => { if (cr.r[i].length > p[k].length) { p[k] = cr.r[i].slice(); more = true; } }); if (more) save(); }
   const f = openOverlay();
   pageFn = () => { const q = byId(p.id); if (!q) return false; openDetail(q); };
   const isToday = S.week[today()].pid === p.id;
@@ -4203,8 +4262,8 @@ function addFromCatalog(cid){
 const MOODS = [...TAX[0][1], 'Seksi', 'İltifat Toplayan', 'Temiz', 'Kör Alım Güvenli', 'Yaz', 'Kış', 'Gece'];
 let rb = {cat: '', seg: '', good: true, rolling: false, cid: null};
 function rbPool(){
-  const owned = new Set(S.inv.map(i => (byId(i.pid) || {}).cid).filter(Boolean));
-  return CAT.filter(c => c.r[5] >= 1000 && !owned.has(c.r[0])
+  const owned = new Set(S.inv.map(i => (byId(i.pid) || {}).cid).filter(Boolean)), av = avoidKeys();
+  return CAT.filter(c => c.r[5] >= 1000 && !owned.has(c.r[0]) && !(av.length && avoidedRow(c, av))
     && (!rb.good || c.r[13] >= 3.9)
     && (!rb.seg || c.r[15] === rb.seg)
     && (!S.gender || c.r[4] === S.gender || c.r[4] === 'U')
@@ -4220,6 +4279,7 @@ function openRandomBuy(){
       <div class="chips"><button class="chip${rb.seg ? '' : ' on'}" data-act="rbseg" data-v="" type="button">Fark etmez</button>${Object.entries(SEG).map(([k, v]) => `<button class="chip${rb.seg === k ? ' on' : ''}" data-act="rbseg" data-v="${k}" type="button">${v}</button>`).join('')}</div></div>
     <div class="field"><span class="label">Ne için?</span>
       <div class="chips" id="rb-moods">${MOODS.map(c => `<button class="chip${rb.cat === c ? ' on' : ''}" data-act="rbcat" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div></div>
+    ${avoidBox()}
     <label class="toggle-row" for="rb-global"><span><b>Global katalog</b><br><span class="muted small">${S.global ? 'Dünyadaki tüm parfümler' : 'Türkiye’de bulunan markalar (Boyner)'}</span></span>
       <span class="switch"><input type="checkbox" id="rb-global"${S.global ? ' checked' : ''}><span></span></span></label>
     <label class="toggle-row" for="rb-good"><span><b>Sadece beğenilenler</b><br><span class="muted small">★ 3,9 ve üstü, en az 1000 oy</span></span>
@@ -4957,7 +5017,10 @@ document.addEventListener('click', async e => {
     case 'cfilt': col.fopen = !col.fopen; renderCollection(); break;
     case 'cclear': col.conc = ''; col.cats = []; renderCollection(); break;
     case 'exfilt': ex.fopen = !ex.fopen; renderExplore(); break;
-    case 'exclear': ex.boy = false; ex.g = ''; ex.seg = ''; ex.conc = ''; ex.cats = []; ex.limit = 40; renderExplore(); break;
+    case 'exclear': ex.boy = false; ex.g = ''; ex.seg = ''; ex.conc = ''; ex.cats = []; ex.limit = 40; S.avoid = []; save(); renderExplore(); break;
+    case 'avoidadd': { const i = document.getElementById('avoid-in'), v = t.dataset.n || (i && i.value); if (avoidAdd(v)) { avoidRedraw(); toast('Artık önerilmeyecek: ' + avoidList()[avoidList().length - 1]); } else if (i) i.value = ''; break; }
+    case 'avoidrm': S.avoid = avoidList().filter(x => x !== t.dataset.n); save(); avoidRedraw(); break;
+    case 'avoidshow': avoidShow = !avoidShow; renderExploreBody(); break;
     case 'addmenu': openAddMenu(); break;
     case 'invconc': { const it = S.inv.find(i => i.id === t.dataset.iid); if (it) { it.conc = it.conc === t.dataset.v ? '' : t.dataset.v; save(); redrawSheet(); if (S.tab === 'envanter') renderInventory(); } break; }
     case 'cview': openCatalogDetail(t.dataset.cid); break;
@@ -5129,6 +5192,8 @@ document.addEventListener('click', async e => {
     case 'edit': openSheet(byId(t.dataset.id)); break;
     case 'view': openDetail(byId(t.dataset.id)); break;
     case 'close': closeSheet(); break;
+    case 'qtab': { dTab = t.dataset.v; if (t.dataset.cid) openCatalogDetail(t.dataset.cid); else openDetail(byId(t.dataset.id)); break; }
+    case 'wheeltoggle': { const id = t.dataset.id; S.wheelOff = S.wheelOff.includes(id) ? S.wheelOff.filter(x => x !== id) : [...S.wheelOff, id]; save(); if (S.tab === 'cark') renderWheel(); toast(S.wheelOff.includes(id) ? 'Çarktan çıkarıldı' : 'Çarka geri kondu'); break; }
     case 'cardshare': await cardShare(); break;
     case 'cardcopy': try { await navigator.clipboard.writeText(await cardLink()); toast('Bağlantı panoya kopyalandı'); } catch (e) { toast('Kopyalanamadı'); } break;
     case 'cardimg': await openCardShot(); break;
@@ -5398,6 +5463,83 @@ window.onNativeBack = () => {
   if (S.tab !== 'hafta') { go('hafta'); return true; }
   return false;
 };
+
+// Searching: the keyboard closes by itself when the list is dragged or "search" is pressed.
+let kbY = null;
+document.addEventListener('touchstart', e => { const a = document.activeElement; kbY = a && a.matches && a.matches('input[type=search],#avoid-in,#bq-q,#batch-in') && !e.target.closest('input,textarea,select,datalist') ? e.touches[0].clientY : null; }, {passive: true});
+document.addEventListener('touchmove', e => { if (kbY != null && Math.abs(e.touches[0].clientY - kbY) > 14) { kbY = null; const a = document.activeElement; if (a && a.blur) a.blur(); } }, {passive: true});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' || !e.target.matches) return;
+  if (e.target.id === 'avoid-in') { e.preventDefault(); if (avoidAdd(e.target.value)) avoidRedraw(); else e.target.value = ''; }
+  else if (e.target.matches('input[type=search]')) { e.preventDefault(); e.target.blur(); }
+});
+document.addEventListener('change', e => { if (e.target.id === 'avoid-in' && noteNames().includes(e.target.value) && avoidAdd(e.target.value)) avoidRedraw(); });
+
+// ---------- press and hold: the quick menu of whatever is under the finger ----------
+function quickFor(el){
+  const a = el.dataset.act, d = el.dataset;
+  if (a === 'cview' || a === 'cadd') { const c = CAT && CAT.byId.get(+d.cid); if (!c) return null; const have = inCollection(c.r[0]); return have ? {p: have} : {c}; }
+  if (a === 'invedit') { const it = S.inv.find(i => i.id === d.iid); return it && byId(it.pid) ? {p: byId(it.pid)} : null; }
+  if (a === 'macedit') { const m = (S.mac || []).find(x => x.id === d.id); return m && byId(m.pid) ? {p: byId(m.pid)} : null; }
+  if (a === 'wksel') { const w = S.week[+d.day], p = w && w.pid && byId(w.pid); return {p: p || null, day: +d.day}; }
+  const p = byId(d.id); return p ? {p} : null;
+}
+function openQuick(q){
+  const {p, c, day} = q, row = (attrs, title, sub) => `<button ${attrs} type="button"><span><b>${title}</b>${sub ? `<small>${sub}</small>` : ''}</span>${ICONS.chev}</button>`;
+  const rows = [];
+  let name = '', brand = '', img = null;
+  if (day != null) {
+    const dn = DAYS.find(x => x.d === day).n;
+    rows.push(row(`data-act="reroll" data-day="${day}"`, `${dn} için başka öner`, esc(S.week[day].cat)));
+  }
+  if (p) {
+    const iv = invOf(p.id), isToday = S.week[today()].pid === p.id, inCard = card().perfumes.includes(p.id), off = S.wheelOff.includes(p.id);
+    name = p.name; brand = p.brand; img = p;
+    if (!isToday) rows.push(row(`data-act="settoday" data-id="${p.id}"`, 'Bugünün parfümü yap'));
+    if (!wornToday(p.id)) rows.push(row(`data-act="wear" data-id="${p.id}"`, 'Bugün sıktım', esc(wearInfo(p) || 'Koku günlüğüne işlenir')));
+    rows.push(iv ? row(`data-act="invedit" data-iid="${iv.id}"`, 'Şişeyi düzenle', `${iv.ml} ml · %${iv.level} kaldı`) : row(`data-act="invaddp" data-id="${p.id}"`, 'Elimde var', 'Envantere ekler'));
+    if (iv && !macOf(iv.id)) rows.push(row(`data-act="macsend" data-iid="${iv.id}"`, 'Maserasyona gönder'));
+    rows.push(row(`data-act="qtab" data-id="${p.id}" data-v="price"`, 'Fiyatlara bak', 'Mağazalardaki güncel fiyatlar'));
+    if (S.sim.on) rows.push(row(`data-act="qtab" data-id="${p.id}" data-v="sim"`, 'Benzerlerini gör'));
+    if (!iv) rows.push(row(`data-act="buyopen" data-id="${p.id}"`, buyOf(p.id) ? 'Alım hatırlatıcısını düzenle' : 'Almak için hatırlat'));
+    rows.push(row(`data-act="cardtoggle" data-kind="perfumes" data-id="${p.id}"`, inCard ? 'Kartvizitten çıkar' : 'Kartvizite ekle', 'İmza kokuların'));
+    rows.push(row(`data-act="wheeltoggle" data-id="${p.id}"`, off ? 'Çarka geri koy' : 'Çarktan çıkar'));
+    rows.push(row(`data-act="edit" data-id="${p.id}"`, 'Düzenle', 'Ad, fotoğraf, notalar, kategoriler; silme de burada'));
+  } else if (c) {
+    const r = c.r; name = r[1]; brand = r[2]; img = {name: r[1], img: fimg(r[0])};
+    rows.push(row(`data-act="cadd" data-cid="${r[0]}"`, 'Koleksiyona ekle'));
+    rows.push(row(`data-act="cinv" data-cid="${r[0]}"`, 'Elimde var', 'Koleksiyona ve envantere ekler'));
+    rows.push(row(`data-act="cbuy" data-cid="${r[0]}"`, 'Almak için hatırlat'));
+    rows.push(row(`data-act="qtab" data-cid="${r[0]}" data-v="price"`, 'Fiyatlara bak', 'Mağazalardaki güncel fiyatlar'));
+    rows.push(row(`data-act="brandgo" data-b="${esc(r[2])}"`, 'Markanın diğer parfümleri', esc(r[2])));
+    if (r[8][0] && !avoidList().some(x => fold(x) === fold(r[8][0]))) rows.push(row(`data-act="avoidadd" data-n="${esc(r[8][0])}"`, `“${esc(r[8][0])}” olanları önerme`, 'Aramada ve rastgele seçimde elenir'));
+  }
+  if (!rows.length) return;
+  sheetMode = 'quick';
+  const f = openOverlay();
+  f.classList.add('qmenu');
+  f.innerHTML = `<div class="row" style="flex-wrap:nowrap">${img ? `<div class="art" style="width:52px;height:64px;border-radius:14px;flex:none">${art(img)}</div>` : ''}
+      <div class="item-body" style="flex:1"><span class="item-name">${esc(name || 'Bu gün')}</span>${brand ? `<span class="item-meta" lang="en">${esc(brand)}</span>` : ''}</div>${closeIcon}</div>
+    <div class="menu">${rows.join('')}</div>`;
+  if (!S.tipHold) { S.tipHold = 1; save(); }
+}
+let hold = null, holdFired = false;
+const HOLD_SEL = '[data-act="view"],[data-act="cview"],[data-act="invedit"],[data-act="macedit"],[data-act="settoday"],[data-act="wksel"]';
+const holdOff = () => { if (hold) { clearTimeout(hold.t); hold = null; } };
+document.addEventListener('pointerdown', e => {
+  holdOff(); holdFired = false;
+  if (e.button || !e.isPrimary) return;
+  const el = e.target.closest(HOLD_SEL);
+  if (!el || el.closest('.qmenu,.dact,.tabs,.td-acts') || e.target.closest('input,select,textarea,.icon-btn')) return;
+  const x = e.clientX, y = e.clientY;
+  hold = {x, y, t: setTimeout(() => { hold = null; const q = quickFor(el); if (!q) return; holdFired = true; haptic('confirm'); openQuick(q); }, 480)};
+});
+document.addEventListener('pointermove', e => { if (hold && Math.hypot(e.clientX - hold.x, e.clientY - hold.y) > 10) holdOff(); }, {passive: true});
+['pointerup', 'pointercancel', 'scroll'].forEach(n => document.addEventListener(n, holdOff, {passive: true, capture: true}));
+// the finger lifting after a hold must not count as a tap on the menu that just opened
+document.addEventListener('click', e => { if (holdFired) { holdFired = false; e.stopImmediatePropagation(); e.preventDefault(); } }, true);
+// a choice in the quick menu that opens nothing itself closes the menu
+document.addEventListener('click', e => { if (e.target.closest && e.target.closest('.qmenu .menu button')) setTimeout(() => { if (sheetMode === 'quick') closeSheet(true); }, 0); });
 
 /* ---------- boot ---------- */
 (async () => {
