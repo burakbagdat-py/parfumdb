@@ -66,6 +66,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle state) {
         super.onCreate(state);
         Notifier.ensureChannel(this);
+        readOpen(getIntent());
 
         int bar = getSharedPreferences(Scheduler.PREFS, MODE_PRIVATE).getInt("bar", 0xFF17110D);
         web = new WebView(this);
@@ -202,6 +203,56 @@ public class MainActivity extends Activity {
     private volatile String pageUrl = "";
 
     /** True only while our own site (the GitHub Pages address) is shown. */
+    private static final String[][] ICONS = {{"classic", "IconClassic"}, {"scandal", "IconScandal"}, {"malachite", "IconMalachite"}, {"lune", "IconLune"}};
+    private String pendingOpen = "";
+
+    String takeOpen() {
+        String o = pendingOpen;
+        pendingOpen = "";
+        return o;
+    }
+
+    private void readOpen(Intent i) {
+        String o = i == null ? null : i.getStringExtra("open");
+        if ("batch".equals(o)) pendingOpen = o;
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        readOpen(intent);
+        if (!pendingOpen.isEmpty() && web != null) web.evaluateJavascript("window.onNativeOpen && window.onNativeOpen()", null);
+    }
+
+    String appIcon() {
+        PackageManager pm = getPackageManager();
+        for (String[] ic : ICONS) {
+            int st = pm.getComponentEnabledSetting(new android.content.ComponentName(this, getPackageName() + "." + ic[1]));
+            if (st == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) return ic[0];
+        }
+        return "classic";
+    }
+
+    /** Exactly one launcher alias stays enabled; the new one is switched on before the others go off. */
+    boolean setAppIcon(String key) {
+        String target = null;
+        for (String[] ic : ICONS) if (ic[0].equals(key)) target = ic[1];
+        if (target == null) return false;
+        PackageManager pm = getPackageManager();
+        try {
+            pm.setComponentEnabledSetting(new android.content.ComponentName(this, getPackageName() + "." + target),
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+            for (String[] ic : ICONS) {
+                if (ic[1].equals(target)) continue;
+                pm.setComponentEnabledSetting(new android.content.ComponentName(this, getPackageName() + "." + ic[1]),
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     boolean trusted() {
         Uri home = Uri.parse(BuildConfig.WEB_URL), cur = Uri.parse(pageUrl == null ? "" : pageUrl);
         return "https".equals(cur.getScheme()) && home.getHost() != null && home.getHost().equals(cur.getHost())

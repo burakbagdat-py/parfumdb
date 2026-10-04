@@ -101,6 +101,43 @@ public class Bridge {
         activity.runOnUiThread(() -> activity.installUpdate(url));
     }
 
+    /** Colours and text for the home-screen widget, as JSON. */
+    @JavascriptInterface
+    public void setWidget(String json) {
+        if (!activity.trusted() || json == null || json.length() > 4000) return;
+        activity.getSharedPreferences(Scheduler.PREFS, android.content.Context.MODE_PRIVATE).edit().putString(BatchWidget.KEY, json).apply();
+        BatchWidget.updateAll(activity);
+    }
+
+    /** Asks the launcher to add the widget to the home screen; false when the launcher cannot do that. */
+    @JavascriptInterface
+    public boolean pinWidget() {
+        if (!activity.trusted()) return false;
+        android.appwidget.AppWidgetManager m = android.appwidget.AppWidgetManager.getInstance(activity);
+        if (!m.isRequestPinAppWidgetSupported()) return false;
+        return m.requestPinAppWidget(new android.content.ComponentName(activity, BatchWidget.class), null, null);
+    }
+
+    /** What the app was opened for ("batch" from the widget); read once. */
+    @JavascriptInterface
+    public String pendingOpen() {
+        if (!activity.trusted()) return "";
+        return activity.takeOpen();
+    }
+
+    @JavascriptInterface
+    public String appIcon() {
+        if (!activity.trusted()) return "";
+        return activity.appIcon();
+    }
+
+    /** Switches the launcher logo: classic, scandal, malachite or lune. */
+    @JavascriptInterface
+    public boolean setAppIcon(String key) {
+        if (!activity.trusted()) return false;
+        return activity.setAppIcon(key);
+    }
+
     @JavascriptInterface
     public void ready() {
         if (!activity.trusted()) return;

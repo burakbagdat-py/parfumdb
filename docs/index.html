@@ -819,6 +819,152 @@ html.premium .skin .sw{width:96px;height:auto;min-height:84px;flex:none}
 [data-skin="malachite"][data-mode="light"] :is(.hero,.card,.box,.rem,.prices,.result,.stat div,.pig-card,.mac-sum,details.cg,.note,.empty,.day,.list>.item,.menu button,.quick button){box-shadow:inset 0 0 0 3px var(--panel),inset 0 0 0 4px color-mix(in srgb,var(--accent-2) 22%,transparent),0 16px 34px -26px var(--shade)}
 /* Scandal keeps its own skin on the shared premium pieces */
 [data-skin="scandal"] :is(.day,.list>.item,.menu button,.quick button){background:linear-gradient(165deg,color-mix(in srgb,var(--accent) 9%,var(--panel)),var(--panel) 58%);box-shadow:0 22px 44px -30px var(--shade),inset 0 1px 0 rgb(255 255 255 / .07)}
+
+/* ============ Lune: moonlight on glass. Lilac, silver-teal and night indigo; frosted panels, soft squircles, a pill dock
+   whose current tab opens up to show its name. Two moods: Nuit (dark, default) and Aube (light). ============ */
+[data-skin="lune"]{
+  --bg:#0a0c1c;--panel:#141837;--panel-2:#1c2148;--line:#30376b;--fg:#eef0ff;--muted:#a8aedb;
+  --accent:#a99bff;--accent-2:#7fe3e0;--hi:#cfc7ff;--ink:#0f0b2a;--danger:#ff8f9c;--ok:#84e0b5;
+  --grad:linear-gradient(120deg,#dcd5ff 0%,#a99bff 46%,#7482ff 100%);
+  --gold:linear-gradient(120deg,#c6f6f4 0%,#7fe3e0 55%,#3fb3c4 100%);
+  --glow:rgb(169 155 255 / .36);--shade:rgb(2 3 14 / .66);
+  --f-display:"Urbanist","Outfit",system-ui,sans-serif;--f-body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --dw:500;--dt:none;--dls:-.02em;
+  --pattern:radial-gradient(circle,rgb(255 255 255 / .9) .7px,transparent 1.1px);--pattern-size:26px 26px;
+  --r:26px;--btn-r:999px;--chip-r:999px;--btn-tt:none;--btn-ls:0;color-scheme:dark;
+  --glass:color-mix(in srgb,var(--panel) 64%,transparent);--rim:rgb(255 255 255 / .13);
+  background:radial-gradient(70% 42% at 12% 4%,rgb(116 130 255 / .34),transparent 70%),radial-gradient(60% 38% at 96% 22%,rgb(127 227 224 / .16),transparent 70%),radial-gradient(90% 50% at 60% 108%,rgb(169 155 255 / .22),transparent 70%),var(--bg);
+  background-attachment:fixed;
+}
+[data-skin="lune"][data-mode="light"]{
+  --bg:#eff0fa;--panel:#ffffff;--panel-2:#e7e8f7;--line:#d3d5ee;--fg:#171a3a;--muted:#5b6090;
+  --accent:#5a4ee0;--accent-2:#127f84;--hi:#4338c4;--ink:#ffffff;--danger:#b82f45;--ok:#1d7a52;
+  --grad:linear-gradient(120deg,#8e84ff 0%,#5a4ee0 55%,#3d35b4 100%);
+  --gold:linear-gradient(120deg,#35b6b8 0%,#127f84 60%,#0c5f66 100%);
+  --glow:rgb(90 78 224 / .24);--shade:rgb(60 62 130 / .28);color-scheme:light;
+  --glass:color-mix(in srgb,#fff 70%,transparent);--rim:rgb(255 255 255 / .9);
+  background:radial-gradient(70% 42% at 12% 4%,rgb(142 132 255 / .3),transparent 70%),radial-gradient(60% 38% at 96% 22%,rgb(53 182 184 / .2),transparent 70%),radial-gradient(90% 50% at 60% 108%,rgb(142 132 255 / .18),transparent 70%),var(--bg);
+  background-attachment:fixed;
+}
+[data-skin="lune"] body{background:transparent}
+[data-skin="lune"] body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--pattern);background-size:var(--pattern-size);opacity:.16;
+  -webkit-mask-image:radial-gradient(90% 55% at 70% 0,#000,transparent 75%);mask-image:radial-gradient(90% 55% at 70% 0,#000,transparent 75%)}
+[data-skin="lune"][data-mode="light"] body::before{display:none}
+[data-skin="lune"] .top{background:color-mix(in srgb,var(--bg) 62%,transparent)}
+[data-skin="lune"] .logo h1{font-weight:300;font-size:29px;letter-spacing:-.03em}
+[data-skin="lune"] .logo small{letter-spacing:.14em;font-size:10.5px;color:var(--accent-2)}
+[data-skin="lune"] h2{font-weight:300;font-size:32px;line-height:1.05}
+[data-skin="lune"] h3{font-weight:400;font-size:22px}
+[data-skin="lune"] .hero-name{font-weight:300;font-size:34px;line-height:1.04}
+[data-skin="lune"] :is(.card-name,.item-name){font-weight:600;font-size:16.5px;letter-spacing:-.01em}
+[data-skin="lune"] .eyebrow{letter-spacing:.2em;font-size:11px;color:var(--accent-2)}
+[data-skin="lune"] .eyebrow::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 10px var(--accent-2);margin-right:9px;vertical-align:middle}
+[data-skin="lune"] .label{color:var(--accent-2);letter-spacing:.14em}
+[data-skin="lune"] .hero-brand,[data-skin="lune"] .card-brand{color:var(--accent-2);letter-spacing:.16em}
+/* frosted panels */
+[data-skin="lune"] :is(.hero,.card,.box,.rem,.prices,.result,.stat div,.pig-card,.mac-sum,details.cg,.note,.empty,.day,.list>.item,.menu button,.quick button){
+  background:var(--glass);border-color:var(--rim);box-shadow:inset 0 1px 0 var(--rim),0 26px 50px -34px var(--shade)}
+[data-skin="lune"] .hero{border-radius:36px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+[data-skin="lune"] .hero::after{display:none}
+[data-skin="lune"] .art{border-radius:30px;background:radial-gradient(80% 60% at 50% 72%,var(--glow),transparent 72%),color-mix(in srgb,var(--panel-2) 70%,transparent);box-shadow:inset 0 0 0 1px var(--rim)}
+[data-skin="lune"] .item .art,[data-skin="lune"] .day .art{border-radius:18px}
+[data-skin="lune"] .card{border-radius:30px;padding:8px 8px 0}
+[data-skin="lune"] .card .art{border-radius:24px}
+[data-skin="lune"] .ph{background:radial-gradient(90% 60% at 50% 30%,color-mix(in srgb,var(--accent) 55%,transparent),transparent 70%),linear-gradient(170deg,color-mix(in srgb,var(--accent-2) 30%,var(--panel)),var(--panel))}
+[data-skin="lune"] .btn{background:var(--glass);border-color:var(--rim);font-weight:600}
+[data-skin="lune"] .btn.primary{background:var(--grad);border-color:transparent;box-shadow:0 14px 28px -12px var(--glow),inset 0 1px 0 rgb(255 255 255 / .45)}
+[data-skin="lune"] .icon-btn{background:var(--glass);border-color:var(--rim)}
+[data-skin="lune"] .chip{background:var(--glass);border-color:var(--rim);color:var(--fg)}
+[data-skin="lune"] .chip.on{background:var(--grad);border-color:transparent;color:var(--ink)}
+[data-skin="lune"] .chip.grp{border-style:solid;color:var(--muted)}
+[data-skin="lune"] .chip.grp.on{background:var(--gold);color:#04262a}
+[data-skin="lune"] .seg{border-radius:999px;background:var(--glass);border-color:var(--rim)}
+[data-skin="lune"] .seg button{border-radius:999px}
+[data-skin="lune"] .seg button.on{background:var(--grad);color:var(--ink);box-shadow:0 8px 16px -10px var(--glow)}
+[data-skin="lune"] .search,[data-skin="lune"] .input{background:var(--glass);border-color:var(--rim)}
+[data-skin="lune"] .bell.on{background:var(--gold);color:#04262a}
+[data-skin="lune"] .quick .qi,[data-skin="lune"] .menu .mi{border-radius:16px}
+[data-skin="lune"] .pointer{border-top-color:var(--accent-2)}
+[data-skin="lune"] .wheel-wrap canvas{box-shadow:0 0 0 6px color-mix(in srgb,var(--bg) 60%,transparent),0 0 0 7px var(--rim),0 30px 80px -20px var(--glow)}
+[data-skin="lune"] .conc{border-color:color-mix(in srgb,var(--accent-2) 60%,transparent);color:var(--accent-2)}
+/* dock: a glass capsule; the current tab widens into a pill with its name */
+[data-skin="lune"] .tabs{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:536px;margin-inline:auto;border:1px solid var(--rim);border-radius:999px;padding:6px;
+  background:var(--glass);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 24px 50px -18px var(--shade),inset 0 1px 0 var(--rim)}
+[data-skin="lune"] .tabs::before{display:none}
+[data-skin="lune"] .tabs-in{display:flex;gap:2px}
+[data-skin="lune"] .tab{flex:1 1 0;flex-direction:row;justify-content:center;font-size:0;gap:0;padding:0;min-height:48px;border-radius:999px;transition:flex-grow .25s ease,background .2s}
+[data-skin="lune"] .tab .ic{width:40px;height:40px;background:none}
+[data-skin="lune"] .tab.on{flex-grow:2.7;font-size:12px;letter-spacing:0;font-weight:700;background:var(--grad);color:var(--ink);padding-right:12px;box-shadow:0 10px 20px -10px var(--glow)}
+[data-skin="lune"] .tab.on .ic{background:none;color:var(--ink)}
+html.no-labels[data-skin="lune"] .tab.on{font-size:0;padding-right:0}
+[data-skin="lune"] .fab{border-radius:22px;box-shadow:0 0 0 1px var(--rim),0 18px 34px -10px var(--glow)}
+[data-skin="lune"] .toast{border-radius:999px;text-align:center}
+[data-skin="lune"] .sheet{border-radius:36px 36px 0 0;border-color:var(--rim);background:color-mix(in srgb,var(--panel) 90%,transparent);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px)}
+[data-skin="lune"] .overlay{background:rgb(6 7 22 / .6)}
+[data-skin="lune"][data-mode="light"] .fam{color:hsl(var(--fh) 55% 28%);background:hsl(var(--fh) 60% 50% / .12);border-color:hsl(var(--fh) 50% 45% / .35)}
+[data-skin="lune"][data-mode="light"] .fam::before{background:hsl(var(--fh) 60% 45%)}
+[data-skin="lune"][data-mode="light"] .boyner{background:#171a3a;color:#fff}
+[data-skin="lune"][data-mode="light"] .overlay{background:rgb(40 42 100 / .34)}
+[data-skin="lune"][data-mode="light"] .art img.cut{filter:drop-shadow(0 10px 12px rgb(60 62 130 / .26))}
+[data-skin="lune"][data-mode="light"] .ph span{color:#fff}
+[data-skin="lune"][data-mode="light"] :is(.bell.on,.chip.grp.on){color:#fff}
+
+/* ============ Premium pass for comfort: larger type, readable labels, stronger contrast, everything within reach of the thumb ============ */
+html.premium .small{font-size:13.5px}
+html.premium .item-meta{font-size:13px}
+html.premium .eyebrow{font-size:11px}
+html.premium .field>label,html.premium .label{font-size:11.5px}
+html.premium .input,html.premium textarea.input,html.premium select.input{padding:13px 14px;font-size:16px}
+html.premium .toggle-row{min-height:48px}
+html.premium details.cg summary{padding:14px}
+html.premium .note-chip{font-size:14px;padding:7px 12px}
+html.premium .rate button{min-width:44px;height:42px}
+html.premium .sizes button{padding:9px 12px;min-width:84px}
+html.premium .switch{width:52px;height:32px}
+html.premium .switch span::after{width:26px;height:26px}
+html.premium .switch input:checked+span::after{transform:translateX(20px)}
+html.premium :focus-visible{outline-width:3px}
+html.premium .hero .art{width:min(46%,178px)}
+html.premium .day .icon-btn{width:40px;height:40px;top:3px;right:3px}
+html.premium .day .icon-btn svg{width:17px;height:17px}
+html.premium .grid>.card:nth-child(even){margin-top:18px;margin-bottom:-18px}
+html.premium .grid{padding-bottom:18px}
+/* the header shrinks instead of swapping titles */
+html.premium .bar-title{display:none}
+html.premium .logo h1{transition:font-size .2s}
+html.premium .top.scrolled{padding-block:8px}
+html.premium .top.scrolled .logo div{opacity:1;transform:none}
+html.premium .top.scrolled .logo small{display:none}
+html.premium .top.scrolled .logo h1{font-size:19px}
+/* a close bar at the bottom of the full-page perfume view, where the thumb is */
+.sheet-back{display:none}
+html.premium .sheet:has(.dhead) .sheet-back{display:inline-flex;position:sticky;bottom:6px;align-self:center;z-index:3;margin-top:6px;padding-inline:38px;background:var(--panel);box-shadow:0 14px 28px -12px var(--shade)}
+/* Scandal: bigger, calmer text; every tab keeps its name */
+[data-skin="scandal"] .btn{font-size:12.5px;letter-spacing:.08em}
+[data-skin="scandal"] .btn.sm{font-size:11.5px}
+[data-skin="scandal"] .chip{font-size:13px}
+[data-skin="scandal"] .eyebrow{font-size:11px;letter-spacing:.24em}
+[data-skin="scandal"] :is(.card-name,.item-name,.dinfo .pn){font-style:normal}
+[data-skin="scandal"] .tab{font-size:9.5px;letter-spacing:.01em;text-transform:none;gap:1px;min-height:50px;color:var(--muted)}
+[data-skin="scandal"] .tab .ic{height:34px}
+[data-skin="scandal"] .tab.on{font-size:9.5px;font-weight:700;margin-top:-20px}
+[data-skin="scandal"] .tab.on .ic{height:44px}
+[data-skin="scandal"][data-mode="light"]{--accent-2:#8a651d;--muted:#7c5263}
+[data-skin="malachite"][data-mode="light"]{--accent-2:#775a1b;--muted:#516a5d}
+[data-skin="malachite"] .tab{font-size:10px}
+@media (prefers-reduced-motion:reduce){[data-skin] .btn.primary::after{animation:none}}
+
+/* ---------- logos and widget page ---------- */
+.logos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.logo-opt{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 10px 14px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel);color:var(--fg);text-align:center}
+.logo-opt svg{width:84px;height:84px;border-radius:24px;box-shadow:0 12px 26px -12px rgb(0 0 0 / .6)}
+.logo-opt.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.logo-opt small{color:var(--muted);font-size:12px}
+.wprev{border-radius:28px;padding:16px 18px;background:linear-gradient(135deg,var(--panel-2),var(--bg));border:1.5px solid color-mix(in srgb,var(--accent-2) 60%,transparent);display:flex;flex-direction:column;gap:6px;min-height:132px}
+.wprev .wt{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-2)}
+.wprev .wm{font-size:19px;font-weight:700;flex:1;display:flex;align-items:center}
+.wprev .ws{font-size:12px;color:var(--muted)}
+.wprev .wb{align-self:flex-start;margin-top:6px;padding:7px 14px;background:var(--accent);color:var(--ink);font-size:13px;font-weight:700}
 </style>
 </head>
 <body>
@@ -943,6 +1089,8 @@ const STORES = {
 };
 // dl: downloaded by the app at runtime from docs/sounds (no new APK needed); others ship inside the APK
 const SOUNDS = {
+  lune_ay: {n: 'Lune · Ay ışığı', dl: 'lune_ay'}, lune_yildiz: {n: 'Lune · Yıldız', dl: 'lune_yildiz'}, lune_dalga: {n: 'Lune · Dalga', dl: 'lune_dalga'},
+  lune_arp: {n: 'Lune · Arp', dl: 'lune_arp'}, lune_nabiz: {n: 'Lune · Nabız', dl: 'lune_nabiz'},
   mal_canak: {n: 'Malachite · Çanak', dl: 'mal_canak'}, mal_kalimba: {n: 'Malachite · Kalimba', dl: 'mal_kalimba'}, mal_damla: {n: 'Malachite · Damla', dl: 'mal_damla'},
   mal_piyano: {n: 'Malachite · Keçe piyano', dl: 'mal_piyano'}, mal_pirinc: {n: 'Malachite · Pirinç', dl: 'mal_pirinc'},
   sc_kadife: {n: 'Scandal · Kadife', dl: 'sc_kadife'}, sc_sampanya: {n: 'Scandal · Şampanya', dl: 'sc_sampanya'}, sc_topuk: {n: 'Scandal · Topuk', dl: 'sc_topuk'},
@@ -1013,7 +1161,17 @@ const SKINS = {
     wheelLight: ['#0f7a55','#fcfbf5','#96762f','#e8eadb','#25a577','#d9dcc6'],
     wheelTextLight: ['#f6fbf4','#10261d','#fffdf5','#0b6245','#f6fbf4','#10261d'],
     shelf: 'Yeşil ve odunsu seçki', line: r => (r[12].includes('Yeşil') || r[12].includes('Odunsu')) && r[12].includes('Yüksek Puanlı') && r[5] > 6000,
-    swatch: 'linear-gradient(135deg,#06100d 0 34%,#2fc08a 34% 58%,#c9a45c 58% 70%,#f2f0e5 70%)', chip: '#2fc08a'}
+    swatch: 'linear-gradient(135deg,#06100d 0 34%,#2fc08a 34% 58%,#c9a45c 58% 70%,#f2f0e5 70%)', chip: '#2fc08a'},
+  lune: {premium: true, rimLight: '#127f84', modes: ['Aube · açık', 'Nuit · karanlık'],
+    set: {rem: 'lune_ay', price: 'lune_arp', pig: 'lune_yildiz', all: ['lune_ay', 'lune_yildiz', 'lune_dalga', 'lune_arp', 'lune_nabiz'], note: 'Ay ışığı: hatırlatıcılar · Arp: fiyat düştü · Yıldız: kumbara.'},
+    n: 'Lune', sub: 'Ay ışığı · leylak, gümüş, gece laciverti · buzlu cam · açık ve karanlık', bar: '#0a0c1c', barLight: '#eff0fa', greet: 'Bu gecenin kokusu', greetLight: 'Bugünün kokusu', sound: 'lune_ay',
+    fonts: 'family=Urbanist:wght@300;400;500;600;700',
+    wheel: ['#a99bff','#141837','#7fe3e0','#1c2148','#dcd5ff','#0a0c1c'],
+    wheelText: ['#0f0b2a','#eef0ff','#04262a','#cfc7ff','#0f0b2a','#7fe3e0'], rim: '#7fe3e0', hub: ['#ffffff','#a99bff'],
+    wheelLight: ['#5a4ee0','#ffffff','#127f84','#e7e8f7','#8e84ff','#d3d5ee'],
+    wheelTextLight: ['#ffffff','#171a3a','#ffffff','#4338c4','#ffffff','#171a3a'],
+    shelf: 'Temiz ve ferah seçki', line: r => (r[12].includes('Temiz') || r[12].includes('Misk')) && r[12].includes('Yüksek Puanlı') && r[5] > 6000,
+    swatch: 'linear-gradient(135deg,#0a0c1c 0 34%,#a99bff 34% 58%,#7fe3e0 58% 70%,#eff0fa 70%)', chip: '#a99bff'}
 };
 const SAMPLE_ROWS = [
 [99116,"Eros Najim","Versace",2024,"E",2133,4,3,["Sıcak baharatlı","Karamel","Narenciye","Ud","Aromatik"],["Karamel","İtalyan mandalinası"],["Kakule","Ud"],["Tütsü","Paçuli","Vetiver"],["Günlük","Date","Ofis","Kış","Gece","Narenciye","Aromatik","Tatlı","Gurme","Amber","Baharatlı","Ud","Oryantal","Seksi","Orta","Erkek"],3.92],
@@ -1128,6 +1286,7 @@ function applySkin(){
     l.onload = () => drawWheel(document.getElementById('wheel'));
     document.head.appendChild(l);
   }
+  setTimeout(syncWidget, 60);
   const bar = light && SKINS[k].barLight || SKINS[k].bar;
   document.querySelector('meta[name=theme-color]').content = bar;
   nativeCall('setBars', bar);
@@ -1138,7 +1297,7 @@ const skin = () => {
 };
 const UI_DEFAULT = {fullscreen: false, anim: true, haptic: true, blur: true, amoled: false, compact: false, labels: true, fs: 'm'};
 // a premium theme brings its own sound set; leaving it puts the usual sounds back
-const SET_RX = /^(sc_|mal_)/;
+const SET_RX = /^(sc_|mal_|lune_)/;
 function themeSounds(on){
   const set = on && SKINS[S.skin] && SKINS[S.skin].set;
   if (set) {
@@ -1668,7 +1827,7 @@ function renderWeek(){
     <button data-tab="cark" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17M6 6l12 12M18 6 6 18"/></svg></span>Çarkı çevir</button>
     <button data-act="randbuy" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.2" fill="currentColor"/><circle cx="15" cy="15" r="1.2" fill="currentColor"/><circle cx="15" cy="9" r="1.2" fill="currentColor"/><circle cx="9" cy="15" r="1.2" fill="currentColor"/></svg></span>Rastgele al</button>
     <button data-tab="kesfet" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg></span>Parfüm bul</button>
-    <button data-tab="ayarlar" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg></span>Ayarlar</button>
+<button data-act="batchq" type="button"><span class="qi"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 5 6v5.5c0 4.3 2.9 7.6 7 9.5 4.1-1.9 7-5.2 7-9.5V6z"/><path d="m9 12 2.2 2.2L15.2 10"/></svg></span>Batch kontrol</button>
   </div></section>
   ${sampleNote() ? `<section class="section">${sampleNote()}</section>` : ''}
   <section class="section">
@@ -2623,6 +2782,86 @@ async function scanPhoto(p, file){
     else { scan.res = {cls: 'warn', h: 'Fotoğrafta QR ya da barkod bulunamadı', t: 'Kodu yakından, net ve düz bir açıyla çek. Parti kodu (küçük basılı harf/rakamlar) kamerayla okunamaz; onu elle yaz.'}; redrawSheet(); }
   } catch (e) { scan.res = {cls: 'warn', h: 'Fotoğraf okunamadı', t: 'Başka bir fotoğraf dene.'}; redrawSheet(); }
 }
+const BATCH_BRANDS = ['Dior', 'Guerlain', 'Givenchy', 'Kenzo', 'Jean Paul Gaultier', 'Rabanne', 'Carolina Herrera', 'Nina Ricci', 'Hugo Boss', 'Gucci', 'Burberry', 'Calvin Klein', 'Chloé', 'Davidoff', 'Marc Jacobs', 'Tom Ford', 'Jo Malone', 'By Kilian', 'Le Labo', 'Frederic Malle'];
+let bq = {pid: '', brand: ''};
+function bqPerfume(){
+  const p = bq.pid && byId(bq.pid);
+  if (p) return p;
+  if (!bq.brand) return null;
+  const other = bq.brand === '?';
+  return {name: other ? 'Başka marka' : bq.brand, brand: other ? '' : bq.brand, fam: [], top: [], heart: [], base: [], cats: []};
+}
+// one screen: pick the bottle (or just the brand), type the code, read the report
+function openBatchQuick(){
+  sheetMode = 'batchq'; scan.res = null;
+  const f = openOverlay();
+  const mine = [...S.inv.map(i => byId(i.pid)).filter(Boolean), ...S.perfumes.filter(p => !invOf(p.id))];
+  if (!bq.pid && !bq.brand && S.lastBatch) { const lp = S.perfumes.find(x => x.name === S.lastBatch.name); if (lp) bq.pid = lp.id; else bq.brand = S.lastBatch.brand || ''; }
+  const draw = () => {
+    const p = bqPerfume(); currentP = p;
+    f.innerHTML = `<div class="row spread"><span class="eyebrow">Batch kontrol</span>${closeIcon}</div>
+      <h2>Parti kodu ve üretim raporu</h2>
+      <div class="field"><span class="label">Hangi şişe?</span>
+        ${mine.length ? `<div class="chips scroll">${mine.slice(0, 40).map(x => `<button class="chip${bq.pid === x.id ? ' on' : ''}" data-act="bqp" data-id="${x.id}" type="button">${esc(x.name)}</button>`).join('')}</div>` : ''}
+        <select class="input" id="bq-brand"><option value="">${mine.length ? 'ya da sadece markayı seç…' : 'Markayı seç…'}</option>${BATCH_BRANDS.map(b => `<option${bq.brand === b && !bq.pid ? ' selected' : ''}>${b}</option>`).join('')}<option value="?"${bq.brand === '?' ? ' selected' : ''}>Başka bir marka</option></select>
+        ${p ? `<span class="muted small">Seçili: <b>${esc([p.brand, p.name !== p.brand ? p.name : ''].filter(Boolean).join(' · '))}</b></span>` : ''}</div>
+      <div class="field"><label for="batch-in">Parti (batch) kodu</label>
+        <div class="row" style="flex-wrap:nowrap"><input class="input" id="batch-in" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="14" placeholder="ör. 2K01" value="${esc(document.getElementById('batch-in') ? document.getElementById('batch-in').value : '')}" style="flex:1;min-width:0;text-transform:uppercase">
+          <button class="btn primary" data-act="batchgo" type="button">Test et</button></div>
+        <span class="muted small">Kutunun altında ve şişenin altında/arkasında basılı ya da kazınmış 3–10 karakter.</span></div>
+      ${scan.on ? `<div class="scan-box"><video id="scan-video" playsinline muted autoplay></video></div><div class="row"><button class="btn sm" data-act="scanstop" type="button">Kamerayı kapat</button></div>`
+        : `<div class="row"><button class="btn sm" data-act="scanstart" type="button">QR / barkod okut</button><label class="btn sm file-label">Fotoğraftan oku<input id="scan-file" type="file" accept="image/*"></label></div>`}
+      ${scanResHtml(scan.res)}
+      ${!scan.res && S.lastBatch ? `<div class="scan-res ${S.lastBatch.cls}"><span class="label">Son kontrol</span><b class="h">${esc(S.lastBatch.h)}</b><span>${esc(S.lastBatch.name)} · <code>${esc(S.lastBatch.code)}</code> · ${esc(fmtShort(S.lastBatch.t))}</span></div>` : ''}`;
+    const v = document.getElementById('scan-video');
+    if (v && scan.stream) { v.srcObject = scan.stream; v.play().catch(() => {}); }
+  };
+  draw(); f._draw = draw;
+}
+// the home-screen widget wears the current theme and shows the last report
+const hex6 = c => { c = String(c).trim(); return /^#[0-9a-f]{3}$/i.test(c) ? '#' + [...c.slice(1)].map(x => x + x).join('') : c; };
+function syncWidget(){
+  if (!NATIVE || !NATIVE.setWidget || !S) return;
+  const cs = getComputedStyle(document.documentElement), v = k => hex6(cs.getPropertyValue(k)), lb = S.lastBatch;
+  nativeCall('setWidget', JSON.stringify({bg: v('--panel-2'), bg2: v('--bg'), fg: v('--fg'), muted: v('--muted'), accent: v('--accent'), edge: v('--accent-2'), ink: v('--ink'),
+    radius: skin().premium ? 30 : 22, title: 'BB · ' + skin().n + ' · Batch kontrol', main: lb ? lb.h : 'Parti kodunu kontrol et',
+    sub: lb ? `${lb.name} · ${lb.code} · ${fmtShort(lb.t)}` : 'Dokun, kodu yaz: üretim tarihi ve rapor hemen gelsin.', btn: 'Kod kontrol et  ›'}));
+}
+window.onNativeOpen = () => { if (S && nativeCall('pendingOpen') === 'batch') openBatchQuick(); };
+
+/* ---------- app logos (one per premium theme) and the widget ---------- */
+const BB_PATH = 'M30,35H42.5A9,9 0 0 1 42.5,53H43.5A9.5,9.5 0 0 1 43.5,72H30ZM36.5,41V47H42.5A3,3 0 0 0 42.5,41ZM36.5,59V66H43.5A3.5,3.5 0 0 0 43.5,59ZM55,35H67.5A9,9 0 0 1 67.5,53H68.5A9.5,9.5 0 0 1 68.5,72H55ZM61.5,41V47H67.5A3,3 0 0 0 67.5,41ZM61.5,59V66H68.5A3.5,3.5 0 0 0 68.5,59Z';
+const LOGOS = {
+  classic: {n: 'Klasik', sub: 'Karamel BB', bg: ['#3a2214', '#140d09'], c: ['#ff8a3d', '#f26d21', '#c98a4b'], frame: 'M30,77.5H78', stroke: '#f26d21'},
+  scandal: {n: 'Scandal', sub: 'Gül BB, altın halka', bg: ['#3a1528', '#12070d'], c: ['#ffc2d5', '#ff6f9f', '#cf3f79'], frame: 'M54,21A33,33 0 1 1 53.99,21Z', stroke: '#e2b56c'},
+  malachite: {n: 'Malachite', sub: 'Zümrüt BB, pirinç çerçeve', bg: ['#12392c', '#06100d'], c: ['#86e6bf', '#2fc08a', '#0f7d58'], frame: 'M41,21H67L87,41V67L67,87H41L21,67V41Z', stroke: '#c9a45c'},
+  lune: {n: 'Lune', sub: 'Leylak BB, hilal', bg: ['#262b63', '#0b0d1c'], c: ['#e4deff', '#a99bff', '#6f7dff'], frame: 'M78,31A33,33 0 1 0 85,65A26,26 0 0 1 78,31Z', stroke: '#7fe3e0'}
+};
+function logoSvg(k){
+  const l = LOGOS[k];
+  return `<svg viewBox="12 12 84 84" aria-hidden="true"><defs><radialGradient id="lb-${k}" cx="50%" cy="42%" r="75%"><stop offset="0" stop-color="${l.bg[0]}"/><stop offset="1" stop-color="${l.bg[1]}"/></radialGradient>
+    <linearGradient id="lf-${k}" x1="30" y1="35" x2="78" y2="72" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${l.c[0]}"/><stop offset=".5" stop-color="${l.c[1]}"/><stop offset="1" stop-color="${l.c[2]}"/></linearGradient></defs>
+    <rect x="12" y="12" width="84" height="84" fill="url(#lb-${k})"/><path d="${l.frame}" fill="none" stroke="${l.stroke}" stroke-width="1.6" stroke-linecap="round"/><path d="${BB_PATH}" fill="url(#lf-${k})" fill-rule="evenodd"/></svg>`;
+}
+function renderLogos(){
+  const can = NATIVE && NATIVE.setAppIcon, cur = can ? nativeCall('appIcon') || 'classic' : 'classic', lb = S.lastBatch;
+  view.innerHTML = `
+  <section class="section">
+    ${backBtn}
+    <h2>Uygulama logosu</h2>
+    <div class="logos">${Object.entries(LOGOS).map(([k, l]) => `<button class="logo-opt${cur === k ? ' on' : ''}" data-act="seticon" data-v="${k}" type="button">
+      ${logoSvg(k)}<b>${esc(l.n)}</b><small>${esc(l.sub)}</small>${cur === k ? '<span class="prem-tag" style="align-self:center">Seçili</span>' : S.skin === k ? '<span class="prem-tag" style="align-self:center">Temana uygun</span>' : ''}</button>`).join('')}</div>
+    <span class="muted small">${can ? 'Dokununca ana ekrandaki simge birkaç saniye içinde değişir. Bazı telefonlarda simge ana ekrandan kalkar; uygulama çekmecesinden tekrar sürükleyebilirsin.' : 'Logo değiştirme uygulamanın yeni sürümünde (v21) çalışır: üstte çıkan “Şimdi güncelle”ye dokun.'}</span>
+  </section>
+  <section class="section">
+    <h2>Widget</h2>
+    <div class="wprev"><span class="wt">BB · ${esc(skin().n)} · Batch kontrol</span><span class="wm">${esc(lb ? lb.h : 'Parti kodunu kontrol et')}</span>
+      <span class="ws">${lb ? esc(`${lb.name} · ${lb.code} · ${fmtShort(lb.t)}`) : 'Dokun, kodu yaz: üretim tarihi ve rapor hemen gelsin.'}</span><span class="wb">Kod kontrol et  ›</span></div>
+    <span class="muted small">Ana ekran widget’ı seçili temanın renklerini giyer, son batch raporunu gösterir; dokununca uygulama doğrudan batch kontrol ekranında açılır.</span>
+    <div class="row"><button class="btn primary" data-act="pinwidget" type="button">Ana ekrana ekle</button><button class="btn" data-act="batchq" type="button">Batch kontrolü aç</button></div>
+    <span class="muted small">“Ana ekrana ekle” çalışmazsa: ana ekranda boş bir yere uzun bas → Widget’lar → BB Parfüm Envanteri.</span>
+  </section>`;
+}
 function scanResHtml(r){
   if (!r) return '';
   return `<div class="scan-res ${r.cls}"><b class="h">${r.cls === 'good' ? '✓ ' : r.cls === 'bad' ? '⚠ ' : ''}${esc(r.h)}</b>${r.code ? `<code>${esc(r.code)}</code>` : ''}<span>${r.t}</span>
@@ -3410,7 +3649,8 @@ function detailHtml(p, o){
         p.note ? ['Not', esc(p.note)] : null
       ].filter(Boolean).map(([k, v]) => `<span>${k}</span><span>${v}</span>`).join('')}</div>
       ${p.cats.length ? `<div class="box" style="gap:8px;padding:12px">${catsHtml(p.cats)}</div>` : ''}
-    </div>`;
+    </div>
+    <button class="btn sheet-back" data-act="close" type="button">Kapat</button>`;
 }
 function openDetail(p){
   if (!p) return;
@@ -3661,6 +3901,7 @@ function renderSettings(){
   if (S.sub === 'yedek') return renderBackup();
   if (S.sub === 'uygulama') return renderAbout();
   if (S.sub === 'alisveris') return renderShop();
+  if (S.sub === 'logo') return renderLogos();
   view.innerHTML = `
   <section class="section">
     <h2>Ayarlar</h2>
@@ -3669,6 +3910,7 @@ function renderSettings(){
       <button data-act="sub" data-sub="bildirim" type="button"><span class="mi">${ICONS.bell}</span><span><b>Bildirimler ve sesler</b><small>${esc(notifSummary())}</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="alisveris" type="button"><span class="mi">${ICONS.bag}</span><span><b>Alışveriş</b><small>${esc(STORES[S.store].n)} · ${S.gender ? GENDER[S.gender] : 'tüm cinsiyetler'}</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="kategori" type="button"><span class="mi">${ICONS.tag}</span><span><b>Kategoriler</b><small>${TAX_LABELS.length} genel${S.customCats.length ? ' + ' + S.customCats.length + ' kendi' : ''}</small></span>${ICONS.chev}</button>
+      <button data-act="sub" data-sub="logo" type="button"><span class="mi">${SHIELD_SVG.replace(/<path.*<\/svg>/, '<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M9 9h3a1.5 1.5 0 0 1 0 3H9zM9 12h3.4a1.6 1.6 0 0 1 0 3.2H9z"/></svg>')}</span><span><b>Logo ve widget</b><small>${Object.keys(LOGOS).length} logo · batch widget’ı</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="yedek" type="button"><span class="mi">${ICONS.box}</span><span><b>Yedek</b><small>${S.perfumes.length} parfüm · ${S.inv.length} şişe</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="uygulama" type="button"><span class="mi">${ICONS.phone}</span><span><b>Uygulama</b><small>${NATIVE ? 'Sürüm ' + esc(nativeCall('versionName') || '') : 'Android APK ve güncellemeler'}</small></span>${ICONS.chev}</button>
     </div>
@@ -4054,11 +4296,25 @@ document.addEventListener('click', async e => {
     case 'openbest': openBest(currentP); break;
     case 'bell': toggleBell(t); break;
     case 'auth': openAuth(currentP); break;
-    case 'scanstart': startScan(currentP); break;
+    case 'batchq': openBatchQuick(); break;
+    case 'bqp': bq.pid = bq.pid === t.dataset.id ? '' : t.dataset.id; bq.brand = ''; scan.res = null; redrawSheet(); break;
+    case 'seticon': {
+      if (!NATIVE || !NATIVE.setAppIcon) { toast('Logo değiştirme uygulamanın yeni sürümünde (v21) çalışır'); break; }
+      const ok = nativeCall('setAppIcon', t.dataset.v);
+      toast(ok ? LOGOS[t.dataset.v].n + ' logosu seçildi; ana ekran birkaç saniyede güncellenir' : 'Logo değiştirilemedi'); renderLogos(); break;
+    }
+    case 'pinwidget': {
+      if (!NATIVE || !NATIVE.pinWidget) { toast('Widget uygulamanın yeni sürümünde (v21) gelir'); break; }
+      syncWidget();
+      toast(nativeCall('pinWidget') ? 'Widget ekleme penceresi açıldı' : 'Bu ana ekran otomatik eklemeyi desteklemiyor: boş yere uzun bas → Widget’lar'); break;
+    }
+    case 'scanstart': startScan(currentP || {name: '', brand: ''}); break;
     case 'scanstop': stopScan(); redrawSheet(); break;
     case 'batchgo': {
       const v = document.getElementById('batch-in').value.trim(); if (!v) { toast('Parti kodunu yaz'); break; }
+      if (!currentP) { toast('Önce şişeyi ya da markayı seç'); break; }
       stopScan(); scan.res = decodeBatch(currentP, v);
+      if (scan.res.code) { S.lastBatch = {name: currentP.name, brand: currentP.brand, code: scan.res.code, h: scan.res.h, cls: scan.res.cls, t: Date.now()}; syncWidget(); }
       if (scan.res.code) { S.authCodes = S.authCodes || {}; (S.authCodes[currentP.name] = S.authCodes[currentP.name] || {}).batch = scan.res.code; save(); try { navigator.clipboard && navigator.clipboard.writeText(scan.res.code).catch(() => {}); } catch (e) {} }
       redrawSheet(); haptic(scan.res.cls === 'good' ? 'confirm' : 'tick'); break;
     }
@@ -4321,7 +4577,8 @@ document.addEventListener('change', async e => {
     if (set.size) S.auth[name] = [...set]; else delete S.auth[name];
     save(); const sc = document.getElementById('sheet').scrollTop; redrawSheet(); document.getElementById('sheet').scrollTop = sc;
   }
-  if (t.id === 'scan-file' && t.files && t.files[0] && currentP) { scanPhoto(currentP, t.files[0]); }
+  if (t.id === 'bq-brand') { bq.brand = t.value; bq.pid = ''; scan.res = null; redrawSheet(); }
+  if (t.id === 'scan-file' && t.files && t.files[0]) { scanPhoto(currentP || {name: '', brand: ''}, t.files[0]); }
   if (t.id === 'mac-skip') { S.macSkip = t.checked; repairWeek(); save(); }
   if (t.id === 'mac-time' && /^\d\d:\d\d$/.test(t.value)) {
     S.macTime = t.value;
@@ -4416,6 +4673,7 @@ window.onNativeBack = () => {
   checkUpdate();
   ensureSounds();
   requestAnimationFrame(() => nativeCall('ready'));
+  window.onNativeOpen();
   if (S.alarms.length) syncAlarms();
   weatherBoot();
   if (S.perfumes.some(p => p.cid && !p.conc)) setTimeout(() => loadCatalog().catch(() => {}), 1500);

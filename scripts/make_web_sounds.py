@@ -203,6 +203,50 @@ def mal_pirinc(t):
     out += partials(392.0, t - .5, ((1, 1), (2, .35), (3, .1)), .01, 1.1) * .5
     return out
 
+# ---------- Lune set: moonlight on glass ----------
+def lune_ay(t):
+    # "Moonlight": a soft glass pad, A major add9 swelling in and out, with one high star on top
+    out = 0
+    for i, f in enumerate((220.0, 329.63, 440.0, 493.88, 659.25)):
+        e = min(1, t / .35) * math.exp(-max(0, t - .5) / 1.1)
+        out += e * (math.sin(2 * math.pi * f * t) + .5 * math.sin(2 * math.pi * f * 1.004 * t) + .12 * math.sin(4 * math.pi * f * t)) * (.9 - i * .1)
+    out += partials(1318.51, t - .7, ((1, 1), (2, .1)), .01, .9) * .5
+    return out * .5
+
+random.seed(5)
+_STARS = [(.05 + i * .09 + random.random() * .05, random.choice((1318.51, 1567.98, 1760.0, 2093.0, 2349.32, 2637.02)), .5 + random.random() * .5) for i in range(11)]
+
+def lune_yildiz(t):
+    # "Stars": a scatter of tiny high bells, pentatonic, thinning out
+    out = 0
+    for s0, f, a in _STARS:
+        out += partials(f, t - s0, ((1, 1), (2.4, .08)), .002, .35) * a * (1 - s0 / 1.6)
+    return out
+
+def lune_dalga(t):
+    # "Wave": one breath of air rising and falling under a slow two-note glide
+    e = math.sin(math.pi * min(1, t / 1.6)) ** 2
+    out = (random.random() * 2 - 1) * e * .16
+    f = 392.0 + 131.0 * min(1, t / 1.2)
+    out += math.sin(2 * math.pi * f * t) * e * .55 + math.sin(2 * math.pi * f * 1.5 * t) * e * .22
+    return out
+
+def lune_arp(t):
+    # "Arp": a clean synth arpeggio climbing F#m7 and landing on a bright top note; good news
+    out = 0
+    for i, f in enumerate((369.99, 440.0, 554.37, 659.25, 739.99, 880.0, 1108.73)):
+        out += partials(f, t - i * .085, ((1, 1), (2, .28), (3, .1)), .004, .42 if i < 6 else 1.0) * (.6 + i * .06)
+    return out
+
+def lune_nabiz(t):
+    # "Pulse": two soft low heartbeats and a small glass ping
+    out = 0
+    for s0 in (0, .28):
+        x = t - s0
+        if x >= 0: out += math.sin(2 * math.pi * (70 + 40 * math.exp(-x / .04)) * x) * min(1, x / .004) * math.exp(-x / .12) * .9
+    out += partials(1760.0, t - .62, ((1, 1), (2.7, .12)), .003, .8) * .45
+    return out
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     random.seed(3)
@@ -223,4 +267,10 @@ if __name__ == '__main__':
     render('mal_damla', 2.0, mal_damla, .5, 2, (.27, .25))
     render('mal_piyano', 2.6, mal_piyano, .5, 4, (.3, .15))
     render('mal_pirinc', 2.3, mal_pirinc, .44, 2, (.2, .2))
+    random.seed(33)
+    render('lune_ay', 3.0, lune_ay, .5, 4, (.33, .28))
+    render('lune_yildiz', 2.2, lune_yildiz, .42, 2, (.25, .3))
+    render('lune_dalga', 2.2, lune_dalga, .48, 5, (.3, .2))
+    render('lune_arp', 2.2, lune_arp, .46, 2, (.17, .25))
+    render('lune_nabiz', 1.9, lune_nabiz, .52, 3, (.26, .15))
     print('ok')
