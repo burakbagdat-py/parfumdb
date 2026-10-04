@@ -604,6 +604,12 @@ body.sheet-open{overflow:hidden}
 .np .note-chip,.dpane .np .note-chip,html.premium .np .note-chip{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;line-height:1.2;padding:7px 13px 7px 10px;border-radius:999px;
   background:color-mix(in srgb,var(--fg) 7%,transparent);border:1px solid color-mix(in srgb,var(--fg) 9%,transparent);color:var(--fg)}
 .np .note-chip::before{content:"";width:8px;height:8px;border-radius:50%;flex:none;background:hsl(var(--nh,0) var(--ns,0%) 62%)}
+.rb-head{display:grid;grid-template-columns:84px minmax(0,1fr);gap:14px;align-items:center}
+.rb-head .art{border-radius:16px;aspect-ratio:4/5;font-size:18px}
+.rb-head .hero-name{font-size:22px}
+/* what can be done with a random pick comes after its scent, and small */
+.rb-mini{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding-top:4px}
+html.premium .rb-mini .btn.sm{min-height:36px;padding:0 13px;font-size:13px}
 .top-acts{display:flex;gap:8px;flex:none}
 /* the press-and-hold menu: plain rows, no icon column */
 .qmenu .menu button,html.premium .qmenu .menu button{grid-template-columns:minmax(0,1fr) auto;padding:13px 16px;min-height:52px}
@@ -2080,6 +2086,7 @@ function renderWeek(){
   </div></section>
   ${sampleNote() ? `<section class="section">${sampleNote()}</section>` : ''}
   ${tiles.length ? `<section class="section"><h2>Şu an</h2><div class="td-tiles">${tiles.join('')}</div></section>` : ''}
+  ${seenStrip(10)}
   <section class="section">
     <div class="row spread"><h2>Bu hafta</h2><button class="btn sm" data-act="shuffle" type="button">Haftayı karıştır</button></div>
     <div class="td-week">${DAYS.map(({d, s: sn}) => { const q = S.week[d].pid && byId(S.week[d].pid); return `<button class="td-day${d === wkSel ? ' on' : ''}${d === t ? ' now' : ''}" data-act="wksel" data-day="${d}" type="button" aria-label="${sn} ${dateOf(d)}${q ? ', ' + esc(q.name) : ''}">${sn}<b>${dateOf(d)}</b><div class="art">${art(q)}</div></button>`; }).join('')}</div>
@@ -2529,6 +2536,7 @@ function renderExploreBody(){
   const filtered = ex.q || ex.g || ex.boy || ex.conc || ex.seg || ex.cats.length;
   let html = '';
   if (!filtered) {
+    html += seenStrip(12);
     const av0 = avoidKeys(), line = CAT.filter(c => skin().line(c.r) && !(av0.length && avoidedRow(c, av0))).slice(0, 16);
     if (line.length) html += `<section class="section"><h3>${esc(skin().shelf)}</h3>
       <div class="shelf">${line.map(c => `<button class="card" data-act="cview" data-cid="${c.r[0]}" type="button">
@@ -4172,6 +4180,16 @@ function wearInfo(p){
 }
 // one action of the perfume page: the full label in the classic row, a short one under an icon in the premium toolbar
 const dBtn = (cls, icon, lg, st, attrs) => `<button class="btn sm${cls ? ' ' + cls : ''}" ${attrs} type="button">${icon}<span class="lg">${lg}</span><span class="st">${st}</span></button>`;
+// the notes as a small pyramid; a brand that publishes one plain list gets one block, not a pyramid with two empty steps
+function notesBlock(p){
+  const tiers = TIERS.filter(([k]) => p[k].length);
+  if (!tiers.length) return '';
+  const chip = (n, k) => { const h = noteHue(n); return `<button class="note-chip"${h == null ? '' : ` style="--nh:${h};--ns:72%"`} data-act="note" data-n="${esc(n)}" data-tier="${k}" type="button">${esc(n)}</button>`; };
+  return `<div class="np">${tiers.length === 1
+    ? `<div class="np-t t3"><div class="np-h"><b>Notalar</b></div><div class="chips">${p[tiers[0][0]].map(n => chip(n, '')).join('')}</div></div>`
+    : tiers.map(([k, label, when]) => `<div class="np-t t${k === 'top' ? 1 : k === 'heart' ? 2 : 3}"><div class="np-h"><b>${label}</b><span>${when}</span></div><div class="chips">${p[k].map(n => chip(n, k)).join('')}</div></div>`).join('')}</div>
+    <span class="muted small" style="text-align:center">Bir notaya dokun, ne koktuğunu anlatsın.</span>`;
+}
 function detailHtml(p, o){
   currentP = p;
   if (dTab === 'sim' && !S.sim.on) dTab = 'notes';
@@ -4194,15 +4212,7 @@ function detailHtml(p, o){
     ${versHtml(p)}
     <div class="seg dtabs">${[['notes', 'Notalar'], ['price', 'Fiyat'], ['info', 'Bilgi'], ...(S.sim.on ? [['sim', 'Benzer']] : [])].map(([k, l]) => `<button class="${dTab === k ? 'on' : ''}" data-act="dtab" data-v="${k}" type="button">${l}</button>`).join('')}</div>
     <div class="dpane" data-pane="notes"${dTab === 'notes' ? '' : ' hidden'}>
-      ${notes ? (() => {
-        // a brand that publishes one plain list of notes gets one block, not a pyramid with two empty steps
-        const tiers = TIERS.filter(([k]) => p[k].length);
-        const chip = (n, k) => { const h = noteHue(n); return `<button class="note-chip"${h == null ? '' : ` style="--nh:${h};--ns:72%"`} data-act="note" data-n="${esc(n)}" data-tier="${k}" type="button">${esc(n)}</button>`; };
-        return `<div class="np">${tiers.length === 1
-          ? `<div class="np-t t3"><div class="np-h"><b>Notalar</b></div><div class="chips">${p[tiers[0][0]].map(n => chip(n, '')).join('')}</div></div>`
-          : tiers.map(([k, label, when]) => `<div class="np-t t${k === 'top' ? 1 : k === 'heart' ? 2 : 3}"><div class="np-h"><b>${label}</b><span>${when}</span></div><div class="chips">${p[k].map(n => chip(n, k)).join('')}</div></div>`).join('')}</div>
-        <span class="muted small" style="text-align:center">Bir notaya dokun, ne koktuğunu anlatsın.</span>`;
-      })()
+      ${notes ? notesBlock(p)
       : '<div class="empty">Henüz nota eklenmemiş. “Düzenle” ile ekleyebilirsin.</div>'}
       ${p.fam.length > 3 ? `<div class="fam-line" style="justify-content:center">${p.fam.slice(3).map(famTag).join('')}</div>` : ''}
     </div>
@@ -4223,6 +4233,7 @@ function detailHtml(p, o){
 function openDetail(p){
   if (!p) return;
   sheetMode = 'detail';
+  seenAdd(p);
   const cr = CAT && p.cid && CAT.byId.get(p.cid);
   if (cr) { let more = false; [['fam', 8], ['top', 9], ['heart', 10], ['base', 11]].forEach(([k, i]) => { if (cr.r[i].length > p[k].length) { p[k] = cr.r[i].slice(); more = true; } }); if (more) save(); }
   const f = openOverlay();
@@ -4241,6 +4252,7 @@ function openCatalogDetail(cid){
   const c = CAT && CAT.byId.get(+cid); if (!c) return;
   sheetMode = 'cdetail';
   const r = c.r, p = toPerfume(r), owned = inCollection(r[0]);
+  seenAdd(p, r[0]);
   const f = openOverlay();
   pageFn = () => openCatalogDetail(cid);
   f.innerHTML = detailHtml(p, {eyebrow: 'Katalog ' + segTag(r[15]) + (c.boy ? ' <span class="boyner">Boyner</span>' : ''), year: r[3], votes: r[5], actions: `
@@ -4344,27 +4356,27 @@ async function rbPick(){
   const r = c.r, p = toPerfume(r), st = STORES[S.store], owned = inCollection(r[0]);
   currentP = p;
   const stats = [r[13] ? '★ ' + r[13].toFixed(1) : '', p.lon ? 'Kalıcılık ' + miniDots(p.lon) : '', p.sil ? 'Yayılım ' + miniDots(p.sil) : ''].filter(Boolean).map(x => `<span class="mini">${x}</span>`).join('');
-  f.innerHTML = `<div class="row spread"><button class="back" style="margin:0" data-act="randbuy" type="button">‹ ${esc([rb.seg ? SEG[rb.seg] : '', rb.cat].filter(Boolean).join(' · ') || 'Seçime dön')}</button>${closeIcon}</div>
-    <div class="dhead">
+  seenAdd(p, r[0]);
+  f.innerHTML = `<div class="row spread" style="flex-wrap:nowrap"><button class="back" style="margin:0" data-act="randbuy" type="button">‹ ${esc([rb.seg ? SEG[rb.seg] : '', rb.cat].filter(Boolean).join(' · ') || 'Seçime dön')}</button>
+      <span class="row" style="flex-wrap:nowrap;gap:8px"><button class="btn sm" data-act="rbgo" type="button">${IC.swap}Başka seç</button>${closeIcon}</span></div>
+    <div class="rb-head">
       <div class="art tap" data-act="cview" data-cid="${r[0]}">${art(p)}</div>
       <div class="hero-body">
         <span class="hero-brand" lang="en">${esc(p.brand)} ${catConc(r)} ${segTag(r[15])}</span>
         <span class="hero-name">${esc(p.name)}</span>
         <div class="dstats">${stats}</div>
-        <div class="bell-row">${bellHtml(p)}${piggyChip(p)}${authChip(p)}</div>
         <div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>
       </div>
     </div>
-    <div class="rb-notes">${[['Üst', p.top], ['Kalp', p.heart], ['Alt', p.base]].filter(x => x[1].length).map(([l, n]) => `<b>${l}:</b> ${esc(n.slice(0, 4).join(', '))}`).join(' · ')}</div>
-    <div class="chips">${mainCats(p).map(x => `<span class="pill">${esc(x)}</span>`).join('')}</div>
+    ${notesBlock(p)}
+    ${p.fam.length > 3 || mainCats(p).length ? `<div class="chips" style="justify-content:center">${p.fam.slice(3).map(famTag).join('')}${mainCats(p).map(x => `<span class="pill">${esc(x)}</span>`).join('')}</div>` : ''}
     ${st.live ? pricesBox(p) : ''}
-    <div class="rb-actions">
-      <button class="btn primary" data-act="cadd" data-cid="${r[0]}" type="button"${owned ? ' disabled' : ''}>${owned ? 'Koleksiyonda ✓' : 'Koleksiyona ekle'}</button>
-      <button class="btn" data-act="cbuy" data-cid="${r[0]}" type="button">Satın almayı planla</button>
-      <button class="btn" data-act="openbest" type="button">Mağazada aç</button>
-      <button class="btn" data-act="rbgo" type="button">Başka seç</button>
-    </div>
-    <button class="btn ghost block" data-act="cview" data-cid="${r[0]}" type="button">Tüm detaylar</button>`;
+    <div class="rb-mini">
+      <button class="btn sm" data-act="cadd" data-cid="${r[0]}" type="button"${owned ? ' disabled' : ''}>${owned ? 'Koleksiyonda ✓' : 'Koleksiyona ekle'}</button>
+      <button class="btn sm" data-act="cbuy" data-cid="${r[0]}" type="button">Almayı planla</button>
+      <button class="btn sm" data-act="openbest" type="button">Mağazada aç</button>
+      <button class="btn sm ghost" data-act="cview" data-cid="${r[0]}" type="button">Tüm detaylar</button>
+    </div>`;
   notifyPick(p, [rb.seg ? SEG[rb.seg] : '', rb.cat].filter(Boolean).join(' · ') || 'Rastgele al');
   if (st.live) loadPricesInto(p);
 }
@@ -5215,6 +5227,9 @@ document.addEventListener('click', async e => {
     case 'edit': openSheet(byId(t.dataset.id)); break;
     case 'view': openDetail(byId(t.dataset.id)); break;
     case 'close': closeSheet(); break;
+    case 'seenall': openSeen(); break;
+    case 'seenopen': await seenOpen(+t.dataset.i); break;
+    case 'seenclear': S.seen = []; save(); closeSheet(true); render(); toast('Geçmiş temizlendi'); break;
     case 'qtab': { dTab = t.dataset.v; if (t.dataset.cid) openCatalogDetail(t.dataset.cid); else openDetail(byId(t.dataset.id)); break; }
     case 'wheeltoggle': { const id = t.dataset.id; S.wheelOff = S.wheelOff.includes(id) ? S.wheelOff.filter(x => x !== id) : [...S.wheelOff, id]; save(); if (S.tab === 'cark') renderWheel(); toast(S.wheelOff.includes(id) ? 'Çarktan çıkarıldı' : 'Çarka geri kondu'); break; }
     case 'cardshare': await cardShare(); break;
@@ -5510,6 +5525,40 @@ function removePerfume(id){
   if (S.card) { S.card.perfumes = (S.card.perfumes || []).filter(x => x !== id); S.card.wish = (S.card.wish || []).filter(x => x !== id); }
   if (S.lastSpin === id) S.lastSpin = null;
   repairWeek(); save();
+}
+// The last perfumes looked at, newest first. Name and house are kept with the entry so the list can be drawn before the catalogue loads.
+const seenList = () => (S.seen = S.seen || []);
+function seenAdd(p, cid){
+  if (!p || !p.name) return;
+  const key = cid || p.cid || 0, l = seenList().filter(x => key ? x.cid !== key : x.pid !== p.id);
+  l.unshift({cid: key, pid: p.id && byId(p.id) ? p.id : '', n: p.name, b: p.brand || '', img: key ? '' : (p.img || ''), t: Date.now()});
+  S.seen = l.slice(0, 40); save();
+}
+const seenPerfume = x => x.pid && byId(x.pid) || (x.cid && inCollection(x.cid)) || null;
+const seenArt = x => art(seenPerfume(x) || {name: x.n, img: x.cid ? fimg(x.cid) : x.img});
+const agoShort = t => { const m = Math.floor((Date.now() - t) / 60e3); return m < 1 ? 'şimdi' : m < 60 ? m + ' dk önce' : m < 24 * 60 ? Math.floor(m / 60) + ' saat önce' : agoTxt(t); };
+function seenStrip(max){
+  const l = seenList().slice(0, max);
+  return l.length ? `<section class="section"><div class="row spread"><h3>Son baktıkların</h3><button class="btn sm ghost" data-act="seenall" type="button">Tümü (${seenList().length})</button></div>
+    <div class="td-alt">${l.map((x, i) => `<button data-act="seenopen" data-i="${i}" type="button"><div class="art">${seenArt(x)}</div><span>${esc(x.n)}</span></button>`).join('')}</div></section>` : '';
+}
+function openSeen(){
+  sheetMode = 'seen';
+  const f = openOverlay(), l = seenList();
+  f.innerHTML = `<div class="row spread"><h2>Son baktıkların</h2>${closeIcon}</div>
+    ${l.length ? `<div class="list">${l.map((x, i) => `<button class="item" data-act="seenopen" data-i="${i}" type="button"><div class="art">${seenArt(x)}</div>
+      <div class="item-body"><span class="item-name">${esc(x.n)}</span><span class="item-meta"><span lang="en">${esc(x.b)}</span> · ${esc(agoShort(x.t))}${seenPerfume(x) ? ' · koleksiyonunda' : ''}</span></div>
+      ${ICONS.chev}</button>`).join('')}</div>
+      <button class="btn sm ghost" data-act="seenclear" type="button" style="align-self:center">Geçmişi temizle</button>`
+      : '<div class="empty">Henüz bir parfüme bakmadın. Baktıkların burada sıralanır.</div>'}`;
+}
+async function seenOpen(i){
+  const x = seenList()[i]; if (!x) return;
+  const p = seenPerfume(x);
+  if (p) { openDetail(p); return; }
+  if (!x.cid) { toast('Bu parfüm artık koleksiyonunda değil'); return; }
+  try { await loadCatalog(); } catch (e) { toast('Katalog yüklenemedi'); return; }
+  if (CAT.byId.get(x.cid)) openCatalogDetail(x.cid); else toast('Bu parfüm katalogda bulunamadı');
 }
 function quickFor(el){
   const a = el.dataset.act, d = el.dataset;
