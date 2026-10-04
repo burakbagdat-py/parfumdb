@@ -483,6 +483,13 @@ body.sheet-open{overflow:hidden}
 .auth-check:first-child{border-top:0}
 .auth-check input{width:20px;height:20px;accent-color:var(--accent);flex:none;margin-top:1px}
 .auth-score{font-family:var(--f-display);font-weight:var(--dw);font-size:18px}
+.scan-box{position:relative;border-radius:18px;overflow:hidden;background:#000;aspect-ratio:4/3}
+.scan-box video{width:100%;height:100%;object-fit:cover;display:block}
+.scan-box::after{content:"";position:absolute;inset:18% 12%;border:2px solid rgb(255 255 255 / .85);border-radius:14px;box-shadow:0 0 0 999px rgb(0 0 0 / .35);pointer-events:none}
+.scan-res{border:1px solid var(--line);border-radius:14px;padding:11px 13px;font-size:13.5px;line-height:1.45;display:flex;flex-direction:column;gap:6px;background:var(--panel-2)}
+.scan-res.good{border-color:var(--ok)} .scan-res.bad{border-color:var(--danger)} .scan-res.warn{border-color:var(--accent-2)}
+.scan-res b.h{font-size:14.5px}
+.scan-res code{font-family:ui-monospace,monospace;font-size:13px;word-break:break-all}
 .dupe-tag{font-size:10.5px;font-weight:800;letter-spacing:.3px;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--grad);color:var(--ink)}
 .sim-why{font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
 .sim-pct{font-size:12px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
@@ -2290,6 +2297,123 @@ const AUTH_CHECKS = [
   ['scent', 'Koku testerla aynı gelişiyor ve kalıcılığı beklenen gibi (ilk dakikada keskin alkol kokup kaybolmuyor)']
 ];
 const authFor = p => AUTH_BRANDS.find(b => b.m.test(fold(p.brand || '')));
+
+/* ---------- scan a QR / barcode with the camera, or type the batch code, and judge it inside the app ---------- */
+// where a brand's own QR may lead
+const OFFICIAL_HOSTS = [[/^lattafa/, ['lattafa.com']], [/^afnan/, ['afnan.com']], [/^(xerjoff|casamorati)/, ['xerjoff.com', 'certilogo.com']], [/^armaf/, ['armaf.ae', 'armaf.com']],
+  [/^rasasi/, ['rasasi.com']], [/^ajmal/, ['ajmal.com', 'ajmalperfume.com']], [/^swiss ?arabian/, ['swissarabian.com']], [/^parfums de marly/, ['parfums-de-marly.com']],
+  [/^creed/, ['creedfragrances.co.uk', 'creedboutique.com', 'creedfragrance.com']], [/^amouage/, ['amouage.com']], [/^fragrance world/, ['fragranceworld.ae']],
+  [/^paris corner/, ['pariscorner.ae']], [/^nishane/, ['nishane.com']], [/^al haramain/, ['alharamainperfumes.com']]];
+// batch-code layouts I am sure about; other houses are not guessed
+const yearDay = {fmt: /^\d{4}[A-Z0-9]{0,6}$/, hint: '4 rakamla başlar: 1. rakam yılın son hanesi, sonraki üçü yılın kaçıncı günü (ör. 3123 → 2023’ün 123. günü)',
+  dec: c => { const d = +c.slice(1, 4); return d >= 1 && d <= 366 ? {y: +c[0], doy: d} : null; }};
+const BATCH_RULES = [
+  {n: 'LVMH (Dior, Guerlain, Givenchy, Kenzo)', m: /^(dior|christian dior|guerlain|givenchy|kenzo)/, fmt: /^\d[A-HJ-M]\d{2}$/, hint: '4 karakter: rakam + harf + 2 rakam (ör. 2K01). Rakam yılın son hanesi, harf ay (A=Ocak … M=Aralık, I kullanılmaz)',
+    dec: c => ({y: +c[0], m: 'ABCDEFGHJKLM'.indexOf(c[1]) + 1})},
+  {n: 'Puig (Jean Paul Gaultier, Rabanne, Carolina Herrera, Nina Ricci)', m: /^(jean paul gaultier|rabanne|paco rabanne|carolina herrera|nina ricci)/, ...yearDay},
+  {n: 'Coty (Hugo Boss, Gucci, Burberry, Calvin Klein, Chloé, Davidoff, Marc Jacobs)', m: /^(hugo boss|boss|gucci|burberry|calvin klein|chloe|davidoff|marc jacobs)/, ...yearDay},
+  {n: 'Estée Lauder (Tom Ford, Jo Malone, Kilian, Le Labo, Frederic Malle)', m: /^(tom ford|jo malone|by kilian|kilian|le labo|frederic malle|estee lauder|aerin|clinique)/, fmt: /^[A-Z][1-9ABC]\d$/,
+    hint: '3 karakter: harf + ay + yıl (ör. A83 → Ağustos, yılın son hanesi 3). Ay: 1–9, A=Ekim, B=Kasım, C=Aralık',
+    dec: c => ({y: +c[2], m: '123456789ABC'.indexOf(c[1]) + 1})}
+];
+const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+function decodeBatch(p, raw){
+  const code = String(raw).toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (code.length < 3 || code.length > 12) return {cls: 'bad', h: 'Bu bir parti koduna benzemiyor', t: 'Parti kodu genelde 3–10 harf/rakamdır ve kutunun altına basılı, şişenin altına kazınmış ya da basılmıştır. Barkodun altındaki 13 haneli sayı parti kodu değildir.'};
+  const rule = BATCH_RULES.find(r => r.m.test(fold(p.brand || '')));
+  const launch = (CAT && p.cid && CAT.byId.get(p.cid) || {r: []}).r[3] || 0;
+  if (!rule) return {cls: 'warn', code, h: 'Kod kaydedildi; bu markanın kod düzenini ben çözemiyorum',
+    t: `${esc(p.brand || 'Bu marka')} için parti kodu düzenini güvenle bilmiyorum, o yüzden tarih uydurmuyorum. Kodu kopyaladım: CheckFresh ya da CheckCosmetic’te markayı seçip yapıştır. Asıl kontrol: kutudaki kod ile şişedeki kod birebir aynı mı?`, links: true};
+  if (!rule.fmt.test(code)) return {cls: 'bad', code, h: 'Kod bu markanın düzenine uymuyor',
+    t: `${esc(rule.n)} kodları şöyle olur: ${esc(rule.hint)}. Yanlış okumuş olabilirsin (0 ile O, 1 ile I karışır); doğru yazdıysan bu ciddi bir şüphe işaretidir.`, links: true};
+  const d = rule.dec(code);
+  if (!d || (d.m !== undefined && !d.m)) return {cls: 'bad', code, h: 'Kod geçerli bir tarih vermiyor', t: 'Karakterler doğru yerde ama gün/ay değeri mümkün değil. Kodu tekrar kontrol et.', links: true};
+  const now = new Date(), cy = now.getFullYear();
+  let y = cy - ((cy - d.y) % 10 + 10) % 10;                       // the latest year ending in that digit
+  const mo = d.m !== undefined ? d.m : new Date(y, 0, d.doy).getMonth() + 1;
+  if (y === cy && mo > now.getMonth() + 1) y -= 10;               // not in the future
+  const when = `${MONTHS[mo - 1]} ${y}`, age = (cy - y) * 12 + (now.getMonth() + 1 - mo);
+  if (launch && y < launch) return {cls: 'bad', code, h: `Üretim tarihi ${when} çıkıyor, ama bu parfüm ${launch}’de çıktı`,
+    t: 'Kod, parfümün piyasaya çıkışından önceki bir tarihi gösteriyor. Kodu doğru yazdıysan bu ürün büyük olasılıkla sahte (ya da kod başka bir ürüne ait).', links: true};
+  return {cls: age > 60 ? 'warn' : 'good', code, h: `Üretim: ${when} · ${age < 12 ? age + ' aylık' : Math.floor(age / 12) + ' yıllık'}`,
+    t: `Kod ${esc(rule.n)} düzenine uyuyor${launch ? ` ve parfümün çıkış yılıyla (${launch}) çelişmiyor` : ''}. ${age > 60 ? 'Beş yıldan eski: orijinal olabilir ama eski stoktur, koku değişmiş olabilir. ' : ''}Yılın son hanesi 10 yılda bir tekrar eder; tarih en yakın uygun yıla göre tahmindir. Şimdi kutudaki ve şişedeki kodun aynı olduğunu kontrol et.`, links: true};
+}
+const GS1 = [[0, 139, 'ABD / Kanada'], [300, 379, 'Fransa'], [400, 440, 'Almanya'], [450, 459, 'Japonya'], [490, 499, 'Japonya'], [500, 509, 'Birleşik Krallık'], [540, 549, 'Belçika / Lüksemburg'],
+  [628, 628, 'Suudi Arabistan'], [629, 629, 'Birleşik Arap Emirlikleri'], [690, 699, 'Çin'], [730, 739, 'İsveç'], [760, 769, 'İsviçre'], [800, 839, 'İtalya'], [840, 849, 'İspanya'],
+  [868, 869, 'Türkiye'], [870, 879, 'Hollanda'], [880, 880, 'Güney Kore'], [890, 890, 'Hindistan']];
+function judgeBarcode(p, digits){
+  const c = digits.length === 12 ? '0' + digits : digits;
+  let ok = false;
+  if (/^\d{13}$/.test(c)) { let sum = 0; for (let i = 0; i < 12; i++) sum += +c[i] * (i % 2 ? 3 : 1); ok = (10 - sum % 10) % 10 === +c[12]; }
+  else if (/^\d{8}$/.test(c)) { let sum = 0; for (let i = 0; i < 7; i++) sum += +c[i] * (i % 2 ? 1 : 3); ok = (10 - sum % 10) % 10 === +c[7]; }
+  else return {cls: 'warn', code: digits, h: 'Barkod okundu', t: 'Bu barkod türü ülke/sağlama bilgisi taşımıyor. Kutudaki parti kodunu elle girerek devam et.'};
+  if (!ok) return {cls: 'bad', code: digits, h: 'Barkodun sağlama hanesi yanlış', t: 'Gerçek bir ürün barkodunda son hane hesapla tutar. Tutmuyorsa barkod uydurulmuş olabilir (ya da kamera yanlış okudu: bir kez daha okut).'};
+  const pre = +c.slice(0, 3), g = c.length === 13 && GS1.find(x => pre >= x[0] && pre <= x[1]);
+  const odd = !!g && g[2] === 'Çin';
+  return {cls: odd ? 'bad' : 'good', code: digits, h: odd ? 'Barkod Çin’de kayıtlı bir firmaya ait' : 'Barkod geçerli' + (g ? ' · ' + g[2] : ''),
+    t: (odd ? 'Tanınmış parfüm evlerinin barkodu Çin önekiyle (690–699) başlamaz; bu güçlü bir sahtelik işaretidir. '
+      : `Sağlama hanesi tutuyor${g ? `; barkodu alan firma ${g[2]} kayıtlı` : ''}. `) + 'Bu, barkodun düzgün olduğunu gösterir; sahteciler gerçek barkodu kopyalayabildiği için tek başına kanıt değildir.'};
+}
+function judgeQr(p, text){
+  let u = null; try { u = new URL(text); } catch (e) {}
+  if (!u || !/^https?:$/.test(u.protocol)) return /^\d{8,14}$/.test(text) ? judgeBarcode(p, text) : {cls: 'warn', code: text.slice(0, 120), h: 'Kod okundu ama bir web adresi değil', t: 'Bu kodun içinde bağlantı yok. Marka doğrulama etiketleri genelde bir web adresi açar; bu bir seri numarası olabilir.'};
+  const host = u.hostname.replace(/^www\./, ''), fb = fold(p.brand || '');
+  const mine = (OFFICIAL_HOSTS.find(x => x[0].test(fb)) || [])[1];
+  const any = OFFICIAL_HOSTS.find(x => x[1].some(h => host === h || host.endsWith('.' + h)));
+  const safe = u.protocol === 'https:' ? u.href : '';
+  if (mine && mine.some(h => host === h || host.endsWith('.' + h))) return {cls: 'good', code: host, h: 'QR markanın resmi adresine gidiyor', t: `Adres: ${esc(host)}. Bu ${esc(p.brand)} için bildiğim resmi alan adı. Sayfayı açıp doğrulamayı tamamla; sayfa “orijinal” demeden işaretleme.`, url: safe};
+  if (mine) return {cls: 'bad', code: host, h: 'QR markanın resmi adresine gitmiyor', t: `Adres: ${esc(host)}. ${esc(p.brand)} için bildiğim resmi adresler: ${mine.join(', ')}. Sahte kutularda “orijinal” diyen sahte doğrulama sitelerine giden QR’lar çok yaygın. Bu sayfaya güvenme.`, url: safe};
+  if (any) return {cls: 'warn', code: host, h: 'QR başka bir markanın adresine gidiyor', t: `Adres: ${esc(host)}; bu ${esc(p.brand || 'bu parfümün markası')} değil. Yanlış ürünü okutmuş olabilirsin.`, url: safe};
+  return {cls: 'warn', code: host, h: 'QR şu adrese gidiyor: ' + host, t: `${esc(p.brand || 'Bu marka')} için resmi doğrulama adresini bilmiyorum. Adres markanın kendi sitesi mi (örn. marka-adı.com)? Alakasız, kısaltılmış ya da garip bir adres ise güvenme.`, url: safe};
+}
+let scan = {stream: null, timer: 0, res: null, on: false};
+function stopScan(){
+  clearInterval(scan.timer); scan.timer = 0; scan.on = false;
+  if (scan.stream) { scan.stream.getTracks().forEach(t => t.stop()); scan.stream = null; }
+}
+const detector = () => 'BarcodeDetector' in window ? new BarcodeDetector({formats: ['qr_code', 'ean_13', 'ean_8', 'upc_a', 'data_matrix', 'code_128']}) : null;
+function scanDone(p, raw, fmt){
+  stopScan(); haptic('confirm');
+  const digits = /^(ean|upc)/.test(fmt || '') && /^\d+$/.test(raw);
+  scan.res = digits ? judgeBarcode(p, raw) : judgeQr(p, raw);
+  S.authCodes = S.authCodes || {}; (S.authCodes[p.name] = S.authCodes[p.name] || {})[digits ? 'ean' : 'qr'] = raw.slice(0, 300); save();
+  redrawSheet();
+}
+async function startScan(p){
+  const det = detector();
+  if (!det) { scan.res = {cls: 'warn', h: 'Bu cihazda kamerayla okutma desteklenmiyor', t: 'Parti kodunu aşağıya elle yazabilirsin; QR için telefonunun kendi kamerasını kullanıp açılan adresin markanın sitesi olduğuna bak.'}; redrawSheet(); return; }
+  try {
+    scan.stream = await navigator.mediaDevices.getUserMedia({video: {facingMode: {ideal: 'environment'}, width: {ideal: 1280}}, audio: false});
+  } catch (e) {
+    scan.res = {cls: 'warn', h: 'Kamera açılamadı', t: NATIVE && appVersion() < 20 ? 'Kamerayla okutma uygulamanın yeni sürümünde (v20) çalışır: üstteki “Şimdi güncelle”ye dokun. O zamana kadar “Fotoğraftan oku”yu ya da elle girmeyi kullan.' : 'Kamera iznini vermen gerekiyor (Ayarlar > Uygulamalar > BB Parfüm Envanteri > İzinler). “Fotoğraftan oku” ya da elle giriş de olur.'};
+    redrawSheet(); return;
+  }
+  scan.on = true; scan.res = null; redrawSheet();
+  if (!document.getElementById('scan-video')) { stopScan(); return; }
+  let busy = false;
+  scan.timer = setInterval(async () => {
+    const v = document.getElementById('scan-video');
+    if (!v) { stopScan(); return; }
+    if (busy || !scan.on || v.readyState < 2) return;
+    busy = true;
+    try { const r = await det.detect(v); if (r.length && scan.on) scanDone(p, r[0].rawValue, r[0].format); } catch (e) {}
+    busy = false;
+  }, 300);
+}
+async function scanPhoto(p, file){
+  const det = detector();
+  if (!det) { scan.res = {cls: 'warn', h: 'Bu cihazda görüntüden kod okuma desteklenmiyor', t: 'Kodu elle yaz.'}; redrawSheet(); return; }
+  try {
+    const bmp = await createImageBitmap(file), r = await det.detect(bmp);
+    if (r.length) scanDone(p, r[0].rawValue, r[0].format);
+    else { scan.res = {cls: 'warn', h: 'Fotoğrafta QR ya da barkod bulunamadı', t: 'Kodu yakından, net ve düz bir açıyla çek. Parti kodu (küçük basılı harf/rakamlar) kamerayla okunamaz; onu elle yaz.'}; redrawSheet(); }
+  } catch (e) { scan.res = {cls: 'warn', h: 'Fotoğraf okunamadı', t: 'Başka bir fotoğraf dene.'}; redrawSheet(); }
+}
+function scanResHtml(r){
+  if (!r) return '';
+  return `<div class="scan-res ${r.cls}"><b class="h">${r.cls === 'good' ? '✓ ' : r.cls === 'bad' ? '⚠ ' : ''}${esc(r.h)}</b>${r.code ? `<code>${esc(r.code)}</code>` : ''}<span>${r.t}</span>
+    ${r.url || r.links ? `<div class="row">${r.url ? `<a class="btn sm primary" href="${esc(r.url)}" data-act="extlink">Sayfayı aç</a>` : ''}${r.links ? '<a class="btn sm" href="https://www.checkfresh.com" data-act="extlink">CheckFresh</a><a class="btn sm" href="https://checkcosmetic.net" data-act="extlink">CheckCosmetic</a>' : ''}</div>` : ''}</div>`;
+}
 function authChip(p){
   const st = p && S.auth && S.auth[p.name], n = st ? st.length : 0;
   return `<button class="bell${n >= 7 ? ' on' : ''}" data-act="auth" type="button" aria-label="Orijinallik testi">${SHIELD_SVG}<span>${n ? `Orijinallik · ${n}/${AUTH_CHECKS.length}` : 'Orijinallik'}</span></button>`;
@@ -2300,7 +2424,9 @@ function openAuth(p){
   const f = openOverlay(); f.dataset.pname = p.name;
   const b = authFor(p), site = (BRAND_SITES.find(x => x[0].test(fold(p.brand || ''))) || [])[1];
   const seg = (CAT && p.cid && CAT.byId.get(p.cid) || {r: []}).r[15];
+  scan.res = null;
   const draw = () => {
+    const saved = S.authCodes && S.authCodes[p.name] || {};
     const st = new Set(S.auth && S.auth[p.name] || []);
     const n = st.size, verdict = !n ? 'Kendi şişen için aşağıdakileri işaretle' : n >= 8 ? 'Büyük olasılıkla orijinal' : n >= 6 ? 'Orijinal olma ihtimali yüksek' : n >= 4 ? 'Emin değilim; eksik kalanlara dikkat' : 'Henüz az işaret var; hepsini kontrol et, çoğu tutmuyorsa şüphelen';
     let k = 0;
@@ -2309,12 +2435,22 @@ function openAuth(p){
       ${headHtml(p, 'Şişen gerçek mi? Sırayla kontrol et.')}
       ${b ? step(`${esc(b.n)} resmi doğrulama`, `<p>${esc(b.how)}</p><div class="row" style="margin-top:8px"><a class="btn sm primary" href="${b.url}" data-act="extlink">${esc(b.btn)}</a></div>`)
           : step('Markanın resmi doğrulaması', `<p>${esc(p.brand || 'Bu marka')} için çevrim içi bir kod doğrulama sayfası bilmiyorum; kutuda QR/hologram varsa okut ve açılan adresin markanın kendi sitesi olduğuna bak. Emin olamazsan markanın müşteri hizmetlerine parti kodunu ve fotoğrafı gönder.</p>${site ? `<div class="row" style="margin-top:8px"><a class="btn sm" href="${site}" data-act="extlink">${esc(p.brand)} resmi sitesi</a></div>` : ''}`)}
+      ${step('Uygulamada test et: okut ya da yaz', `<p>Kutudaki <b>QR / hologram kodunu</b> ya da <b>barkodu</b> kameraya göster; parti kodunu (küçük basılı harf-rakamlar) elle yaz. Sonucu hemen burada söylerim.</p>
+        ${scan.on ? `<div class="scan-box" style="margin-top:8px"><video id="scan-video" playsinline muted autoplay></video></div>
+          <div class="row" style="margin-top:8px"><button class="btn sm" data-act="scanstop" type="button">Kamerayı kapat</button><span class="muted small">Kodu çerçevenin içine getir</span></div>`
+        : `<div class="row" style="margin-top:8px"><button class="btn sm primary" data-act="scanstart" type="button">QR / barkod okut</button>
+          <label class="btn sm file-label">Fotoğraftan oku<input id="scan-file" type="file" accept="image/*"></label></div>`}
+        <div class="row" style="flex-wrap:nowrap;margin-top:8px"><input class="input" id="batch-in" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="14" placeholder="Parti kodu (ör. 2K01)" value="${esc(saved.batch || '')}" style="flex:1;min-width:0;text-transform:uppercase">
+          <button class="btn sm" data-act="batchgo" type="button">Test et</button></div>
+        <div style="margin-top:8px">${scanResHtml(scan.res)}</div>`)}
       ${step('Parti (batch) kodunu sorgula', `<p>Kutunun altında ve şişenin altında/arkasında basılı ya da kazınmış 4–8 haneli kod olur. İkisi aynı olmalı. Kodu aşağıdaki sitelerde markayı seçip gir: üretim tarihini gösterir. Kod tanınmıyorsa ya da tarih saçmaysa (çıkış yılından önce gibi) şüphelen.</p>
         <div class="row" style="margin-top:8px"><a class="btn sm" href="https://www.checkfresh.com" data-act="extlink">CheckFresh</a><a class="btn sm" href="https://checkcosmetic.net" data-act="extlink">CheckCosmetic</a></div>`)}
       ${step('Nereden aldığına bak', `<p>${seg === 'O' ? 'Orta Doğu markalarında sahteler çok yaygın: kutudaki hologram/QR etiketi olmayan ya da kazınmış ürünlerden uzak dur.' : seg === 'N' ? 'Niş parfümlerde en güvenlisi markanın kendi sitesi ve yetkili butiklerdir; “tester”, “kutusuz”, “outlet” ilanlarının çoğu sahtedir.' : 'Yetkili zincirlerden (Boyner, Beymen, Sephora, Gratis) alınan ürün orijinaldir.'} Pazar yerlerinde (n11, Pazarama, Trendyol, Hepsiburada) satıcının kim olduğuna bak: mağazanın kendisi ya da yetkili distribütör değilse risk yüksek.</p>`)}
       ${step('Şişeni kontrol et', `<div class="row spread" style="margin:4px 0 6px"><span class="auth-score">${n}/${AUTH_CHECKS.length}</span><span class="muted small">${verdict}</span></div>
         <div>${AUTH_CHECKS.map(([id, t]) => `<label class="auth-check"><input type="checkbox" class="auth-tick" data-id="${id}"${st.has(id) ? ' checked' : ''}><span>${t}</span></label>`).join('')}</div>`)}
       <span class="muted small">Bu liste kesin bir ekspertiz değildir; iyi yapılmış sahteler birçok işareti geçebilir. En güvenilir kanıt yetkili satıcı faturası ve markanın kendi doğrulamasıdır.</span>`;
+    const v = document.getElementById('scan-video');
+    if (v && scan.stream) { v.srcObject = scan.stream; v.play().catch(() => {}); }
   };
   draw(); f._draw = draw;
 }
@@ -2880,6 +3016,7 @@ function openOverlay(){
   return o.firstChild;
 }
 function closeSheet(){
+  stopScan();
   const o = document.getElementById('overlay');
   if (o) { o.id = ''; o.classList.add('closing'); setTimeout(() => o.remove(), 180); }
   document.body.classList.remove('sheet-open'); closeNoteCard();
@@ -3702,6 +3839,14 @@ document.addEventListener('click', async e => {
     case 'openbest': openBest(currentP); break;
     case 'bell': toggleBell(t); break;
     case 'auth': openAuth(currentP); break;
+    case 'scanstart': startScan(currentP); break;
+    case 'scanstop': stopScan(); redrawSheet(); break;
+    case 'batchgo': {
+      const v = document.getElementById('batch-in').value.trim(); if (!v) { toast('Parti kodunu yaz'); break; }
+      stopScan(); scan.res = decodeBatch(currentP, v);
+      if (scan.res.code) { S.authCodes = S.authCodes || {}; (S.authCodes[currentP.name] = S.authCodes[currentP.name] || {}).batch = scan.res.code; save(); try { navigator.clipboard && navigator.clipboard.writeText(scan.res.code).catch(() => {}); } catch (e) {} }
+      redrawSheet(); haptic(scan.res.cls === 'good' ? 'confirm' : 'tick'); break;
+    }
     case 'wheelsrc': S.wheelInv = t.dataset.v === 'inv'; save(); renderWheel(); toast(S.wheelInv ? 'Çark envanterden dönüyor' : 'Çark koleksiyondan dönüyor'); break;
     case 'spinagain': closeSheet(); setTimeout(() => { window.scrollTo({top: 0, behavior: 'smooth'}); spin(); }, 220); break;
     case 'pig': { const p = currentP; if (!p) break; const g = pigFor(p.name); if (g) openPig(g.id); else openPigSetup(p); break; }
@@ -3962,6 +4107,7 @@ document.addEventListener('change', async e => {
     if (set.size) S.auth[name] = [...set]; else delete S.auth[name];
     save(); const sc = document.getElementById('sheet').scrollTop; redrawSheet(); document.getElementById('sheet').scrollTop = sc;
   }
+  if (t.id === 'scan-file' && t.files && t.files[0] && currentP) { scanPhoto(currentP, t.files[0]); }
   if (t.id === 'mac-skip') { S.macSkip = t.checked; repairWeek(); save(); }
   if (t.id === 'mac-time' && /^\d\d:\d\d$/.test(t.value)) {
     S.macTime = t.value;

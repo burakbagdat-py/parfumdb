@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -48,6 +49,8 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity {
     private static final int FILE_REQ = 7;
+    private static final int CAM_REQ = 77;
+    private PermissionRequest cameraRequest;
     private static final int PERM_REQ = 8;
     private static final int SOUND_REQ = 9;
     static final String UA = "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Mobile Safari/537.36";
@@ -167,6 +170,23 @@ public class MainActivity extends Activity {
                     return false;
                 }
                 return true;
+            }
+
+            // camera for the in-app code scanner: only our own page, only video, and only after Android's own permission dialog
+            @Override
+            public void onPermissionRequest(final PermissionRequest req) {
+                runOnUiThread(() -> {
+                    boolean video = false;
+                    for (String r : req.getResources()) if (PermissionRequest.RESOURCE_VIDEO_CAPTURE.equals(r)) video = true;
+                    if (!video || !trusted()) { req.deny(); return; }
+                    if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                        req.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+                    } else {
+                        if (cameraRequest != null) cameraRequest.deny();
+                        cameraRequest = req;
+                        requestPermissions(new String[]{Manifest.permission.CAMERA}, CAM_REQ);
+                    }
+                });
             }
         });
 
@@ -551,6 +571,11 @@ public class MainActivity extends Activity {
     @Override
     public void onRequestPermissionsResult(int code, String[] perms, int[] results) {
         super.onRequestPermissionsResult(code, perms, results);
+        if (code == CAM_REQ && cameraRequest != null) {
+            if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) cameraRequest.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+            else cameraRequest.deny();
+            cameraRequest = null;
+        }
         if (code == PERM_REQ) {
             boolean ok = results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED;
             web.evaluateJavascript("window.onNativePermission && window.onNativePermission(" + ok + ")", null);
