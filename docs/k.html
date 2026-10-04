@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Parfüm kartviziti</title>
+<style>
+/* A shared card. What it shows comes from the part of the address after "#"; the page only looks up perfume names, theme colours and
+   bottle pictures by number. Nothing typed on a card is ever sent anywhere. */
+:root{--bg:#17110d;--panel:#211812;--fg:#f8ede3;--muted:#b49d8b;--accent:#f26d21;--ink:#2a1407;--disp:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+body{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px 16px calc(24px + env(safe-area-inset-bottom,0px))}
+main{width:100%;max-width:420px;display:flex;flex-direction:column;gap:14px}
+.vcard{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;gap:16px;padding:24px 20px 16px;border-radius:30px;background:var(--panel);box-shadow:0 30px 60px -34px rgb(0 0 0 / .6)}
+.vcard.a::before{content:"";position:absolute;z-index:-1;right:-32%;top:-30%;width:92%;aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 34%,transparent),transparent)}
+.vcard.b{padding-top:0}
+.vcard.b .band{height:84px;margin:0 -20px -46px;background:linear-gradient(120deg,var(--accent),color-mix(in srgb,var(--accent) 55%,var(--panel)))}
+.vcard.b .top{align-items:flex-end}
+.vcard.b .av{box-shadow:0 0 0 4px var(--panel)}
+.top{display:flex;align-items:center;gap:14px}
+.av{width:74px;height:74px;border-radius:50%;flex:none;display:grid;place-items:center;background:var(--accent);color:var(--ink);font-family:var(--disp);font-weight:700;font-size:26px}
+.id{display:flex;flex-direction:column;gap:3px;min-width:0}
+.name{font-family:var(--disp);font-size:27px;font-weight:650;line-height:1.1;letter-spacing:-.02em;overflow-wrap:anywhere}
+.title{font-size:14px;color:var(--muted);line-height:1.3}
+.bio{margin:0;font-size:15px;line-height:1.5;overflow-wrap:anywhere}
+.label{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:-6px}
+.fams{display:flex;flex-wrap:wrap;gap:6px}
+.fam{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:5px 12px 5px 9px;border-radius:999px;background:color-mix(in srgb,var(--fg) 9%,transparent)}
+.fam::before{content:"";width:8px;height:8px;border-radius:50%;background:hsl(var(--fh) 70% 58%)}
+.perf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 10px}
+.p{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-width:0}
+.p .art{width:100%;aspect-ratio:4/5;border-radius:16px;overflow:hidden;background:#fff;display:grid;place-items:center;color:#888;font-weight:700;font-size:22px}
+.p .art img{width:100%;height:100%;object-fit:cover;display:block}
+.p span{font-size:12.5px;font-weight:600;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:1.2em}
+.p small{font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.perf.wish .art{opacity:.92;border-radius:14px}
+.links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.link{display:grid;grid-template-columns:36px minmax(0,1fr);column-gap:10px;align-items:center;min-height:52px;padding:8px 12px 8px 8px;border-radius:16px;
+  background:color-mix(in srgb,var(--fg) 9%,transparent);color:var(--fg);text-decoration:none;min-width:0}
+.link:last-child:nth-child(odd){grid-column:1 / -1}
+.link i{grid-row:1 / span 2;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--accent) 22%,transparent);color:var(--accent);font-style:normal;font-weight:800;font-size:11px}
+.link span{font-size:14px;font-weight:600;line-height:1.2}
+.link small{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.foot{display:flex;justify-content:space-between;gap:10px;font-size:11px;color:var(--muted);letter-spacing:.04em;padding-top:12px;border-top:1px solid color-mix(in srgb,var(--fg) 12%,transparent)}
+.acts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.btn{min-height:50px;padding:0 16px;border-radius:999px;border:0;font:inherit;font-size:15px;font-weight:600;background:color-mix(in srgb,var(--fg) 10%,transparent);color:var(--fg);cursor:pointer}
+.btn.primary{grid-column:1 / -1;background:var(--accent);color:var(--ink);min-height:54px;font-size:16px}
+.btn:active{transform:scale(.98)}
+a:focus-visible,.btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.note{margin:0;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.5}
+.note a{color:var(--accent)}
+.empty{text-align:center;line-height:1.6;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main id="root"></main>
+<script>
+(async () => {
+'use strict';
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const root = document.getElementById('root');
+const fail = msg => { root.appendChild(el('p', 'empty', msg || 'Bu bağlantıda okunabilir bir kartvizit yok. Bağlantının tamamını kopyaladığından emin ol.')); };
+const str = (v, n) => typeof v === 'string' ? v.slice(0, n) : '';
+// the link kinds the app offers; an address is always built here from a user name, never taken ready-made (except an https web site)
+const handle = base => v => { const h = String(v).trim().replace(/^https?:\/\/[^/]+\//i, '').replace(/^@/, '').replace(/[/?#].*$/, ''); return /^[\w.\-]{1,40}$/.test(h) ? base + h : ''; };
+const LINKS = {
+  instagram: ['Instagram', 'IG', handle('https://instagram.com/')], tiktok: ['TikTok', 'TT', handle('https://www.tiktok.com/@')], x: ['X', 'X', handle('https://x.com/')],
+  youtube: ['YouTube', 'YT', handle('https://www.youtube.com/@')], facebook: ['Facebook', 'f', handle('https://www.facebook.com/')], telegram: ['Telegram', 'TG', handle('https://t.me/')],
+  whatsapp: ['WhatsApp', 'WA', v => { const d = String(v).replace(/\D/g, ''); return d.length >= 8 && d.length <= 15 ? 'https://wa.me/' + d : ''; }],
+  mail: ['E-posta', '@', v => /^[^\s@<>"'`]+@[^\s@<>"'`]+\.[a-z]{2,}$/i.test(String(v).trim()) ? 'mailto:' + String(v).trim() : ''],
+  web: ['Web sitesi', 'www', v => { try { const t = String(v).trim(), u = new URL(/^https?:\/\//i.test(t) ? t.replace(/^http:/i, 'https:') : 'https://' + t); return t && u.protocol === 'https:' && u.hostname.includes('.') ? u.href : ''; } catch (e) { return ''; } }]
+};
+const CODE = {i: 'instagram', t: 'tiktok', x: 'x', y: 'youtube', f: 'facebook', g: 'telegram', w: 'whatsapp', m: 'mail', s: 'web'};
+const ACCENTS = ['', '#cf93a2', '#cdb488', '#93b8a0', '#a3a1dc', '#77a2d6', '#c98a66', '#7fc4c0', '#b9bec9'];
+
+// ---------- read the address ----------
+const bytesOf = b64 => { const bin = atob(b64.replace(/-/g, '+').replace(/_/g, '/')), a = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i); return a; };
+let d = null;   // {n, t, b, links: [[kind, value]], perf: [ref], wish: [ref], skin, light, look, accent, stats, taste}; ref = {cid} or {name, brand}
+try {
+  const raw = location.hash.slice(1);
+  if (!raw || raw.length > 6000) throw 0;
+  if (raw[0] === '1' || raw[0] === '2') {
+    let bytes = bytesOf(raw.slice(1));
+    if (raw[0] === '2') {
+      if (!('DecompressionStream' in window)) { fail('Tarayıcın bu kartı açamıyor. Güncel bir tarayıcıyla (Chrome, Safari, Firefox) dene.'); return; }
+      const ds = new DecompressionStream('deflate-raw'), w = ds.writable.getWriter(); w.write(bytes); w.close();
+      bytes = new Uint8Array(await new Response(ds.readable).arrayBuffer());
+      if (bytes.length > 8000) throw 0;
+    }
+    const f = new TextDecoder().decode(bytes).split('\n');
+    const refs = s => (s ? s.split('\t') : []).slice(0, 6).map(x => x[0] === '!' ? {name: str(x.slice(1).split('|')[0], 60), brand: str(x.slice(1).split('|')[1] || '', 40)} : {cid: parseInt(x, 36)});
+    const th = (f[6] || '').split('.');
+    d = {n: str(f[0], 60), t: str(f[1], 80), b: str(f[2], 240), links: (f[3] ? f[3].split('\t') : []).map(x => [CODE[x[0]], x.slice(1)]), perf: refs(f[4]), wish: refs(f[5]).slice(0, 3),
+      skin: th[0] || '', light: th[1] === 'l', look: th[2] || 'a', accent: +th[3] || 0, stats: (f[7] || '').split('.').map(Number), taste: (f[8] ? f[8].split('.') : []).map(x => parseInt(x, 36))};
+  } else {
+    // the first kind of link: plain JSON
+    const j = JSON.parse(new TextDecoder().decode(bytesOf(raw)));
+    if (!j || typeof j !== 'object') throw 0;
+    d = {n: str(j.n, 60), t: str(j.t, 80), b: str(j.b, 240), links: (Array.isArray(j.l) ? j.l : []).filter(Array.isArray).map(x => [String(x[0]), str(x[1], 80)]),
+      perf: (Array.isArray(j.p) ? j.p : []).filter(Array.isArray).slice(0, 6).map(x => ({name: str(x[0], 60), brand: str(x[1], 40), cid: Number(x[2]) || 0})), wish: [],
+      colors: Array.isArray(j.c) ? j.c : null, look: 'a', accent: 0, stats: Array.isArray(j.s) ? j.s.map(Number) : [], taste: []};
+  }
+} catch (e) { fail(); return; }
+
+// ---------- what the numbers stand for ----------
+const getJson = async u => { try { const r = await fetch(u); return r.ok ? await r.json() : null; } catch (e) { return null; } };
+const meta = await getJson('data/card.json') || {skins: {}, fams: []};
+const css = document.documentElement.style;
+const paint = c => { if (Array.isArray(c)) ['--bg', '--panel', '--fg', '--muted', '--accent', '--ink'].forEach((k, i) => { if (/^#[0-9a-f]{6}$/i.test(c[i] || '')) css.setProperty(k, c[i]); }); };
+const skin = Object.prototype.hasOwnProperty.call(meta.skins, d.skin) ? meta.skins[d.skin] : null;
+if (skin) { paint(d.light && skin.l ? skin.l : skin.d); if (skin.serif) css.setProperty('--disp', '"Iowan Old Style","Palatino Linotype",Georgia,serif'); }
+else paint(d.colors);
+if (ACCENTS[d.accent]) { css.setProperty('--accent', ACCENTS[d.accent]); css.setProperty('--ink', '#1d1a22'); }
+const cids = [...d.perf, ...d.wish].map(x => x.cid).filter(c => Number.isInteger(c) && c > 0 && c < 1e7);
+const names = {};
+await Promise.all([...new Set(cids.map(c => Math.floor(c / 2000)))].map(async k => Object.assign(names, await getJson('data/n/' + k + '.json') || {})));
+
+// ---------- draw ----------
+const name = d.n.trim(), title = d.t.trim(), bio = d.b.trim();
+const card = el('article', 'vcard ' + (d.look === 'b' ? 'b' : d.look === 's' ? 's' : 'a'));
+if (d.look === 'b') card.appendChild(el('div', 'band'));
+const top = el('div', 'top');
+top.appendChild(el('div', 'av', (name || 'BB').split(/\s+/).slice(0, 2).map(w => w.charAt(0).toUpperCase()).join('')));
+const id = el('div', 'id'); id.appendChild(el('b', 'name', name || 'Kartvizit')); if (title) id.appendChild(el('span', 'title', title));
+top.appendChild(id); card.appendChild(top);
+if (bio) card.appendChild(el('p', 'bio', bio));
+const fams = d.taste.map(i => meta.fams[i]).filter(Array.isArray).slice(0, 4);
+if (fams.length) {
+  card.appendChild(el('span', 'label', 'Koku zevkim'));
+  const g = el('div', 'fams');
+  for (const [n, h] of fams) { const c = el('span', 'fam', String(n)); c.style.setProperty('--fh', String(+h || 0)); g.appendChild(c); }
+  card.appendChild(g);
+}
+const grid = (list, label, cls) => {
+  const items = list.map(x => { const k = names[String(x.cid)]; return {cid: x.cid, name: x.name || (Array.isArray(k) ? String(k[0]) : ''), brand: x.brand || (Array.isArray(k) ? String(k[1]) : '')}; }).filter(x => x.name);
+  if (!items.length) return;
+  card.appendChild(el('span', 'label', label));
+  const g = el('div', 'perf' + (cls ? ' ' + cls : ''));
+  for (const x of items) {
+    const p = el('div', 'p'), a = el('div', 'art', x.name.trim().charAt(0).toUpperCase());
+    if (Number.isInteger(x.cid) && x.cid > 0 && x.cid < 1e7) {
+      const im = new Image(); im.alt = ''; im.referrerPolicy = 'no-referrer';
+      im.onload = () => { a.textContent = ''; a.appendChild(im); };
+      im.src = 'https://fimgs.net/mdimg/perfume/375x500.' + x.cid + '.jpg';
+    }
+    const br = el('small', '', x.brand.slice(0, 40)); br.lang = 'en';   // house names are not Turkish: no dotted capital I
+    p.appendChild(a); p.appendChild(el('span', '', x.name.slice(0, 60))); p.appendChild(br);
+    g.appendChild(p);
+  }
+  card.appendChild(g);
+};
+grid(d.perf, 'İmza kokularım');
+grid(d.wish, 'İstek listem', 'wish');
+const links = d.links.slice(0, 8).filter(x => Object.prototype.hasOwnProperty.call(LINKS, x[0])).map(([k, v]) => [LINKS[k], str(v, 80), LINKS[k][2](v)]).filter(x => x[2]);
+if (links.length) {
+  const g = el('div', 'links');
+  for (const [k, v, url] of links) {
+    const a = el('a', 'link'); a.href = url; a.rel = 'noopener noreferrer nofollow'; if (/^https:/.test(url)) a.target = '_blank';
+    a.appendChild(el('i', '', k[1])); a.appendChild(el('span', '', k[0]));
+    // what is shown is the real destination, so a link cannot pretend to go somewhere else
+    a.appendChild(el('small', '', k[1] === 'www' ? new URL(url).hostname : k[1] === '@' || k[1] === 'WA' ? v.trim() : '@' + v.trim().replace(/^@/, '')));
+    g.appendChild(a);
+  }
+  card.appendChild(g);
+}
+const foot = el('div', 'foot'); foot.appendChild(el('span', '', 'BB Parfüm Envanteri'));
+const st = d.stats.map(x => Number.isFinite(x) ? x | 0 : 0);
+if (st[0] > 0) foot.appendChild(el('span', '', st[0] + ' parfüm' + (st[1] > 0 ? ' · ' + st[1] + ' şişe' : '') + (st[2] > 0 ? ' · ' + st[2] + ' kullanım' : '')));
+card.appendChild(foot);
+root.appendChild(card);
+
+// ---------- what a visitor can do with it ----------
+const acts = el('div', 'acts');
+const vcf = () => {
+  const esc = s => String(s).replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+  const L = ['BEGIN:VCARD', 'VERSION:3.0', 'FN:' + esc(name || 'Kartvizit'), 'N:' + esc(name || 'Kartvizit') + ';;;;'];
+  if (title) L.push('TITLE:' + esc(title));
+  for (const [k, v, url] of links) {
+    if (k[1] === '@') L.push('EMAIL:' + esc(v.trim()));
+    else if (k[1] === 'WA') L.push('TEL;TYPE=CELL:+' + v.replace(/\D/g, ''));
+    else L.push('URL:' + esc(url));
+  }
+  L.push('NOTE:' + esc((bio ? bio + ' — ' : '') + 'Parfüm kartviziti: ' + location.href), 'END:VCARD');
+  return L.join('\r\n');
+};
+if (links.length) {
+  const b = el('button', 'btn primary', 'Rehbere ekle'); b.type = 'button';
+  b.onclick = () => { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([vcf()], {type: 'text/vcard'})); a.download = (name || 'kartvizit').replace(/[^\p{L}\p{N} _-]/gu, '').trim() + '.vcf'; document.body.appendChild(a); a.click(); a.remove(); };
+  acts.appendChild(b);
+}
+const say = (b, t) => { const old = b.textContent; b.textContent = t; setTimeout(() => { b.textContent = old; }, 1600); };
+const copy = el('button', 'btn', 'Bağlantıyı kopyala'); copy.type = 'button';
+copy.onclick = async () => { try { await navigator.clipboard.writeText(location.href); say(copy, 'Kopyalandı'); } catch (e) { say(copy, 'Kopyalanamadı'); } };
+acts.appendChild(copy);
+if (navigator.share) { const sh = el('button', 'btn', 'Paylaş'); sh.type = 'button'; sh.onclick = () => navigator.share({title: document.title, url: location.href}).catch(() => {}); acts.appendChild(sh); }
+else copy.style.gridColumn = '1 / -1';
+root.appendChild(acts);
+const note = el('p', 'note', 'Bağlantıya dokunmadan önce adresine bak: kartı hazırlayan kişinin yazdığı adrestir. '); const mk = el('a', '', 'Sen de kartını yap'); mk.href = './'; note.appendChild(mk);
+root.appendChild(note);
+document.title = (name ? name + ' · ' : '') + 'parfüm kartviziti';
+const mc = document.createElement('meta'); mc.name = 'theme-color'; mc.content = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim(); document.head.appendChild(mc);
+})();
+</script>
+</body>
+</html>

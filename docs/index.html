@@ -575,6 +575,22 @@ body.sheet-open{overflow:hidden}
 .card-row .bad{border-color:var(--danger)}
 .qr-box{align-self:center;width:min(100%,300px);aspect-ratio:1;padding:12px;border-radius:20px;background:#fff}
 .qr-box svg{width:100%;height:100%;display:block}
+.vcard.vc-s::before{display:none}
+.vcard.vc-b{padding-top:0}
+.vcard.vc-b::before{display:none}
+.vc-band{height:84px;margin:0 -20px -46px;background:linear-gradient(120deg,var(--accent),color-mix(in srgb,var(--accent) 55%,var(--card)))}
+.vcard.vc-b .vc-top{align-items:flex-end}
+.vcard.vc-b .vc-av{box-shadow:0 0 0 4px var(--panel)}
+.vc-fams{display:flex;flex-wrap:wrap;gap:6px}
+.vc-label{margin-bottom:-6px}
+.vc-qr{display:flex;align-items:center;gap:12px;padding:10px;border-radius:18px;background:var(--fill)}
+.vc-qr .q{width:92px;height:92px;flex:none;padding:6px;border-radius:12px;background:#fff}
+.vc-qr .q svg{width:100%;height:100%;display:block}
+.vc-qr span{font-size:13px;line-height:1.35;color:var(--muted)}
+.vc-qr b{display:block;color:var(--fg);font-size:14.5px}
+.vc-sw{display:flex;gap:10px;flex-wrap:wrap}
+.vc-sw button{width:38px;height:38px;border-radius:50%;border:2px solid transparent;background:var(--sw);padding:0;box-shadow:inset 0 0 0 2px var(--panel)}
+.vc-sw button.on{border-color:var(--fg)}
 .top-acts{display:flex;gap:8px;flex:none}
 html.premium .lt{padding-right:108px}
 .setnav{position:sticky;top:60px;z-index:20;padding-block:8px;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
@@ -4363,37 +4379,60 @@ function saveDraft(){
   toast(i >= 0 ? 'Güncellendi' : 'Koleksiyona eklendi');
 }
 
-/* ---------- personal card: who you are, where to find you, the perfumes you wear; shared as a link, a picture or a QR code ---------- */
+/* ---------- personal card: who you are, where to find you, the perfumes you wear; shared as a short link, a picture or a QR code ---------- */
 const hUrl = base => v => { const h = String(v).trim().replace(/^https?:\/\/[^/]+\//i, '').replace(/^@/, '').replace(/[/?#].*$/, ''); return /^[\w.\-]{1,40}$/.test(h) ? base + h : ''; };
-// only these kinds of link can be on a card, and each is built here: a card never carries a ready-made address except an https web site
+// only these kinds of link can be on a card, and each is built here: a card never carries a ready-made address except an https web site.
+// c is the one-letter code the link uses for it; docs/k.html knows the same table.
 const CARD_LINKS = {
-  instagram: {n: 'Instagram', i: 'IG', ph: 'kullanıcı adın', mk: hUrl('https://instagram.com/')},
-  tiktok: {n: 'TikTok', i: 'TT', ph: 'kullanıcı adın', mk: hUrl('https://www.tiktok.com/@')},
-  x: {n: 'X', i: 'X', ph: 'kullanıcı adın', mk: hUrl('https://x.com/')},
-  youtube: {n: 'YouTube', i: 'YT', ph: 'kanal adın', mk: hUrl('https://www.youtube.com/@')},
-  facebook: {n: 'Facebook', i: 'f', ph: 'profil adın', mk: hUrl('https://www.facebook.com/')},
-  telegram: {n: 'Telegram', i: 'TG', ph: 'kullanıcı adın', mk: hUrl('https://t.me/')},
-  whatsapp: {n: 'WhatsApp', i: 'WA', ph: '90 5xx xxx xx xx', mk: v => { const d = String(v).replace(/\D/g, ''); return d.length >= 8 && d.length <= 15 ? 'https://wa.me/' + d : ''; }},
-  mail: {n: 'E-posta', i: '@', ph: 'ad@ornek.com', mk: v => /^[^\s@<>"'`]+@[^\s@<>"'`]+\.[a-z]{2,}$/i.test(String(v).trim()) ? 'mailto:' + String(v).trim() : ''},
-  web: {n: 'Web sitesi', i: 'www', ph: 'ornek.com', mk: v => { try { const t = String(v).trim(), u = new URL(/^https?:\/\//i.test(t) ? t.replace(/^http:/i, 'https:') : 'https://' + t); return t && u.protocol === 'https:' && u.hostname.includes('.') ? u.href : ''; } catch (e) { return ''; } }}
+  instagram: {n: 'Instagram', i: 'IG', c: 'i', ph: 'kullanıcı adın', mk: hUrl('https://instagram.com/')},
+  tiktok: {n: 'TikTok', i: 'TT', c: 't', ph: 'kullanıcı adın', mk: hUrl('https://www.tiktok.com/@')},
+  x: {n: 'X', i: 'X', c: 'x', ph: 'kullanıcı adın', mk: hUrl('https://x.com/')},
+  youtube: {n: 'YouTube', i: 'YT', c: 'y', ph: 'kanal adın', mk: hUrl('https://www.youtube.com/@')},
+  facebook: {n: 'Facebook', i: 'f', c: 'f', ph: 'profil adın', mk: hUrl('https://www.facebook.com/')},
+  telegram: {n: 'Telegram', i: 'TG', c: 'g', ph: 'kullanıcı adın', mk: hUrl('https://t.me/')},
+  whatsapp: {n: 'WhatsApp', i: 'WA', c: 'w', ph: '90 5xx xxx xx xx', mk: v => { const d = String(v).replace(/\D/g, ''); return d.length >= 8 && d.length <= 15 ? 'https://wa.me/' + d : ''; }},
+  mail: {n: 'E-posta', i: '@', c: 'm', ph: 'ad@ornek.com', mk: v => /^[^\s@<>"'`]+@[^\s@<>"'`]+\.[a-z]{2,}$/i.test(String(v).trim()) ? 'mailto:' + String(v).trim() : ''},
+  web: {n: 'Web sitesi', i: 'www', c: 's', ph: 'ornek.com', mk: v => { try { const t = String(v).trim(), u = new URL(/^https?:\/\//i.test(t) ? t.replace(/^http:/i, 'https:') : 'https://' + t); return t && u.protocol === 'https:' && u.hostname.includes('.') ? u.href : ''; } catch (e) { return ''; } }}
 };
-const card = () => (S.card = S.card || {name: '', title: '', bio: '', photo: '', links: [], perfumes: []});
+// 0 = the theme's own colour; the rest are fixed, so the link can name one with a single digit
+const CARD_ACCENTS = ['', '#cf93a2', '#cdb488', '#93b8a0', '#a3a1dc', '#77a2d6', '#c98a66', '#7fc4c0', '#b9bec9'];
+const CARD_LOOKS = [['a', 'Aura'], ['s', 'Sade'], ['b', 'Şerit']];
+const card = () => { const c = S.card = S.card || {}; for (const [k, v] of Object.entries({name: '', title: '', bio: '', photo: '', links: [], perfumes: [], wish: [], look: 'a', accent: 0})) if (c[k] === undefined) c[k] = v; return c; };
 const cardShown = l => l.k === 'web' ? String(l.v).trim().replace(/^https?:\/\//i, '').replace(/\/$/, '') : l.k === 'mail' || l.k === 'whatsapp' ? String(l.v).trim() : '@' + String(l.v).trim().replace(/^@/, '');
 const cardInitials = n => (String(n || '').trim() || 'BB').split(/\s+/).slice(0, 2).map(w => w.charAt(0).toUpperCase()).join('');
-function cardHtml(){
-  const c = card(), ps = c.perfumes.map(byId).filter(Boolean).slice(0, 6);
+// the three scent families that weigh most in the chosen perfumes (in the whole collection when fewer than two are chosen)
+function cardTaste(){
+  const c = card(), sig = c.perfumes.map(byId).filter(Boolean), src = sig.length >= 2 ? sig : S.perfumes, w = new Map();
+  src.forEach(p => p.fam.slice(0, 3).forEach((f, i) => w.set(f, (w.get(f) || 0) + (3 - i))));
+  return [...w.entries()].sort((a, b) => b[1] - a[1]).map(x => x[0]).filter(f => f in FAM_HUE).slice(0, 3);
+}
+const qrSvg = raw => {
+  if (!String(raw || '').includes(';')) return '';
+  const [n, bits] = raw.split(';'), N = +n; let d = '';
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (bits[y * N + x] === '1') { let w = 1; while (x + w < N && bits[y * N + x + w] === '1') w++; d += `M${x} ${y}h${w}v1h-${w}z`; x += w - 1; }
+  return `<svg viewBox="-1 -1 ${N + 2} ${N + 2}" shape-rendering="crispEdges" role="img" aria-label="Kartvizit QR kodu"><path d="${d}" fill="#000"/></svg>`;
+};
+function cardHtml(qr){
+  const c = card(), ps = c.perfumes.map(byId).filter(Boolean).slice(0, 6), ws = c.wish.map(byId).filter(Boolean).slice(0, 3), taste = cardTaste();
   const links = c.links.map(l => ({...l, d: CARD_LINKS[l.k], u: CARD_LINKS[l.k] ? CARD_LINKS[l.k].mk(l.v) : ''})).filter(l => l.u);
-  return `<div class="vcard">
+  const ac = CARD_ACCENTS[c.accent] || '';
+  const tile = p => `<div class="vc-p"><div class="art">${art(p)}</div><span>${esc(p.name)}</span><small lang="en">${esc(p.brand || '')}</small></div>`;
+  return `<div class="vcard vc-${c.look === 'b' ? 'b' : c.look === 's' ? 's' : 'a'}"${ac ? ` style="--accent:${ac};--hi:${ac};--ink:#1d1a22;--grad:linear-gradient(${ac},${ac});--tint:color-mix(in srgb,${ac} 20%,transparent)"` : ''}>
+    ${c.look === 'b' ? '<div class="vc-band"></div>' : ''}
     <div class="vc-top"><div class="vc-av">${c.photo ? `<img src="${esc(c.photo)}" alt="">` : `<span>${esc(cardInitials(c.name))}</span>`}</div>
       <div class="vc-id"><b class="vc-name">${esc(c.name || 'Adın')}</b>${c.title ? `<span class="vc-title">${esc(c.title)}</span>` : ''}</div></div>
     ${c.bio ? `<p class="vc-bio">${esc(c.bio)}</p>` : ''}
-    ${ps.length ? `<span class="vc-label">İmza kokularım</span><div class="vc-perf">${ps.map(p => `<div class="vc-p"><div class="art">${art(p)}</div><span>${esc(p.name)}</span><small lang="en">${esc(p.brand || '')}</small></div>`).join('')}</div>` : ''}
+    ${taste.length ? `<span class="vc-label">Koku zevkim</span><div class="vc-fams">${taste.map(famTag).join('')}</div>` : ''}
+    ${ps.length ? `<span class="vc-label">İmza kokularım</span><div class="vc-perf">${ps.map(tile).join('')}</div>` : ''}
+    ${ws.length ? `<span class="vc-label">İstek listem</span><div class="vc-perf">${ws.map(tile).join('')}</div>` : ''}
     ${links.length ? `<div class="vc-links">${links.map(l => `<a class="vc-link" href="${esc(l.u)}"${/^https:/.test(l.u) ? ' data-act="extlink"' : ''}><i>${l.d.i}</i><span>${l.d.n}</span><small>${esc(cardShown(l))}</small></a>`).join('')}</div>` : ''}
-    <div class="vc-foot"><span>BB Parfüm Envanteri</span><span>${S.perfumes.length} parfüm · ${S.inv.length} şişe</span></div>
+    ${qr ? `<div class="vc-qr"><div class="q">${qr}</div><span><b>Kartımı aç</b>Kameranla okut; bağlantılarım ve kokularım telefonunda açılsın.</span></div>` : ''}
+    <div class="vc-foot"><span>BB Parfüm Envanteri</span><span>${S.perfumes.length} parfüm · ${S.inv.length} şişe${(S.wears || []).length ? ' · ' + S.wears.length + ' kullanım' : ''}</span></div>
   </div>`;
 }
 function renderCard(){
-  const c = card(), ps = c.perfumes.map(byId).filter(Boolean);
+  const c = card(), ps = c.perfumes.map(byId).filter(Boolean), ws = c.wish.map(byId).filter(Boolean);
+  const picked = (list, kind) => list.length ? `<div class="chips">${list.map(p => `<button class="chip on" data-act="cardtoggle" data-kind="${kind}" data-id="${p.id}" type="button">${esc(p.name)}<span class="x">×</span></button>`).join('')}</div>` : '';
   view.innerHTML = `
   <section class="section">
     ${setNav()}
@@ -4401,16 +4440,27 @@ function renderCard(){
     <div id="vcard-host">${cardHtml()}</div>
     <div class="td-row">
       <button class="btn primary" data-act="cardshare" type="button" style="flex:1 1 100%">Bağlantıyı paylaş</button>
-      <button class="btn" data-act="cardimg" type="button">Görsel olarak paylaş</button>
+      <button class="btn" data-act="cardimg" type="button">Görsel</button>
       <button class="btn" data-act="cardqr" type="button">QR kodu</button>
+      <button class="btn" data-act="cardcopy" type="button">Kopyala</button>
     </div>
-    <span class="muted small">Bağlantıyı açan kişi kartını tarayıcıda görür; uygulama gerekmez. Bilgiler bağlantının kendi içinde taşınır, hiçbir sunucuya yüklenmez. Fotoğrafın yalnızca görselde yer alır, bağlantıda baş harflerin görünür.</span>
+    <span class="muted small" id="card-len">Bağlantıyı açan kişi kartını tarayıcıda görür; uygulama gerekmez.</span>
+  </section>
+  <section class="section"><h3>Görünüm</h3>
+    <div class="box">
+      <div class="field"><span class="label">Kart düzeni</span>
+        <div class="seg">${CARD_LOOKS.map(([k, l]) => `<button class="${c.look === k ? 'on' : ''}" data-act="cardlook" data-v="${k}" type="button">${l}</button>`).join('')}</div></div>
+      <div class="field"><span class="label">Vurgu rengi</span>
+        <div class="vc-sw">${CARD_ACCENTS.map((x, i) => `<button class="${(c.accent || 0) === i ? 'on' : ''}" data-act="cardaccent" data-v="${i}" type="button" style="--sw:${x || 'var(--accent)'}" aria-label="${i ? 'Renk ' + i : 'Temanın rengi'}"></button>`).join('')}</div>
+        <span class="muted small">İlk daire seçili temanın rengidir; kart, bağlantıda da bu temayla açılır.</span></div>
+    </div>
   </section>
   <section class="section"><h3>Bilgilerin</h3>
     <div class="box">
       <div class="row" style="flex-wrap:nowrap"><div class="vc-av" style="width:56px;height:56px;font-size:20px">${c.photo ? `<img src="${esc(c.photo)}" alt="">` : `<span>${esc(cardInitials(c.name))}</span>`}</div>
         <label class="btn sm file-label">Fotoğraf seç<input id="card-photo" type="file" accept="image/*"></label>
         ${c.photo ? '<button class="btn sm ghost" data-act="cardnophoto" type="button">Kaldır</button>' : ''}</div>
+      <span class="muted small">Fotoğraf yalnızca görselde yer alır; bağlantıda baş harflerin görünür.</span>
       <div class="field"><label for="card-name">Ad</label><input class="input card-f" id="card-name" data-f="name" maxlength="60" value="${esc(c.name)}" placeholder="Adın ya da takma adın" autocomplete="off"></div>
       <div class="field"><label for="card-title">Alt başlık</label><input class="input card-f" id="card-title" data-f="title" maxlength="80" value="${esc(c.title)}" placeholder="ör. Parfüm tutkunu · İstanbul" autocomplete="off"></div>
       <div class="field"><label for="card-bio">Kısa tanıtım</label><textarea class="input card-f" id="card-bio" data-f="bio" maxlength="240" rows="3" placeholder="Hangi kokuları seversin, ne arıyorsun?">${esc(c.bio)}</textarea></div>
@@ -4424,10 +4474,13 @@ function renderCard(){
         <span class="muted small">Yalnızca kullanıcı adını yaz; adresi ben kurarım. Kırmızı çerçeve: yazdığın geçerli değil, kartta görünmez.</span></div>`
       : '<div class="empty">Instagram, TikTok, WhatsApp, e-posta ya da web siteni ekle.</div>'}
   </section>
-  <section class="section"><div class="row spread"><h3>İmza kokuların</h3><button class="btn sm" data-act="cardpick" type="button">Parfüm seç (${ps.length}/6)</button></div>
-    ${ps.length ? `<div class="chips">${ps.map(p => `<button class="chip on" data-act="cardtoggle" data-id="${p.id}" type="button">${esc(p.name)}<span class="x">×</span></button>`).join('')}</div>`
-      : '<div class="empty">Koleksiyonundan en çok kullandığın parfümleri seç; kartında fotoğraflarıyla görünür.</div>'}
+  <section class="section"><div class="row spread"><h3>İmza kokuların</h3><button class="btn sm" data-act="cardpick" data-kind="perfumes" type="button">Parfüm seç (${ps.length}/6)</button></div>
+    ${picked(ps, 'perfumes') || '<div class="empty">Koleksiyonundan en çok kullandığın parfümleri seç; kartında fotoğraflarıyla görünür.</div>'}
+  </section>
+  <section class="section"><div class="row spread"><h3>İstek listen</h3><button class="btn sm" data-act="cardpick" data-kind="wish" type="button">Parfüm seç (${ws.length}/3)</button></div>
+    ${picked(ws, 'wish') || '<span class="muted small">Almak istediğin en çok üç parfüm; hediye arayan bilsin. Koleksiyonunda olup envanterinde olmayanlar önce gelir.</span>'}
   </section>`;
+  cardLink().then(u => { const e = document.getElementById('card-len'); if (e) e.textContent = `Bağlantın ${u.length} karakter. Açan kişi kartını tarayıcıda görür; uygulama gerekmez. Yazdıkların bağlantının içinde taşınır, hiçbir yere yüklenmez.`; }).catch(() => {});
 }
 let cardT = 0;
 const cardRefresh = () => { clearTimeout(cardT); cardT = setTimeout(() => { const h = document.getElementById('vcard-host'); if (h) h.innerHTML = cardHtml(); }, 160); };
@@ -4443,55 +4496,68 @@ document.addEventListener('change', async e => {
     try { card().photo = await resizeImage(t.files[0]); save(); renderCard(); } catch (err) { toast('Bu fotoğraf açılamadı, başka bir tane dene'); }
   }
 });
-function openCardPick(){
+function openCardPick(kind){
   sheetMode = 'cardpick';
-  const f = openOverlay();
-  const draw = () => { const c = card(); f.innerHTML = `<div class="row spread"><h2>İmza kokuların</h2>${closeIcon}</div>
-    <span class="muted small">En çok 6 parfüm; seçtiğin sırayla görünür.</span>
-    ${S.perfumes.length ? `<div class="list">${S.perfumes.map(p => { const i = c.perfumes.indexOf(p.id); return `<button class="item" data-act="cardtoggle" data-id="${p.id}" type="button">
-      <div class="art">${art(p)}</div><div class="item-body"><span class="item-name">${esc(p.name)}</span><span class="item-meta" lang="en">${esc(p.brand || '')}</span></div>
+  const f = openOverlay(), wish = kind === 'wish', max = wish ? 3 : 6;
+  f.dataset.kind = wish ? 'wish' : 'perfumes';
+  const draw = () => { const c = card(), sel = wish ? c.wish : c.perfumes;
+    // for the wish list, what is not on the shelf yet comes first
+    const list = wish ? S.perfumes.slice().sort((a, b) => !!invOf(a.id) - !!invOf(b.id)) : S.perfumes;
+    f.innerHTML = `<div class="row spread"><h2>${wish ? 'İstek listen' : 'İmza kokuların'}</h2>${closeIcon}</div>
+    <span class="muted small">En çok ${max} parfüm; seçtiğin sırayla görünür.</span>
+    ${list.length ? `<div class="list">${list.map(p => { const i = sel.indexOf(p.id); return `<button class="item" data-act="cardtoggle" data-kind="${wish ? 'wish' : 'perfumes'}" data-id="${p.id}" type="button">
+      <div class="art">${art(p)}</div><div class="item-body"><span class="item-name">${esc(p.name)}</span><span class="item-meta" lang="en">${esc(p.brand || '')}${wish && invOf(p.id) ? ' · envanterinde' : ''}</span></div>
       <span class="pill"${i >= 0 ? ' style="background:var(--accent);color:var(--ink);border-color:transparent"' : ''}>${i >= 0 ? (i + 1) + '. seçili' : 'seç'}</span></button>`; }).join('')}</div>`
       : '<div class="empty">Koleksiyonun boş. Önce Keşfet’ten parfüm ekle.</div>'}`; };
   draw(); f._draw = draw;
 }
-// everything the card shows travels inside the link itself (after the #), so nothing is uploaded anywhere
-function cardLink(){
-  const c = card(), cs = getComputedStyle(document.documentElement), v = k => hex6(cs.getPropertyValue(k));
-  const data = {n: c.name.trim().slice(0, 60), t: c.title.trim().slice(0, 80), b: c.bio.trim().slice(0, 240),
-    l: c.links.filter(l => CARD_LINKS[l.k] && CARD_LINKS[l.k].mk(l.v)).slice(0, 8).map(l => [l.k, String(l.v).trim().slice(0, 80)]),
-    p: c.perfumes.map(byId).filter(Boolean).slice(0, 6).map(p => [p.name.slice(0, 60), (p.brand || '').slice(0, 40), p.cid || 0]),
-    c: [v('--bg'), v('--panel'), v('--fg'), v('--muted'), v('--accent'), v('--ink')], s: [S.perfumes.length, S.inv.length]};
-  let bin = ''; new TextEncoder().encode(JSON.stringify(data)).forEach(x => { bin += String.fromCharCode(x); });
-  const base = /^https?:/.test(location.protocol) ? location.origin + location.pathname.replace(/[^/]*$/, '') : 'https://burakbagdat-py.github.io/parfumdb/';
-  return base + 'kart.html#' + btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+// The link carries the card itself, written as shortly as it can be: perfumes and scent families as numbers, link kinds as one letter,
+// the theme by name. docs/k.html turns the numbers back into names (data/n/*.json, data/card.json). Nothing is uploaded anywhere.
+async function cardLink(){
+  const c = card(), clean = (x, n) => String(x || '').replace(/[\n\t]+/g, ' ').trim().slice(0, n);
+  const ref = p => p.cid ? (+p.cid).toString(36) : '!' + clean(p.name, 60).replace(/\|/g, ' ') + '|' + clean(p.brand, 40).replace(/\|/g, ' ');
+  const fams = Object.keys(FAM_HUE);
+  const text = [clean(c.name, 60), clean(c.title, 80), clean(c.bio, 240),
+    c.links.filter(l => CARD_LINKS[l.k] && CARD_LINKS[l.k].mk(l.v)).slice(0, 8).map(l => CARD_LINKS[l.k].c + clean(l.v, 80)).join('\t'),
+    c.perfumes.map(byId).filter(Boolean).slice(0, 6).map(ref).join('\t'), c.wish.map(byId).filter(Boolean).slice(0, 3).map(ref).join('\t'),
+    [S.skin, lightMode() || S.skin === 'althair' ? 'l' : 'd', c.look || 'a', c.accent || 0].join('.'),
+    [S.perfumes.length, S.inv.length, (S.wears || []).length].join('.'),
+    cardTaste().map(f => fams.indexOf(f).toString(36)).join('.')].join('\n');
+  const b64 = bytes => { let bin = ''; bytes.forEach(x => { bin += String.fromCharCode(x); }); return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); };
+  const bytes = new TextEncoder().encode(text);
+  let data = '1' + b64(bytes);
+  try {
+    if ('CompressionStream' in window) {
+      const cs = new CompressionStream('deflate-raw'), w = cs.writable.getWriter(); w.write(bytes); w.close();
+      const z = '2' + b64(new Uint8Array(await new Response(cs.readable).arrayBuffer()));
+      if (z.length + 8 < data.length) data = z;
+    }
+  } catch (e) {}
+  const web = /^https?:$/.test(location.protocol), base = web ? location.origin + location.pathname.replace(/[^/]*$/, '') : 'https://burakbagdat-py.github.io/parfumdb/';
+  return base + (location.protocol === 'https:' || !web ? 'k' : 'k.html') + '#' + data;
 }
 async function cardShare(){
-  const c = card(), url = cardLink(), txt = (c.name.trim() ? c.name.trim() + ' · ' : '') + 'parfüm kartvizitim\n' + url;
+  const c = card(), url = await cardLink(), txt = (c.name.trim() ? c.name.trim() + ' · ' : '') + 'parfüm kartvizitim\n' + url;
   if (NATIVE && NATIVE.shareText) { nativeCall('shareText', txt); return; }
   if (navigator.share) { try { await navigator.share({title: 'Kartvizitim', text: txt}); return; } catch (e) { if (e && e.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(url); toast('Bağlantı panoya kopyalandı'); } catch (e) { toast('Kopyalanamadı'); }
 }
-// the picture: the card alone on the screen, photographed by the app
-function openCardShot(){
-  if (!NATIVE || !NATIVE.shareShot) { toast('Görsel paylaşımı uygulamanın yeni sürümüyle (v28) gelir; şimdilik bağlantıyı paylaşabilirsin'); return; }
+// the picture: the card alone on the screen, with its QR code, photographed by the app
+async function openCardShot(){
+  if (!NATIVE || !NATIVE.shareShot) { toast('Görsel paylaşımı uygulamanın v28 sürümüyle gelir; şimdilik bağlantıyı paylaşabilirsin'); return; }
+  const qr = NATIVE.qr ? qrSvg(nativeCall('qr', await cardLink())) : '';
   const el = document.createElement('div'); el.className = 'vc-shot'; el.id = 'vc-shot';
-  el.innerHTML = cardHtml() + `<div class="row"><button class="btn primary" data-act="cardshotgo" type="button">Görseli paylaş</button><button class="btn" data-act="cardshotx" type="button">Vazgeç</button></div>`;
+  el.innerHTML = cardHtml(qr) + `<div class="row"><button class="btn primary" data-act="cardshotgo" type="button">Görseli paylaş</button><button class="btn" data-act="cardshotx" type="button">Vazgeç</button></div>`;
   document.body.appendChild(el);
 }
 window.onNativeShot = ok => { const el = document.getElementById('vc-shot'); if (el) el.remove(); if (ok) toast('Görsel galeriye de kaydedildi (Pictures/BB Parfum)'); };
-function openCardQr(){
-  const url = cardLink(), raw = NATIVE && NATIVE.qr ? String(nativeCall('qr', url) || '') : '';
+async function openCardQr(){
+  const url = await cardLink(), svg = NATIVE && NATIVE.qr ? qrSvg(nativeCall('qr', url)) : '';
   sheetMode = 'cardqr';
   const f = openOverlay();
-  let svg = '';
-  if (raw.includes(';')) {
-    const [n, bits] = raw.split(';'), N = +n; let d = '';
-    for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (bits[y * N + x] === '1') { let w = 1; while (x + w < N && bits[y * N + x + w] === '1') w++; d += `M${x} ${y}h${w}v1h-${w}z`; x += w - 1; }
-    svg = `<svg viewBox="-2 -2 ${N + 4} ${N + 4}" shape-rendering="crispEdges" role="img" aria-label="Kartvizit QR kodu"><path d="${d}" fill="#000"/></svg>`;
-  }
   f.innerHTML = `<div class="row spread"><h2>Kartvizit QR kodu</h2>${closeIcon}</div>
     ${svg ? `<div class="qr-box">${svg}</div><span class="muted small">Karşındaki kişi telefonunun kamerasıyla okutunca kartın onun tarayıcısında açılır.</span>`
-      : '<div class="empty">QR kodunu uygulamanın yeni sürümü (v28) çizer. Bağlantıyı paylaşabilir ya da kopyalayabilirsin.</div>'}
+      : '<div class="empty">QR kodunu uygulamanın v28 sürümü çizer. Bağlantıyı paylaşabilir ya da kopyalayabilirsin.</div>'}
     <div class="row acts"><button class="btn" data-act="cardcopy" type="button">Bağlantıyı kopyala</button><button class="btn primary" data-act="cardshare" type="button">Paylaş</button></div>`;
 }
 
@@ -5064,19 +5130,21 @@ document.addEventListener('click', async e => {
     case 'view': openDetail(byId(t.dataset.id)); break;
     case 'close': closeSheet(); break;
     case 'cardshare': await cardShare(); break;
-    case 'cardcopy': try { await navigator.clipboard.writeText(cardLink()); toast('Bağlantı panoya kopyalandı'); } catch (e) { toast('Kopyalanamadı'); } break;
-    case 'cardimg': openCardShot(); break;
+    case 'cardcopy': try { await navigator.clipboard.writeText(await cardLink()); toast('Bağlantı panoya kopyalandı'); } catch (e) { toast('Kopyalanamadı'); } break;
+    case 'cardimg': await openCardShot(); break;
     case 'cardshotx': { const el = document.getElementById('vc-shot'); if (el) el.remove(); break; }
     case 'cardshotgo': { const el = document.querySelector('#vc-shot .vcard'); if (!el) break; const r = el.getBoundingClientRect(); t.disabled = true;
       nativeCall('shareShot', r.left, r.top, r.width, r.height, window.innerWidth); setTimeout(() => window.onNativeShot(false), 6000); break; }
-    case 'cardqr': openCardQr(); break;
-    case 'cardpick': openCardPick(); break;
+    case 'cardqr': await openCardQr(); break;
+    case 'cardpick': openCardPick(t.dataset.kind); break;
+    case 'cardlook': card().look = t.dataset.v; save(); renderCard(); break;
+    case 'cardaccent': card().accent = +t.dataset.v || 0; save(); renderCard(); break;
     case 'cardaddlink': { const c = card(); if (c.links.length >= 8) { toast('En çok 8 bağlantı'); break; } const used = new Set(c.links.map(l => l.k)); c.links.push({k: Object.keys(CARD_LINKS).find(k => !used.has(k)) || 'web', v: ''}); save(); renderCard();
       const ins = document.querySelectorAll('.card-v'); if (ins.length) ins[ins.length - 1].focus(); break; }
     case 'cardrmlink': card().links.splice(+t.dataset.i, 1); save(); renderCard(); break;
     case 'cardnophoto': card().photo = ''; save(); renderCard(); break;
-    case 'cardtoggle': { const c = card(), id = t.dataset.id, i = c.perfumes.indexOf(id);
-      if (i >= 0) c.perfumes.splice(i, 1); else if (c.perfumes.length >= 6) { toast('En çok 6 parfüm'); break; } else c.perfumes.push(id);
+    case 'cardtoggle': { const c = card(), wish = t.dataset.kind === 'wish', list = wish ? c.wish : c.perfumes, max = wish ? 3 : 6, id = t.dataset.id, i = list.indexOf(id);
+      if (i >= 0) list.splice(i, 1); else if (list.length >= max) { toast('En çok ' + max + ' parfüm'); break; } else list.push(id);
       save(); if (sheetMode === 'cardpick') redrawSheet(); if (S.tab === 'ayarlar' && S.sub === 'kart') renderCard(); break; }
     case 'errcopy': try { await navigator.clipboard.writeText(JSON.stringify({v: appVersion(), ua: navigator.userAgent, skin: S.skin, errs: errLog()})); toast('Hata kaydı panoya kopyalandı'); } catch (e) { toast('Kopyalanamadı'); } break;
     case 'errclear': try { localStorage.removeItem('bb_errs'); } catch (e) {} renderAbout(); break;
