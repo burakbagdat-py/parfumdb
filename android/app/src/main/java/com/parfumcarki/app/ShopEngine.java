@@ -25,10 +25,15 @@ final class ShopEngine {
     private static final String[] HOSTS = {"boyner.com.tr", "beymen.com", "gratis.com", "n11.com", "sephora.com.tr",
             "trendyol.com", "hepsiburada.com", "amazon.com.tr", "rossmann.com.tr", "watsons.com.tr", "perfumepoint.com.tr", "pazarama.com"};
     static final Set<String> STOP = new HashSet<>(Arrays.asList(("ml erkek kadin unisex parfum parfumu eau de du la le toilette cologne "
-            + "edt edp extrait spray sprey vapo natural for men women pour homme femme fragrance refillable orijinal orjinal yeni new diger christian "
-            + "ve icin tr gr mens womens ladies bayan bay erkeklere kadinlara perfume parfume vaporisateur vaporizer").split(" ")));
-    static final Set<String> BAD = new HashSet<>(Arrays.asList(("set seti deodorant deo dus shower balm lotion losyon sampuan serum vucut "
-            + "body after sabun kit minyatur miniature refill stick krem hair sac tester decant gift hediye mist gel jel kolonya").split(" ")));
+            + "edt edp extrait spray sprey spreyi vapo natural for men women pour homme femme fragrance refillable orijinal orjinal yeni new diger christian "
+            + "ve icin tr gr mens womens ladies bayan bay erkeklere kadinlara perfume parfume vaporisateur vaporizer "
+            + "baharatli ciceksi cicekli odunsu meyveli meyvemsi oryantal aromatik kalici kutulu jelatinli bandrollu ithal sise sisesi kokusu").split(" ")));
+    static final Set<String> BAD = new HashSet<>(Arrays.asList(("set seti deodorant deo deospray deostick dus shower balm lotion losyon losyonu sampuan serum vucut "
+            + "body after sabun kit minyatur miniature refill stick krem hair sac tester decant dekant numune sample gift hediye mist gel jel kolonya "
+            + "tiras toner ruj travel seyahat bosaltma").split(" ")));
+    private static final Pattern GIFT_SET = Pattern.compile("\\d\\s*(ml|gr?)\\s*\\+|\\+\\s*\\d", Pattern.CASE_INSENSITIVE);
+    private static final Pattern UNI = Pattern.compile("\\\\+u([0-9a-fA-F]{4})");
+    private static final Pattern LD = Pattern.compile("<script[^>]*application/ld\\+json[^>]*>(.*?)</script>", Pattern.DOTALL);
     private static final Pattern SIZE = Pattern.compile("(\\d{2,3})\\s*ml", Pattern.CASE_INSENSITIVE);
 
     private ShopEngine() { }
@@ -59,34 +64,60 @@ final class ShopEngine {
         String url = rule.getString("search").replace("{q}", URLEncoder.encode(query, "UTF-8"));
         if (!allowed(url)) throw new IllegalArgumentException("host not allowed");
         String html = MainActivity.httpText(url);
-        if ("ldjson".equals(type)) {
-            Matcher m = Pattern.compile("<script[^>]*application/ld\\+json[^>]*>(.*?)</script>", Pattern.DOTALL).matcher(html);
-            while (m.find()) {
-                try {
-                    JSONObject d = new JSONObject(m.group(1).trim());
-                    if (!"ItemList".equals(d.optString("@type"))) continue;
-                    JSONArray list = d.optJSONArray("itemListElement");
-                    for (int i = 0; list != null && i < list.length(); i++) {
-                        JSONObject it = list.getJSONObject(i).optJSONObject("item");
-                        if (it == null) continue;
-                        JSONObject of = it.optJSONObject("offers");
-                        if (of == null) continue;
-                        out.put(new JSONObject().put("t", it.optString("name")).put("u", it.optString("url", of.optString("url")))
-                                .put("p", of.optDouble("price", 0)));
-                    }
-                } catch (Exception ignored) { }
-            }
-            return out;
+        if ("ldjson".equals(type)) return ldItems(html, out);
+        try {
+            regexItems(rule, html, out);
+        } catch (Exception ignored) { }
+        // the store changed its page and the rule finds nothing: an older rule kept beside it, then the page's own product list
+        JSONArray alt = rule.optJSONArray("alt");
+        for (int i = 0; out.length() == 0 && alt != null && i < alt.length(); i++) {
+            try {
+                regexItems(alt.getJSONObject(i), html, out);
+            } catch (Exception ignored) { }
         }
+        if (out.length() == 0) ldItems(html, out);
+        return out;
+    }
+
+    private static void regexItems(JSONObject rule, String html, JSONArray out) throws Exception {
         Pattern pu = Pattern.compile(rule.getString("url")), pt = Pattern.compile(rule.getString("title")), pp = Pattern.compile(rule.getString("price"));
         String[] segs = html.split(rule.getString("split"));
         for (int i = 1; i < segs.length && out.length() < 80; i++) {
             Matcher u = pu.matcher(segs[i]), t = pt.matcher(segs[i]), p = pp.matcher(segs[i]);
             if (!u.find() || !t.find() || !p.find()) continue;
-            out.put(new JSONObject().put("t", Html.fromHtml(t.group(1), Html.FROM_HTML_MODE_LEGACY).toString())
+            out.put(new JSONObject().put("t", text(Html.fromHtml(t.group(1), Html.FROM_HTML_MODE_LEGACY).toString()))
                     .put("u", rule.optString("base", "") + u.group(1)).put("p", price(p.group(1), rule.optString("fmt", "tr"))));
         }
+    }
+
+    /** schema.org product list, which many stores embed for search engines. */
+    private static JSONArray ldItems(String html, JSONArray out) {
+        Matcher m = LD.matcher(html);
+        while (m.find()) {
+            try {
+                JSONObject d = new JSONObject(m.group(1).trim());
+                if (!"ItemList".equals(d.optString("@type"))) continue;
+                JSONArray list = d.optJSONArray("itemListElement");
+                for (int i = 0; list != null && i < list.length(); i++) {
+                    JSONObject it = list.getJSONObject(i).optJSONObject("item");
+                    if (it == null) continue;
+                    JSONObject of = it.optJSONObject("offers");
+                    if (of == null) continue;
+                    out.put(new JSONObject().put("t", text(it.optString("name"))).put("u", it.optString("url", of.optString("url")))
+                            .put("p", of.optDouble("price", 0)));
+                }
+            } catch (Exception ignored) { }
+        }
         return out;
+    }
+
+    /** Text cut out of a page's embedded data can still carry an escaped ampersand (backslash, u, 0026) or an HTML one. */
+    static String text(String s) {
+        Matcher m = UNI.matcher(s);
+        StringBuffer b = new StringBuffer();
+        while (m.find()) m.appendReplacement(b, Matcher.quoteReplacement(String.valueOf((char) Integer.parseInt(m.group(1), 16))));
+        m.appendTail(b);
+        return b.toString().replace("&amp;", "&").replaceAll("\\s+", " ").trim();
     }
 
     static double price(String s, String fmt) {
@@ -152,16 +183,24 @@ final class ShopEngine {
     /** Same perfume? All name words present, nothing that marks another product or flanker, same concentration when known.
      *  brand may also carry the shorthands stores use (YSL, PDM…); the page sends them. */
     static boolean matches(String name, String brand, String conc, String title) {
+        // "100 ml + 75 ml deodorant" is a gift set; a word that makes it another product can stand anywhere in the title
+        if (GIFT_SET.matcher(title).find()) return false;
+        Set<String> whole = new HashSet<>(toks(title));
+        for (String b : BAD) if (whole.contains(b)) return false;
         String t = cleanTitle(title);
         List<String> tl = toks(t);
         Set<String> tt = new HashSet<>(tl);
-        List<String> nameT = new ArrayList<>();
-        boolean longWord = false;
-        for (String w : toks(name)) if (!STOP.contains(w)) { nameT.add(w); if (w.length() > 1) longWord = true; }
-        if (longWord) nameT.removeIf(w -> w.length() < 2);
-        if (nameT.isEmpty() || !tt.containsAll(nameT)) return false;
-        for (String b : BAD) if (tt.contains(b)) return false;
         Set<String> brandT = new HashSet<>(toks(brand));
+        List<String> named = new ArrayList<>();
+        boolean longWord = false;
+        for (String w : toks(name)) if (!STOP.contains(w)) { named.add(w); if (w.length() > 1) longWord = true; }
+        // one-letter leftovers say nothing, but a number is part of the name ("No 5", "1 Million")
+        if (longWord) named.removeIf(w -> w.length() < 2 && !Character.isDigit(w.charAt(0)));
+        // stores leave the house out of the title or write its line instead
+        List<String> core = new ArrayList<>();
+        for (String w : named) if (!brandT.contains(w)) core.add(w);
+        final List<String> nameT = core.isEmpty() ? named : core;
+        if (nameT.isEmpty() || !tt.containsAll(nameT)) return false;
         for (String w : tl) if (w.length() > 1 && !nameT.contains(w) && !brandT.contains(w) && !STOP.contains(w) && !w.matches("\\d+(ml|gr?|cl)?")) return false;
         // "Eau Sauvage" is a different perfume from "Sauvage"
         int i = tl.indexOf(nameT.get(0));
@@ -169,9 +208,20 @@ final class ShopEngine {
         return concOk(conc, name, t);
     }
 
-    /** Lowest price per size for this perfume on one store: {"100": {"p": 7120, "u": "..."}} — explicit concentration matches win. */
-    static JSONObject sizes(JSONArray items, String name, String brand, String conc, int fixedMl) throws Exception {
+    /** Lowest price per size for this perfume on one store: {"100": {"p": 7120, "u": "..."}} — explicit concentration matches win.
+     *  On a marketplace the cheapest of three or more sellers is skipped when it lies far under the middle one. */
+    static JSONObject sizes(JSONArray items, String name, String brand, String conc, int fixedMl, boolean market) throws Exception {
         JSONObject best = new JSONObject(), exact = new JSONObject();
+        java.util.Map<Integer, List<Double>> seen = new java.util.HashMap<>();
+        if (market) for (int i = 0; i < items.length(); i++) {
+            JSONObject it = items.getJSONObject(i);
+            double p = it.optDouble("p", 0);
+            int ml = fixedMl > 0 ? fixedMl : sizeOf(it.optString("t"));
+            if (p <= 0 || ml <= 0 || !matches(name, brand, conc, it.optString("t"))) continue;
+            if (!seen.containsKey(ml)) seen.put(ml, new ArrayList<>());
+            seen.get(ml).add(p);
+        }
+        for (List<Double> all : seen.values()) java.util.Collections.sort(all);
         for (int i = 0; i < items.length(); i++) {
             JSONObject it = items.getJSONObject(i);
             String title = it.optString("t");
@@ -179,6 +229,8 @@ final class ShopEngine {
             if (p <= 0 || !matches(name, brand, conc, title)) continue;
             int ml = fixedMl > 0 ? fixedMl : sizeOf(title);
             if (ml <= 0) continue;
+            List<Double> all = seen.get(ml);
+            if (all != null && all.size() >= 3 && p < all.get(all.size() / 2) * 0.6) continue;
             boolean explicit = conc != null && !conc.isEmpty() && concs(cleanTitle(title)).contains(conc);
             JSONObject target = explicit ? exact : best;
             String k = String.valueOf(ml);

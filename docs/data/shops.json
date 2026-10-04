@@ -1,5 +1,5 @@
 {
- "v": 3,
+ "v": 4,
  "shops": {
   "boyner": {
    "n": "Boyner",
@@ -23,7 +23,7 @@
    "search": "https://www.gratis.com/search?q={q}",
    "split": "\\\\\"shareLink\\\\\":",
    "url": "^\\\\\"(https://www\\.gratis\\.com/[^\\\\\"]+)",
-   "title": "\\\\\"displayName\\\\\":\\\\\"([^\\\\\"]+)",
+   "title": "\\\\\"displayName\\\\\":\\\\\"((?:[^\\\\\"]|\\\\u[0-9a-fA-F]{4})+)",
    "price": "\\\\\"discountedPrice\\\\\":(\\d+)",
    "fmt": "kurus"
   },

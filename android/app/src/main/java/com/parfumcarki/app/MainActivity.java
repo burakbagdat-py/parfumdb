@@ -405,12 +405,23 @@ public class MainActivity extends Activity {
     }
 
     static String httpText(String url) throws Exception {
+        try {
+            return httpOnce(url);
+        } catch (java.net.SocketTimeoutException | IllegalStateException e) {
+            throw e;    // too slow, or refused: asking again right away only makes it worse
+        } catch (java.io.IOException e) {
+            Thread.sleep(300);
+            return httpOnce(url);   // the line dropped
+        }
+    }
+
+    private static String httpOnce(String url) throws Exception {
         HttpURLConnection c = (HttpURLConnection) new URL(url).openConnection();
         c.setRequestProperty("User-Agent", UA);
         c.setRequestProperty("Accept", "text/html,application/xhtml+xml");
         c.setRequestProperty("Accept-Language", "tr-TR,tr;q=0.9");
-        c.setConnectTimeout(8000);
-        c.setReadTimeout(15000);
+        c.setConnectTimeout(6000);
+        c.setReadTimeout(11000);
         int code = c.getResponseCode();
         if (code == 403 || code == 429 || code == 503) throw new IllegalStateException("blocked");
         if (code >= 400) throw new IllegalStateException("http " + code);

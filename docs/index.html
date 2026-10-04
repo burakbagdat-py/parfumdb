@@ -2509,10 +2509,23 @@ async function loadShops(){
   catch (e) { try { SHOP_RULES = await idbGet('shops'); } catch (e2) {} }
   return SHOP_RULES = SHOP_RULES || {boyner: {n: 'Boyner', type: 'boyner'}};
 }
-const M_STOP = new Set(('ml erkek kadin unisex parfum parfumu eau de du la le toilette cologne edt edp extrait spray sprey vapo natural for men women pour homme femme '
-  + 'fragrance refillable orijinal orjinal yeni new diger christian ve icin tr gr mens womens ladies bayan bay erkeklere kadinlara perfume parfume vaporisateur vaporizer').split(' '));
-const M_BAD = new Set(('set seti deodorant deo dus shower balm lotion losyon sampuan serum vucut body after sabun kit minyatur miniature refill stick krem hair sac '
-  + 'tester decant gift hediye mist gel jel kolonya').split(' '));
+const M_STOP = new Set(('ml erkek kadin unisex parfum parfumu eau de du la le toilette cologne edt edp extrait spray sprey spreyi vapo natural for men women pour homme femme '
+  + 'fragrance refillable orijinal orjinal yeni new diger christian ve icin tr gr mens womens ladies bayan bay erkeklere kadinlara perfume parfume vaporisateur vaporizer '
+  // words marketplaces add to describe the smell or the box; no perfume is told apart by them
+  + 'baharatli ciceksi cicekli odunsu meyveli meyvemsi oryantal aromatik kalici kutulu jelatinli bandrollu ithal sise sisesi kokusu').split(' '));
+const M_BAD = new Set(('set seti deodorant deo deospray deostick dus shower balm lotion losyon losyonu sampuan serum vucut body after sabun kit minyatur miniature refill stick krem hair sac '
+  + 'tester decant dekant numune sample gift hediye mist gel jel kolonya tiras toner ruj travel seyahat bosaltma').split(' '));
+const G_MALE = new Set(['erkek', 'men', 'mens', 'homme', 'bay', 'erkeklere']), G_FEM = new Set(['kadin', 'women', 'womens', 'femme', 'bayan', 'ladies', 'kadinlara']);
+// other ways stores write a house: needed to recognise the title ("Paco Rabanne 1 Million") and to search with ("paco rabanne 1 million")
+const BRAND_SYN = {'rabanne': ['paco rabanne'], 'paco rabanne': ['rabanne'], 'giorgio armani': ['armani', 'emporio armani'], 'emporio armani': ['giorgio armani', 'armani'], 'armani': ['giorgio armani', 'emporio armani'],
+  'dolce gabbana': ['dolce & gabbana'], 'yves saint laurent': ['ysl'], 'jean paul gaultier': ['jpg', 'gaultier'], 'maison francis kurkdjian': ['mfk', 'francis kurkdjian'], 'parfums de marly': ['marly', 'pdm'],
+  'lattafa': ['lattafa perfumes'], 'hugo boss': ['boss'], 'dior': ['christian dior'], 'viktor rolf': ['viktor & rolf'], 'maison margiela': ['maison martin margiela', 'margiela', 'replica'],
+  'by kilian': ['kilian'], 'kilian': ['by kilian'], 'ermenegildo zegna': ['zegna'], 'zegna': ['ermenegildo zegna'], 'salvatore ferragamo': ['ferragamo'], 'ferragamo': ['salvatore ferragamo'],
+  'bvlgari': ['bulgari'], 'bulgari': ['bvlgari'], 'montblanc': ['mont blanc'], 'mont blanc': ['montblanc'], 'jo malone london': ['jo malone'], 'afnan': ['afnan perfumes'], 'maison alhambra': ['alhambra'],
+  'al haramain': ['haramain'], 'issey miyake': ['miyake'], 'abercrombie fitch': ['abercrombie & fitch'], 'victoria s secret': ['victoria secret'], 'zadig voltaire': ['zadig & voltaire']};
+const brandSyn = brand => BRAND_SYN[mFold(shortBrand(brand))] || BRAND_SYN[mFold(brand)] || [];
+// text scraped out of a page's embedded data can still carry \u0026 and &amp;
+const uniText = s => String(s || '').replace(/\\+u([0-9a-fA-F]{4})/g, (_, h) => String.fromCharCode(parseInt(h, 16))).replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
 function mFold(s){ return fold(s).replace(/[^a-z0-9]+/g, ' ').trim(); }
 // "One Million" and "1 Million" are the same name
 const mToks = s => mFold(s).split(' ').filter(Boolean).map(w => w === 'one' ? '1' : w);
@@ -2543,19 +2556,32 @@ function concOK(conc, name, t){
 function brandWords(brand){
   const fb = mFold(brand), fs = mFold(shortBrand(brand));
   const al = Object.entries(ALIASES).filter(([, v]) => v === fb || v === fs).map(([k]) => mFold(k));
-  return [...new Set([...mToks(brand), ...al.flatMap(x => x.split(' '))])];
+  return [...new Set([...mToks(brand), ...al.flatMap(x => x.split(' ')), ...brandSyn(brand).flatMap(x => mToks(x))])];
 }
 // same rules as the app's ShopEngine: every name word present, no flanker/other-product words, same concentration when known
 function mMatch(p, title){
+  const raw = String(title);
+  // "100 ml + 75 ml deodorant" is a gift set, not the bottle
+  if (/\d\s*(ml|gr?)\s*\+|\+\s*\d/i.test(raw)) return false;
+  // what makes it another product can stand anywhere in the title ("Sauvage - Tıraş Losyonu 100 ml")
+  if (mFold(raw).split(' ').some(w => M_BAD.has(w))) return false;
   // Turkish "Parfüm" just means perfume, it is not the Parfum concentration
-  const t = mFold(String(title).split(' - ')[0].replace(/parf[üÜ]m/gi, ' ')), tl = t.split(' ').map(w => w === 'one' ? '1' : w), tt = new Set(tl);
-  let nameT = mToks(p.name).filter(w => !M_STOP.has(w));
-  if (nameT.some(w => w.length > 1)) nameT = nameT.filter(w => w.length > 1);
+  const t = mFold(raw.split(' - ')[0].replace(/parf[üÜ]m/gi, ' ')), tl = t.split(' ').map(w => w === 'one' ? '1' : w), tt = new Set(tl);
   const brandT = new Set(brandWords(p.brand));
+  let nameT = mToks(p.name).filter(w => !M_STOP.has(w));
+  // one-letter leftovers ("L'Homme" -> l) say nothing, but a number is part of the name ("No 5", "1 Million")
+  if (nameT.some(w => w.length > 1)) nameT = nameT.filter(w => w.length > 1 || /\d/.test(w));
+  // stores leave the house out of the title or write its line instead ("Emporio Armani Stronger With You" is sold as "Stronger With You")
+  const core = nameT.filter(w => !brandT.has(w)); if (core.length) nameT = core;
   if (!nameT.length || !nameT.every(w => tt.has(w))) return false;
-  if (tl.some(w => M_BAD.has(w))) return false;
   if (tl.some(w => w.length > 1 && !nameT.includes(w) && !brandT.has(w) && !M_STOP.has(w) && !/^\d+(ml|gr?|cl)?$/.test(w))) return false;
   const i = tl.indexOf(nameT[0]); if (i > 0 && tl[i - 1] === 'eau' && !mFold(p.name).startsWith('eau')) return false;
+  // "Light Blue" (hers) is not "Light Blue Pour Homme"; a title naming both sexes says nothing
+  if (p.g === 'K' || p.g === 'E') {
+    const own = new Set(mToks(p.name)), all = mFold(raw).split(' ').filter(w => !own.has(w));
+    const male = all.some(w => G_MALE.has(w)), fem = all.some(w => G_FEM.has(w));
+    if (male !== fem && (p.g === 'K' ? male : fem)) return false;
+  }
   return concOK(p.conc, p.name, t);
 }
 // same perfume whatever concentration the store sells it in
@@ -2568,16 +2594,47 @@ function soldConc(p, title){
   if (nc.length && nc.every(c => cs.includes(c))) { const rest = cs.filter(c => !nc.includes(c)); return p.conc || rest[0] || nc[0]; }
   return cs.filter(c => !nc.includes(c))[0] || '?';
 }
-// {EDP: {100: {p, u, t}}, EDT: {...}, '?': {...}}
-function mBuckets(items, p){
-  const out = {};
+// {EDP: {100: {p, u, t, n}}, EDT: {...}, '?': {...}}; n = how many listings the store had for that bottle
+function mBuckets(items, p, market){
+  const all = {};
   for (const it of items || []) {
     if (!(it.p > 0) || !mMatchName(p, it.t)) continue;
     const m = /(\d{2,3})\s*ml/i.exec(it.t); const ml = it.ml || (m ? +m[1] : 0); if (!ml) continue;
-    const c = soldConc(p, it.t), b = out[c] || (out[c] = {});
-    if (!b[ml] || b[ml].p > it.p) b[ml] = {p: it.p, u: it.u, t: it.t};
+    const c = soldConc(p, it.t), b = all[c] || (all[c] = {});
+    (b[ml] || (b[ml] = [])).push({p: it.p, u: it.u, t: it.t});
+  }
+  const out = {};
+  for (const [c, b] of Object.entries(all)) {
+    out[c] = {};
+    for (const [ml, list] of Object.entries(b)) {
+      list.sort((x, y) => x.p - y.p);
+      // on a marketplace the very cheapest of many sellers is rarely the real bottle: skip what lies far under the middle listing
+      const mid = list[list.length >> 1].p;
+      const pick = market && list.length >= 3 ? list.find(x => x.p >= mid * .6) || list[0] : list[0];
+      out[c][ml] = {...pick, n: list.length};
+    }
   }
   return out;
+}
+// A marketplace price far under what the shops themselves ask is flagged: it stays in the list, but is never called the best price.
+function priceSane(data, rules){
+  const shops = Object.entries(data.shops || {}), isM = k => !!(rules && rules[k] && rules[k].market);
+  const concs = new Set(shops.flatMap(([, v]) => Object.keys(v.byConc || {})));
+  for (const c of concs) {
+    const mls = new Set(shops.flatMap(([, v]) => Object.keys((v.byConc || {})[c] || {})));
+    for (const ml of mls) {
+      const offers = shops.map(([k, v]) => [k, ((v.byConc || {})[c] || {})[ml]]).filter(x => x[1]);
+      const solid = offers.filter(([k]) => !isM(k)).map(x => x[1].p).sort((a, b) => a - b);
+      const ref = solid.length ? solid[(solid.length - 1) >> 1] : 0;
+      for (const [k, o] of offers) o.sus = !!(ref && isM(k) && o.p < ref * .55);
+    }
+  }
+  // inside one marketplace a clearly bigger bottle that costs clearly less than a smaller one is not believable either
+  for (const [k, v] of shops) if (isM(k)) for (const b of Object.values(v.byConc || {})) {
+    const ms = Object.keys(b).map(Number).sort((x, y) => x - y);
+    for (let i = 1; i < ms.length; i++) { const small = b[ms[i - 1]], big = b[ms[i]]; if (!small.sus && ms[i] >= ms[i - 1] * 1.4 && big.p < small.p * .8) big.sus = true; }
+  }
+  return data;
 }
 const CONC_RANK = ['EDT', 'EDP', 'Parfum', 'Elixir', 'Extrait', 'EDC', '?'];
 function concCounts(data){
@@ -2597,12 +2654,17 @@ function pickConc(data, want, p){
   return data;
 }
 const hasAny = b => Object.values(b || {}).some(x => Object.keys(x).length);
-// several ways to write the same search, tried in order until a store finds it
+// Several ways to write the same search. The short one comes first: a store's search narrows with every extra word
+// ("Chanel Bleu de Chanel Eau de Parfum" finds nothing where "Bleu de Chanel" finds everything).
 function queryVariants(p){
   const ascii = s => String(s).normalize('NFD').replace(/\p{M}/gu, '').replace(/[’'`´]/g, ' ').replace(/&/g, ' ').replace(/\s+/g, ' ').trim();
-  const b = shortBrand(p.brand), n = String(p.name).trim();
-  const v = [`${b} ${n}`, ascii(`${b} ${n}`), p.conc ? `${ascii(b)} ${ascii(n)} ${p.conc}` : '', ascii(n).length >= 4 ? ascii(n) : ''];
-  return [...new Set(v.map(x => x.trim()).filter(Boolean))].slice(0, 3);
+  const b = ascii(shortBrand(p.brand)), n = ascii(p.name);
+  const core = n.replace(/\s+(eau de (parfum|toilette|cologne)|extrait de parfum|edp|edt|edc)\s*$/i, '').trim() || n;
+  // the name already says the house: "Bleu de Chanel", "Armani Code", "Emporio Armani Stronger With You"
+  const bt = mToks(b).filter(w => w.length > 2), nt = mToks(n), own = !b || bt.some(w => nt.includes(w)) || brandSyn(p.brand).some(x => mToks(x).every(w => nt.includes(w)));
+  const pre = own ? '' : b + ' ', syn = own ? '' : brandSyn(p.brand).find(x => !/&/.test(x) && x.length > 3) || '';
+  const v = [pre + core, own && b && mToks(b).some(w => !nt.includes(w)) ? `${b} ${core}` : '', syn ? `${syn} ${core}` : '', core !== n ? pre + n : '', p.conc && !mConcs(mFold(core)).length ? `${pre}${core} ${p.conc}` : '', !own && mToks(core).filter(w => !M_STOP.has(w)).join('').length >= 6 ? core : ''];
+  return [...new Set(v.map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean))].slice(0, 4);
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 function mSizes(items, p){
@@ -2619,8 +2681,11 @@ const mpMem = new Map();
 async function shopTry(rule, k, q){
   for (let a = 0; a < 2; a++) {
     const r = await nativeAsync('shopSearch', JSON.stringify({...rule, id: k}), q, 0);
-    if (r && (!r.error || r.blocked)) return r;
-    await sleep(1500);
+    if (r && !r.error) { for (const it of r.items || []) it.t = uniText(it.t); return r; }
+    if (r && r.blocked) return r;
+    // a store that timed out will not be faster a second later; only a dropped connection is worth a second try
+    if (r && /Timeout/i.test(r.error || '')) break;
+    await sleep(400);
   }
   return {error: 'fail'};
 }
@@ -2637,11 +2702,13 @@ async function boynerItems(q){
     .map(it => ({t: it.t, u: 'https://www.boyner.com.tr/' + String(it.u).replace(/^\//, ''), p: parsePrice(it.p)}));
   return {items};
 }
-async function boynerShop(p, qs){
-  for (const q of qs) {
+// hint: what this store answered last time ({q: the spelling that found it} or {miss: true})
+async function boynerShop(p, qs, hint){
+  let failed = false;
+  for (const q of qs.slice(0, hint && hint.miss ? 1 : 3)) {
     const r = await boynerItems(q);
     if (r.blocked) return {sizes: {}, blocked: true};
-    if (r.error) continue;
+    if (r.error) { failed = true; continue; }
     let bc = mBuckets(r.items, p);
     if (!hasAny(bc) && r.items.some(it => mMatchName(p, it.t) && !/\d{2,3}\s*ml/i.test(it.t))) {
       // the perfume is there but its titles have no size: ask Boyner per size
@@ -2655,30 +2722,44 @@ async function boynerShop(p, qs){
     }
     if (hasAny(bc)) return {byConc: bc, sizes: {}, q};
   }
-  return {sizes: {}};
+  return failed ? {sizes: {}, failed: true} : {sizes: {}, miss: true};
 }
-// all spellings are asked at once; the first one (in order) that finds the perfume wins, so a miss costs one round trip, not three
-// apps before v17 run one request at a time, so there the spellings are tried one after another
+// apps before v17 run one request at a time
 const parallelNet = () => appVersion() >= 17;
-async function storeShop(rule, k, p, qs){
-  if (!parallelNet()) {
-    for (const q of qs) {
-      const r = await shopTry(rule, k, q);
-      if (r.blocked) return {sizes: {}, blocked: true};
-      if (!r.error) { const bc = mBuckets(r.items, p); if (hasAny(bc)) return {byConc: bc, sizes: {}, q}; }
-    }
-    return {sizes: {}};
-  }
-  const runs = qs.map(q => shopTry(rule, k, q));
-  for (let i = 0; i < runs.length; i++) {
-    const r = await runs[i];
+// One request per store when things go well: the first spelling. Only a miss costs more, and then the other spellings go out together.
+// A store that did not sell the perfume last time is asked once.
+async function storeShop(rule, k, p, qs, hint){
+  const ask = async q => {
+    const r = await shopTry(rule, k, q);
+    if (r.blocked) return {blocked: true};
+    if (r.error) return {error: true};
+    const bc = mBuckets(r.items, p, rule.market);
+    return hasAny(bc) ? {byConc: bc, sizes: {}, q} : {};
+  };
+  const first = await ask(qs[0]);
+  if (first.blocked) return {sizes: {}, blocked: true};
+  if (first.byConc) return first;
+  const rest = hint && hint.miss ? [] : qs.slice(1);
+  let failed = !!first.error;
+  const runs = parallelNet() ? rest.map(ask) : null;
+  for (let i = 0; i < rest.length; i++) {
+    const r = runs ? await runs[i] : await ask(rest[i]);
     if (r.blocked) return {sizes: {}, blocked: true};
-    if (!r.error) { const bc = mBuckets(r.items, p); if (hasAny(bc)) return {byConc: bc, sizes: {}, q: qs[i]}; }
+    if (r.byConc) return r;
+    if (!r.error) failed = false;
   }
-  return {sizes: {}};
+  return failed ? {sizes: {}, failed: true} : {sizes: {}, miss: true};
+}
+// A store that answers "too many requests" is left alone for a while (5, 10, 20… up to 60 minutes) instead of being asked again
+// with every perfume: asking keeps it closed for longer, and waiting for its refusal is what makes a search slow.
+const blockUntil = k => ((S.shop.block || {})[k] || 0);
+function noteBlock(k, blocked){
+  const b = S.shop.block || (S.shop.block = {}), n = S.shop.blockN || (S.shop.blockN = {});
+  if (blocked) { n[k] = Math.min(5, (n[k] || 0) + 1); b[k] = Date.now() + Math.min(60, 5 * 2 ** (n[k] - 1)) * 60e3; save(); }
+  else if (b[k] || n[k]) { delete b[k]; delete n[k]; save(); }
 }
 const withTimeout = (pr, ms, v) => Promise.race([pr, new Promise(r => setTimeout(() => r(v), ms))]);
-const mKey = p => 'mp4:' + fold(storeQuery(p));
+const mKey = p => 'mp5:' + fold(storeQuery(p));
 async function cachedMulti(p){
   const key = mKey(p);
   if (mpMem.has(key)) return pickConc(mpMem.get(key), mpMem.get(key).conc, p);
@@ -2696,25 +2777,37 @@ function fetchMulti(p, onProgress, opt){
     if (!NATIVE) return null;
     const rules = await loadShops();
     const ids = S.shop.order.filter(k => !S.shop.off.includes(k) && rules[k] && (k === 'boyner' || NATIVE.shopSearch));
-    const qs = queryVariants(p);
     const old = await cachedMulti(p);
+    const force = !!(opt && opt.force), week = old && Date.now() - old.t < 7 * 864e5;
+    const base = queryVariants(p);
     const out = {t: Date.now(), shops: {}, order: ids};
     let done = 0;
-    const finish = () => {
-      // a store that is rate-limited right now keeps the prices it gave last time
-      if (old) for (const [k, v] of Object.entries(out.shops)) if (!Object.keys(v.sizes).length && old.shops && old.shops[k] && Object.keys(old.shops[k].sizes).length && (v.blocked || v.slow)) out.shops[k] = {...old.shops[k], stale: true};
+    const settle = () => {
+      // a store that is closed or slow right now keeps the prices it gave last time
+      if (old) for (const [k, v] of Object.entries(out.shops)) if (!hasAny(v.byConc) && old.shops && old.shops[k] && hasAny(old.shops[k].byConc) && (v.blocked || v.slow || v.failed)) out.shops[k] = {...old.shops[k], stale: old.shops[k].stale || old.t, wait: v.wait};
+      priceSane(out, rules);
       pickConc(out, out.conc, p);
-      if (Object.values(out.shops).some(x => hasAny(x.byConc) || Object.keys(x.sizes).length)) { mpMem.set(key, out); idbSet(key, out).catch(() => {}); }
     };
-    // every store at once; the page stops waiting for a slow store after 15 s, its answer is still added when it arrives
+    const finish = () => {
+      settle();
+      // "not sold here" is worth remembering too: the next look is instant and asks each store once instead of four times
+      if (Object.values(out.shops).some(x => hasAny(x.byConc) || Object.keys(x.sizes).length || x.miss)) { mpMem.set(key, out); idbSet(key, out).catch(() => {}); }
+    };
+    // every store at once; the page stops waiting for a slow store after 12 s, its answer is still added when it arrives
     await Promise.all(ids.map(async k => {
-      const job = (k === 'boyner' ? boynerShop(p, qs) : storeShop(rules[k], k, p, qs)).catch(() => ({sizes: {}}));
-      const r = await withTimeout(job, 15000, null);
+      const hint = !force && old && old.shops && old.shops[k] ? {q: old.shops[k].q, miss: !!(week && old.shops[k].miss)} : null;
+      // the spelling that found the perfume in this store last time goes first
+      const qs = hint && hint.q ? [hint.q, ...base.filter(q => q !== hint.q)] : base;
+      const closed = !force && blockUntil(k) > Date.now();
+      const job = closed ? Promise.resolve({sizes: {}, blocked: true, wait: blockUntil(k)})
+        : (k === 'boyner' ? boynerShop(p, qs, hint) : storeShop(rules[k], k, p, qs, hint)).catch(() => ({sizes: {}, failed: true}));
+      const note = r => { if (!closed && r && !r.failed) noteBlock(k, !!r.blocked); if (r && r.blocked) r.wait = blockUntil(k); return r; };
+      const r = note(await withTimeout(job, 12000, null));
       out.shops[k] = r || {sizes: {}, slow: true};
-      pickConc(out, out.conc, p);
+      settle();
       done++;
       listeners.forEach(f => f(rules[k].n, done - 1, ids.length, out));
-      if (!r) job.then(late => { out.shops[k] = late; pickConc(out, out.conc, p); finish(); listeners.forEach(f => f(rules[k].n, ids.length, ids.length, out, true)); });
+      if (!r) job.then(late => { out.shops[k] = note(late); finish(); listeners.forEach(f => f(rules[k].n, ids.length, ids.length, out, true)); });
     }));
     finish();
     return out;
@@ -2724,7 +2817,8 @@ function fetchMulti(p, onProgress, opt){
 }
 function bestAt(data, ml){
   let best = null;
-  for (const [k, v] of Object.entries(data.shops)) { const x = v.sizes[ml]; if (x && (!best || x.p < best.p)) best = {...x, shop: k}; }
+  // a flagged marketplace price is the best only when nothing else is on offer
+  for (const [k, v] of Object.entries(data.shops)) { const x = v.sizes[ml]; if (x && (!best || (!x.sus === !best.sus ? x.p < best.p : !x.sus))) best = {...x, shop: k}; }
   return best;
 }
 function allSizes(data){ return [...new Set(Object.values(data.shops).flatMap(v => Object.keys(v.sizes).map(Number)))].sort((a, b) => a - b); }
@@ -3798,11 +3892,13 @@ async function loadPricesInto(p, force){
   const old = force ? null : await cachedMulti(p);
   if (!live()) return;
   if (old && allSizes(old).length) { priceState.data = old; drawPrices(); if (Date.now() - old.t < 2 * 3600e3) return; }
+  // nobody sold it a moment ago: believed for a day, or for half an hour when a store could not be reached
+  else if (old && Date.now() - old.t < (Object.values(old.shops).some(v => v.blocked || v.failed || v.slow) ? 30 * 60e3 : 24 * 3600e3)) { priceState.data = old; drawPrices(); return; }
   const data = await fetchMulti(p, (shop, i, n, part, late) => {
     if (!live()) return;
     if (part && allSizes(part).length && (late || i + 1 < n)) { priceState.data = part; drawPrices(); }
     if (meta() && !late) meta().textContent = i + 1 < n ? `${i + 1}/${n} mağaza tamam…${parallelNet() ? '' : ' · hızlı arama için uygulamayı güncelle'}` : '';
-  }, {fresh: !!old || !!force});
+  }, {fresh: !!old || !!force, force: !!force});
   if (!live()) return;
   if (data && (allSizes(data).length || !old)) priceState.data = data;
   drawPrices();
@@ -3816,7 +3912,7 @@ function drawPrices(){
   if (!sizes.length) {
     if (meta) meta.textContent = '';
     const blocked = data && Object.entries(data.shops).filter(([, v]) => v.blocked).map(([k]) => (STORES[k] || {n: k}).n);
-    body.innerHTML = `<span class="muted small">${data ? 'Seçili mağazalarda bu parfüm bulunamadı.' : 'Fiyatlara ulaşılamadı.'}${blocked && blocked.length ? ' ' + blocked.join(', ') + ' şu an yanıt vermiyor.' : ''}</span>
+    body.innerHTML = `<span class="muted small">${data ? 'Seçili mağazalarda bu parfüm bulunamadı.' : 'Fiyatlara ulaşılamadı.'}${blocked && blocked.length ? ' ' + blocked.join(', ') + ' şu an yanıt vermiyor; “Tekrar dene” onları da yeniden sorar.' : ''}</span>
       <div class="row"><button class="btn sm" data-act="pricerefresh" type="button">Tekrar dene</button></div>${searchChips}${priceToggle(p, null)}`;
     return;
   }
@@ -3830,9 +3926,12 @@ function drawPrices(){
         : `<span class="muted small">Sadece <b>${esc(concLbl(sel))}</b> olarak satılan ürünler gösteriliyor.</span>`}</div>`;
   const sl = document.getElementById('sold-line');
   if (sl) sl.innerHTML = cl.filter(c => c !== '?').length ? 'Satışta: ' + cl.filter(c => c !== '?').map(c => `<span class="conc">${esc(c)}</span>`).join(' ') : '';
-  const ml = priceState.ml && sizes.includes(priceState.ml) ? priceState.ml : pickMl(sizes, 100);
+  // the size stays where the user put it; until then it follows the stores as they answer (the first one may only have 200 ml)
+  const ml = priceState.userMl && sizes.includes(priceState.userMl) ? priceState.userMl : pickMl(sizes, 100);
   priceState.ml = ml;
-  const rows = Object.entries(data.shops).filter(([, v]) => v.sizes[ml]).map(([k, v]) => ({k, ...v.sizes[ml]})).sort((a, b) => a.p - b.p);
+  const rows = Object.entries(data.shops).filter(([, v]) => v.sizes[ml]).map(([k, v]) => ({k, stale: v.stale, ...v.sizes[ml]})).sort((a, b) => (!!a.sus - !!b.sus) || a.p - b.p);
+  const closed = data.order.filter(k => data.shops[k] && (data.shops[k].blocked || data.shops[k].stale)).map(k => { const v = data.shops[k], m = Math.max(1, Math.ceil(((v.wait || 0) - Date.now()) / 60e3));
+    return (STORES[k] || {n: k}).n + (v.wait > Date.now() ? ` (${m} dk sonra yeniden denenir)` : ''); });
   const missing = data.order.filter(k => !(data.shops[k] && data.shops[k].sizes[ml])).map(k => (STORES[k] || {n: k}).n);
   const rules = SHOP_RULES || {};
   body.innerHTML = `${concBar}
@@ -3840,11 +3939,13 @@ function drawPrices(){
       <a class="btn sm primary" href="${esc(rows[0].u)}" data-act="extlink">Aç</a></div>
     <div class="sizes">${sizes.map(sz => { const b = bestAt(data, sz); return `<button class="${sz === ml ? 'on' : ''}" data-act="pricesize" data-ml="${sz}" type="button"><b>${sz} ml</b><small>${fmtPrice(b.p)}</small></button>`; }).join('')}</div>
     <div class="list">${rows.map((r, i) => `<div class="item" style="grid-template-columns:minmax(0,1fr) auto auto">
-      <div class="item-body"><span class="item-name" style="font-size:15px">${esc((STORES[r.k] || {n: r.k}).n)} ${sel && sel !== '?' ? concTag(sel, '') : ''}${i === 0 && rows.length > 1 ? ' <span class="seg-tag N">En ucuz</span>' : ''}${rules[r.k] && rules[r.k].market ? ' <span class="pill">pazar yeri</span>' : ''}</span>
+      <div class="item-body"><span class="item-name" style="font-size:15px">${esc((STORES[r.k] || {n: r.k}).n)} ${sel && sel !== '?' ? concTag(sel, '') : ''}${i === 0 && rows.length > 1 && !r.sus ? ' <span class="seg-tag N">En ucuz</span>' : ''}${rules[r.k] && rules[r.k].market ? ' <span class="pill">pazar yeri</span>' : ''}${r.sus ? ' <span class="pill" style="color:var(--danger)">şüpheli ucuz</span>' : ''}${r.stale ? ' <span class="pill">son bilinen</span>' : ''}</span>
         <span class="item-meta">${esc(r.t || '')}</span></div>
       <span class="price">${fmtPrice(r.p)}</span>
       <a class="btn sm" href="${esc(r.u)}" data-act="extlink">Aç</a></div>`).join('')}</div>
     ${missing.length ? `<span class="muted small">${ml} ml bulunamadı: ${esc(missing.join(', '))}</span>` : ''}
+    ${closed.length ? `<span class="muted small">Şu an yanıt vermiyor: ${esc(closed.join(', '))}. Varsa son bilinen fiyatı gösteriliyor.</span>` : ''}
+    ${rows.some(r => r.sus) ? '<span class="muted small">“Şüpheli ucuz”: pazar yerindeki fiyat, mağazaların fiyatının yarısına yakın. En ucuz sayılmaz; almadan önce satıcıya bak.</span>' : ''}
     ${priceToggle(p, ml)}`;
 }
 function priceToggle(p, ml){
@@ -4691,8 +4792,8 @@ document.addEventListener('click', async e => {
       toast('Hatırlatıcı kuruldu: ' + fmtShort(at)); break;
     }
     case 'buydel': S.buys = S.buys.filter(b => b.id !== t.dataset.id); save(); closeSheet(); render(); toast('Hatırlatıcı silindi'); break;
-    case 'pricesize': if (priceState) { priceState.ml = +t.dataset.ml; drawPrices(); } break;
-    case 'priceconc': if (priceState && priceState.data) { pickConc(priceState.data, t.dataset.v, priceState.p); priceState.ml = null; drawPrices(); } break;
+    case 'pricesize': if (priceState) { priceState.ml = priceState.userMl = +t.dataset.ml; drawPrices(); } break;
+    case 'priceconc': if (priceState && priceState.data) { pickConc(priceState.data, t.dataset.v, priceState.p); priceState.ml = priceState.userMl = null; drawPrices(); } break;
     case 'pricerefresh': if (priceState) { const p = priceState.p; priceMem.clear(); const b = document.getElementById('price-body'); if (b) b.innerHTML = '<span class="muted small">Fiyatlar alınıyor…</span>'; loadPricesInto(p, true); } break;
     case 'addboy': { const d = draft; closeSheet(); draft = d; openSheet(null); break; }
     case 'ccat-g': col.group = t.dataset.g; renderCollection(); break;

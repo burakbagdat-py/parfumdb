@@ -110,6 +110,9 @@ public class PriceWatch extends BroadcastReceiver {
             double best = Double.MAX_VALUE;
             String bestUrl = "", bestShop = "";
             JSONObject perShop = new JSONObject();
+            // marketplace offers wait until the shops' own prices are known: one far below them is not believed
+            java.util.List<Object[]> market = new java.util.ArrayList<>();
+            java.util.List<Double> solid = new java.util.ArrayList<>();
             for (int k = 0; k < rules.length(); k++) {
                 try {
                     JSONObject rule = rules.getJSONObject(k);
@@ -130,19 +133,33 @@ public class PriceWatch extends BroadcastReceiver {
                                 continue;
                             }
                         }
-                        hit = ShopEngine.sizes(items, name, brand, conc, boyner ? ml : 0).optJSONObject(String.valueOf(ml));
+                        hit = ShopEngine.sizes(items, name, brand, conc, boyner ? ml : 0, rule.optBoolean("market")).optJSONObject(String.valueOf(ml));
                         if (hit == null) Thread.sleep(800);
                     }
                     if (hit != null) {
                         perShop.put(rule.optString("id"), hit.getDouble("p"));
-                        if (hit.getDouble("p") < best) {
-                            best = hit.getDouble("p");
-                            bestUrl = hit.optString("u");
-                            bestShop = rule.optString("n");
+                        if (rule.optBoolean("market")) {
+                            market.add(new Object[]{hit.getDouble("p"), hit.optString("u"), rule.optString("n")});
+                        } else {
+                            solid.add(hit.getDouble("p"));
+                            if (hit.getDouble("p") < best) {
+                                best = hit.getDouble("p");
+                                bestUrl = hit.optString("u");
+                                bestShop = rule.optString("n");
+                            }
                         }
                     }
                     Thread.sleep(1200);
                 } catch (Exception ignored) { }
+            }
+            java.util.Collections.sort(solid);
+            double ref = solid.isEmpty() ? 0 : solid.get((solid.size() - 1) / 2);
+            for (Object[] m : market) {
+                double p = (Double) m[0];
+                if (p < ref * 0.55 || p >= best) continue;
+                best = p;
+                bestUrl = (String) m[1];
+                bestShop = (String) m[2];
             }
             if (best == Double.MAX_VALUE) continue;
             try {
