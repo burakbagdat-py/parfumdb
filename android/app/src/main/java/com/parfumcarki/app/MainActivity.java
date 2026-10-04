@@ -214,7 +214,7 @@ public class MainActivity extends Activity {
 
     private void readOpen(Intent i) {
         String o = i == null ? null : i.getStringExtra("open");
-        if ("batch".equals(o)) pendingOpen = o;
+        if ("batch".equals(o) || "scan".equals(o)) pendingOpen = o;
     }
 
     @Override

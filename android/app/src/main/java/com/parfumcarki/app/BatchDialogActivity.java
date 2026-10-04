@@ -67,7 +67,7 @@ public class BatchDialogActivity extends Activity {
         root.addView(title);
 
         TextView head = new TextView(this);
-        head.setText("Parti kodunu yaz");
+        head.setText("Kodu yaz ya da okut");
         head.setTextColor(fg);
         head.setTextSize(20);
         head.setTypeface(Typeface.DEFAULT_BOLD);
@@ -101,8 +101,21 @@ public class BatchDialogActivity extends Activity {
         row.addView(go, gl);
         root.addView(row);
 
+        // the camera lives in the app (it reads QR codes and barcodes); this opens it straight on the scanner
+        TextView scanBtn = new TextView(this);
+        scanBtn.setText("QR ya da barkod okut");
+        scanBtn.setTextColor(fg);
+        scanBtn.setTextSize(15);
+        scanBtn.setTypeface(Typeface.DEFAULT_BOLD);
+        scanBtn.setGravity(Gravity.CENTER);
+        scanBtn.setBackground(box(field, edge & 0x66FFFFFF, 999));
+        scanBtn.setPadding(dp(18), dp(12), dp(18), dp(12));
+        LinearLayout.LayoutParams sl = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        sl.topMargin = dp(10);
+        root.addView(scanBtn, sl);
+
         final TextView res = new TextView(this);
-        res.setText("Marka seçmene gerek yok: kodun düzeninden hangi gruba ait olduğunu ben bulurum.");
+        res.setText("Parti kodunu yaz: marka seçmene gerek yok, kodun düzeninden hangi gruba ait olduğunu ben bulurum. Kutudaki QR ya da barkod için “okut”a dokun; kamera uygulamada açılır.");
         res.setTextColor(muted);
         res.setTextSize(14);
         res.setLineSpacing(dp(3), 1f);
@@ -158,6 +171,10 @@ public class BatchDialogActivity extends Activity {
             return true;
         });
         close.setOnClickListener(v -> finish());
+        scanBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, MainActivity.class).putExtra("open", "scan").setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+            finish();
+        });
         full.setOnClickListener(v -> {
             startActivity(new Intent(this, MainActivity.class).putExtra("open", "batch").setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP));
             finish();

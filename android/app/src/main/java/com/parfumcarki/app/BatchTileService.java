@@ -13,6 +13,7 @@ public class BatchTileService extends TileService {
         Tile t = getQsTile();
         if (t == null) return;
         t.setState(Tile.STATE_INACTIVE);
+        if (Build.VERSION.SDK_INT >= 29) t.setSubtitle("Kod yaz ya da okut");
         t.updateTile();
     }
 

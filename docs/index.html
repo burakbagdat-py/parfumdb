@@ -545,233 +545,369 @@ body.sheet-open{overflow:hidden}
 [data-skin="layton"] .eyebrow{letter-spacing:.24em}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-/* ============ Premium themes, second edition. One calm layout, five muted palettes, two surfaces:
-   Mat (flat, solid, no glow) and Aero (frosted glass over soft colour). No ornaments; the controls sit where the thumb is. ============ */
-[data-skin="scandal"]{--bg:#1b1619;--panel:#251e22;--panel-2:#2f262b;--line:#40343a;--fg:#efe6e8;--muted:#a8989e;--accent:#c98b9b;--accent-2:#b9a07a;--hi:#d9a3b1;--ink:#2a1219;--danger:#e58a7c;--ok:#86c79a;color-scheme:dark}
-[data-skin="scandal"][data-mode="light"]{--bg:#f3edee;--panel:#fbf8f8;--panel-2:#ece3e5;--line:#dccfd3;--fg:#2c1f24;--muted:#7a686e;--accent:#a5566c;--accent-2:#86693c;--hi:#8f4459;--ink:#ffffff;--danger:#b23b2e;--ok:#2d7a4c;color-scheme:light}
-[data-skin="malachite"]{--bg:#151a17;--panel:#1d2420;--panel-2:#262f2a;--line:#36423b;--fg:#e8eee9;--muted:#99a79e;--accent:#8fb39b;--accent-2:#b5a57c;--hi:#a9c9b3;--ink:#10201a;--danger:#e58a7c;--ok:#86c79a;color-scheme:dark}
-[data-skin="malachite"][data-mode="light"]{--bg:#eef1ed;--panel:#f9fbf8;--panel-2:#e3e9e3;--line:#cfd8d0;--fg:#1c2a22;--muted:#62736a;--accent:#47735a;--accent-2:#7b6a3a;--hi:#375e48;--ink:#ffffff;--danger:#b23b2e;--ok:#2d7a4c;color-scheme:light}
-[data-skin="lune"]{--bg:#16171f;--panel:#1f212c;--panel-2:#282b39;--line:#383c4f;--fg:#e9eaf3;--muted:#9a9db3;--accent:#9c9ad6;--accent-2:#86b7bd;--hi:#b4b2e6;--ink:#14132a;--danger:#e58a7c;--ok:#86c79a;color-scheme:dark}
-[data-skin="lune"][data-mode="light"]{--bg:#eeeff5;--panel:#f9f9fc;--panel-2:#e4e5ef;--line:#d0d2e0;--fg:#1d1f33;--muted:#63667f;--accent:#5f5cb0;--accent-2:#2f7c85;--hi:#4b489a;--ink:#ffffff;--danger:#b23b2e;--ok:#2d7a4c;color-scheme:light}
-[data-skin="sartorial"]{--bg:#14171d;--panel:#1c2029;--panel-2:#252a35;--line:#353c4b;--fg:#ece8df;--muted:#9da2ad;--accent:#c7ae82;--accent-2:#9aa9c4;--hi:#d8c29b;--ink:#201a0e;--danger:#e58a7c;--ok:#86c79a;color-scheme:dark}
-[data-skin="sartorial"][data-mode="light"]{--bg:#f1eee7;--panel:#fbf9f4;--panel-2:#e8e3d7;--line:#d6cfbf;--fg:#1b2233;--muted:#666b78;--accent:#7c6535;--accent-2:#445a86;--hi:#675227;--ink:#ffffff;--danger:#b23b2e;--ok:#2d7a4c;color-scheme:light}
-[data-skin="denim"]{--bg:#141a22;--panel:#1b2330;--panel-2:#242f40;--line:#344357;--fg:#e9edf2;--muted:#98a5b6;--accent:#6f9bd1;--accent-2:#c98a66;--hi:#8db3e2;--ink:#0d1826;--danger:#e58a7c;--ok:#86c79a;color-scheme:dark}
-[data-skin="denim"][data-mode="light"]{--bg:#e9eef4;--panel:#f8fafc;--panel-2:#dde5ee;--line:#c8d3e0;--fg:#18253a;--muted:#5c6b80;--accent:#3a679f;--accent-2:#a8603c;--hi:#2e5687;--ink:#ffffff;--danger:#b23b2e;--ok:#2d7a4c;color-scheme:light}
+/* ============ Premium themes, third edition. A different app, not a recoloured one:
+   large titles, one product stage per screen, three ranks of button (filled, quiet, text) and every main action in the thumb's reach.
+   Two surfaces: Mat (flat, solid) and Aero (frosted glass over soft colour). ============ */
+[data-skin="scandal"]{--bg:#181315;--panel:#221b1e;--panel-2:#2d2428;--line:#40343a;--fg:#f1e8ea;--muted:#a8989e;--accent:#cf93a2;--accent-2:#b9a07a;--hi:#deabb8;--ink:#2a1219;--danger:#e58a7c;--ok:#86c79a;color-scheme:dark}
+[data-skin="scandal"][data-mode="light"]{--bg:#f2ebec;--panel:#fcfafa;--panel-2:#eae0e2;--line:#dccfd3;--fg:#2a1d22;--muted:#7a686e;--accent:#a5566c;--accent-2:#86693c;--hi:#8f4459;--ink:#ffffff;--danger:#b23b2e;--ok:#2d7a4c;color-scheme:light}
+[data-skin="malachite"]{--bg:#121614;--panel:#1a211d;--panel-2:#242d28;--line:#36423b;--fg:#e9efea;--muted:#99a79e;--accent:#93b8a0;--accent-2:#b5a57c;--hi:#aecdb8;--ink:#10201a;--danger:#e58a7c;--ok:#86c79a;color-scheme:dark}
+[data-skin="malachite"][data-mode="light"]{--bg:#ecf0eb;--panel:#fafcf9;--panel-2:#e1e8e1;--line:#cfd8d0;--fg:#1a2820;--muted:#62736a;--accent:#47735a;--accent-2:#7b6a3a;--hi:#375e48;--ink:#ffffff;--danger:#b23b2e;--ok:#2d7a4c;color-scheme:light}
+[data-skin="lune"]{--bg:#13141b;--panel:#1c1e28;--panel-2:#262936;--line:#383c4f;--fg:#eaebf4;--muted:#9a9db3;--accent:#a3a1dc;--accent-2:#86b7bd;--hi:#bab8ea;--ink:#14132a;--danger:#e58a7c;--ok:#86c79a;color-scheme:dark}
+[data-skin="lune"][data-mode="light"]{--bg:#ecedf4;--panel:#fafafd;--panel-2:#e2e3ee;--line:#d0d2e0;--fg:#1b1d30;--muted:#63667f;--accent:#5f5cb0;--accent-2:#2f7c85;--hi:#4b489a;--ink:#ffffff;--danger:#b23b2e;--ok:#2d7a4c;color-scheme:light}
+[data-skin="sartorial"]{--bg:#11141a;--panel:#191d26;--panel-2:#232833;--line:#353c4b;--fg:#eeeae1;--muted:#9da2ad;--accent:#cdb488;--accent-2:#9aa9c4;--hi:#dcc7a1;--ink:#201a0e;--danger:#e58a7c;--ok:#86c79a;color-scheme:dark}
+[data-skin="sartorial"][data-mode="light"]{--bg:#f0ece4;--panel:#fcfaf6;--panel-2:#e6e0d3;--line:#d6cfbf;--fg:#1a2030;--muted:#666b78;--accent:#7c6535;--accent-2:#445a86;--hi:#675227;--ink:#ffffff;--danger:#b23b2e;--ok:#2d7a4c;color-scheme:light}
+[data-skin="denim"]{--bg:#11161d;--panel:#18202b;--panel-2:#222c3b;--line:#344357;--fg:#eaeef3;--muted:#98a5b6;--accent:#77a2d6;--accent-2:#c98a66;--hi:#94b9e6;--ink:#0d1826;--danger:#e58a7c;--ok:#86c79a;color-scheme:dark}
+[data-skin="denim"][data-mode="light"]{--bg:#e8edf3;--panel:#f9fbfd;--panel-2:#dbe4ee;--line:#c8d3e0;--fg:#162338;--muted:#5c6b80;--accent:#3a679f;--accent-2:#a8603c;--hi:#2e5687;--ink:#ffffff;--danger:#b23b2e;--ok:#2d7a4c;color-scheme:light}
 
-[data-skin="scandal"]{--f-display:"Fraunces","Iowan Old Style",Georgia,serif;--f-body:"Plus Jakarta Sans",system-ui,sans-serif;--dw:600}
+[data-skin="scandal"]{--f-display:"Fraunces","Iowan Old Style",Georgia,serif;--f-body:"Plus Jakarta Sans",system-ui,sans-serif;--dw:500}
 [data-skin="malachite"]{--f-display:"Sora",system-ui,sans-serif;--f-body:"Plus Jakarta Sans",system-ui,sans-serif;--dw:600}
 [data-skin="lune"]{--f-display:"Urbanist",system-ui,sans-serif;--f-body:"Plus Jakarta Sans",system-ui,sans-serif;--dw:600}
-[data-skin="sartorial"]{--f-display:"Playfair Display",Georgia,serif;--f-body:"Plus Jakarta Sans",system-ui,sans-serif;--dw:600}
-[data-skin="denim"]{--f-display:"Archivo",system-ui,sans-serif;--f-body:"Plus Jakarta Sans",system-ui,sans-serif;--dw:700}
-html.premium{--r:18px;--btn-r:13px;--chip-r:999px;--btn-tt:none;--btn-ls:0;--dt:none;--dls:-.015em;--pattern:none;--pattern-size:auto;
-  --grad:linear-gradient(var(--accent),var(--accent));--glow:transparent;--shade:rgb(0 0 0 / .45);
-  --card:var(--panel);--edge:var(--line);--tint:color-mix(in srgb,var(--accent) 20%,transparent)}
-html.premium[data-mode="light"]{--shade:rgb(30 35 50 / .2)}
-/* Aero: soft colour behind, frosted panels in front */
-html.premium[data-finish="aero"]{--card:color-mix(in srgb,var(--panel) 56%,transparent);--edge:color-mix(in srgb,#fff 15%,transparent);
-  --grad:linear-gradient(135deg,color-mix(in srgb,var(--accent) 78%,#fff),var(--accent));--glow:color-mix(in srgb,var(--accent) 32%,transparent);
-  background:radial-gradient(60% 42% at 12% 0%,color-mix(in srgb,var(--accent) 46%,transparent),transparent 72%),radial-gradient(55% 40% at 104% 28%,color-mix(in srgb,var(--accent-2) 36%,transparent),transparent 72%),radial-gradient(85% 50% at 40% 112%,color-mix(in srgb,var(--accent) 30%,transparent),transparent 72%),var(--bg);
+[data-skin="sartorial"]{--f-display:"Playfair Display",Georgia,serif;--f-body:"Plus Jakarta Sans",system-ui,sans-serif;--dw:500}
+[data-skin="denim"]{--f-display:"Archivo",system-ui,sans-serif;--f-body:"Plus Jakarta Sans",system-ui,sans-serif;--dw:650}
+
+/* pieces that only the premium layout shows */
+.quick,.quick-sec,.lt,.bi,.st,.fab span,.dact-x,.dock-x,#dock-show{display:none}
+
+html.premium{--r:24px;--btn-r:999px;--chip-r:999px;--btn-tt:none;--btn-ls:0;--dt:none;--dls:-.02em;--pattern:none;--pattern-size:auto;
+  --grad:linear-gradient(var(--accent),var(--accent));--glow:transparent;--shade:rgb(0 0 0 / .6);
+  --card:var(--panel);--fill:color-mix(in srgb,var(--fg) 9%,transparent);--edge:transparent;--hair:color-mix(in srgb,var(--fg) 10%,transparent);
+  --bar:var(--panel-2);--tint:color-mix(in srgb,var(--accent) 17%,transparent);--seg-on:color-mix(in srgb,var(--fg) 16%,transparent);--lift:none;--pshadow:none}
+html.premium[data-mode="light"]{--shade:rgb(40 45 60 / .24);--fill:color-mix(in srgb,var(--fg) 7%,transparent);--bar:var(--panel);--seg-on:#fff}
+/* Aero: soft colour behind, frosted panels in front, a line of light on every top edge */
+html.premium[data-finish="aero"]{--card:color-mix(in srgb,var(--panel) 52%,transparent);--edge:color-mix(in srgb,#fff 12%,transparent);--bar:color-mix(in srgb,var(--panel-2) 62%,transparent);
+  --fill:color-mix(in srgb,var(--fg) 11%,transparent);--lift:inset 0 1px 0 color-mix(in srgb,#fff 16%,transparent),0 18px 40px -30px var(--shade);
+  --grad:linear-gradient(180deg,color-mix(in srgb,var(--accent) 80%,#fff),var(--accent));--pshadow:inset 0 1px 0 rgb(255 255 255 / .42),0 12px 26px -14px color-mix(in srgb,var(--accent) 75%,transparent);
+  background:radial-gradient(62% 40% at 8% 0%,color-mix(in srgb,var(--accent) 42%,transparent),transparent 72%),radial-gradient(58% 38% at 108% 30%,color-mix(in srgb,var(--accent-2) 34%,transparent),transparent 72%),radial-gradient(90% 46% at 36% 110%,color-mix(in srgb,var(--accent) 28%,transparent),transparent 72%),var(--bg);
   background-attachment:fixed}
-html.premium[data-finish="aero"][data-mode="light"]{--card:color-mix(in srgb,#fff 60%,transparent);--edge:rgb(255 255 255 / .85)}
+html.premium[data-finish="aero"][data-mode="light"]{--card:rgb(255 255 255 / .6);--edge:rgb(255 255 255 / .9);--bar:rgb(255 255 255 / .68);--fill:color-mix(in srgb,var(--fg) 8%,transparent);
+  --lift:inset 0 1px 0 #fff,0 18px 40px -30px var(--shade)}
 html.premium[data-finish="aero"] body{background:transparent}
-html.premium[data-finish="aero"] :is(.hero,.card,.box,.rem,.prices,.result,.stat div,.pig-card,.mac-sum,details.cg,.note,.empty,.day,.list>.item,.menu button,.quick button,.pyramid,.skin){box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 14%,transparent),0 14px 30px -22px var(--shade)}
-html.premium[data-finish="aero"] :is(.hero,.tabs,.sheet,.dact){backdrop-filter:blur(22px) saturate(1.25);-webkit-backdrop-filter:blur(22px) saturate(1.25)}
-html.premium[data-finish="aero"] .top{background:color-mix(in srgb,var(--bg) 52%,transparent)}
-html.premium[data-finish="aero"] .sheet{background:color-mix(in srgb,var(--panel) 90%,transparent)}
-html.premium[data-finish="aero"] :is(.btn,.icon-btn,.seg,.search,.input,.chip){background:color-mix(in srgb,var(--panel-2) 55%,transparent)}
-html.premium[data-finish="aero"] .btn.primary{background:var(--grad);box-shadow:inset 0 1px 0 rgb(255 255 255 / .35),0 10px 22px -12px var(--glow)}
-html.no-blur.premium[data-finish="aero"] :is(.hero,.tabs,.sheet,.dact){backdrop-filter:none;-webkit-backdrop-filter:none}
+html.no-blur.premium[data-finish="aero"]{--bar:var(--panel-2)}
 
 /* --- type and rhythm --- */
-html.premium body{font-size:15.5px}
-html.premium .section{gap:14px;margin-bottom:30px}
-html.premium h2{font-size:24px}
+html.premium body{font-size:15.5px;letter-spacing:-.003em}
+html.premium .pt{display:none!important}
+html.premium .section{gap:14px;margin-bottom:32px}
+html.premium h2{font-size:23px;line-height:1.15}
 html.premium h3{font-size:18px}
 html.premium .small{font-size:13.5px}
-html.premium .eyebrow{font-size:11px;letter-spacing:.14em;color:var(--muted)}
-html.premium .field>label,html.premium .label{font-size:11.5px;letter-spacing:.1em}
-html.premium .hero-brand,html.premium .card-brand{color:var(--accent-2);letter-spacing:.1em}
-/* --- header: title on the left, settings on the right; it shrinks when you scroll --- */
-html.premium .top{padding:14px 16px 10px;background:color-mix(in srgb,var(--bg) 88%,transparent)}
-html.premium .logo .mono{display:none}
-html.premium .logo div{display:flex;flex-direction:column-reverse;gap:2px}
-html.premium .logo h1{font-size:24px;line-height:1.05;transition:font-size .2s}
-html.premium .logo small{font-size:11px;letter-spacing:.1em}
-html.premium .bar-title{display:none}
-html.premium .top.scrolled{padding-block:8px}
-html.premium .top.scrolled .logo div{opacity:1;transform:none}
-html.premium .top.scrolled .logo small{display:none}
-html.premium .top.scrolled .logo h1{font-size:18px}
+html.premium .eyebrow{font-size:11px;letter-spacing:.14em;color:var(--muted);font-weight:600}
+html.premium .field>label,html.premium .label{font-size:12.5px;letter-spacing:0;text-transform:none;font-weight:600;color:var(--muted)}
+html.premium .hero-brand,html.premium .card-brand{color:var(--muted);letter-spacing:.12em;font-weight:600;font-size:11px}
+html.premium :focus-visible{outline:3px solid var(--hi);outline-offset:2px}
+
+/* --- header: a large title that scrolls away; a slim bar with the same title takes over --- */
+html.premium .top{margin-bottom:0;padding:8px 16px;justify-content:flex-end;background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;border-bottom:1px solid transparent;transition:background .2s,border-color .2s}
+html.premium .top.scrolled{background:var(--bg);border-bottom-color:var(--hair)}
+html.premium[data-finish="aero"] .top.scrolled{background:color-mix(in srgb,var(--bg) 62%,transparent);backdrop-filter:blur(24px) saturate(1.3);-webkit-backdrop-filter:blur(24px) saturate(1.3)}
+html.no-blur.premium[data-finish="aero"] .top.scrolled{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none}
+html.premium .logo{display:none}
+html.premium .bar-title{left:16px;font-size:19px;transform:translateY(8px)}
+html.premium .lt{display:flex;flex-direction:column;justify-content:flex-end;gap:4px;min-height:60px;margin:-60px 0 18px;padding-right:56px;position:relative;z-index:26;pointer-events:none}
+html.premium .lt small{font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+html.premium .lt strong{display:block;font-size:35px;line-height:1;letter-spacing:-.03em}
+html.premium .top .icon-btn{position:relative;z-index:27}
+
 /* --- surfaces --- */
-html.premium :is(.hero,.card,.box,.rem,.prices,.result,.stat div,.pig-card,.mac-sum,details.cg,.note,.empty,.day,.list>.item,.menu button,.quick button,.pyramid,.skin){
-  background:var(--card);border:1px solid var(--edge);border-radius:var(--r);box-shadow:none}
+html.premium :is(.hero,.box,.rem,.prices,.result,.pig-card,.mac-sum,.note,.day,.list,.menu,.pyramid,.skin,.stat,.streak,.status,.logo-opt,.scan-res,.order,.suggest,.bq-sug,.fpanel,.empty){
+  background:var(--card);border:1px solid var(--edge);border-radius:var(--r);box-shadow:var(--lift)}
+html.premium details.cg{background:var(--card)!important;border:1px solid var(--edge);border-radius:20px;box-shadow:var(--lift)}
+html.premium .sheet :is(.box,.rem,.prices,.result,.pig-card,.mac-sum,.note,.list,.menu,.pyramid,.status,.scan-res,.order,.suggest,.bq-sug,.empty,details.cg),
+html.premium :is(.box,details.cg) :is(.box,.status,details.cg,.order){--card:var(--fill);box-shadow:none;border-color:transparent}
 html.premium .hero::before,html.premium .hero::after,html.premium .tabs::before{display:none}
-html.premium .art{border-radius:16px;background:var(--panel-2)}
-html.premium .item .art,html.premium .day .art{border-radius:12px}
-html.premium .ph{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 45%,var(--panel-2)),var(--panel-2))}
-html.premium .ph.stage{background:var(--panel-2)}
-/* --- controls: one size, one shape, flat --- */
-html.premium .btn{min-height:44px;padding:10px 16px;font-size:14px;font-weight:600;border-radius:13px;background:var(--panel-2);border:1px solid var(--edge);color:var(--fg);box-shadow:none}
-html.premium .btn.primary{background:var(--grad);color:var(--ink);border-color:transparent}
-html.premium .btn.ghost{background:transparent}
-html.premium .btn.sm{min-height:36px;padding:6px 12px;font-size:13px;border-radius:11px}
-html.premium .btn.danger{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 45%,var(--edge))}
-html.premium .icon-btn{width:44px;height:44px;border-radius:14px;background:var(--panel-2);border:1px solid var(--edge);color:var(--fg)}
-html.premium .chip{min-height:34px;display:inline-flex;align-items:center;padding:5px 13px;font-size:13px;border:1px solid var(--edge);background:transparent;color:var(--muted)}
-html.premium .chip.on{background:var(--tint);border-color:var(--accent);color:var(--fg)}
-html.premium .chip.grp{border-style:dashed}
-html.premium .chip.grp.on{border-style:solid;background:var(--panel-2);border-color:var(--accent-2)}
-html.premium .seg{border-radius:14px;background:var(--panel-2);border:1px solid var(--edge);padding:4px}
-html.premium .seg button{border-radius:10px;padding:9px 4px;font-size:13px}
-html.premium .seg button.on{background:var(--tint);color:var(--fg);box-shadow:inset 0 0 0 1px var(--accent)}
-html.premium .search{padding:13px 18px;font-size:16px;border-radius:14px;background:var(--panel-2);border:1px solid var(--edge)}
-html.premium .input,html.premium textarea.input,html.premium select.input{padding:12px 14px;font-size:16px;border-radius:13px;background:var(--panel-2);border:1px solid var(--edge)}
-html.premium .toggle-row{min-height:48px}
+html.premium .art{border-radius:18px;background:var(--fill)}
+html.premium .ph{background:linear-gradient(160deg,color-mix(in srgb,var(--accent) 42%,var(--panel-2)),var(--panel-2))}
+html.premium .ph.stage{background:radial-gradient(70% 60% at 50% 60%,color-mix(in srgb,var(--accent) 16%,transparent),transparent 75%)}
+html.premium .empty{border-style:solid;padding:26px 20px}
+html.premium .note{background:var(--tint);border-color:transparent;box-shadow:none}
+html.premium .update{border-radius:20px;background:var(--accent)}
+
+/* --- buttons: filled for the one main action, quiet for the rest, text for the least --- */
+html.premium .btn{min-height:48px;padding:0 20px;font-size:15px;font-weight:600;border-radius:999px;border:0;background:var(--fill);color:var(--fg);box-shadow:none;letter-spacing:-.005em;line-height:1.15}
+html.premium .btn.primary{background:var(--grad);color:var(--ink);box-shadow:var(--pshadow)}
+html.premium .btn.ghost{background:transparent;color:var(--hi)}
+html.premium .btn.danger{background:color-mix(in srgb,var(--danger) 15%,transparent);color:var(--danger)}
+html.premium .btn.sm{min-height:40px;padding:0 16px;font-size:14px}
+html.premium .btn.block{min-height:52px}
+html.premium .btn:disabled{opacity:.5;box-shadow:none}
+html.premium .bi{display:block;width:18px;height:18px;flex:none}
+html.premium .btn:active,html.premium .icon-btn:active,html.premium .chip:active{transform:scale(.97)}
+html.premium .icon-btn{width:44px;height:44px;border-radius:50%;background:var(--fill);border:0;color:var(--fg)}
+html.premium .icon-btn svg{width:20px;height:20px}
+html.premium .icon-btn.added{background:var(--tint);color:var(--hi)}
+html.premium .linkbtn{color:var(--hi)}
+html.premium .back{align-self:flex-start;min-height:40px;padding:0 16px 0 10px;border-radius:999px;background:var(--fill);color:var(--fg);font-size:14px;margin:0}
+html.premium .chip{min-height:38px;display:inline-flex;align-items:center;padding:0 15px;font-size:14px;font-weight:500;border:0;background:var(--fill);color:var(--fg)}
+html.premium .chip.on{background:var(--fg);color:var(--bg);font-weight:600}
+html.premium .chip.grp{background:none;border-radius:0;padding:0 2px;margin-right:10px;color:var(--muted);font-weight:600;box-shadow:inset 0 -2px 0 transparent}
+html.premium .chip.grp.on{background:none;color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
+html.premium .seg{border-radius:16px;background:var(--fill);border:0;padding:4px}
+html.premium .seg button{min-height:40px;border-radius:12px;padding:0 6px;font-size:14px;color:var(--muted)}
+html.premium .seg button.on{background:var(--seg-on);color:var(--fg);box-shadow:none}
+html.premium[data-mode="light"] .seg button.on{box-shadow:0 1px 4px var(--shade)}
+html.premium .search{height:50px;padding:0 20px;font-size:16px;border-radius:999px;background:var(--fill);border:1px solid transparent}
+html.premium .input,html.premium textarea.input,html.premium select.input{padding:13px 15px;font-size:16px;border-radius:16px;background:var(--fill);border:1px solid transparent}
+html.premium :is(.search,.input):focus{border-color:var(--accent)}
+html.premium .toggle-row{min-height:52px}
 html.premium .switch{width:52px;height:32px}
-html.premium .switch span::after{width:26px;height:26px}
-html.premium .switch input:checked+span::after{transform:translateX(20px)}
-html.premium details.cg summary{padding:14px}
-html.premium .note-chip{font-size:14px;padding:7px 12px;border-radius:10px}
-html.premium .rate button{min-width:44px;height:42px;border-radius:11px}
-html.premium .sizes button{padding:9px 12px;min-width:84px}
-html.premium .level{height:5px}
-html.premium .fab{width:56px;height:56px;border-radius:18px;background:var(--grad);box-shadow:0 12px 24px -12px var(--shade)}
-html.premium .toast{border-radius:14px}
-html.premium .conc{border-color:var(--edge);color:var(--accent-2)}
-html.premium :focus-visible{outline-width:3px}
-/* the three trackers sit side by side as equal buttons */
-html.premium .bell-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
-html.premium .bell{width:auto;max-width:none;flex-direction:column;justify-content:center;gap:4px;padding:9px 4px 8px;border-radius:12px;font-size:11.5px;line-height:1.15;text-align:center;border:1px solid var(--edge);background:var(--panel-2);color:var(--muted)}
+html.premium .switch span{background:color-mix(in srgb,var(--fg) 20%,transparent)}
+html.premium .switch span::after{width:26px;height:26px;background:#fff;box-shadow:0 2px 5px rgb(0 0 0 / .3)}
+html.premium .switch input:checked+span{background:var(--accent)}
+html.premium .switch input:checked+span::after{transform:translateX(20px);background:#fff}
+html.premium details.cg summary{padding:16px;align-items:center;gap:10px;font-size:15.5px}
+html.premium details.cg summary::after{content:"";width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);rotate:45deg;flex:none;margin:-4px 4px 0 0;transition:rotate .2s}
+html.premium details.cg[open]>summary::after{rotate:225deg;margin-top:4px}
+html.premium details.cg summary small{margin-left:auto;text-align:right}
+html.premium .note-chip{font-size:14px;padding:8px 13px;border-radius:999px;background:var(--fill);border:0}
+html.premium .rate button{min-width:48px;height:44px;border-radius:999px;border:0;background:var(--fill);color:var(--fg);padding:0 16px;font-weight:600}
+html.premium .rate button.on{background:var(--fg);color:var(--bg)}
+html.premium .sizes button{padding:10px 14px;min-width:86px;border-radius:16px;border:0;background:var(--fill);box-shadow:none}
+html.premium .sizes button.on{box-shadow:inset 0 0 0 2px var(--accent)}
+html.premium .pig-add button{min-height:50px;border-radius:999px;border:0;background:var(--fill)}
+html.premium .pig-add button.big{background:var(--grad);box-shadow:var(--pshadow)}
+html.premium .level{height:4px;background:var(--hair)}
+html.premium .level i,html.premium .bar i,html.premium .dots i.on{background:var(--accent)}
+html.premium .toast{border-radius:999px;padding:14px 20px;text-align:center}
+html.premium .conc{border:0;background:var(--fill);color:var(--fg);padding:2px 7px;border-radius:6px;font-weight:700}
+html.premium .pill{border:0;background:var(--fill);padding:3px 9px}
+html.premium .fam{background:var(--fill);border:0;color:var(--fg);font-weight:500;padding:4px 11px 4px 9px}
+html.premium .macchip{min-height:34px;padding:0 13px 0 9px;border:0;background:var(--fill);font-weight:600;font-size:13px}
+html.premium .macchip.on{background:var(--tint);color:var(--hi)}
+html.premium .macchip.ready{background:var(--accent);color:var(--ink)}
+html.premium .seg-tag{border:0;background:var(--fill);color:var(--muted)}
+html.premium .seg-tag.N{background:var(--tint);color:var(--hi)}
+html.premium .dupe-tag{background:var(--tint);color:var(--hi)}
+html.premium .sample-tag{top:10px;left:10px;border-radius:999px;padding:4px 10px;font-size:10.5px;letter-spacing:.04em;text-transform:none;font-weight:600;background:rgb(0 0 0 / .55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+html.premium .notecard{border-radius:26px;border:0;background:var(--panel-2);padding:18px}
+html.premium .scan-res{border-left:3px solid var(--accent-2)}
+html.premium .scan-res.good{border-left-color:var(--ok)}
+html.premium .scan-res.bad{border-left-color:var(--danger)}
+html.premium .auth-step .n{background:var(--tint);color:var(--hi)}
+/* the three trackers: equal tiles, icon above the word */
+html.premium .bell-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%}
+html.premium .bell{width:auto;max-width:none;flex-direction:column;justify-content:center;gap:6px;min-height:68px;padding:10px 4px;border-radius:18px;font-size:12px;font-weight:600;line-height:1.15;text-align:center;border:0;background:var(--fill);color:var(--fg)}
+html.premium .bell svg{width:20px;height:20px;color:var(--muted)}
 html.premium .bell span{max-width:100%;overflow-wrap:anywhere}
-html.premium .bell.on{background:var(--tint);border-color:var(--accent);color:var(--fg);box-shadow:none}
-html.premium .bell.on svg{animation:none}
-/* --- home: bottle on the left, name beside it, one row of equal buttons underneath --- */
-html.premium .hero{grid-template-columns:104px minmax(0,1fr);gap:6px 16px;padding:16px;align-items:start;text-align:left}
-html.premium .hero>.hero-body{display:contents}
-html.premium .hero>.art{grid-column:1;grid-row:1 / span 6;width:104px;align-self:start}
-html.premium .hero>.hero-body>*{grid-column:2}
-html.premium .hero-name{font-size:23px;line-height:1.1}
-html.premium .hero>.hero-body>.hero-actions{grid-column:1 / -1;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:8px;margin-top:12px;padding-top:0}
-html.premium .hero-actions .btn{min-height:44px;padding-inline:6px;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.quick,.quick-sec{display:none}
+html.premium .bell.on{background:var(--tint);color:var(--fg);box-shadow:none}
+html.premium .bell.on svg{color:var(--accent);animation:none}
+
+/* --- today: the bottle on a stage, its name under it, the main button as wide as the card --- */
+html.premium .hero{display:flex;flex-direction:column;align-items:center;gap:0;padding:26px 18px 18px;border-radius:32px;text-align:center}
+html.premium[data-finish="aero"] .hero{backdrop-filter:blur(22px) saturate(1.2);-webkit-backdrop-filter:blur(22px) saturate(1.2)}
+html.premium .hero>.art{width:166px;aspect-ratio:4/5;border-radius:26px;background:transparent;margin-bottom:18px}
+html.premium .hero>.art .ph.stage{inset:-28%;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 26%,transparent),transparent)}
+html.premium .hero>.art{overflow:visible}
+html.premium .hero>.art img{border-radius:26px}
+html.premium .hero>.art img.cut{padding:0;border-radius:0}
+html.premium .hero>.hero-body{align-items:center;gap:8px;width:100%;padding:0}
+html.premium .hero-name{font-size:29px;line-height:1.08;letter-spacing:-.025em}
+html.premium .hero .fam-line{justify-content:center}
+html.premium .hero .notes-mini{-webkit-line-clamp:1;max-width:100%}
+html.premium .hero .wx{justify-content:center}
+html.premium .hero-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;margin-top:14px;padding:0}
+html.premium .hero-actions .btn{min-height:48px;padding-inline:10px;font-size:14.5px}
+html.premium .hero-actions .btn:first-child{grid-column:1 / -1;min-height:56px;font-size:16.5px}
+html.premium .hero-actions .btn:last-child:nth-child(2){grid-column:1 / -1}
 html.premium .quick-sec{display:flex}
-html.premium .quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-html.premium .quick button{display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 4px 10px;color:var(--fg);font-size:11.5px;font-weight:600;line-height:1.15}
-html.premium .quick .qi{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--tint);color:var(--accent)}
-html.premium .quick svg{width:20px;height:20px}
+html.premium .quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+html.premium .quick button{display:flex;flex-direction:column;align-items:center;gap:8px;padding:0;border:0;background:none;box-shadow:none;color:var(--muted);font-size:12.5px;font-weight:600;line-height:1.15}
+html.premium .quick .qi{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:var(--card);border:1px solid var(--edge);box-shadow:var(--lift);color:var(--fg);transition:transform .12s}
+html.premium .quick button:active .qi{transform:scale(.94)}
+html.premium .quick svg{width:23px;height:23px}
 /* the week as cards to swipe */
 html.premium .week{flex-direction:row;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border:0;background:none;box-shadow:none;border-radius:0;margin-inline:-16px;padding:2px 16px 10px}
-html.premium .week::-webkit-scrollbar{display:none}
-html.premium .day{flex:none;width:132px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:12px 10px;scroll-snap-align:start;position:relative}
-html.premium .day:first-child{border-top:1px solid var(--edge)}
-html.premium .day.today{border-color:var(--accent);background:linear-gradient(180deg,var(--tint),var(--card) 70%)}
-html.premium .day .dname{flex-direction:row;gap:6px;align-items:baseline}
-html.premium .day .art{width:78px;height:98px}
-html.premium .day .dinfo{align-items:center;width:100%}
+html.premium .day{flex:none;width:136px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:14px 10px 12px;scroll-snap-align:start;position:relative;border-top:1px solid var(--edge)}
+html.premium .day.today{background:var(--card);box-shadow:inset 0 0 0 2px var(--accent)}
+html.premium .day .dname{flex-direction:row;gap:6px;align-items:baseline;align-self:flex-start;padding-left:4px}
+html.premium .day .dname span{font-size:19px}
+html.premium .day .art{width:80px;height:100px;border-radius:16px}
+html.premium .day .dinfo{align-items:center;width:100%;gap:4px}
 html.premium .dinfo .pn{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:14.5px;line-height:1.15;min-height:2.3em}
-html.premium .day .icon-btn{position:absolute;top:4px;right:4px;width:38px;height:38px;border:0;background:transparent}
+html.premium .day .icon-btn{position:absolute;top:6px;right:6px;width:36px;height:36px;background:transparent;color:var(--muted)}
 html.premium .day .icon-btn svg{width:16px;height:16px}
-/* rows as separate cards; settings as tiles */
-html.premium .list{background:none;border:0;box-shadow:none;gap:8px;overflow:visible;border-radius:0}
-html.premium .list>.item{padding:11px 13px}
-html.premium .list>.item .art{width:54px;height:68px}
-html.premium .grid{gap:12px}
-html.premium .card .art{border-radius:0}
-html.premium .menu{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;border:0;background:none;box-shadow:none;overflow:visible}
-html.premium .menu button{grid-template-columns:minmax(0,1fr);gap:9px;align-content:start;padding:14px;min-height:118px}
-html.premium .menu button>svg:last-child{display:none}
-html.premium .menu .mi{width:40px;height:40px;border-radius:12px;background:var(--tint)}
-html.premium .menu .mi svg{color:var(--accent)}
-html.premium .skins{grid-template-columns:minmax(0,1fr)}
-html.premium .skin{flex-direction:row;align-items:stretch;overflow:hidden}
-html.premium .skin .sw{width:92px;height:auto;min-height:80px;flex:none}
-html.premium .skin.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
-html.premium .tier{grid-template-columns:minmax(0,1fr);gap:8px}
-html.premium .dpane .tier{grid-template-columns:minmax(0,1fr)}
+html.premium .sel{font-size:11.5px;letter-spacing:.02em;text-transform:none;font-weight:600}
+/* numbers side by side in one card */
+html.premium .stat,html.premium .streak{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding:16px 4px}
+html.premium .stat div,html.premium .streak div{background:none;border:0;border-left:1px solid var(--hair);border-radius:0;padding:0 8px;align-items:center;text-align:center;box-shadow:none}
+html.premium .stat div:first-child,html.premium .streak div:first-child{border-left:0}
+html.premium .stat b,html.premium .streak b{font-size:27px;line-height:1.1}
+html.premium .stat span,html.premium .streak span{font-size:12.5px}
+html.premium .jday{border:0;border-radius:12px;background:var(--card)}
+html.premium .jday.on{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--accent) 60%,transparent)}
+/* lists: rows in one card, a hair between them */
+html.premium .list{overflow:hidden}
+html.premium .item,html.premium .brand-row{padding:13px 14px;border-top-color:var(--hair)}
+html.premium .item .art{width:54px;height:68px;border-radius:14px}
+html.premium .item-name{font-size:16px}
+html.premium .item-meta{font-size:12.5px}
+html.premium .brand-av{border-radius:50%;background:var(--fill);color:var(--fg)}
+/* shelves and the collection: no boxes, the photo is the card */
+html.premium .grid{gap:22px 14px}
+html.premium .card{background:none;border:0;border-radius:0;overflow:visible;box-shadow:none}
+html.premium .card .art{border-radius:24px;background:var(--card);border:1px solid var(--edge);box-shadow:var(--lift)}
+html.premium .card-body{padding:11px 4px 0;gap:3px}
+html.premium .card-name{font-size:16px;line-height:1.18}
+html.premium .grid .card-body .chips{display:none}
+html.premium .shelf .card{width:142px}
+html.premium .shelf{gap:14px}
+html.premium .pig-card{width:184px;padding:14px;border-radius:22px;gap:8px}
+/* search with the filter button beside it; the filters open underneath */
+html.premium .sbar{display:flex;gap:10px;align-items:center}
+html.premium .sfield{flex:1;min-width:0;display:flex;align-items:center;gap:10px;height:52px;padding:0 18px;border-radius:999px;background:var(--fill);border:1px solid transparent;color:var(--muted)}
+html.premium .sfield:focus-within{border-color:var(--accent)}
+html.premium .sfield svg{width:20px;height:20px;flex:none}
+html.premium .sfield .search{flex:1;min-width:0;height:100%;padding:0;border:0;background:none;border-radius:0;color:var(--fg);outline:none}
+html.premium .fbtn{position:relative;width:52px;height:52px}
+html.premium .fbtn.on{background:var(--fg);color:var(--bg)}
+html.premium .fbtn b{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;display:grid;place-items:center;background:var(--accent);color:var(--ink);font-size:11.5px;font-weight:700;box-shadow:0 0 0 2px var(--bg)}
+html.premium .fpanel{display:flex;flex-direction:column;gap:14px;padding:16px}
+html.premium .fpanel .chips.scroll{margin-inline:-16px;padding-inline:16px}
+html.premium .fpanel .label{margin-bottom:-6px}
+/* settings: one list, a tinted icon, a chevron */
+html.premium .menu{overflow:hidden}
+html.premium .menu button{padding:15px 16px;border-top-color:var(--hair);grid-template-columns:40px minmax(0,1fr) auto}
+html.premium .menu .mi{width:40px;height:40px;border-radius:13px;background:var(--tint)}
+html.premium .menu .mi svg{color:var(--hi)}
+html.premium .menu>button>svg:last-child{color:var(--muted)}
+html.premium .skins{gap:12px}
+html.premium .skin{overflow:hidden}
+html.premium .skin.on{border-color:transparent;box-shadow:inset 0 0 0 2px var(--accent)}
+html.premium .logo-opt.on{border-color:transparent;box-shadow:inset 0 0 0 2px var(--accent)}
+html.premium .tier{grid-template-columns:minmax(0,1fr);gap:8px;border-top-color:var(--hair);padding:14px 16px}
+html.premium .dpane .tier{grid-template-columns:minmax(0,1fr);padding:14px 16px}
 html.premium .tier-name{flex-direction:row;align-items:baseline;gap:8px}
 html.premium .tier:first-child,html.premium .tier:nth-child(2),html.premium .tier:nth-child(3){background:none}
-/* --- a perfume opens as a full page; its actions wait in a bar at the bottom --- */
-html.premium .sheet{border-radius:24px 24px 0 0;border-color:var(--edge)}
-html.premium .sheet:has(.dhead){height:100dvh;max-height:100dvh;border-radius:0;border:0;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:0}
-html.premium .dhead{grid-template-columns:96px minmax(0,1fr);gap:14px;align-items:start}
-html.premium .dhead .hero-body{gap:7px}
-html.premium .hero-body>.conc{align-self:flex-start}
-html.premium .dhead .art{width:96px}
-html.premium .dhead .hero-name{font-size:22px}
-html.premium .dtabs{border:0;border-bottom:1px solid var(--edge);border-radius:0;padding:0;gap:0;background:var(--panel);box-shadow:none;top:calc(-16px - env(safe-area-inset-top,0px))}
-html.premium[data-finish="aero"] .dtabs{background:color-mix(in srgb,var(--panel) 90%,transparent)}
-html.premium .dtabs button{border-radius:0;padding:13px 4px;font-size:13.5px}
+/* the wheel: one wide button under it */
+html.premium .wheel-wrap+.row .btn{width:100%;min-height:58px;font-size:17px}
+html.premium .wheel-wrap canvas{box-shadow:0 30px 60px -34px var(--shade)}
+html.premium .result{grid-template-columns:84px minmax(0,1fr);padding:14px}
+
+/* --- sheets: a handle, round shoulders, the buttons pinned to the bottom edge --- */
+html.premium .sheet{border-radius:32px 32px 0 0;border:0;background:var(--panel);padding:16px 16px calc(20px + env(safe-area-inset-bottom,0px));gap:16px}
+html.premium[data-finish="aero"] .sheet{background:color-mix(in srgb,var(--panel) 86%,transparent);backdrop-filter:blur(26px) saturate(1.3);-webkit-backdrop-filter:blur(26px) saturate(1.3);box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 18%,transparent)}
+html.no-blur.premium[data-finish="aero"] .sheet{background:var(--panel);backdrop-filter:none;-webkit-backdrop-filter:none}
+html.premium .sheet::before{width:40px;height:5px;background:color-mix(in srgb,var(--fg) 22%,transparent);margin:-6px auto -2px}
+html.premium .sheet h2{font-size:24px}
+html.premium .sheet:has(>.row.spread>.btn.primary){padding-bottom:0}
+html.premium .sheet>.row.spread:has(>.btn.primary),html.premium .sheet>.rb-actions,html.premium .sheet>.row.acts{order:98;position:sticky;bottom:0;z-index:3;flex-wrap:nowrap;gap:10px;margin:auto -16px 0;padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));
+  background:var(--panel);border-top:1px solid var(--hair)}
+html.premium .sheet>.row.spread:has(>.btn.primary)>span:empty{display:none}
+html.premium .sheet>.row.spread:has(>.btn.primary)>.btn{min-height:52px;white-space:nowrap}
+html.premium .sheet>.row.spread:has(>.btn.primary)>.btn.primary{flex:1;font-size:16px}
+html.premium .sheet:has(>.rb-actions),html.premium .sheet:has(>.row.acts){padding-bottom:0}
+html.premium .sheet>.rb-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+html.premium .sheet>.rb-actions .btn{padding-inline:8px;font-size:14px}
+html.premium .sheet>.rb-actions .btn.primary{grid-column:1 / -1;min-height:54px;font-size:16px}
+html.premium .sheet>.row.acts>.btn{flex:1;min-height:52px;padding-inline:8px}
+html.premium .sheet>.rb-actions~*,html.premium .sheet>.row.acts~*{order:97}
+html.premium .spin-hero{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;gap:14px}
+html.premium .spin-hero .art{width:150px;border-radius:24px}
+html.premium .spin-hero .hero-body{align-items:center}
+html.premium .spin-hero .fam-line{justify-content:center}
+/* a perfume opens as a page of its own: stage on top, a toolbar under the thumb */
+html.premium .sheet:has(.dhead){height:100dvh;max-height:100dvh;border-radius:0;padding-top:calc(14px + env(safe-area-inset-top,0px));padding-bottom:0}
+html.premium .sheet:has(.dhead)::before{display:none}
+html.premium .dhead{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+html.premium .dhead .art{width:172px;border-radius:28px;background:transparent;overflow:visible}
+html.premium .dhead .art .ph.stage{inset:-26%;background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 24%,transparent),transparent)}
+html.premium .dhead .art img{border-radius:28px}
+html.premium .dhead .art img.cut{padding:0;border-radius:0}
+html.premium .dhead .hero-body{align-items:center;gap:9px;width:100%}
+html.premium .dhead .hero-name{font-size:28px}
+html.premium .dhead .dstats{justify-content:center;font-size:13px}
+html.premium .dhead .fam-line{justify-content:center}
+html.premium .dtabs{border:0;border-bottom:1px solid var(--hair);border-radius:0;padding:0;gap:0;background:var(--panel);box-shadow:none;top:calc(-14px - env(safe-area-inset-top,0px));margin-inline:-16px;padding-inline:16px}
+html.premium .dtabs button{border-radius:0;min-height:48px;font-size:14.5px}
 html.premium .dtabs button.on{background:none;color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
-.dact-x{display:none}
-html.premium .dact{order:99;position:sticky;bottom:0;z-index:3;flex-wrap:wrap;gap:8px;margin:auto -16px 0;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
-  background:color-mix(in srgb,var(--panel) 94%,transparent);border-top:1px solid var(--edge)}
-html.premium .dact .btn{flex:1 1 26%;min-width:0;padding-inline:6px;font-size:12.5px;line-height:1.15;white-space:normal;text-align:center}
-html.premium .dact .dact-x{display:inline-flex;order:-1;flex:0 0 44px;width:44px;padding:0;font-size:0;background:transparent}
-html.premium .dact .dact-x svg{width:18px;height:18px}
-/* --- dock: a floating bar; the current tab is a tinted pill with its name --- */
-html.premium .app{padding-bottom:calc(112px + env(safe-area-inset-bottom,0px))}
-html.premium .fab{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
-html.premium .toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
-html.premium .tabs{left:12px;right:12px;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:536px;margin-inline:auto;border:1px solid var(--edge);border-radius:22px;padding:6px;
-  background:color-mix(in srgb,var(--panel) 93%,transparent);box-shadow:0 14px 34px -16px var(--shade);transition:opacity .25s,scale .3s cubic-bezier(.22,1,.36,1)}
-html.premium .tab{font-size:10px;gap:2px;padding:6px 0 5px;border-radius:16px;color:var(--muted);letter-spacing:0;min-width:0}
+html.premium[data-mode="light"] .dtabs button.on{box-shadow:inset 0 -2px 0 var(--accent)}
+html.premium .dact{order:99;position:sticky;bottom:0;z-index:3;flex-wrap:nowrap;align-items:center;gap:6px;margin:auto -16px 0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--hair)}
+html.premium .dact .btn{flex:0 0 58px;min-height:54px;padding:0 2px;flex-direction:column;gap:3px;background:none;border-radius:16px;font-size:11px;font-weight:600;line-height:1.1;color:var(--fg);text-align:center}
+html.premium .dact .btn .bi{width:22px;height:22px;color:var(--muted)}
+html.premium .dact .btn .lg{display:none}
+html.premium .dact .btn .st{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html.premium .dact .btn.primary{flex:1 1 0;min-width:0;order:9;flex-direction:row;gap:8px;min-height:54px;margin-left:2px;padding:0 10px;border-radius:999px;background:var(--grad);color:var(--ink);font-size:15px;white-space:nowrap;box-shadow:var(--pshadow)}
+html.premium .dact .btn.primary .bi{display:none}
+html.premium .dact .btn.primary .st{display:none}
+html.premium .dact .btn.primary .lg{display:block;overflow:hidden;text-overflow:ellipsis}
+html.premium .dact .dact-x{display:inline-flex;order:-1;flex:0 0 48px;width:48px;min-height:48px;border-radius:50%;background:var(--fill);font-size:0;gap:0;margin-right:2px}
+html.premium .dact .dact-x svg{width:20px;height:20px}
+
+/* --- dock: floating, every tab named, the open one tinted; the main action of the page floats above it with its name --- */
+html.premium .app{padding-bottom:calc(118px + env(safe-area-inset-bottom,0px))}
+html.premium .tabs{left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));max-width:536px;margin-inline:auto;border:1px solid var(--edge);border-radius:30px;padding:6px;
+  background:var(--bar);box-shadow:0 16px 36px -18px var(--shade);transition:opacity .25s,scale .3s cubic-bezier(.22,1,.36,1)}
+html.premium[data-finish="aero"] .tabs{backdrop-filter:blur(26px) saturate(1.4);-webkit-backdrop-filter:blur(26px) saturate(1.4);box-shadow:inset 0 1px 0 color-mix(in srgb,#fff 18%,transparent),0 16px 36px -18px var(--shade)}
+html.no-blur.premium .tabs{backdrop-filter:none;-webkit-backdrop-filter:none}
+html.premium .tab{font-size:10.5px;gap:3px;padding:8px 0 7px;border-radius:24px;color:var(--muted);letter-spacing:0;min-width:0;font-weight:600;transition:background .2s,color .2s}
 html.premium .tab .ic{width:auto;height:24px;background:none}
-html.premium .tab.on{color:var(--fg);background:var(--tint);font-weight:700}
+html.premium .tab svg{width:23px;height:23px}
+html.premium .tab.on{color:var(--fg);background:var(--tint)}
 html.premium .tab.on .ic{background:none;color:var(--accent)}
+html.premium .fab{width:auto;height:56px;padding:0 22px 0 18px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;right:max(16px,calc(50% - 264px));bottom:calc(96px + env(safe-area-inset-bottom,0px));
+  background:var(--grad);color:var(--ink);font-size:15.5px;font-weight:650;box-shadow:var(--pshadow),0 14px 30px -14px var(--shade);animation:pr-fab .3s cubic-bezier(.22,1,.36,1) both}
+html.premium .fab span{display:inline}
+html.premium .fab svg{width:22px;height:22px}
+html.premium .toast{bottom:calc(98px + env(safe-area-inset-bottom,0px))}
+@keyframes pr-fab{from{opacity:0;transform:translateY(14px) scale(.9)}to{opacity:1;transform:none}}
 /* light surfaces need darker tags */
-html.premium[data-mode="light"] .fam{color:hsl(var(--fh) 55% 27%);background:hsl(var(--fh) 60% 50% / .12);border-color:hsl(var(--fh) 50% 45% / .35)}
 html.premium[data-mode="light"] .fam::before{background:hsl(var(--fh) 60% 44%)}
 html.premium[data-mode="light"] .boyner{background:var(--fg);color:var(--panel)}
 html.premium[data-mode="light"] .overlay{background:rgb(30 35 50 / .4)}
-html.premium[data-mode="light"] .art img.cut{filter:drop-shadow(0 8px 10px rgb(30 35 50 / .25))}
-/* a quiet entrance when a tab opens */
-@keyframes pr-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-html.premium #view[data-fresh]>.section{animation:pr-rise .32s cubic-bezier(.22,1,.36,1) both}
-html.premium #view[data-fresh]>.section:nth-child(n+2){animation-delay:.04s}
-html.premium.no-anim #view[data-fresh]>.section{animation:none}
+html.premium[data-mode="light"] .art img.cut{filter:drop-shadow(0 10px 12px rgb(30 35 50 / .25))}
+/* quiet motion */
+@keyframes pr-rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+html.premium #view[data-fresh]>.section{animation:pr-rise .36s cubic-bezier(.22,1,.36,1) both}
+html.premium #view[data-fresh]>.section:nth-child(2){animation-delay:.04s}
+html.premium #view[data-fresh]>.section:nth-child(n+3){animation-delay:.08s}
+html.premium.no-anim #view[data-fresh]>.section,html.premium.no-anim .fab{animation:none}
+@keyframes pr-sheet{from{transform:translateY(60px);opacity:.3}to{transform:none;opacity:1}}
+html.premium .overlay:not(.closing) .sheet{animation:pr-sheet .34s cubic-bezier(.2,.9,.25,1)}
 
-/* --- the dock can sit on any edge and can be tucked away --- */
-.dock-x,#dock-show{display:none}
-html.premium .dock-x{display:grid;place-items:center;position:absolute;left:50%;top:-13px;translate:-50% 0;width:44px;height:18px;padding:0;border-radius:999px;border:1px solid var(--edge);background:var(--panel);color:var(--muted);box-shadow:0 4px 10px -4px var(--shade)}
-html.premium .dock-x svg{width:14px;height:14px}
+/* --- the dock can sit on any edge and can be tucked away: its handle is the short line above it --- */
+html.premium .dock-x{display:grid;place-items:center;position:absolute;left:50%;top:-20px;translate:-50% 0;width:64px;height:22px;padding:0;border:0;background:none}
+html.premium .dock-x svg{display:none}
+html.premium .dock-x::before{content:"";width:34px;height:4px;border-radius:2px;background:color-mix(in srgb,var(--fg) 30%,transparent)}
 html.premium.dock-hidden .tabs{opacity:0;scale:.92;pointer-events:none}
-html.premium.dock-hidden #dock-show{display:grid;place-items:center;position:fixed;z-index:31;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));translate:-50% 0;width:56px;height:26px;padding:0;border-radius:999px;
-  border:1px solid var(--edge);background:color-mix(in srgb,var(--panel) 92%,transparent);color:var(--accent);box-shadow:0 10px 20px -8px var(--shade)}
+html.premium.dock-hidden #dock-show{display:grid;place-items:center;position:fixed;z-index:31;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));translate:-50% 0;width:64px;height:28px;padding:0;border-radius:999px;
+  border:1px solid var(--edge);background:var(--bar);color:var(--fg);box-shadow:0 10px 20px -8px var(--shade)}
 html.premium #dock-show svg{width:16px;height:16px}
-html.premium.dock-hidden .app{padding-bottom:calc(56px + env(safe-area-inset-bottom,0px))}
-html.premium.dock-hidden :is(.fab,.toast){bottom:calc(50px + env(safe-area-inset-bottom,0px))}
+html.premium.dock-hidden .app{padding-bottom:calc(64px + env(safe-area-inset-bottom,0px))}
+html.premium.dock-hidden :is(.fab,.toast){bottom:calc(52px + env(safe-area-inset-bottom,0px))}
 html.premium[data-dock="top"] .tabs{top:calc(8px + env(safe-area-inset-top,0px));bottom:auto}
-html.premium[data-dock="top"] .app{padding-top:calc(92px + env(safe-area-inset-top,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
-html.premium[data-dock="top"] .top{top:calc(74px + env(safe-area-inset-top,0px))}
-html.premium[data-dock="top"] .dock-x{top:auto;bottom:-13px}
-html.premium[data-dock="top"] .dock-x svg{rotate:180deg}
+html.premium[data-dock="top"] .app{padding-top:calc(96px + env(safe-area-inset-top,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+html.premium[data-dock="top"] .top{top:calc(80px + env(safe-area-inset-top,0px))}
+html.premium[data-dock="top"] .dock-x{top:auto;bottom:-20px}
 html.premium[data-dock="top"] :is(.fab,.toast){bottom:calc(22px + env(safe-area-inset-bottom,0px))}
 html.premium[data-dock="top"].dock-hidden .app{padding-top:16px}
 html.premium[data-dock="top"].dock-hidden .top{top:0}
 html.premium[data-dock="top"].dock-hidden #dock-show{top:calc(6px + env(safe-area-inset-top,0px));bottom:auto;z-index:33}
-html.premium:is([data-dock="left"],[data-dock="right"]) .tabs{top:50%;bottom:auto;translate:0 -50%;width:62px;max-width:62px;margin:0;padding:6px 5px}
+html.premium[data-dock="top"].dock-hidden #dock-show svg{rotate:180deg}
+html.premium:is([data-dock="left"],[data-dock="right"]) .tabs{top:50%;bottom:auto;translate:0 -50%;width:64px;max-width:64px;margin:0;padding:6px}
 html.premium[data-dock="left"] .tabs{left:8px;right:auto}
 html.premium[data-dock="right"] .tabs{right:8px;left:auto}
 html.premium:is([data-dock="left"],[data-dock="right"]) .tabs-in{grid-template-columns:minmax(0,1fr);gap:4px;max-width:none}
-html.premium:is([data-dock="left"],[data-dock="right"]) .tab{font-size:0;gap:0;padding:0;min-height:46px;justify-content:center}
+html.premium:is([data-dock="left"],[data-dock="right"]) .tab{font-size:0;gap:0;padding:0;min-height:50px;justify-content:center}
 html.premium:is([data-dock="left"],[data-dock="right"]) .tab .ic{height:auto}
-html.premium[data-dock="left"] .app{padding-left:84px;padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
-html.premium[data-dock="right"] .app{padding-right:84px;padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+html.premium[data-dock="left"] .app{padding-left:88px;padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+html.premium[data-dock="right"] .app{padding-right:88px;padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+html.premium[data-dock="left"] .top{margin-left:-88px;padding-left:88px}
+html.premium[data-dock="right"] .top{margin-right:-88px;padding-right:88px}
 html.premium:is([data-dock="left"],[data-dock="right"]) :is(.fab,.toast){bottom:calc(22px + env(safe-area-inset-bottom,0px))}
 html.premium[data-dock="right"] .fab{right:auto;left:16px}
-html.premium[data-dock="left"] .toast{left:86px}
-html.premium[data-dock="right"] .toast{right:86px}
-html.premium[data-dock="left"] .dock-x{left:auto;right:-13px;top:50%;translate:0 -50%;width:18px;height:44px}
-html.premium[data-dock="right"] .dock-x{left:-13px;top:50%;translate:0 -50%;width:18px;height:44px}
-html.premium[data-dock="left"] .dock-x svg{rotate:90deg}
-html.premium[data-dock="right"] .dock-x svg{rotate:-90deg}
+html.premium[data-dock="left"] .toast{left:90px}
+html.premium[data-dock="right"] .toast{right:90px}
+html.premium[data-dock="left"] .dock-x{left:auto;right:-20px;top:50%;translate:0 -50%;width:22px;height:64px}
+html.premium[data-dock="right"] .dock-x{left:-20px;top:50%;translate:0 -50%;width:22px;height:64px}
+html.premium:is([data-dock="left"],[data-dock="right"]) .dock-x::before{width:4px;height:34px}
 html.premium:is([data-dock="left"],[data-dock="right"]).dock-hidden .app{padding-inline:16px}
+html.premium:is([data-dock="left"],[data-dock="right"]).dock-hidden .top{margin-inline:-16px;padding-inline:16px}
 html.premium[data-dock="left"].dock-hidden .toast{left:16px}
 html.premium[data-dock="right"].dock-hidden .toast{right:16px}
-html.premium:is([data-dock="left"],[data-dock="right"]).dock-hidden #dock-show{top:50%;bottom:auto;translate:0 -50%;width:26px;height:56px}
+html.premium:is([data-dock="left"],[data-dock="right"]).dock-hidden #dock-show{top:50%;bottom:auto;translate:0 -50%;width:28px;height:64px}
 html.premium[data-dock="left"].dock-hidden #dock-show{left:6px}
 html.premium[data-dock="right"].dock-hidden #dock-show{left:auto;right:6px}
-html.premium:is([data-dock="left"],[data-dock="right"]).dock-hidden #dock-show svg{rotate:90deg}
+html.premium[data-dock="left"].dock-hidden #dock-show svg{rotate:90deg}
+html.premium[data-dock="right"].dock-hidden #dock-show svg{rotate:-90deg}
 
 /* ---------- small shared pieces ---------- */
 .prem-tag{font-size:9.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid currentColor;color:var(--accent-2);align-self:flex-start}
@@ -798,6 +934,7 @@ html.premium:is([data-dock="left"],[data-dock="right"]).dock-hidden #dock-show s
     <span class="bar-title" id="bar-title"></span>
     <button class="icon-btn" data-tab="ayarlar" type="button" aria-label="Ayarlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   </header>
+  <div class="lt"><small id="lt-date"></small><strong class="disp" id="lt-title"></strong></div>
   <div id="update-slot"></div>
   <main id="view"></main>
 </div>
@@ -1025,11 +1162,11 @@ const SKINS = {
 };
 // second edition of the premium themes: muted palettes on one shared layout (see the stylesheet)
 const PREM = {
-  scandal:   {sub: 'Kuru gül ve kum · mat ya da aero', d: ['#1b1619', '#251e22', '#2f262b', '#c98b9b', '#b9a07a', '#efe6e8', '#2a1219'], l: ['#f3edee', '#fbf8f8', '#ece3e5', '#a5566c', '#86693c', '#2c1f24', '#ffffff'], fonts: 'family=Fraunces:opsz,wght@9..144,400..700'},
-  malachite: {sub: 'Adaçayı yeşili ve keten · mat ya da aero', d: ['#151a17', '#1d2420', '#262f2a', '#8fb39b', '#b5a57c', '#e8eee9', '#10201a'], l: ['#eef1ed', '#f9fbf8', '#e3e9e3', '#47735a', '#7b6a3a', '#1c2a22', '#ffffff'], fonts: 'family=Sora:wght@400;500;600;700'},
-  lune:      {sub: 'Arduvaz ve leylak · mat ya da aero', d: ['#16171f', '#1f212c', '#282b39', '#9c9ad6', '#86b7bd', '#e9eaf3', '#14132a'], l: ['#eeeff5', '#f9f9fc', '#e4e5ef', '#5f5cb0', '#2f7c85', '#1d1f33', '#ffffff'], fonts: 'family=Urbanist:wght@400;500;600;700'},
-  sartorial: {sub: 'Gece laciverti ve kum · mat ya da aero', d: ['#14171d', '#1c2029', '#252a35', '#c7ae82', '#9aa9c4', '#ece8df', '#201a0e'], l: ['#f1eee7', '#fbf9f4', '#e8e3d7', '#7c6535', '#445a86', '#1b2233', '#ffffff'], fonts: 'family=Playfair+Display:wght@400..700'},
-  denim:     {sub: 'Kot mavisi ve kiremit · mat ya da aero', d: ['#141a22', '#1b2330', '#242f40', '#6f9bd1', '#c98a66', '#e9edf2', '#0d1826'], l: ['#e9eef4', '#f8fafc', '#dde5ee', '#3a679f', '#a8603c', '#18253a', '#ffffff'], fonts: 'family=Archivo:wdth,wght@75..100,400..800'}
+  scandal:   {sub: 'Kuru gül ve kum · mat ya da aero', d: ['#181315', '#221b1e', '#2d2428', '#cf93a2', '#b9a07a', '#f1e8ea', '#2a1219'], l: ['#f2ebec', '#fcfafa', '#eae0e2', '#a5566c', '#86693c', '#2a1d22', '#ffffff'], fonts: 'family=Fraunces:opsz,wght@9..144,400..700'},
+  malachite: {sub: 'Adaçayı yeşili ve keten · mat ya da aero', d: ['#121614', '#1a211d', '#242d28', '#93b8a0', '#b5a57c', '#e9efea', '#10201a'], l: ['#ecf0eb', '#fafcf9', '#e1e8e1', '#47735a', '#7b6a3a', '#1a2820', '#ffffff'], fonts: 'family=Sora:wght@400;500;600;700'},
+  lune:      {sub: 'Arduvaz ve leylak · mat ya da aero', d: ['#13141b', '#1c1e28', '#262936', '#a3a1dc', '#86b7bd', '#eaebf4', '#14132a'], l: ['#ecedf4', '#fafafd', '#e2e3ee', '#5f5cb0', '#2f7c85', '#1b1d30', '#ffffff'], fonts: 'family=Urbanist:wght@400;500;600;700'},
+  sartorial: {sub: 'Gece laciverti ve kum · mat ya da aero', d: ['#11141a', '#191d26', '#232833', '#cdb488', '#9aa9c4', '#eeeae1', '#201a0e'], l: ['#f0ece4', '#fcfaf6', '#e6e0d3', '#7c6535', '#445a86', '#1a2030', '#ffffff'], fonts: 'family=Playfair+Display:wght@400..700'},
+  denim:     {sub: 'Kot mavisi ve kiremit · mat ya da aero', d: ['#11161d', '#18202b', '#222c3b', '#77a2d6', '#c98a66', '#eaeef3', '#0d1826'], l: ['#e8edf3', '#f9fbfd', '#dbe4ee', '#3a679f', '#a8603c', '#162338', '#ffffff'], fonts: 'family=Archivo:wdth,wght@75..100,400..800'}
 };
 for (const [k, v] of Object.entries(PREM)) {
   const [bg, pn, p2, ac, a2, fg, ink] = v.d, L = v.l;
@@ -1161,6 +1298,26 @@ const skin = () => {
   const k = SKINS[S.skin] || SKINS.karamel;
   return k.wheelLight && lightMode() ? {...k, wheel: k.wheelLight, wheelText: k.wheelTextLight, greet: k.greetLight || k.greet, rim: k.rimLight || k.rim} : k;
 };
+// premium themes change the layout, not only the colours
+const PR = () => !!(S && SKINS[S.skin] && SKINS[S.skin].premium);
+const bi = d => `<svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const IC = {
+  check: bi('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),
+  swap: bi('<path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/>'),
+  cloud: bi('<path d="M7 18h10a4 4 0 0 0 .6-7.95A6 6 0 0 0 6.1 11.1 3.5 3.5 0 0 0 7 18z"/>'),
+  clock: bi('<circle cx="12" cy="13" r="7.5"/><path d="M12 9v4l2.5 2M5 4 3 6M19 4l2 2"/>'),
+  pencil: bi('<path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4"/>'),
+  bottle: bi('<path d="M9.5 3h5v3h-5zM10.5 6v2M13.5 6v2"/><rect x="6" y="8" width="12" height="13" rx="3"/>'),
+  plus: bi('<path d="M12 5v14M5 12h14"/>'),
+  dice: bi('<rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 9h.01M15 15h.01M15 9h.01M9 15h.01M12 12h.01"/>'),
+  sliders: bi('<path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/>'),
+  search: bi('<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>'),
+  down: bi('<path d="m6 9 6 6 6-6"/>')
+};
+// search field with the filter button beside it; the filters themselves open underneath
+const filtBar = (id, ph, val, n, open, act) => `<div class="sbar"><label class="sfield">${IC.search}<input class="search" id="${id}" type="search" placeholder="${esc(ph)}" value="${esc(val)}" autocomplete="off"></label>
+  <button class="icon-btn fbtn${open ? ' on' : ''}" data-act="${act}" type="button" aria-label="Filtreler" aria-expanded="${!!open}">${IC.sliders}${n ? `<b>${n}</b>` : ''}</button></div>`;
+const offChip = (act, attr, label) => `<button class="chip on" data-act="${act}" ${attr} type="button">${esc(label)}<span class="x">×</span></button>`;
 const UI_DEFAULT = {fullscreen: false, anim: true, haptic: true, blur: true, amoled: false, compact: false, labels: true, fs: 'm', dock: 'bottom', dockHidden: false};
 // a premium theme brings its own sound set; leaving it puts the usual sounds back
 const SET_RX = /^(sc_|mal_|lune_|so_|dn_)/;
@@ -1629,12 +1786,16 @@ function toast(msg){
 /* ---------- shared UI ---------- */
 const view = document.getElementById('view');
 const TAB_ORDER = ['hafta', 'cark', 'kesfet', 'koleksiyon', 'envanter', 'maserasyon', 'ayarlar'];
+const PTITLE = {hafta: 'Bugün', cark: 'Çark', kesfet: 'Keşfet', koleksiyon: 'Koleksiyon', envanter: 'Envanter', maserasyon: 'Maserasyon', ayarlar: 'Ayarlar'};
 const TAB_TITLE = {hafta: 'Bu hafta', cark: 'Çark', kesfet: 'Keşfet', koleksiyon: 'Koleksiyon', envanter: 'Envanter', maserasyon: 'Maserasyon', ayarlar: 'Ayarlar'};
 let shownTab = null;
 function haptic(kind){ if (S && S.ui && !S.ui.haptic) return; if (NATIVE && NATIVE.haptic) nativeCall('haptic', kind || 'tick'); else try { navigator.vibrate && navigator.vibrate(kind === 'confirm' ? 15 : 6); } catch (e) {} }
 function render(){
   document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
-  document.getElementById('bar-title').textContent = TAB_TITLE[S.tab] || '';
+  document.getElementById('bar-title').textContent = (PR() ? PTITLE : TAB_TITLE)[S.tab] || '';
+  document.getElementById('lt-title').textContent = PTITLE[S.tab] || '';
+  document.querySelector('.tab[data-tab="hafta"]').lastChild.textContent = PR() ? 'Bugün' : 'Hafta';
+  document.getElementById('lt-date').textContent = new Date().toLocaleDateString('tr-TR', {day: 'numeric', month: 'long', weekday: 'long'});
   const fab = document.getElementById('fab'); if (fab) fab.remove();
   if (shownTab !== S.tab) {
     const dx = shownTab ? (TAB_ORDER.indexOf(S.tab) > TAB_ORDER.indexOf(shownTab) ? 18 : -18) : 0;
@@ -1646,12 +1807,14 @@ function render(){
   const d = DAYS.find(x => x.d === today());
   document.getElementById('today-label').textContent = d.n + ' · ' + new Date().getDate();
   ({hafta: renderWeek, cark: renderWheel, kesfet: renderExplore, koleksiyon: renderCollection, envanter: renderInventory, maserasyon: renderMac, ayarlar: renderSettings}[S.tab] || renderWeek)();
-  const fabAct = {koleksiyon: ['go', 'kesfet', 'Katalogdan ekle'], envanter: ['invpick', '', 'Şişe ekle'], maserasyon: ['macpick', '', 'Şişe dinlendir']}[S.tab];
+  const fabAct = {koleksiyon: PR() ? ['addmenu', '', 'Parfüm ekle'] : ['go', 'kesfet', 'Katalogdan ekle'], envanter: ['invpick', '', 'Şişe ekle'], maserasyon: ['macpick', '', 'Şişe dinlendir'],
+    kesfet: PR() ? ['randbuy', '', 'Rastgele al'] : null}[S.tab];
   if (fabAct) {
     const b = document.createElement('button');
     b.className = 'fab'; b.id = 'fab'; b.type = 'button'; b.dataset.act = fabAct[0]; if (fabAct[1]) b.dataset.tab = fabAct[1];
     b.setAttribute('aria-label', fabAct[2]);
-    b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>';
+    b.innerHTML = (S.tab === 'kesfet' ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M9 9h.01M15 15h.01M15 9h.01M9 15h.01M12 12h.01"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>') + `<span>${fabAct[2]}</span>`;
     document.body.appendChild(b);
   }
 }
@@ -1690,7 +1853,7 @@ function renderWeek(){
   const t = today(); const tw = S.week[t]; const p = tw.pid && byId(tw.pid);
   view.innerHTML = `
   <section class="section">
-    <span class="eyebrow">${esc(skin().greet)}</span>
+    <span class="eyebrow pt">${esc(skin().greet)}</span>
     <div class="hero">
       <div class="art${p ? ' tap' : ''}"${p ? ` data-act="view" data-id="${p.id}"` : ''}>${art(p)}</div>
       <div class="hero-body">
@@ -1701,9 +1864,9 @@ function renderWeek(){
           ${wxLine()}`
         : `<p class="hero-name">Parfüm yok</p><span class="muted small">“${esc(tw.cat)}” kategorisinde parfüm bulunamadı. Günün kategorisini değiştir ya da envanterine parfüm ekle.</span>${wxLine()}`}
         <div class="hero-actions">
-          ${p ? (wornToday(p.id) ? `<button class="btn sm" type="button" disabled>Sıktım ✓</button>` : `<button class="btn sm primary" data-act="wear" data-id="${p.id}" type="button">Sıktım</button>`) : ''}
-          <button class="btn sm${p ? '' : ' primary'}" data-act="reroll" data-day="${t}" type="button">Başka öner</button>
-          ${S.weather && S.weather.on && WX ? `<button class="btn sm ghost" data-act="wxpick" type="button">Havaya göre</button>` : ''}
+          ${p ? (wornToday(p.id) ? `<button class="btn sm" type="button" disabled>${IC.check}${PR() ? 'Bugün sıkıldı' : 'Sıktım ✓'}</button>` : `<button class="btn sm primary" data-act="wear" data-id="${p.id}" type="button">${IC.check}${PR() ? 'Bugün bunu sıktım' : 'Sıktım'}</button>`) : ''}
+          <button class="btn sm${p ? '' : ' primary'}" data-act="reroll" data-day="${t}" type="button">${IC.swap}Başka öner</button>
+          ${S.weather && S.weather.on && WX ? `<button class="btn sm${PR() ? '' : ' ghost'}" data-act="wxpick" type="button">${IC.cloud}Havaya göre</button>` : ''}
         </div>
       </div>
     </div>
@@ -1785,7 +1948,7 @@ let wheelOpen = false;
 function wheelOptions(){
   const inv = invPerfumes().length, base = wheelBase(), off = new Set(S.wheelOff);
   const fromInv = S.wheelInv && inv > 0;
-  const summary = [fromInv ? 'Envanter' : 'Koleksiyon', ...S.wheelCats].join(' · ');
+  const summary = [fromInv ? 'Envanter' : 'Koleksiyon', ...S.wheelCats, ...(PR() ? [filteredWheel().length + ' parfüm'] : [])].join(' · ');
   return `<details class="cg" id="wheel-opts"${wheelOpen ? ' open' : ''} style="background:var(--panel)"><summary>Çark ayarları <small>${esc(summary)}</small></summary>
   <div style="display:flex;flex-direction:column;gap:12px;padding:4px 12px 14px">
     <div class="field"><span class="label">Çark nereden dönsün</span>
@@ -1805,7 +1968,7 @@ function renderWheel(){
   const last = S.lastSpin && byId(S.lastSpin);
   view.innerHTML = `
   <section class="section">
-    <div class="row spread"><h2>Ne sıksam?</h2><span class="muted small">${wheelList.length} parfüm</span></div>
+    <div class="row spread pt"><h2>Ne sıksam?</h2><span class="muted small">${wheelList.length} parfüm</span></div>
     ${wheelOptions()}
   </section>
   <section class="section">
@@ -1848,7 +2011,7 @@ function showSpinResult(p){
         ${iv ? `<span class="muted small">Envanterde · ${iv.ml} ml · %${iv.level}</span>` : ''}
       </div>
     </div>
-    <div class="row">
+    <div class="row acts">
       ${wornToday(p.id) ? '<button class="btn primary" type="button" disabled>Sıktım ✓</button>' : `<button class="btn primary" data-act="wear" data-id="${p.id}" type="button">Sıktım</button>`}
       <button class="btn" data-act="settoday" data-id="${p.id}" type="button"${isToday ? ' disabled' : ''}>${isToday ? 'Bugünün parfümü' : 'Bugüne ata'}</button>
     </div>
@@ -2029,6 +2192,24 @@ function renderBrandPage(){
 }
 const concChips = (act, cur) => `<div class="chips scroll"><button class="chip${cur ? '' : ' on'}" data-act="${act}" data-v="" type="button">Tüm türler</button>${CONCS.map(c => `<button class="chip${cur === c ? ' on' : ''}" data-act="${act}" data-v="${c}" type="button">${c}</button>`).join('')}</div>`;
 function renderExplore(){
+  const n = (ex.boy ? 1 : 0) + (ex.g ? 1 : 0) + (ex.seg ? 1 : 0) + (ex.conc ? 1 : 0) + ex.cats.length;
+  const filters = `<div class="chips scroll">
+      <button class="chip${ex.boy ? ' on' : ''}" data-act="exboy" type="button">Boyner'de</button>
+      ${['E','K','U'].map(g => `<button class="chip${ex.g === g ? ' on' : ''}" data-act="exg" data-g="${g}" type="button">${GENDER[g]}</button>`).join('')}
+    </div>
+    <div class="chips scroll"><button class="chip${ex.seg ? '' : ' on'}" data-act="exseg" data-v="" type="button">Tüm segmentler</button>${Object.entries(SEG).map(([k, v]) => `<button class="chip${ex.seg === k ? ' on' : ''}" data-act="exseg" data-v="${k}" type="button">${v}</button>`).join('')}</div>
+    ${concChips('exconc', ex.conc)}
+    ${catFilter('excat', ex.group, ex.cats)}`;
+  if (PR()) {
+    view.innerHTML = `
+  <section class="section">
+    <div class="seg"><button class="${ex.mode === 'perf' ? 'on' : ''}" data-act="exmode" data-v="perf" type="button">Parfümler</button><button class="${ex.mode === 'brands' ? 'on' : ''}" data-act="exmode" data-v="brands" type="button">Markalar</button></div>
+    ${ex.mode === 'brands' && !ex.brand ? '' : filtBar('ex-q', 'Parfüm, marka ya da nota ara', ex.q, n, ex.fopen, 'exfilt')
+      + (ex.fopen ? `<div class="fpanel">${filters}${n ? '<button class="btn sm ghost" data-act="exclear" type="button" style="align-self:flex-start;padding-inline:4px">Filtreleri temizle</button>' : ''}</div>`
+        : n ? `<div class="chips scroll">${ex.boy ? offChip('exboy', '', 'Boyner’de') : ''}${ex.g ? offChip('exg', `data-g="${ex.g}"`, GENDER[ex.g]) : ''}${ex.seg ? offChip('exseg', 'data-v=""', SEG[ex.seg]) : ''}${ex.conc ? offChip('exconc', 'data-v=""', ex.conc) : ''}${ex.cats.map(c => offChip('excat', `data-cat="${esc(c)}"`, c)).join('')}</div>` : '')}
+  </section>
+  <div id="ex-body"><div class="list">${'<div class="sk-row"><div class="sk"></div><div class="sk-lines"><div class="sk" style="width:70%"></div><div class="sk" style="width:45%"></div><div class="sk" style="width:55%"></div></div></div>'.repeat(6)}</div></div>`;
+  } else
   view.innerHTML = `
   <section class="section">
     <div class="row spread"><h2>Keşfet</h2><button class="btn sm primary" data-act="randbuy" type="button">Rastgele parfüm al</button></div>
@@ -2128,14 +2309,20 @@ function renderExploreBody(){
 /* ---------- collection ---------- */
 let col = {q: '', conc: '', cats: [], group: 'Kullanım'};
 function renderCollection(){
+  const n = (col.conc ? 1 : 0) + col.cats.length;
+  const filters = `${concChips('cconc', col.conc)}
+    ${catFilter('ccat', col.group, col.cats)}`;
   view.innerHTML = `
   <section class="section">
-    <div class="row spread"><h2>Koleksiyon <span class="muted small" style="font-family:var(--f-body);text-transform:none">${S.perfumes.length}</span></h2>
+    <div class="row spread pt"><h2>Koleksiyon <span class="muted small" style="font-family:var(--f-body);text-transform:none">${S.perfumes.length}</span></h2>
       <button class="btn sm ghost" data-act="add" type="button">Elle ekle</button></div>
-    ${sampleNote()}
+    ${PR() ? filtBar('col-search', S.perfumes.length + ' parfümde ara', col.q, n, col.fopen, 'cfilt')
+      + (col.fopen ? `<div class="fpanel">${filters}${n ? '<button class="btn sm ghost" data-act="cclear" type="button" style="align-self:flex-start;padding-inline:4px">Filtreleri temizle</button>' : ''}</div>`
+        : n ? `<div class="chips scroll">${col.conc ? offChip('cconc', 'data-v=""', col.conc) : ''}${col.cats.map(c => offChip('ccat', `data-cat="${esc(c)}"`, c)).join('')}</div>` : '')
+      + sampleNote()
+    : `${sampleNote()}
     <input class="search" id="col-search" type="search" placeholder="Koleksiyonda ara" value="${esc(col.q)}" autocomplete="off">
-    ${concChips('cconc', col.conc)}
-    ${catFilter('ccat', col.group, col.cats)}
+    ${filters}`}
   </section>
   ${pigCards()}
   <section class="section" id="col-grid"></section>`;
@@ -2698,7 +2885,7 @@ function bqSuggest(q){
   return out.join('');
 }
 // one screen: type the code and read the report; choosing the perfume is optional and only adds the launch-year check
-function openBatchQuick(){
+function openBatchQuick(quiet){
   sheetMode = 'batchq'; scan.res = null;
   const f = openOverlay();
   if (!CAT) loadCatalog().catch(() => {});
@@ -2724,7 +2911,7 @@ function openBatchQuick(){
     if (v && scan.stream) { v.srcObject = scan.stream; v.play().catch(() => {}); }
   };
   draw(); f._draw = draw;
-  setTimeout(() => { const i = document.getElementById('batch-in'); if (i && !scan.res) i.focus(); }, 250);
+  setTimeout(() => { const i = document.getElementById('batch-in'); if (i && !scan.res && !quiet) i.focus(); }, 250);
 }
 document.addEventListener('input', e => {
   if (e.target.id !== 'bq-q') return;
@@ -2745,7 +2932,12 @@ function adoptNativeBatch(){
     if (nb && nb.t && (!S.lastBatch || nb.t > S.lastBatch.t)) { S.lastBatch = {name: nb.group || 'Hızlı kontrol', brand: '', code: nb.code, h: nb.h, cls: 'good', t: nb.t}; save(); }
   } catch (e) {}
 }
-window.onNativeOpen = () => { if (!S) return; adoptNativeBatch(); if (nativeCall('pendingOpen') === 'batch') openBatchQuick(); };
+window.onNativeOpen = () => {
+  if (!S) return; adoptNativeBatch();
+  const o = nativeCall('pendingOpen');
+  if (o === 'batch' || o === 'scan') openBatchQuick(o === 'scan');
+  if (o === 'scan') startScan(currentP || {name: '', brand: ''});
+};
 
 /* ---------- app logos (one per premium theme) and the widget ---------- */
 const BB_PATH = 'M30,35H42.5A9,9 0 0 1 42.5,53H43.5A9.5,9.5 0 0 1 43.5,72H30ZM36.5,41V47H42.5A3,3 0 0 0 42.5,41ZM36.5,59V66H43.5A3.5,3.5 0 0 0 43.5,59ZM55,35H67.5A9,9 0 0 1 67.5,53H68.5A9.5,9.5 0 0 1 68.5,72H55ZM61.5,41V47H67.5A3,3 0 0 0 67.5,41ZM61.5,59V66H68.5A3.5,3.5 0 0 0 68.5,59Z';
@@ -3219,7 +3411,7 @@ function renderInventory(){
   const totalMl = items.reduce((s, x) => s + Math.round(x.i.ml * x.i.level / 100), 0);
   view.innerHTML = `
   <section class="section">
-    <h2>Envanter</h2>
+    <h2 class="pt">Envanter</h2>
     <div class="stat"><div><b>${items.length}</b><span>şişe</span></div><div><b>${totalMl}</b><span>ml kaldı</span></div><div><b>${items.filter(x => x.i.level > 0 && x.i.level <= 20).length}</b><span>bitmek üzere</span></div></div>
     ${sourceSeg()}
   </section>
@@ -3270,7 +3462,7 @@ function renderMac(){
   const done = list.filter(x => x.m.end <= now).sort((a, b) => b.m.end - a.m.end);
   view.innerHTML = `
   <section class="section">
-    <h2>Maserasyon</h2>
+    <h2 class="pt">Maserasyon</h2>
     <span class="muted small">Yeni alınan ya da yeni açılan şişeyi serin, karanlık bir yerde ağzı kapalı dinlendirince alkol keskinliği azalır, notalar oturur; koku genelde daha dolgun ve kalıcı olur. Envanterindeki bir şişeyi gönder, süre bitince sana haber vereyim.</span>
     <div class="stat"><div><b>${act.length}</b><span>dinleniyor</span></div><div><b>${done.length}</b><span>hazır</span></div><div><b>${act.length ? macLeft(act[0].m) : '–'}</b><span>en yakın · gün</span></div></div>
   </section>
@@ -3535,6 +3727,8 @@ function wearInfo(p){
   const last = Math.max(...w.map(x => x.t)), days = Math.floor((Date.now() - last) / 864e5);
   return `${w.length} kez sıkıldı · son: ${days === 0 ? 'bugün' : days + ' gün önce'}`;
 }
+// one action of the perfume page: the full label in the classic row, a short one under an icon in the premium toolbar
+const dBtn = (cls, icon, lg, st, attrs) => `<button class="btn sm${cls ? ' ' + cls : ''}" ${attrs} type="button">${icon}<span class="lg">${lg}</span><span class="st">${st}</span></button>`;
 function detailHtml(p, o){
   currentP = p;
   if (dTab === 'sim' && !S.sim.on) dTab = 'notes';
@@ -3553,7 +3747,7 @@ function detailHtml(p, o){
         ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
       </div>
     </div>
-    <div class="row dact">${o.actions}<button class="btn dact-x" data-act="close" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>Kapat</button></div>
+    <div class="row dact">${o.actions}<button class="btn dact-x" data-act="close" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>Kapat</button></div>
     ${versHtml(p)}
     <div class="seg dtabs">${[['notes', 'Notalar'], ['price', 'Fiyat'], ['info', 'Bilgi'], ...(S.sim.on ? [['sim', 'Benzer']] : [])].map(([k, l]) => `<button class="${dTab === k ? 'on' : ''}" data-act="dtab" data-v="${k}" type="button">${l}</button>`).join('')}</div>
     <div class="dpane" data-pane="notes"${dTab === 'notes' ? '' : ' hidden'}>
@@ -3585,10 +3779,10 @@ function openDetail(p){
   const iv = invOf(p.id);
   f.innerHTML = detailHtml(p, {eyebrow: 'Koku profili', conc: iv && iv.conc, actions: `
       ${iv ? `<button class="btn sm primary" data-act="settoday" data-id="${p.id}" type="button"${isToday ? ' disabled' : ''}>${isToday ? 'Bugünün parfümü' : 'Bugün bunu sık'}</button>
-        <button class="btn sm" data-act="invedit" data-iid="${iv.id}" type="button">Envanterde · ${iv.ml} ml</button>`
-      : `<button class="btn sm primary" data-act="buyopen" data-id="${p.id}" type="button">${buyOf(p.id) ? '⏰ ' + esc(fmtShort(buyOf(p.id).at)) : 'Almak için hatırlatıcı kur'}</button>
-        <button class="btn sm" data-act="invaddp" data-id="${p.id}" type="button">Elimde var</button>`}
-      <button class="btn sm ghost" data-act="edit" data-id="${p.id}" type="button">Düzenle</button>`});
+        ${dBtn('', IC.bottle, `Envanterde · ${iv.ml} ml`, `${iv.ml} ml · %${iv.level}`, `data-act="invedit" data-iid="${iv.id}"`)}`
+      : `${dBtn('primary', '', buyOf(p.id) ? '⏰ ' + esc(fmtShort(buyOf(p.id).at)) : PR() ? 'Hatırlatıcı kur' : 'Almak için hatırlatıcı kur', '', `data-act="buyopen" data-id="${p.id}"`)}
+        ${dBtn('', IC.check, 'Elimde var', 'Elimde var', `data-act="invaddp" data-id="${p.id}"`)}`}
+      ${dBtn('ghost', IC.pencil, 'Düzenle', 'Düzenle', `data-act="edit" data-id="${p.id}"`)}`});
   loadPricesInto(p);
 }
 function openCatalogDetail(cid){
@@ -3598,8 +3792,8 @@ function openCatalogDetail(cid){
   const f = openOverlay();
   f.innerHTML = detailHtml(p, {eyebrow: 'Katalog ' + segTag(r[15]) + (c.boy ? ' <span class="boyner">Boyner</span>' : ''), year: r[3], votes: r[5], actions: `
       <button class="btn sm primary" data-act="cadd" data-cid="${r[0]}" type="button"${owned ? ' disabled' : ''}>${owned ? 'Koleksiyonda' : 'Koleksiyona ekle'}</button>
-      <button class="btn sm" data-act="cbuy" data-cid="${r[0]}" type="button">Almak için hatırlat</button>
-      <button class="btn sm" data-act="cinv" data-cid="${r[0]}" type="button"${owned && invOf(owned.id) ? ' disabled' : ''}>${owned && invOf(owned.id) ? 'Envanterde' : 'Elimde var'}</button>`});
+      ${dBtn('', IC.clock, 'Almak için hatırlat', 'Hatırlat', `data-act="cbuy" data-cid="${r[0]}"`)}
+      ${dBtn('', IC.check, owned && invOf(owned.id) ? 'Envanterde' : 'Elimde var', owned && invOf(owned.id) ? 'Envanterde' : 'Elimde var', `data-act="cinv" data-cid="${r[0]}"${owned && invOf(owned.id) ? ' disabled' : ''}`)}`});
   loadPricesInto(p);
 }
 function openBoynerOnly(p){
@@ -3612,6 +3806,17 @@ function openBoynerOnly(p){
     <div class="row spread"><a class="btn sm" href="${esc(p.u)}" data-act="extlink">Boyner'de aç</a>
       <button class="btn sm primary" data-act="addboy" type="button">Elle ekle</button></div>`;
   draft = norm({id: null, name: p.t.trim(), brand: p.b, img: p.img, note: '', cats: []});
+}
+// premium: one "add" button, two ways to add
+function openAddMenu(){
+  sheetMode = 'addmenu';
+  const f = openOverlay();
+  f.innerHTML = `<div class="row spread"><h2>Parfüm ekle</h2>${closeIcon}</div>
+    <div class="menu">
+      <button data-act="go" data-tab="kesfet" type="button"><span class="mi">${IC.search}</span><span><b>Katalogda bul</b><small>Görseli, notaları ve kategorileri kendiliğinden gelir</small></span>${ICONS.chev}</button>
+      <button data-act="add" type="button"><span class="mi">${IC.pencil}</span><span><b>Elle ekle</b><small>Katalogda yoksa adını, fotoğrafını ve notalarını sen yaz</small></span>${ICONS.chev}</button>
+      <button data-act="randbuy" type="button"><span class="mi">${IC.dice}</span><span><b>Rastgele öner</b><small>Segmente ve havaya göre bir parfüm seçeyim</small></span>${ICONS.chev}</button>
+    </div>`;
 }
 function addFromCatalog(cid){
   const c = CAT && CAT.byId.get(+cid); if (!c) return null;
@@ -3648,7 +3853,7 @@ function openRandomBuy(){
       <span class="switch"><input type="checkbox" id="rb-global"${S.global ? ' checked' : ''}><span></span></span></label>
     <label class="toggle-row" for="rb-good"><span><b>Sadece beğenilenler</b><br><span class="muted small">★ 3,9 ve üstü, en az 1000 oy</span></span>
       <span class="switch"><input type="checkbox" id="rb-good"${rb.good ? ' checked' : ''}><span></span></span></label>
-    <div class="row" style="flex-wrap:nowrap">
+    <div class="row acts" style="flex-wrap:nowrap">
       <button class="btn block" data-act="rbroll" type="button" style="flex:1">Rastgele mod</button>
       <button class="btn primary block" data-act="rbgo" type="button" style="flex:1">Parfüm seç</button>
     </div>
@@ -3829,7 +4034,7 @@ function renderSettings(){
   if (S.sub === 'logo') return renderLogos();
   view.innerHTML = `
   <section class="section">
-    <h2>Ayarlar</h2>
+    <h2 class="pt">Ayarlar</h2>
     <div class="menu">
       <button data-act="sub" data-sub="gorunum" type="button"><span class="mi">${ICONS.palette}</span><span><b>Tema ve görünüm</b><small>${esc(skin().n)} · arka plan ${S.nobg ? 'kaldırılıyor' : 'beyaz'}</small></span>${ICONS.chev}</button>
       <button data-act="sub" data-sub="bildirim" type="button"><span class="mi">${ICONS.bell}</span><span><b>Bildirimler ve sesler</b><small>${esc(notifSummary())}</small></span>${ICONS.chev}</button>
@@ -4185,6 +4390,11 @@ document.addEventListener('click', async e => {
     case 'brandgo': closeSheet(); S.tab = 'kesfet'; ex.mode = 'brands'; ex.brand = t.dataset.b; ex.q = ''; ex.g = ''; ex.conc = ''; ex.seg = ''; ex.cats = []; ex.boy = false; save(); render(); window.scrollTo(0, 0); break;
     case 'exconc': ex.conc = t.dataset.v; ex.limit = 40; renderExplore(); break;
     case 'cconc': col.conc = t.dataset.v; renderCollection(); break;
+    case 'cfilt': col.fopen = !col.fopen; renderCollection(); break;
+    case 'cclear': col.conc = ''; col.cats = []; renderCollection(); break;
+    case 'exfilt': ex.fopen = !ex.fopen; renderExplore(); break;
+    case 'exclear': ex.boy = false; ex.g = ''; ex.seg = ''; ex.conc = ''; ex.cats = []; ex.limit = 40; renderExplore(); break;
+    case 'addmenu': openAddMenu(); break;
     case 'invconc': { const it = S.inv.find(i => i.id === t.dataset.iid); if (it) { it.conc = it.conc === t.dataset.v ? '' : t.dataset.v; save(); redrawSheet(); if (S.tab === 'envanter') renderInventory(); } break; }
     case 'cview': openCatalogDetail(t.dataset.cid); break;
     case 'bview': {
@@ -4414,7 +4624,7 @@ document.addEventListener('click', async e => {
       const was = S.skin; S.skin = t.dataset.v;
       // entering Scandal brings its sound set along; leaving it puts the usual price and piggy sounds back
       if (S.skin !== was) themeSounds(!!SKINS[S.skin].set);
-      applySkin(); save(); renderLook(); ensureSounds().then(() => { if (NATIVE && NATIVE.setPriceSound) syncAlarms(); }); toast(skin().n + ' teması'); break;
+      applySkin(); save(); render(); ensureSounds().then(() => { if (NATIVE && NATIVE.setPriceSound) syncAlarms(); }); toast(skin().n + ' teması'); break;
     }
     case 'scmode': S.mode = t.dataset.v; applySkin(); save(); renderLook(); break;
     case 'finish': S.finish = t.dataset.v; applySkin(); save(); renderLook(); break;
