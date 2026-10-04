@@ -38,3 +38,8 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 }
+
+dependencies {
+    // QR / barcode decoding for the quick window (pure Java, works offline, no Play services). Pinned to an exact version.
+    implementation 'com.google.zxing:core:3.5.3'
+}

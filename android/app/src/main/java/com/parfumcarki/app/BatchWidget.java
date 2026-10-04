@@ -69,19 +69,23 @@ public class BatchWidget extends AppWidgetProvider {
         int bw = 600, bh = Math.max(60, Math.min(600, Math.round(600f * hDp / wDp)));
         float r = Math.min(bh / 2f, slim ? bh / 2f : 44f);
         v.setImageViewBitmap(R.id.w_bg, card(bw, bh, bg, bg2, edge, r));
-        String main = o.optString("main", "Parti kodunu kontrol et");
+        String main = o.optString("main", "Kod yaz ya da okut");
         v.setTextViewText(R.id.w_main, main);
         v.setTextColor(R.id.w_main, fg);
         if (!slim) {
-            v.setTextViewText(R.id.w_sub, o.optString("sub", "Dokun, kodu yaz: üretim tarihi hemen gelsin."));
+            v.setTextViewText(R.id.w_sub, o.optString("sub", "Yazıya dokun: kodu yaz · Okut: QR ve barkod"));
             v.setTextColor(R.id.w_sub, muted);
         }
-        v.setTextViewText(R.id.w_btn, "Batch ›");
+        v.setTextViewText(R.id.w_btn, "Okut");
         v.setTextColor(R.id.w_btn, ink);
         v.setInt(R.id.w_btn, "setBackgroundColor", accent);
 
-        Intent open = new Intent(c, BatchDialogActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        // the text opens the window for typing a code; the button opens it with the camera already reading
+        Intent open = new Intent(c, BatchDialogActivity.class).setAction("com.parfumcarki.app.TYPE").setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         v.setOnClickPendingIntent(R.id.w_root, PendingIntent.getActivity(c, 41, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
+        Intent scan = new Intent(c, BatchDialogActivity.class).setAction("com.parfumcarki.app.SCAN").putExtra(BatchDialogActivity.MODE, BatchDialogActivity.SCAN)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        v.setOnClickPendingIntent(R.id.w_btn, PendingIntent.getActivity(c, 43, scan, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE));
         return v;
     }
 

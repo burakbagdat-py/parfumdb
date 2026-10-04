@@ -2923,13 +2923,13 @@ function syncWidget(){
   if (!NATIVE || !NATIVE.setWidget || !S) return;
   const cs = getComputedStyle(document.documentElement), v = k => hex6(cs.getPropertyValue(k)), lb = S.lastBatch;
   nativeCall('setWidget', JSON.stringify({bg: v('--panel-2'), bg2: v('--bg'), fg: v('--fg'), muted: v('--muted'), accent: v('--accent'), edge: v('--accent-2'), ink: v('--ink'),
-    radius: skin().premium ? 30 : 22, title: 'BB · ' + skin().n + ' · Batch kontrol', main: lb ? lb.h : 'Parti kodunu kontrol et',
-    sub: lb ? `${lb.name} · ${lb.code} · ${fmtShort(lb.t)}` : 'Dokun, kodu yaz: üretim tarihi ve rapor hemen gelsin.', btn: 'Kod kontrol et  ›'}));
+    radius: skin().premium ? 30 : 22, title: 'BB · ' + skin().n + ' · Batch kontrol', main: lb ? lb.h : 'Kod yaz ya da okut',
+    sub: lb ? `${lb.name} · ${lb.code} · ${fmtShort(lb.t)}` : 'Yazıya dokun: kodu yaz · Okut: QR ve barkod', btn: 'Okut'}));
 }
 function adoptNativeBatch(){
   try {
     const nb = JSON.parse(nativeCall('lastBatch') || 'null');
-    if (nb && nb.t && (!S.lastBatch || nb.t > S.lastBatch.t)) { S.lastBatch = {name: nb.group || 'Hızlı kontrol', brand: '', code: nb.code, h: nb.h, cls: 'good', t: nb.t}; save(); }
+    if (nb && nb.t && (!S.lastBatch || nb.t > S.lastBatch.t)) { S.lastBatch = {name: nb.group || 'Hızlı kontrol', brand: '', code: nb.code, h: nb.h, cls: nb.cls || 'good', t: nb.t}; save(); }
   } catch (e) {}
 }
 window.onNativeOpen = () => {
@@ -2967,15 +2967,16 @@ function renderLogos(){
   </section>
   <section class="section">
     <h2>Widget</h2>
-    <div class="wprev"><span class="wt">BB · ${esc(skin().n)} · Batch kontrol</span><span class="wm">${esc(lb ? lb.h : 'Parti kodunu kontrol et')}</span>
-      <span class="ws">${lb ? esc(`${lb.name} · ${lb.code} · ${fmtShort(lb.t)}`) : 'Dokun, kodu yaz: üretim tarihi ve rapor hemen gelsin.'}</span><span class="wb">Kod kontrol et  ›</span></div>
+    <div class="wprev"><span class="wt">BB · ${esc(skin().n)} · Batch kontrol</span><span class="wm">${esc(lb ? lb.h : 'Kod yaz ya da okut')}</span>
+      <span class="ws">${lb ? esc(`${lb.name} · ${lb.code} · ${fmtShort(lb.t)}`) : 'Dokun, kodu yaz: üretim tarihi ve rapor hemen gelsin.'}</span><span class="wb">Okut</span></div>
     <span class="muted small">Widget artık ince bir şerit (4×1). Dokununca uygulama açılmadan küçük bir pencerede kodu yazıp raporu alırsın. Boyutunu değiştirmek için widget’a uzun bas ve kenarlarından çek: yükseltirsen ikinci satırda son rapor görünür, daraltırsan tek satır kalır. Eski büyük widget ekranında duruyorsa onu da aynı şekilde küçültebilirsin.</span>
     <div class="row"><button class="btn primary" data-act="pinwidget" type="button">Ana ekrana ekle</button><button class="btn" data-act="batchq" type="button">Batch kontrolü aç</button></div>
+    <span class="muted small">Widget’ta yazıya dokunursan kod yazma penceresi, <b>Okut</b> düğmesine dokunursan kamera açılır; ikisi de uygulamayı açmaz.</span>
     <span class="muted small">“Ana ekrana ekle” çalışmazsa: ana ekranda boş bir yere uzun bas → Widget’lar → BB Parfüm Envanteri.</span>
   </section>
   <section class="section">
     <h2>Kısayol kutucuğu</h2>
-    <span class="muted small">Ekranı yukarıdan aşağı kaydırınca açılan hızlı ayarlara (Wi‑Fi, Bluetooth kutucuklarının yanına) <b>Batch kontrol</b> kutucuğu ekler. Dokununca hangi uygulamada olursan ol küçük bir pencere açılır; marka seçmeden kodu yazıp üretim raporunu alırsın.</span>
+    <span class="muted small">Ekranı yukarıdan aşağı kaydırınca açılan hızlı ayarlara (Wi‑Fi, Bluetooth kutucuklarının yanına) <b>Batch / QR kontrol</b> kutucuğu ekler. Dokununca hangi uygulamada olursan ol küçük bir pencere kamerası açık gelir: QR ya da barkodu okutur, kısa raporu aynı pencerede görürsün; uygulama açılmaz. Parti kodunu yazmak için aynı pencerede “Kodu elle yaz” var. Bu, uygulamanın v25 sürümüyle gelir.</span>
     <div class="row"><button class="btn primary" data-act="addtile" type="button">Hızlı ayarlara ekle</button></div>
     <span class="muted small">Düğme çalışmazsa: bildirim panelini iki kez aşağı çek → kalem (düzenle) simgesi → “Batch kontrol”ü yukarı sürükle.</span>
   </section>`;
