@@ -311,6 +311,62 @@ def so_kristal(t):
         if x >= 0: out += a * min(1, x / .003) * math.exp(-x / d) * math.sin(2 * math.pi * f * x) * .55
     return out
 
+# ---------- Denim set: a sunny afternoon, an acoustic guitar on the porch ----------
+def ks(f, dur, damp=.996, bright=.5, seed=1):
+    """Karplus-Strong plucked string: a burst of noise circulating through a damped delay line."""
+    rnd = random.Random(seed)
+    n = max(2, int(RATE / f))
+    line = [rnd.random() * 2 - 1 for _ in range(n)]
+    # soften the pick
+    for i in range(1, n): line[i] = line[i] * bright + line[i - 1] * (1 - bright)
+    out = []
+    for i in range(int(RATE * dur)):
+        v = line[i % n]
+        line[i % n] = damp * .5 * (v + line[(i + 1) % n])
+        out.append(v)
+    return out
+
+def mix(parts, dur):
+    """parts: (start seconds, samples, gain) -> one buffer"""
+    buf = [0.0] * int(RATE * dur)
+    for s0, smp, g in parts:
+        o = int(s0 * RATE)
+        for i, v in enumerate(smp):
+            if o + i >= len(buf): break
+            buf[o + i] += v * g
+    return buf
+
+def from_buf(buf):
+    return lambda t: buf[min(len(buf) - 1, int(t * RATE))]
+
+_G = (98.0, 123.47, 146.83, 196.0, 246.94, 392.0)          # open G chord, low to high
+_DN_GITAR = mix([(i * .028, ks(f, 2.4, .9965, .45, 10 + i), .9 - i * .06) for i, f in enumerate(_G)]
+                + [(1.0 + i * .02, ks(f, 1.5, .995, .5, 30 + i), .5) for i, f in enumerate((196.0, 246.94, 293.66, 392.0))], 2.8)
+_C = (261.63, 329.63, 392.0, 523.25)
+_DN_UKULELE = mix([(i * .018, ks(f * 2, 1.0, .993, .7, 50 + i), .8) for i, f in enumerate(_C)]
+                  + [(.22 + i * .018, ks(f * 2, 1.0, .993, .7, 60 + i), .7) for i, f in enumerate(reversed(_C))]
+                  + [(.44 + i * .03, ks(f * 2, 1.6, .9955, .7, 70 + i), .9) for i, f in enumerate((349.23, 440.0, 523.25, 698.46))], 2.2)
+_DN_PICK = mix([(0, ks(146.83, 1.2, .995, .4, 80), 1), (.24, ks(220.0, 1.2, .995, .4, 81), .85), (.48, ks(293.66, 1.8, .996, .45, 82), .9), (.5, ks(369.99, 1.8, .996, .45, 83), .6)], 2.4)
+
+def dn_fermuar(t):
+    # "Zip": a zipper pulled up (a ratcheting buzz rising in pitch), then the button snapped shut
+    out = 0
+    if t < .55:
+        f = 500 + 2600 * (t / .55) ** 1.6
+        teeth = 1 if math.sin(2 * math.pi * (60 + 150 * t) * t) > 0 else .25
+        out += (random.random() * 2 - 1) * teeth * .32 * min(1, t / .03) + math.sin(2 * math.pi * f * t) * teeth * .12
+    x = t - .7
+    if 0 <= x < .08: out += math.sin(2 * math.pi * 1900 * x) * math.exp(-x / .005) * .8 + math.sin(2 * math.pi * 320 * x) * math.exp(-x / .02) * .7 + (random.random() * 2 - 1) * math.exp(-x / .003) * .4
+    return out
+
+def dn_citcit(t):
+    # "Snaps": two press studs, then a warm low string to finish
+    out = 0
+    for s0, a in ((0, 1), (.2, .85)):
+        x = t - s0
+        if 0 <= x < .07: out += a * (math.sin(2 * math.pi * 2200 * x) * math.exp(-x / .004) * .7 + math.sin(2 * math.pi * 380 * x) * math.exp(-x / .018) * .8 + (random.random() * 2 - 1) * math.exp(-x / .0025) * .35)
+    return out + _DN_PICK[min(len(_DN_PICK) - 1, int(max(0, t - .42) * RATE))] * (.55 if t >= .42 else 0)
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     random.seed(3)
@@ -343,4 +399,10 @@ if __name__ == '__main__':
     render('so_cello', 3.0, so_cello, .5, 4, (.31, .14))
     render('so_klavsen', 2.0, so_klavsen, .42, 2, (.2, .16))
     render('so_kristal', 2.2, so_kristal, .46, 2, (.28, .2))
+    random.seed(55)
+    render('dn_gitar', 2.8, from_buf(_DN_GITAR), .5, 3, (.27, .12))
+    render('dn_ukulele', 2.2, from_buf(_DN_UKULELE), .46, 2, (.21, .14))
+    render('dn_pena', 2.4, from_buf(_DN_PICK), .5, 3, (.3, .16))
+    render('dn_fermuar', 1.2, dn_fermuar, .45, 2)
+    render('dn_citcit', 2.4, dn_citcit, .5, 2, (.25, .12))
     print('ok')

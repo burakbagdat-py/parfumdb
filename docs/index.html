@@ -1123,6 +1123,208 @@ html[data-skin="sartorial"][data-mode="light"] :is(.hero,.box,.rem,.prices,.resu
 .bq-sug button:first-child{border-top:0}
 .bq-sug small{color:var(--muted);font-size:12px}
 html.no-anim[data-skin="sartorial"] .btn.primary::before{animation:none}
+
+/* ============ Denim: weekend-casual. Raw indigo twill, copper rivets and thread, a tan leather patch; pocket-shaped frames,
+   everything a size smaller and closer, springy motion. Two moods: Raw (dark, default) and Stonewash (light). ============ */
+html[data-skin="denim"]{
+  --bg:#0e1828;--panel:#16253b;--panel-2:#1e314d;--line:#2f4769;--fg:#f2ece1;--muted:#a8b6ca;
+  --accent:#e98b3a;--accent-2:#dcb98e;--hi:#f5b673;--ink:#1c0f03;--danger:#f58f7c;--ok:#8fd6a6;
+  --grad:linear-gradient(125deg,#f9c48d 0%,#e98b3a 46%,#b85f1e 100%);
+  --gold:linear-gradient(125deg,#e6c79f 0%,#c99a63 50%,#a0713b 100%);
+  --glow:rgb(233 139 58 / .34);--shade:rgb(0 0 0 / .6);--thread:color-mix(in srgb,var(--accent) 82%,transparent);
+  --spring:cubic-bezier(.34,1.56,.64,1);--ease:cubic-bezier(.22,1,.36,1);
+  --f-display:"Archivo","Barlow",system-ui,sans-serif;--f-body:"DM Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --dw:700;--dt:none;--dls:-.02em;
+  --pattern:repeating-linear-gradient(135deg,rgb(255 255 255 / .05) 0 1px,transparent 1px 3px),repeating-linear-gradient(45deg,rgb(0 0 0 / .09) 0 1px,transparent 1px 4px);--pattern-size:auto;
+  --r:14px;--btn-r:10px;--chip-r:9px;--btn-tt:none;--btn-ls:0;color-scheme:dark;
+  background:radial-gradient(110% 55% at 20% -8%,rgb(74 112 170 / .42),transparent 62%),radial-gradient(90% 45% at 105% 60%,rgb(233 139 58 / .12),transparent 62%),var(--bg);
+  background-attachment:fixed;
+}
+html[data-skin="denim"][data-mode="light"]{
+  --bg:#dfe7f1;--panel:#f5f7fb;--panel-2:#d2ddeb;--line:#b6c5d8;--fg:#13233a;--muted:#536379;
+  --accent:#c0601a;--accent-2:#855427;--hi:#a34f12;--ink:#fff7ee;--danger:#b33a2b;--ok:#23764b;
+  --grad:linear-gradient(125deg,#e7913f 0%,#c0601a 52%,#95470f 100%);
+  --gold:linear-gradient(125deg,#c99a63 0%,#a0713b 55%,#7c5526 100%);
+  --glow:rgb(192 96 26 / .26);--shade:rgb(40 60 90 / .3);--thread:color-mix(in srgb,var(--accent) 80%,transparent);
+  --pattern:repeating-linear-gradient(135deg,rgb(255 255 255 / .5) 0 1px,transparent 1px 3px),repeating-linear-gradient(45deg,rgb(30 60 110 / .07) 0 1px,transparent 1px 4px);color-scheme:light;
+  background:radial-gradient(110% 55% at 20% -8%,rgb(255 255 255 / .85),transparent 62%),radial-gradient(90% 45% at 105% 60%,rgb(192 96 26 / .1),transparent 62%),var(--bg);
+  background-attachment:fixed;
+}
+@keyframes dn-rise{from{opacity:0;transform:translateY(18px) scale(.975)}to{opacity:1;transform:none}}
+@keyframes dn-pop{0%{transform:scale(.6)}60%{transform:scale(1.14)}100%{transform:scale(1)}}
+@keyframes dn-sheet{from{opacity:.4;transform:translateY(60px)}to{opacity:1;transform:none}}
+@keyframes dn-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes dn-shine{0%,70%{transform:translateX(-130%) skewX(-18deg)}100%{transform:translateX(230%) skewX(-18deg)}}
+@keyframes dn-zip{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+html[data-skin="denim"] body{background:transparent;font-size:15px}
+html[data-skin="denim"] body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--pattern)}
+/* motion: things arrive with a little spring, one after another */
+html[data-skin="denim"] #view[data-fresh]>.section{animation:dn-rise .6s var(--ease) both}
+html[data-skin="denim"] #view[data-fresh]>.section:nth-child(2){animation-delay:.07s}
+html[data-skin="denim"] #view[data-fresh]>.section:nth-child(3){animation-delay:.14s}
+html[data-skin="denim"] #view[data-fresh]>.section:nth-child(n+4){animation-delay:.2s}
+html[data-skin="denim"] #view[data-fresh] .grid>.card{animation:dn-rise .5s var(--ease) both}
+html[data-skin="denim"] #view[data-fresh] .grid>.card:nth-child(2){animation-delay:.05s}
+html[data-skin="denim"] #view[data-fresh] .grid>.card:nth-child(3){animation-delay:.1s}
+html[data-skin="denim"] #view[data-fresh] .grid>.card:nth-child(4){animation-delay:.15s}
+html[data-skin="denim"] #view[data-fresh] .grid>.card:nth-child(n+5){animation-delay:.2s}
+html[data-skin="denim"] #view[data-fresh] .level i{transform-origin:left;animation:dn-grow .9s var(--ease) .25s both}
+html[data-skin="denim"] .sheet{animation:dn-sheet .5s cubic-bezier(.2,1.15,.3,1)}
+html[data-skin="denim"] .tab.on .ic{animation:dn-pop .45s var(--spring)}
+html[data-skin="denim"] .chip.on{animation:dn-pop .32s var(--spring)}
+html[data-skin="denim"] :is(.btn,.chip,.card,.item,.icon-btn,.fab,.seg button,.quick button,.day){transition:transform .35s var(--spring),background .2s,border-color .2s,box-shadow .25s}
+html[data-skin="denim"] :is(.btn,.chip,.icon-btn,.fab,.seg button,.quick button):active{transform:scale(.92);transition-duration:.08s}
+html[data-skin="denim"] .art img.nb{transform:scale(.94);transition:opacity .35s,transform .5s var(--ease)}
+html[data-skin="denim"] .art img.nb.ready{transform:none}
+html.no-anim[data-skin="denim"] :is(#view[data-fresh]>.section,#view[data-fresh] .grid>.card,#view[data-fresh] .level i,.sheet,.tab.on .ic,.chip.on,.hero::after){animation:none}
+/* header: compact, left, with a leather patch for the date */
+html[data-skin="denim"] .top{padding:10px 16px 8px;background:color-mix(in srgb,var(--bg) 80%,transparent)}
+html[data-skin="denim"] .logo h1{font-size:22px;font-weight:800;letter-spacing:-.03em;font-stretch:88%}
+html[data-skin="denim"] .logo small,html[data-skin="denim"] .eyebrow{display:inline-block;width:max-content;max-width:100%;font-size:9.5px;letter-spacing:.14em;font-weight:800;color:#3a2410;background:var(--gold);padding:3px 9px;border-radius:4px;box-shadow:inset 0 0 0 1px rgb(60 36 14 / .35),0 1px 0 rgb(255 255 255 / .25) inset}
+html[data-skin="denim"] .eyebrow::before{content:none}
+html[data-skin="denim"] h2{font-size:24px;font-weight:800;font-stretch:88%;letter-spacing:-.03em}
+html[data-skin="denim"] h3{font-size:18px;font-weight:700}
+html[data-skin="denim"] .label,html[data-skin="denim"] .field>label{color:var(--accent-2);letter-spacing:.12em;font-size:10.5px}
+html[data-skin="denim"] .hero-brand,html[data-skin="denim"] .card-brand{color:var(--accent-2);letter-spacing:.14em;font-size:10px}
+html[data-skin="denim"] .small{font-size:13px}
+html[data-skin="denim"] .section{gap:11px;margin-bottom:24px}
+/* denim panels with a single line of copper stitching */
+html[data-skin="denim"] :is(.hero,.card,.box,.rem,.prices,.result,.stat div,.pig-card,.mac-sum,details.cg,.note,.empty,.day,.list>.item,.menu button,.quick button){
+  border:1px solid color-mix(in srgb,#fff 9%,var(--line));border-radius:14px;
+  background:var(--pattern),linear-gradient(180deg,var(--panel-2),var(--panel));
+  box-shadow:0 16px 30px -24px var(--shade),inset 0 1px 0 rgb(255 255 255 / .08)}
+html[data-skin="denim"] :is(.hero,.box,.card,.prices,.rem,.day,.menu button){outline:1.5px dashed var(--thread);outline-offset:-6px}
+/* compact hero: bottle in a pocket on the left, the rest beside it, a rivet in each top corner */
+html[data-skin="denim"] .hero{grid-template-columns:100px minmax(0,1fr);justify-items:stretch;text-align:left;gap:14px;padding:18px 16px 16px;align-items:center}
+html[data-skin="denim"] .hero::before{content:"";inset:11px 11px auto 11px;width:auto;height:9px;aspect-ratio:auto;z-index:2;background:radial-gradient(circle at 4.5px 4.5px,#fbe0bd 0 1.3px,#d08a4a 1.4px 3px,#7a4a1f 3.1px 4.5px,transparent 4.6px) left/9px 9px no-repeat,radial-gradient(circle at 4.5px 4.5px,#fbe0bd 0 1.3px,#d08a4a 1.4px 3px,#7a4a1f 3.1px 4.5px,transparent 4.6px) right/9px 9px no-repeat}
+html[data-skin="denim"] .hero::after{content:"";inset:0;height:auto;opacity:1;background:linear-gradient(100deg,transparent 40%,rgb(255 255 255 / .1) 50%,transparent 60%);animation:dn-shine 5s ease-in-out infinite}
+html[data-skin="denim"] .hero .art{width:100px}
+html[data-skin="denim"] .hero-body{align-items:flex-start;gap:5px}
+html[data-skin="denim"] .hero-name{font-size:23px;font-weight:800;font-stretch:88%;line-height:1.06}
+html[data-skin="denim"] .hero :is(.fam-line,.hero-actions){justify-content:flex-start}
+html[data-skin="denim"] .hero-actions{margin-top:6px;gap:6px}
+/* back-pocket frames */
+html[data-skin="denim"] .art{border-radius:10px;clip-path:polygon(0 0,100% 0,100% 80%,50% 100%,0 80%);background:radial-gradient(80% 60% at 50% 60%,var(--glow),transparent 72%),var(--panel-2)}
+html[data-skin="denim"] .item .art,html[data-skin="denim"] .day .art,html[data-skin="denim"] .jday .art{clip-path:none;border-radius:9px}
+html[data-skin="denim"] .card{padding:8px 8px 0}
+html[data-skin="denim"] .card-body{padding:8px 4px 10px}
+html[data-skin="denim"] .card-name{font-size:15px;font-weight:700}
+html[data-skin="denim"] .item-name{font-size:15.5px;font-weight:700}
+html[data-skin="denim"] .grid{gap:10px}
+html[data-skin="denim"] .grid>.card:nth-child(even){margin:0}
+html[data-skin="denim"] .ph{background:radial-gradient(90% 60% at 50% 30%,color-mix(in srgb,var(--accent) 55%,transparent),transparent 70%),linear-gradient(170deg,#3b5b8c,var(--panel))}
+/* everything a size smaller */
+html[data-skin="denim"] .btn{min-height:38px;padding:8px 14px;font-size:13.5px;font-weight:700;border:1.5px dashed var(--thread);background:color-mix(in srgb,var(--panel-2) 80%,transparent)}
+html[data-skin="denim"] .btn.sm{min-height:32px;padding:5px 11px;font-size:12.5px}
+html[data-skin="denim"] .btn.primary{border:0;background:var(--grad);position:relative;overflow:hidden;box-shadow:0 8px 18px -8px var(--glow),inset 0 1px 0 rgb(255 255 255 / .5),inset 0 -2px 0 rgb(90 40 5 / .35)}
+html[data-skin="denim"] .btn.primary::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 35%,rgb(255 255 255 / .6) 50%,transparent 65%);animation:dn-shine 3.6s ease-in-out infinite}
+html.no-anim[data-skin="denim"] .btn.primary::after{animation:none;opacity:0}
+html.no-anim[data-skin="denim"] .hero::after{animation:none;opacity:0}
+html[data-skin="denim"] .btn.danger{border-color:color-mix(in srgb,var(--danger) 65%,transparent)}
+html[data-skin="denim"] .icon-btn{width:38px;height:38px;border-radius:50%;border:0;color:#3a2410;
+  background:radial-gradient(circle at 35% 30%,#fbe6c8,#d99555 45%,#8f5a28 100%);box-shadow:inset 0 0 0 3px rgb(90 50 15 / .3),0 6px 12px -6px var(--shade)}
+html[data-skin="denim"] .chip{min-height:31px;padding:4px 11px;font-size:12.5px;border-color:color-mix(in srgb,#fff 12%,var(--line));background:color-mix(in srgb,var(--panel-2) 60%,transparent);color:var(--fg)}
+html[data-skin="denim"] .chip.on{background:var(--grad);border-color:transparent;color:var(--ink);font-weight:700}
+html[data-skin="denim"] .chip.grp{border-style:dashed;border-color:var(--thread);color:var(--muted)}
+html[data-skin="denim"] .chip.grp.on{background:var(--gold);color:#3a2410;border-style:solid;border-color:transparent}
+html[data-skin="denim"] .seg{border-radius:11px;padding:3px;border-color:color-mix(in srgb,#fff 10%,var(--line))}
+html[data-skin="denim"] .seg button{border-radius:8px;padding:7px 4px}
+html[data-skin="denim"] .seg button.on{background:var(--grad);color:var(--ink);box-shadow:none;font-weight:700}
+html[data-skin="denim"] .search{padding:11px 16px;font-size:15px;border-radius:12px;border:1.5px dashed var(--thread);background:color-mix(in srgb,var(--panel) 80%,transparent)}
+html[data-skin="denim"] .input,html[data-skin="denim"] textarea.input,html[data-skin="denim"] select.input{padding:10px 12px;font-size:15px;border-radius:10px}
+html[data-skin="denim"] .toggle-row{min-height:42px}
+html[data-skin="denim"] .bell{border-radius:8px;padding:4px 9px 4px 6px}
+html[data-skin="denim"] .bell.on{background:var(--gold);color:#3a2410}
+html[data-skin="denim"] .list{gap:7px}
+html[data-skin="denim"] .list>.item{padding:9px 11px}
+html[data-skin="denim"] .list>.item .art{width:46px;height:58px}
+html[data-skin="denim"] .quick{gap:8px}
+html[data-skin="denim"] .quick button{flex-direction:row;justify-content:flex-start;gap:8px;padding:8px 9px;font-size:11.5px;text-align:left;outline:0}
+html[data-skin="denim"] .quick .qi{width:30px;height:30px;flex:none;background:radial-gradient(circle at 35% 30%,#fbe6c8,#d99555 45%,#8f5a28 100%);color:#3a2410;box-shadow:inset 0 0 0 3px rgb(90 50 15 / .3)}
+html[data-skin="denim"] .quick svg{width:16px;height:16px}
+html.premium[data-skin="denim"] .quick{grid-template-columns:repeat(2,minmax(0,1fr))}
+html[data-skin="denim"] .day{width:118px;padding:11px 8px 10px;gap:7px}
+html[data-skin="denim"] .day .art{width:66px;height:82px}
+html[data-skin="denim"] .menu button{min-height:104px;padding:13px;gap:8px}
+html[data-skin="denim"] .menu .mi{width:36px;height:36px;background:radial-gradient(circle at 35% 30%,#fbe6c8,#d99555 45%,#8f5a28 100%)}
+html[data-skin="denim"] .menu .mi svg{color:#3a2410}
+html[data-skin="denim"] .level{height:5px}
+html[data-skin="denim"] .conc{border-color:var(--thread);color:var(--hi)}
+html[data-skin="denim"] .pointer{border-top-color:var(--accent)}
+html[data-skin="denim"] .wheel-wrap canvas{box-shadow:0 0 0 5px var(--bg),0 0 0 6.5px var(--accent),0 26px 60px -20px var(--glow)}
+html[data-skin="denim"] .dhead .art{width:min(34%,132px)}
+html[data-skin="denim"] .dhead .hero-name{font-size:24px}
+html[data-skin="denim"] .dtabs button{padding:10px 4px}
+html[data-skin="denim"] .note-chip{font-size:13px;padding:5px 10px}
+/* dock: a waistband with one line of stitching; the current tab is a copper jeans button */
+html[data-skin="denim"] .tabs{left:10px;right:10px;bottom:calc(9px + env(safe-area-inset-bottom,0px));max-width:540px;margin-inline:auto;border:1px solid color-mix(in srgb,#fff 10%,var(--line));border-radius:16px;padding:5px;
+  background:var(--pattern),color-mix(in srgb,var(--panel-2) 94%,transparent);box-shadow:0 20px 40px -16px var(--shade),inset 0 1px 0 rgb(255 255 255 / .09);outline:1.5px dashed var(--thread);outline-offset:-5px}
+html[data-skin="denim"] .tabs::before{display:none}
+html[data-skin="denim"] .tab{font-size:9.5px;gap:1px;padding:3px 0 2px;letter-spacing:0}
+html[data-skin="denim"] .tab .ic{width:36px;height:30px;border-radius:50%}
+html[data-skin="denim"] .tab svg{width:19px;height:19px}
+html[data-skin="denim"] .tab.on{color:var(--fg);font-weight:700}
+html[data-skin="denim"] .tab.on .ic{width:32px;height:32px;margin-block:-1px;color:#3a2410;background:radial-gradient(circle at 35% 30%,#fbe6c8,#d99555 45%,#8f5a28 100%);box-shadow:inset 0 0 0 3px rgb(90 50 15 / .32),0 6px 12px -5px var(--glow)}
+html[data-skin="denim"] .fab{width:50px;height:50px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fbe6c8,#d99555 45%,#8f5a28 100%);color:#3a2410;box-shadow:inset 0 0 0 4px rgb(90 50 15 / .3),0 14px 24px -10px var(--glow)}
+html[data-skin="denim"] .toast{border-radius:12px}
+html[data-skin="denim"] .sheet{border-radius:20px 20px 0 0;border-color:color-mix(in srgb,#fff 12%,var(--line));background:var(--pattern),var(--panel);padding-top:16px}
+html[data-skin="denim"] .sheet::before{background:var(--thread)}
+html[data-skin="denim"] .overlay{background:rgb(5 10 20 / .72)}
+html[data-skin="denim"][data-mode="light"] .fam{color:hsl(var(--fh) 55% 26%);background:hsl(var(--fh) 60% 50% / .12);border-color:hsl(var(--fh) 50% 45% / .35)}
+html[data-skin="denim"][data-mode="light"] .fam::before{background:hsl(var(--fh) 60% 42%)}
+html[data-skin="denim"][data-mode="light"] .boyner{background:#13233a;color:#f5f7fb}
+html[data-skin="denim"][data-mode="light"] .overlay{background:rgb(25 45 80 / .42)}
+html[data-skin="denim"][data-mode="light"] .art img.cut{filter:drop-shadow(0 8px 10px rgb(30 50 90 / .3))}
+html[data-skin="denim"][data-mode="light"] .ph span{color:#f5f7fb}
+
+/* ============ Premium themes: the tab bar can sit on any edge, and can be tucked away ============ */
+.dock-x,#dock-show{display:none}
+html.premium[data-skin] .dock-x{display:grid;place-items:center;position:absolute;left:50%;top:-13px;translate:-50% 0;width:44px;height:18px;padding:0;border-radius:999px;border:1px solid color-mix(in srgb,var(--accent-2) 40%,var(--line));background:var(--panel);color:var(--muted);box-shadow:0 4px 10px -4px var(--shade)}
+html.premium[data-skin] .dock-x svg{width:14px;height:14px;transition:rotate .25s}
+html.premium[data-skin] .tabs{transition:opacity .25s,scale .3s cubic-bezier(.22,1,.36,1)}
+html.premium[data-skin].dock-hidden .tabs{opacity:0;scale:.92;pointer-events:none}
+html.premium[data-skin].dock-hidden #dock-show{display:grid;place-items:center;position:fixed;z-index:31;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));translate:-50% 0;width:56px;height:26px;padding:0;border-radius:999px;
+  border:1px solid color-mix(in srgb,var(--accent-2) 45%,var(--line));background:color-mix(in srgb,var(--panel) 92%,transparent);color:var(--accent-2);box-shadow:0 10px 20px -8px var(--shade)}
+html.premium[data-skin] #dock-show svg{width:16px;height:16px}
+html.premium[data-skin].dock-hidden .app{padding-bottom:calc(56px + env(safe-area-inset-bottom,0px))}
+html.premium[data-skin].dock-hidden :is(.fab,.toast){bottom:calc(50px + env(safe-area-inset-bottom,0px))}
+/* top */
+html.premium[data-skin][data-dock="top"] .tabs{top:calc(8px + env(safe-area-inset-top,0px));bottom:auto}
+html.premium[data-skin][data-dock="top"] .app{padding-top:calc(96px + env(safe-area-inset-top,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+html.premium[data-skin][data-dock="top"] .top{top:calc(78px + env(safe-area-inset-top,0px))}
+html.premium[data-skin][data-dock="top"] .dock-x{top:auto;bottom:-13px}
+html.premium[data-skin][data-dock="top"] .dock-x svg{rotate:180deg}
+html.premium[data-skin][data-dock="top"] :is(.fab,.toast){bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+html.premium[data-skin][data-dock="top"].dock-hidden .app{padding-top:16px}
+html.premium[data-skin][data-dock="top"].dock-hidden .top{top:0}
+html.premium[data-skin][data-dock="top"].dock-hidden #dock-show{top:calc(6px + env(safe-area-inset-top,0px));bottom:auto;z-index:33}
+/* left and right: a narrow rail, icons only */
+html.premium[data-skin]:is([data-dock="left"],[data-dock="right"]) .tabs{top:50%;bottom:auto;translate:0 -50%;width:62px;max-width:62px;margin:0;padding:8px 5px;border-radius:22px;border-width:1px;border-style:solid}
+html.premium[data-skin][data-dock="left"] .tabs{left:8px;right:auto}
+html.premium[data-skin][data-dock="right"] .tabs{right:8px;left:auto}
+html.premium[data-skin]:is([data-dock="left"],[data-dock="right"]) .tabs-in{display:grid;grid-template-columns:minmax(0,1fr);gap:6px;max-width:none}
+html.premium[data-skin]:is([data-dock="left"],[data-dock="right"]) .tab{font-size:0;gap:0;margin:0;padding:0;min-height:46px;flex:none;justify-content:center;flex-direction:column;background:none;box-shadow:none}
+html.premium[data-skin]:is([data-dock="left"],[data-dock="right"]) .tab::before,html.premium[data-skin]:is([data-dock="left"],[data-dock="right"]) .tab::after{display:none}
+html.premium[data-skin]:is([data-dock="left"],[data-dock="right"]) .tab .ic{width:44px;height:44px;border-radius:14px}
+html.premium[data-skin]:is([data-dock="left"],[data-dock="right"]) .tab.on .ic{background:var(--grad);color:var(--ink)}
+html.premium[data-skin][data-dock="left"] .app{padding-left:84px;padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+html.premium[data-skin][data-dock="right"] .app{padding-right:84px;padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+html.premium[data-skin][data-dock="left"] .top{margin-left:-16px}
+html.premium[data-skin]:is([data-dock="left"],[data-dock="right"]) :is(.fab,.toast){bottom:calc(22px + env(safe-area-inset-bottom,0px))}
+html.premium[data-skin][data-dock="right"] .fab{right:auto;left:16px}
+html.premium[data-skin][data-dock="left"] .toast{left:86px}
+html.premium[data-skin][data-dock="right"] .toast{right:86px}
+html.premium[data-skin][data-dock="left"] .dock-x{left:auto;right:-13px;top:50%;translate:0 -50%;width:18px;height:44px}
+html.premium[data-skin][data-dock="right"] .dock-x{left:-13px;top:50%;translate:0 -50%;width:18px;height:44px}
+html.premium[data-skin][data-dock="left"] .dock-x svg{rotate:90deg}
+html.premium[data-skin][data-dock="right"] .dock-x svg{rotate:-90deg}
+html.premium[data-skin]:is([data-dock="left"],[data-dock="right"]).dock-hidden .app{padding-inline:16px}
+html.premium[data-skin][data-dock="left"].dock-hidden .toast{left:16px}
+html.premium[data-skin][data-dock="right"].dock-hidden .toast{right:16px}
+html.premium[data-skin]:is([data-dock="left"],[data-dock="right"]).dock-hidden #dock-show{top:50%;bottom:auto;translate:0 -50%;width:26px;height:56px}
+html.premium[data-skin][data-dock="left"].dock-hidden #dock-show{left:6px}
+html.premium[data-skin][data-dock="right"].dock-hidden #dock-show{left:auto;right:6px}
+html.premium[data-skin]:is([data-dock="left"],[data-dock="right"]).dock-hidden #dock-show svg{rotate:90deg}
 </style>
 </head>
 <body>
@@ -1145,7 +1347,9 @@ html.no-anim[data-skin="sartorial"] .btn.primary::before{animation:none}
     <button class="tab" data-tab="envanter" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9.5 3h5v3h-5zM10.5 6v2M13.5 6v2"/><rect x="6" y="8" width="12" height="13" rx="3"/><path d="M6 15h12"/></svg></span>Envanter</button>
     <button class="tab" data-tab="maserasyon" type="button"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6.5 3.5h11M6.5 20.5h11"/><path d="M8 3.5V6a4 4 0 0 0 1.8 3.3L12 11l2.2-1.7A4 4 0 0 0 16 6V3.5M8 20.5V18a4 4 0 0 1 1.8-3.3L12 13l2.2 1.7A4 4 0 0 1 16 18v2.5"/></svg></span>Maserasyon</button>
   </div>
+  <button class="dock-x" data-act="dockhide" type="button" aria-label="Sekme çubuğunu gizle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
 </nav>
+<button id="dock-show" data-act="dockshow" type="button" aria-label="Sekme çubuğunu göster"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m6 15 6-6 6 6"/></svg></button>
 
 <script>
 (() => {
@@ -1247,6 +1451,8 @@ const STORES = {
 };
 // dl: downloaded by the app at runtime from docs/sounds (no new APK needed); others ship inside the APK
 const SOUNDS = {
+  dn_gitar: {n: 'Denim · Gitar', dl: 'dn_gitar'}, dn_ukulele: {n: 'Denim · Ukulele', dl: 'dn_ukulele'}, dn_pena: {n: 'Denim · Pena', dl: 'dn_pena'},
+  dn_fermuar: {n: 'Denim · Fermuar', dl: 'dn_fermuar'}, dn_citcit: {n: 'Denim · Çıtçıt', dl: 'dn_citcit'},
   so_piyano: {n: 'Sartorial · Salon piyanosu', dl: 'so_piyano'}, so_saat: {n: 'Sartorial · Sarkaçlı saat', dl: 'so_saat'}, so_cello: {n: 'Sartorial · Çello', dl: 'so_cello'},
   so_klavsen: {n: 'Sartorial · Klavsen', dl: 'so_klavsen'}, so_kristal: {n: 'Sartorial · Kristal sürahi', dl: 'so_kristal'},
   lune_ay: {n: 'Lune · Ay ışığı', dl: 'lune_ay'}, lune_yildiz: {n: 'Lune · Yıldız', dl: 'lune_yildiz'}, lune_dalga: {n: 'Lune · Dalga', dl: 'lune_dalga'},
@@ -1341,7 +1547,17 @@ const SKINS = {
     wheelLight: ['#14203a','#fbf7ec','#7d2a3a','#ece3cf','#b8902f','#d9ccae'],
     wheelTextLight: ['#f3ead6','#14203a','#fbf7ec','#7d2a3a','#1a1304','#14203a'],
     shelf: 'Old money klasikleri', line: r => r[12].includes('Klasik') && r[12].includes('Yüksek Puanlı') && r[5] > 7000,
-    swatch: 'linear-gradient(135deg,#0a101e 0 34%,#e0bd72 34% 46%,#fff4cf 46% 52%,#b98d3a 52% 60%,#8e2f42 60% 72%,#f4eee0 72%)', chip: '#e0bd72'}
+    swatch: 'linear-gradient(135deg,#0a101e 0 34%,#e0bd72 34% 46%,#fff4cf 46% 52%,#b98d3a 52% 60%,#8e2f42 60% 72%,#f4eee0 72%)', chip: '#e0bd72'},
+  denim: {premium: true, rimLight: '#c0601a', modes: ['Stonewash · açık', 'Raw · karanlık'],
+    set: {rem: 'dn_gitar', price: 'dn_ukulele', pig: 'dn_citcit', all: ['dn_gitar', 'dn_ukulele', 'dn_pena', 'dn_fermuar', 'dn_citcit'], note: 'Gitar: hatırlatıcılar · Ukulele: fiyat düştü · Çıtçıt: kumbara.'},
+    n: 'Denim', sub: 'Hafta sonu rahatlığı · indigo kot, bakır perçin ve dikiş, deri etiket · kompakt · açık ve karanlık', bar: '#0e1828', barLight: '#dfe7f1', greet: 'Bugünün kombini', greetLight: 'Bugünün kombini', sound: 'dn_gitar',
+    fonts: 'family=Archivo:wdth,wght@75..100,400..900&family=DM+Sans:opsz,wght@9..40,400..700',
+    wheel: ['#e98b3a','#16253b','#dcb98e','#1e314d','#4a70aa','#0e1828'],
+    wheelText: ['#1c0f03','#f2ece1','#3a2410','#f5b673','#f2ece1','#dcb98e'], rim: '#e98b3a', hub: ['#fbe6c8','#8f5a28'],
+    wheelLight: ['#c0601a','#f5f7fb','#a0713b','#d2ddeb','#3b5b8c','#b6c5d8'],
+    wheelTextLight: ['#fff7ee','#13233a','#fff7ee','#13233a','#f5f7fb','#13233a'],
+    shelf: 'Her güne uyanlar', line: r => r[12].includes('Günlük') && r[12].includes('Kör Alım Güvenli') && r[5] > 8000,
+    swatch: 'linear-gradient(135deg,#0e1828 0 30%,#2f4c7a 30% 54%,#e98b3a 54% 64%,#dcb98e 64% 74%,#dfe7f1 74%)', chip: '#e98b3a'}
 };
 const SAMPLE_ROWS = [
 [99116,"Eros Najim","Versace",2024,"E",2133,4,3,["Sıcak baharatlı","Karamel","Narenciye","Ud","Aromatik"],["Karamel","İtalyan mandalinası"],["Kakule","Ud"],["Tütsü","Paçuli","Vetiver"],["Günlük","Date","Ofis","Kış","Gece","Narenciye","Aromatik","Tatlı","Gurme","Amber","Baharatlı","Ud","Oryantal","Seksi","Orta","Erkek"],3.92],
@@ -1465,9 +1681,9 @@ const skin = () => {
   const k = SKINS[S.skin] || SKINS.karamel;
   return k.wheelLight && lightMode() ? {...k, wheel: k.wheelLight, wheelText: k.wheelTextLight, greet: k.greetLight || k.greet, rim: k.rimLight || k.rim} : k;
 };
-const UI_DEFAULT = {fullscreen: false, anim: true, haptic: true, blur: true, amoled: false, compact: false, labels: true, fs: 'm'};
+const UI_DEFAULT = {fullscreen: false, anim: true, haptic: true, blur: true, amoled: false, compact: false, labels: true, fs: 'm', dock: 'bottom', dockHidden: false};
 // a premium theme brings its own sound set; leaving it puts the usual sounds back
-const SET_RX = /^(sc_|mal_|lune_|so_)/;
+const SET_RX = /^(sc_|mal_|lune_|so_|dn_)/;
 function themeSounds(on){
   const set = on && SKINS[S.skin] && SKINS[S.skin].set;
   if (set) {
@@ -1484,6 +1700,8 @@ function applyUi(){
   c.toggle('no-anim', !u.anim); c.toggle('no-blur', !u.blur); c.toggle('amoled', !!u.amoled);
   c.toggle('compact', !!u.compact); c.toggle('no-labels', !u.labels);
   c.toggle('fs-s', u.fs === 's'); c.toggle('fs-l', u.fs === 'l');
+  c.toggle('dock-hidden', !!u.dockHidden);
+  if (u.dock && u.dock !== 'bottom') document.documentElement.dataset.dock = u.dock; else delete document.documentElement.dataset.dock;
   nativeCall('setFullscreen', !!u.fullscreen);
 }
 
@@ -1659,7 +1877,10 @@ function cutImage(src){
     const run = () => {
       cutting++;
       const im = new Image(); im.crossOrigin = 'anonymous';
-      const done = v => { cutting--; res(v); const n = cutQueue.shift(); if (n) n(); };
+      let over = false;
+      // a download that stalls must not hold its slot forever, or every later photo waits behind it
+      const done = v => { if (over) return; over = true; clearTimeout(guard); cutting--; res(v); const n = cutQueue.shift(); if (n) n(); };
+      const guard = setTimeout(() => done(null), 9000);
       im.onload = () => { let v = null; try { v = removeWhite(im); } catch (e) {} done(v); };
       im.onerror = () => done(null);
       im.src = src;
@@ -1677,14 +1898,27 @@ function getNobg(src){
   })();
   NOBG.set(src, p); return p;
 }
+// a photo that will not load gets a second try, then the perfume's initial instead of an empty frame
+function imgFail(img){
+  const src = img.dataset.nobg || img.dataset.src0 || '';
+  if (img.classList.contains('cut')) { img.classList.remove('cut'); img.src = src; return; }
+  const n = +(img.dataset.tries || 0);
+  if (src && n < 2) { img.dataset.tries = n + 1; setTimeout(() => { if (img.isConnected) img.src = src + (src.includes('?') ? '&' : '?') + 'r=' + (n + 1); }, 700 + n * 1500); return; }
+  const ph = img.parentElement && img.parentElement.querySelector('.ph');
+  if (ph && !ph.textContent.trim()) { ph.classList.remove('stage'); ph.innerHTML = `<span>${esc(img.dataset.l || '?')}</span>`; }
+  img.remove();
+}
+window.imgFail = imgFail;
 function hydrate(){
   document.querySelectorAll('img[data-nobg]:not([data-h])').forEach(img => {
     img.dataset.h = '1';
     const src = img.dataset.nobg;
-    getNobg(src).then(u => {
-      img.onerror = () => img.remove();
-      img.src = u || src; img.classList.toggle('cut', !!u); img.classList.add('ready');
-    });
+    let shown = false;
+    const show = u => { if (!img.isConnected) return; shown = true; img.src = u || src; img.classList.toggle('cut', !!u); img.classList.add('ready'); };
+    img.onerror = () => imgFail(img);
+    // never wait long for the cut-out: the plain photo appears first and is swapped when the cut-out is ready
+    const slow = setTimeout(() => { if (!shown) show(null); }, 1400);
+    getNobg(src).then(u => { clearTimeout(slow); if (u || !shown) show(u); }, () => { clearTimeout(slow); if (!shown) show(null); });
   });
 }
 new MutationObserver(() => hydrate()).observe(document.body, {childList: true, subtree: true});
@@ -1716,8 +1950,8 @@ function art(p){
   const name = p && p.name || '?';
   if (p && p.img) {
     const img = S.nobg && NATIVE && /^https?:/.test(p.img)
-      ? `<img data-nobg="${esc(p.img)}" class="nb" alt="">`
-      : `<img src="${esc(p.img)}" alt="" loading="lazy" onerror="this.remove()">`;
+      ? `<img data-nobg="${esc(p.img)}" data-l="${esc(name.trim().charAt(0).toUpperCase())}" class="nb" alt="">`
+      : `<img src="${esc(p.img)}" data-src0="${/^https?:/.test(p.img) ? esc(p.img) : ''}" data-l="${esc(name.trim().charAt(0).toUpperCase())}" alt="" loading="lazy" onerror="imgFail(this)">`;
     return `<div class="ph stage"></div>` + img;
   }
   return `<div class="ph"><span>${esc(name.trim().charAt(0).toUpperCase())}</span></div>`;
@@ -3040,6 +3274,7 @@ const LOGOS = {
   scandal: {n: 'Scandal', sub: 'Gül BB, altın halka', bg: ['#3a1528', '#12070d'], c: ['#ffc2d5', '#ff6f9f', '#cf3f79'], frame: 'M54,21A33,33 0 1 1 53.99,21Z', stroke: '#e2b56c'},
   malachite: {n: 'Malachite', sub: 'Zümrüt BB, pirinç çerçeve', bg: ['#12392c', '#06100d'], c: ['#86e6bf', '#2fc08a', '#0f7d58'], frame: 'M41,21H67L87,41V67L67,87H41L21,67V41Z', stroke: '#c9a45c'},
   sartorial: {n: 'Sartorial', sub: 'Altın varak BB, oval kameo', bg: ['#1c2a4a', '#0a101e'], c: ['#fff1c4', '#e0bd72', '#9a7424'], frame: 'M54,21A29,33 0 1 1 53.99,21Z', stroke: '#e0bd72'},
+  denim: {n: 'Denim', sub: 'Bakır BB, dikişli cep', bg: ['#2a4670', '#0f1a2b'], c: ['#f8c48a', '#e58a3a', '#b85f1e'], frame: 'M24,24H84V70L54,87L24,70Z', stroke: '#e58a3a'},
   lune: {n: 'Lune', sub: 'Leylak BB, hilal', bg: ['#262b63', '#0b0d1c'], c: ['#e4deff', '#a99bff', '#6f7dff'], frame: 'M78,31A33,33 0 1 0 85,65A26,26 0 0 1 78,31Z', stroke: '#7fe3e0'}
 };
 function logoSvg(k){
@@ -4199,6 +4434,9 @@ function renderLook(){
       <div class="field"><span class="label">${esc(skin().n)} modu</span>
         <div class="seg">${[['auto', 'Otomatik'], ['light', skin().modes[0]], ['dark', skin().modes[1]]].map(([k, l]) => `<button class="${(S.mode || 'auto') === k ? 'on' : ''}" data-act="scmode" data-v="${k}" type="button">${l}</button>`).join('')}</div>
         <span class="muted small">Otomatik, telefonun açık/karanlık ayarını izler.</span></div>
+      <div class="field"><span class="label">Sekme çubuğunun yeri</span>
+        <div class="seg">${[['bottom', 'Alt'], ['top', 'Üst'], ['left', 'Sol'], ['right', 'Sağ']].map(([k, l]) => `<button class="${(S.ui.dock || 'bottom') === k ? 'on' : ''}" data-act="dockpos" data-v="${k}" type="button">${l}</button>`).join('')}</div>
+        <span class="muted small">Çubuğun kenarındaki küçük oka dokununca çubuk gizlenir; aynı yerde kalan küçük tutamak geri getirir.</span></div>
       <div class="field"><span class="label">${esc(skin().n)} ses seti</span>
         <div class="chips">${skin().set.all.map(k => `<button class="chip" data-act="scplay" data-v="${k}" type="button">▶ ${esc(sname(k).split(' · ')[1] || sname(k))}</button>`).join('')}</div>
         <span class="muted small">${esc(skin().set.note)} Dokunup dinle; set temayı seçince kendiliğinden uygulandı.</span>
@@ -4208,7 +4446,7 @@ function renderLook(){
   </section>
   <section class="section">
     <details class="cg" open style="background:var(--panel)">
-      <summary>Uygulama görünümü <small>${Object.values(S.ui).filter(v => v === true).length} açık</small></summary>
+      <summary>Uygulama görünümü <small>${['fullscreen', 'anim', 'haptic', 'blur', 'amoled', 'compact', 'labels'].filter(k => S.ui[k] === true).length} açık</small></summary>
       <div style="display:flex;flex-direction:column;gap:14px;padding:4px 12px 14px">
         ${[
           ['fullscreen', 'Tam ekran', NATIVE && NATIVE.setFullscreen ? 'Üstteki saat ve bildirim çubuğunu gizler.' : 'Uygulamanın son sürümünde çalışır.'],
@@ -4697,6 +4935,9 @@ document.addEventListener('click', async e => {
       applySkin(); save(); renderLook(); ensureSounds().then(() => { if (NATIVE && NATIVE.setPriceSound) syncAlarms(); }); toast(skin().n + ' teması'); break;
     }
     case 'scmode': S.mode = t.dataset.v; applySkin(); save(); renderLook(); break;
+    case 'dockpos': S.ui.dock = t.dataset.v; S.ui.dockHidden = false; save(); applyUi(); renderLook(); break;
+    case 'dockhide': S.ui.dockHidden = true; save(); applyUi(); haptic('tick'); break;
+    case 'dockshow': S.ui.dockHidden = false; save(); applyUi(); haptic('tick'); break;
     case 'scset': themeSounds(true); save(); await ensureSounds(); if (NATIVE && NATIVE.setPriceSound) syncAlarms(); lastPlan = ''; syncNative(); toast(skin().n + ' ses seti uygulandı'); break;
     case 'scplay': {
       const k = t.dataset.v;
@@ -4782,7 +5023,7 @@ document.addEventListener('change', async e => {
   if (t.id === 'wx-on') { S.weather.on = t.checked; save(); if (t.checked) fetchWeather(true).then(() => renderLook()); else renderLook(); }
   if (t.id === 'wx-auto') { S.weather.auto = t.checked; save(); }
   if (t.id === 'wx-city') { S.weather.city = t.value; WX = null; save(); fetchWeather(true).then(() => renderLook()); }
-  if (t.dataset && t.dataset.ui) { S.ui[t.dataset.ui] = t.checked; save(); applyUi(); const sm = document.querySelector('details.cg summary small'); if (sm) sm.textContent = Object.values(S.ui).filter(v => v === true).length + ' açık'; }
+  if (t.dataset && t.dataset.ui) { S.ui[t.dataset.ui] = t.checked; save(); applyUi(); const sm = document.querySelector('details.cg summary small'); if (sm) sm.textContent = ['fullscreen', 'anim', 'haptic', 'blur', 'amoled', 'compact', 'labels'].filter(k => S.ui[k] === true).length + ' açık'; }
   if (t.id === 'wheel-inv') { S.wheelInv = t.checked; save(); renderWheel(); }
   if (['pig-remind', 'pig-tgt'].includes(t.id)) {
     const g = S.piggies.find(x => x.id === document.getElementById('sheet').dataset.pig);
