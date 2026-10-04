@@ -118,6 +118,28 @@ public class Bridge {
         return m.requestPinAppWidget(new android.content.ComponentName(activity, BatchWidget.class), null, null);
     }
 
+    /** Android 13+: asks the system to add the "Batch kontrol" tile to quick settings. */
+    @JavascriptInterface
+    @android.annotation.TargetApi(33)
+    public boolean addTile() {
+        if (!activity.trusted() || android.os.Build.VERSION.SDK_INT < 33) return false;
+        try {
+            android.app.StatusBarManager sb = activity.getSystemService(android.app.StatusBarManager.class);
+            sb.requestAddTileService(new android.content.ComponentName(activity, BatchTileService.class), "Batch kontrol",
+                    android.graphics.drawable.Icon.createWithResource(activity, R.drawable.ic_stat), activity.getMainExecutor(), r -> { });
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** The last code checked in the small dialog (JSON), so the page can show it too. */
+    @JavascriptInterface
+    public String lastBatch() {
+        if (!activity.trusted()) return "";
+        return activity.getSharedPreferences(Scheduler.PREFS, android.content.Context.MODE_PRIVATE).getString("last_batch", "");
+    }
+
     /** What the app was opened for ("batch" from the widget); read once. */
     @JavascriptInterface
     public String pendingOpen() {

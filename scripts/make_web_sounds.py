@@ -247,6 +247,70 @@ def lune_nabiz(t):
     out += partials(1760.0, t - .62, ((1, 1), (2.7, .12)), .003, .8) * .45
     return out
 
+# ---------- Sartorial set: a drawing room with a grand piano, a long-case clock and a decanter ----------
+GRAND = ((1, 1.0), (2, .5), (3, .28), (4, .14), (5, .07), (6, .035))
+
+def piano(f, x, a=1.0, d=1.3):
+    # slightly stretched, two detuned strings, a soft hammer thump at the start
+    if x < 0: return 0.0
+    e = min(1, x / .006) * (math.exp(-x / d) * .75 + math.exp(-x / (d * .22)) * .25)
+    out = 0
+    for k, wgt in GRAND:
+        fk = f * k * (1 + .00035 * k * k)
+        out += wgt * (math.sin(2 * math.pi * fk * x) + .6 * math.sin(2 * math.pi * fk * 1.0015 * x)) * math.exp(-x * k * .5)
+    return a * e * out * .6 + a * math.sin(2 * math.pi * 90 * x) * math.exp(-x / .012) * .12
+
+def so_piyano(t):
+    # "Salon piano": an unhurried E major 9 spread, left hand first, one grace note on top
+    out = 0
+    for s0, f, a in ((0, 82.41, .8), (.05, 164.81, .7), (.16, 246.94, .75), (.28, 311.13, .8), (.4, 369.99, .75), (.52, 493.88, .8), (.74, 739.99, .5), (.8, 830.61, .6)):
+        out += piano(f, t - s0, a, 1.5)
+    return out
+
+def so_saat(t):
+    # "Long-case clock": the first Westminster quarter (G# F# E B) on soft tubular bells, then the tick
+    out = 0
+    for i, f in enumerate((415.3, 369.99, 329.63, 246.94)):
+        x = t - i * .42
+        if x >= 0:
+            out += min(1, x / .004) * math.exp(-x / 1.0) * (math.sin(2 * math.pi * f * x) + .45 * math.sin(2 * math.pi * f * 2.0 * x) * math.exp(-x * 2)
+                    + .3 * math.sin(2 * math.pi * f * 2.76 * x) * math.exp(-x * 3) + .12 * math.sin(2 * math.pi * f * 5.4 * x) * math.exp(-x * 6)) * .7
+    for s0 in (2.0, 2.5):
+        x = t - s0
+        if 0 <= x < .03: out += (random.random() * 2 - 1) * math.exp(-x / .004) * .22 + math.sin(2 * math.pi * 1400 * x) * math.exp(-x / .006) * .16
+    return out
+
+def so_cello(t):
+    # "Cello": two bowed notes, D2 rising to A2, slow bow and a little vibrato
+    def bow(x, f, dur):
+        if x < 0 or x > dur + .5: return 0.0
+        e = min(1, x / .16) * (1 if x < dur else math.exp(-(x - dur) / .18))
+        vib = 1 + .006 * math.sin(2 * math.pi * 5.3 * x) * min(1, x / .4)
+        return e * sum(math.sin(2 * math.pi * f * k * vib * x) / k ** 1.25 for k in range(1, 9)) * .5
+    return bow(t, 73.42, 1.0) + bow(t - 1.05, 110.0, 1.2) * .95
+
+def so_klavsen(t):
+    # "Harpsichord": a quick baroque turn and a rolled A major chord; bright, short, celebratory
+    def pluck(x, f, a=1.0):
+        if x < 0: return 0.0
+        return a * min(1, x / .0015) * math.exp(-x / .5) * sum(math.sin(2 * math.pi * f * k * x) * math.exp(-x * k * .9) / k ** .7 for k in range(1, 12)) * .32
+    out = 0
+    for s0, f in ((0, 880.0), (.09, 987.77), (.18, 880.0), (.27, 830.61), (.36, 880.0)):
+        out += pluck(t - s0, f, .8)
+    for i, f in enumerate((220.0, 277.18, 329.63, 440.0, 554.37, 659.25)):
+        out += pluck(t - .56 - i * .035, f, .9)
+    return out
+
+def so_kristal(t):
+    # "Decanter": the crystal stopper set back in its neck (a low glassy knock), then the rim ringing
+    out = 0
+    x = t
+    if x < .1: out += math.sin(2 * math.pi * 520 * x) * math.exp(-x / .02) * .7 + (random.random() * 2 - 1) * math.exp(-x / .006) * .2
+    for f, a, d in ((1174.66, 1, 1.3), (1174.66 * 2.32, .35, .7), (1174.66 * 4.25, .12, .35), (1178.0, .6, 1.3)):
+        x = t - .12
+        if x >= 0: out += a * min(1, x / .003) * math.exp(-x / d) * math.sin(2 * math.pi * f * x) * .55
+    return out
+
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     random.seed(3)
@@ -273,4 +337,10 @@ if __name__ == '__main__':
     render('lune_dalga', 2.2, lune_dalga, .48, 5, (.3, .2))
     render('lune_arp', 2.2, lune_arp, .46, 2, (.17, .25))
     render('lune_nabiz', 1.9, lune_nabiz, .52, 3, (.26, .15))
+    random.seed(44)
+    render('so_piyano', 3.2, so_piyano, .5, 3, (.29, .16))
+    render('so_saat', 3.0, so_saat, .46, 3, (.37, .18))
+    render('so_cello', 3.0, so_cello, .5, 4, (.31, .14))
+    render('so_klavsen', 2.0, so_klavsen, .42, 2, (.2, .16))
+    render('so_kristal', 2.2, so_kristal, .46, 2, (.28, .2))
     print('ok')

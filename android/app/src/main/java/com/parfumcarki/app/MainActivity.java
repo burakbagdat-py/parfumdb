@@ -203,7 +203,7 @@ public class MainActivity extends Activity {
     private volatile String pageUrl = "";
 
     /** True only while our own site (the GitHub Pages address) is shown. */
-    private static final String[][] ICONS = {{"classic", "IconClassic"}, {"scandal", "IconScandal"}, {"malachite", "IconMalachite"}, {"lune", "IconLune"}};
+    private static final String[][] ICONS = {{"classic", "IconClassic"}, {"scandal", "IconScandal"}, {"malachite", "IconMalachite"}, {"lune", "IconLune"}, {"sartorial", "IconSartorial"}};
     private String pendingOpen = "";
 
     String takeOpen() {

@@ -965,6 +965,164 @@ html.premium .sheet:has(.dhead) .sheet-back{display:inline-flex;position:sticky;
 .wprev .wm{font-size:19px;font-weight:700;flex:1;display:flex;align-items:center}
 .wprev .ws{font-size:12px;color:var(--muted)}
 .wprev .wb{align-self:flex-start;margin-top:6px;padding:7px 14px;background:var(--accent);color:var(--ink);font-size:13px;font-weight:700}
+
+/* ============ Sartorial (after Penhaligon's Sartorial: a Savile Row cutting room). Midnight wool, gold foil, ivory card, claret lining.
+   Pinstripes, stitched edges, oval cameo portraits, ruled ledgers instead of cards, a stitched belt for a dock, foil that catches the light.
+   Two moods: Midnight (dark, default) and Parchment (light). ============ */
+html[data-skin="sartorial"]{
+  --bg:#0a101e;--panel:#111a2e;--panel-2:#18233c;--line:#2b3859;--fg:#f3ead6;--muted:#aab2c8;
+  --accent:#e0bd72;--accent-2:#e7c98a;--hi:#f4dfa8;--ink:#1a1304;--danger:#f0907f;--ok:#8fd4a4;--claret:#8e2f42;
+  --foil:linear-gradient(105deg,#8f6c22 0%,#f7e6ad 16%,#c79f4a 32%,#fff4cf 48%,#b98d3a 64%,#f1d58c 82%,#8f6c22 100%);
+  --foil-ink:linear-gradient(105deg,#c79f4a 0%,#fff4cf 22%,#d9b663 44%,#fbe9b4 62%,#c79f4a 82%,#f1d58c 100%);
+  --grad:var(--foil);--gold:linear-gradient(120deg,#b44a5f,#8e2f42 55%,#5f1c2b);
+  --glow:rgb(224 189 114 / .34);--shade:rgb(0 0 0 / .62);--stitch:color-mix(in srgb,var(--accent) 46%,transparent);
+  --f-display:"Playfair Display","Didot",Georgia,serif;--f-body:"EB Garamond","Cormorant Garamond",Georgia,serif;
+  --dw:500;--dt:none;--dls:0;
+  --pattern:repeating-linear-gradient(90deg,rgb(224 189 114 / .09) 0 1px,transparent 1px 17px);--pattern-size:auto;
+  --r:6px;--btn-r:4px;--chip-r:3px;--btn-tt:uppercase;--btn-ls:.12em;color-scheme:dark;
+  background:radial-gradient(120% 60% at 50% -10%,rgb(44 62 110 / .55),transparent 65%),radial-gradient(90% 50% at 50% 115%,rgb(142 47 66 / .22),transparent 65%),var(--bg);
+  background-attachment:fixed;
+}
+html[data-skin="sartorial"][data-mode="light"]{
+  --bg:#f4eee0;--panel:#fbf7ec;--panel-2:#ece3cf;--line:#d9ccae;--fg:#14203a;--muted:#5a6178;
+  --accent:#8a6518;--accent-2:#7d2a3a;--hi:#6f5010;--ink:#1a1304;--danger:#a8322a;--ok:#2c7149;--claret:#7d2a3a;
+  --foil-ink:linear-gradient(105deg,#6d5113 0%,#b8902f 24%,#7a5a17 48%,#c39b3c 72%,#6d5113 100%);
+  --glow:rgb(138 101 24 / .26);--shade:rgb(60 45 15 / .3);--stitch:color-mix(in srgb,var(--accent) 50%,transparent);
+  --pattern:repeating-linear-gradient(90deg,rgb(20 32 58 / .06) 0 1px,transparent 1px 17px);color-scheme:light;
+  background:radial-gradient(120% 60% at 50% -10%,rgb(255 255 255 / .8),transparent 65%),radial-gradient(90% 50% at 50% 115%,rgb(125 42 58 / .1),transparent 65%),var(--bg);
+  background-attachment:fixed;
+}
+@keyframes so-foil{to{background-position:-220% 0}}
+@keyframes so-twinkle{0%,100%{opacity:.12}35%{opacity:1}65%{opacity:.35}}
+@keyframes so-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes so-unfold{from{opacity:.3;transform:translateY(34px) scaleY(.97)}to{opacity:1;transform:none}}
+html[data-skin="sartorial"] body{background:transparent;font-size:17px;line-height:1.45;font-variant-numeric:lining-nums}
+html[data-skin="sartorial"] body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:var(--pattern)}
+/* everything settles into place */
+html[data-skin="sartorial"] #view[data-fresh]>.section{animation:so-rise .55s cubic-bezier(.2,.8,.2,1) both}
+html[data-skin="sartorial"] #view[data-fresh]>.section:nth-child(2){animation-delay:.06s}
+html[data-skin="sartorial"] #view[data-fresh]>.section:nth-child(3){animation-delay:.12s}
+html[data-skin="sartorial"] #view[data-fresh]>.section:nth-child(4){animation-delay:.18s}
+html[data-skin="sartorial"] #view[data-fresh]>.section:nth-child(n+5){animation-delay:.24s}
+html[data-skin="sartorial"] .sheet{animation:so-unfold .42s cubic-bezier(.2,.9,.2,1)}
+html.no-anim[data-skin="sartorial"] :is(#view[data-fresh]>.section,.sheet,.btn.primary,.btn.primary::before,.quick .qi,.fab,.logo h1,.hero-name){animation:none}
+/* letterhead */
+html[data-skin="sartorial"] .top{justify-content:center;background:color-mix(in srgb,var(--bg) 82%,transparent);border-bottom:1px solid var(--stitch)}
+html[data-skin="sartorial"] .top .icon-btn{position:absolute;right:16px}
+html[data-skin="sartorial"] .logo,html[data-skin="sartorial"] .logo div{align-items:center;text-align:center}
+html[data-skin="sartorial"] .logo h1{font-size:25px;font-weight:500;letter-spacing:.02em}
+html[data-skin="sartorial"] .logo small{font-family:var(--f-display);letter-spacing:.32em;font-size:9.5px;color:var(--accent-2)}
+/* gold foil lettering */
+html[data-skin="sartorial"] :is(.logo h1,h2,.hero-name,.bigprice,.stat b,.pig-ring b,.mac-left b,.auth-score){background:var(--foil-ink);background-size:220% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
+html[data-skin="sartorial"] :is(.logo h1,.hero-name){animation:so-foil 9s linear infinite}
+html[data-skin="sartorial"] h2{font-size:30px;font-weight:500;line-height:1.1}
+html[data-skin="sartorial"] h3{font-size:22px;font-style:italic;font-weight:500}
+html[data-skin="sartorial"] .eyebrow{display:flex;align-items:center;gap:10px;justify-content:center;font-family:var(--f-display);letter-spacing:.3em;font-size:10px;color:var(--accent-2)}
+html[data-skin="sartorial"] .eyebrow::before,html[data-skin="sartorial"] .eyebrow::after{content:"";height:1px;flex:1;max-width:46px;background:var(--stitch)}
+html[data-skin="sartorial"] .label,html[data-skin="sartorial"] .field>label{font-family:var(--f-display);letter-spacing:.2em;font-size:10.5px;color:var(--accent-2)}
+html[data-skin="sartorial"] .small{font-size:14.5px}
+html[data-skin="sartorial"] .item-meta{font-size:14px}
+html[data-skin="sartorial"] .item-name,html[data-skin="sartorial"] .card-name{font-size:18px;font-weight:500}
+html[data-skin="sartorial"] .hero-brand,html[data-skin="sartorial"] .card-brand{font-family:var(--f-display);letter-spacing:.26em;font-size:10px;color:var(--accent-2)}
+/* stitched panels */
+html[data-skin="sartorial"] :is(.hero,.box,.rem,.prices,.result,.pig-card,.mac-sum,.note,.empty,.day,.menu button,.stat div,details.cg){
+  border:1px solid var(--stitch);border-radius:6px;background:linear-gradient(180deg,color-mix(in srgb,var(--panel-2) 55%,var(--panel)),var(--panel));
+  box-shadow:0 22px 44px -32px var(--shade),inset 0 1px 0 rgb(255 255 255 / .05)}
+html[data-skin="sartorial"] :is(.hero,.box,.menu button,.day,.rem,.prices){outline:1px dashed var(--stitch);outline-offset:-7px}
+/* the perfume of the day as a calling card: cameo on the left, name on the right, buttons across the bottom */
+html[data-skin="sartorial"] .hero{grid-template-columns:112px minmax(0,1fr);justify-items:stretch;text-align:left;gap:6px 18px;padding:26px 22px 24px;align-items:start}
+html[data-skin="sartorial"] .hero::before,html[data-skin="sartorial"] .hero::after{display:none}
+html[data-skin="sartorial"] .hero-body{display:contents}
+html[data-skin="sartorial"] .hero>.art{grid-column:1;grid-row:1 / span 6;width:112px;align-self:center}
+html[data-skin="sartorial"] .hero-body>*{grid-column:2}
+html[data-skin="sartorial"] .hero-name{font-size:28px;line-height:1.08}
+html[data-skin="sartorial"] .hero :is(.fam-line,.hero-actions){justify-content:flex-start}
+html[data-skin="sartorial"] .hero-body>.hero-actions{grid-column:1 / -1;margin-top:14px;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px}
+html[data-skin="sartorial"] .hero-actions .btn{padding-inline:6px;font-size:11px}
+/* oval cameos */
+html[data-skin="sartorial"] .art{border-radius:50%;aspect-ratio:3/4;background:radial-gradient(70% 60% at 50% 60%,var(--glow),transparent 72%),var(--panel-2);box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--accent),0 16px 28px -16px var(--shade)}
+html[data-skin="sartorial"] .item .art,html[data-skin="sartorial"] .day .art{box-shadow:0 0 0 1.5px var(--bg),0 0 0 2.5px var(--accent)}
+html[data-skin="sartorial"] .card{background:none;border:0;box-shadow:none;border-radius:0;align-items:center;padding:6px 0 0;overflow:visible}
+html[data-skin="sartorial"] .card .art{width:74%;aspect-ratio:3/4}
+html[data-skin="sartorial"] .card-body{align-items:center;text-align:center;padding:12px 4px 10px}
+html[data-skin="sartorial"] .card-body :is(.fam-line,.chips,.row){justify-content:center}
+html[data-skin="sartorial"] .grid>.card:nth-child(even){margin:0}
+html[data-skin="sartorial"] .sample-tag{position:static;transform:none;order:-1;align-self:center;background:none;color:var(--accent-2);padding:0 0 6px;font-family:var(--f-display);letter-spacing:.18em}
+html[data-skin="sartorial"] .ph{background:radial-gradient(90% 60% at 50% 30%,color-mix(in srgb,var(--accent) 50%,transparent),transparent 70%),linear-gradient(170deg,var(--claret),var(--panel))}
+/* ledgers: ruled lines, no boxes */
+html[data-skin="sartorial"] .list>.item{border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;box-shadow:none;padding:14px 2px}
+html[data-skin="sartorial"] .list>.item:last-child{border-bottom:0}
+html[data-skin="sartorial"] .list{gap:0}
+/* foil buttons */
+html[data-skin="sartorial"] .btn{border-radius:4px;background:transparent;border:1px solid var(--stitch);font-size:12px;font-weight:600;position:relative;overflow:hidden;transition:transform .15s,filter .2s,box-shadow .2s}
+html[data-skin="sartorial"] .btn.sm{font-size:11px}
+html[data-skin="sartorial"] .btn:active{filter:brightness(1.25)}
+html[data-skin="sartorial"] .btn.primary{background:var(--foil);background-size:240% 100%;color:var(--ink);border-color:transparent;animation:so-foil 5.5s linear infinite;
+  box-shadow:0 12px 26px -12px rgb(224 189 114 / .7),inset 0 1px 0 rgb(255 255 255 / .6),inset 0 -1px 0 rgb(90 60 10 / .45)}
+html[data-skin="sartorial"] .btn.primary::before{content:"";position:absolute;inset:0;pointer-events:none;animation:so-twinkle 2.8s ease-in-out infinite;
+  background:radial-gradient(circle at 16% 32%,#fff 0 1.1px,transparent 2.4px),radial-gradient(circle at 70% 68%,#fff 0 1.3px,transparent 2.8px),radial-gradient(circle at 88% 24%,#fff 0 .9px,transparent 2px),radial-gradient(circle at 42% 16%,#fff 0 .8px,transparent 1.8px)}
+html[data-skin="sartorial"] .btn.danger{border-color:color-mix(in srgb,var(--danger) 55%,transparent)}
+html[data-skin="sartorial"] .icon-btn{border-radius:50%;background:transparent;border-color:var(--stitch);color:var(--accent)}
+html[data-skin="sartorial"] .chip{border-radius:3px;border-color:var(--stitch);font-size:14px;color:var(--fg);background:transparent}
+html[data-skin="sartorial"] .chip.on{background:var(--foil);background-size:200% 100%;border-color:transparent;color:var(--ink);font-weight:600}
+html[data-skin="sartorial"] .chip.grp{border-style:solid;font-style:italic;color:var(--muted)}
+html[data-skin="sartorial"] .chip.grp.on{background:var(--gold);color:#fff3e6;font-style:normal}
+html[data-skin="sartorial"] .seg{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0;gap:0}
+html[data-skin="sartorial"] .seg button{border-radius:0;padding:11px 4px;font-size:14px}
+html[data-skin="sartorial"] .seg button.on{background:none;color:var(--accent);box-shadow:inset 0 -2px 0 var(--accent)}
+html[data-skin="sartorial"] .search,html[data-skin="sartorial"] .input{border:0;border-bottom:1px solid var(--stitch);border-radius:0;background:transparent;padding-inline:4px}
+html[data-skin="sartorial"] select.input option{background:var(--panel)}
+html[data-skin="sartorial"] .bell{border-radius:3px;font-size:13px}
+html[data-skin="sartorial"] .bell.on{background:var(--gold);color:#fff3e6;box-shadow:none}
+html[data-skin="sartorial"] .note-chip{border-radius:3px;font-style:italic}
+html[data-skin="sartorial"] .level{height:3px;border-radius:0}
+html[data-skin="sartorial"] .level i,html[data-skin="sartorial"] .switch input:checked+span{background:var(--foil)}
+html[data-skin="sartorial"] .conc{border-color:var(--stitch);color:var(--accent-2);border-radius:2px}
+html[data-skin="sartorial"] .fam{border-radius:3px}
+/* wax seals */
+html[data-skin="sartorial"] .quick button{background:none;border:0;box-shadow:none;outline:0;padding:0;gap:10px;font-size:13.5px}
+html[data-skin="sartorial"] .quick .qi{width:60px;height:60px;border-radius:50%;background:var(--foil);background-size:240% 100%;animation:so-foil 7s linear infinite;box-shadow:0 0 0 3px var(--bg),0 0 0 4px var(--accent),0 14px 24px -12px var(--glow),inset 0 0 0 5px rgb(120 84 20 / .28)}
+html[data-skin="sartorial"] .menu .mi{border-radius:50%;background:var(--foil)}
+html[data-skin="sartorial"] .fab{border-radius:50%;background:var(--foil);background-size:240% 100%;animation:so-foil 7s linear infinite;box-shadow:0 0 0 3px var(--bg),0 0 0 4px var(--accent),0 16px 30px -10px var(--glow)}
+/* garment tags for the week */
+html[data-skin="sartorial"] .day{border-radius:4px;padding-top:30px;clip-path:polygon(16px 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%,0 16px);outline:0}
+html[data-skin="sartorial"] .day::before{content:"";position:absolute;top:9px;left:50%;width:9px;height:9px;margin-left:-5px;border-radius:50%;border:1px solid var(--accent)}
+html[data-skin="sartorial"] .day .icon-btn{top:16px;right:2px}
+html[data-skin="sartorial"] .day.today{border-color:var(--accent);background:linear-gradient(180deg,color-mix(in srgb,var(--claret) 45%,var(--panel)),var(--panel) 75%)}
+/* the dock is a belt: edge to edge, stitched, names in small serif, a foil diamond under the current one */
+html[data-skin="sartorial"] .tabs{left:0;right:0;bottom:0;border-radius:0;border-top:1px solid var(--stitch);background:color-mix(in srgb,var(--panel) 94%,transparent);padding:12px 6px calc(8px + env(safe-area-inset-bottom,0px))}
+html[data-skin="sartorial"] .tabs::before{content:"";display:block;position:absolute;left:12px;right:12px;top:4px;height:0;border-top:1px dashed var(--stitch);background:none;opacity:1}
+html[data-skin="sartorial"] .tab{font-family:var(--f-display);font-size:10.5px;letter-spacing:.03em;gap:2px;color:var(--muted)}
+html[data-skin="sartorial"] .tab .ic{height:26px;width:auto;background:none}
+html[data-skin="sartorial"] .tab svg{width:21px;height:21px}
+html[data-skin="sartorial"] .tab.on{color:var(--accent)}
+html[data-skin="sartorial"] .tab.on .ic{background:none;color:var(--accent);transform:translateY(-2px)}
+html[data-skin="sartorial"] .tab.on::after{content:"";width:6px;height:6px;transform:rotate(45deg);background:var(--foil);margin-top:2px}
+html[data-skin="sartorial"] .tab:not(.on)::after{content:"";height:8px}
+html[data-skin="sartorial"] .toast{border-radius:4px;font-family:var(--f-display);text-align:center}
+html[data-skin="sartorial"] .sheet{border-radius:10px 10px 0 0;border-color:var(--stitch);border-top:2px solid var(--accent);background:linear-gradient(180deg,color-mix(in srgb,var(--panel-2) 60%,var(--panel)),var(--panel) 30%)}
+html[data-skin="sartorial"] .overlay{background:rgb(4 7 16 / .78)}
+html[data-skin="sartorial"] .pointer{border-top-color:var(--accent)}
+html[data-skin="sartorial"] .wheel-wrap canvas{box-shadow:0 0 0 5px var(--bg),0 0 0 7px var(--accent),0 30px 70px -22px var(--glow)}
+html[data-skin="sartorial"] .dhead .art{width:min(38%,150px)}
+html[data-skin="sartorial"] .sheet-back{background:var(--panel)}
+html[data-skin="sartorial"] .tier:first-child,html[data-skin="sartorial"] .tier:nth-child(2),html[data-skin="sartorial"] .tier:nth-child(3){background:none}
+html[data-skin="sartorial"] .tier-name b{font-style:italic}
+html[data-skin="sartorial"][data-mode="light"] .fam{color:hsl(var(--fh) 55% 26%);background:hsl(var(--fh) 60% 50% / .1);border-color:hsl(var(--fh) 50% 45% / .35)}
+html[data-skin="sartorial"][data-mode="light"] .fam::before{background:hsl(var(--fh) 60% 42%)}
+html[data-skin="sartorial"][data-mode="light"] .boyner{background:#14203a;color:#fbf7ec}
+html[data-skin="sartorial"][data-mode="light"] .overlay{background:rgb(20 28 50 / .45)}
+html[data-skin="sartorial"][data-mode="light"] .art img.cut{filter:drop-shadow(0 10px 12px rgb(60 45 15 / .28))}
+html[data-skin="sartorial"][data-mode="light"] .ph span{color:#fbf7ec}
+html[data-skin="sartorial"][data-mode="light"] :is(.hero,.box,.rem,.prices,.result,.pig-card,.mac-sum,.note,.empty,.day,.menu button,.stat div,details.cg){box-shadow:0 18px 34px -28px var(--shade),inset 0 1px 0 #fff}
+
+/* typeahead for the quick batch check */
+.bq-sug{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel-2)}
+.bq-sug:empty{display:none}
+.bq-sug button{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:10px 12px;border:0;border-top:1px solid var(--line);background:none;text-align:left;color:var(--fg);font-size:14.5px}
+.bq-sug button:first-child{border-top:0}
+.bq-sug small{color:var(--muted);font-size:12px}
+html.no-anim[data-skin="sartorial"] .btn.primary::before{animation:none}
 </style>
 </head>
 <body>
@@ -1089,6 +1247,8 @@ const STORES = {
 };
 // dl: downloaded by the app at runtime from docs/sounds (no new APK needed); others ship inside the APK
 const SOUNDS = {
+  so_piyano: {n: 'Sartorial · Salon piyanosu', dl: 'so_piyano'}, so_saat: {n: 'Sartorial · Sarkaçlı saat', dl: 'so_saat'}, so_cello: {n: 'Sartorial · Çello', dl: 'so_cello'},
+  so_klavsen: {n: 'Sartorial · Klavsen', dl: 'so_klavsen'}, so_kristal: {n: 'Sartorial · Kristal sürahi', dl: 'so_kristal'},
   lune_ay: {n: 'Lune · Ay ışığı', dl: 'lune_ay'}, lune_yildiz: {n: 'Lune · Yıldız', dl: 'lune_yildiz'}, lune_dalga: {n: 'Lune · Dalga', dl: 'lune_dalga'},
   lune_arp: {n: 'Lune · Arp', dl: 'lune_arp'}, lune_nabiz: {n: 'Lune · Nabız', dl: 'lune_nabiz'},
   mal_canak: {n: 'Malachite · Çanak', dl: 'mal_canak'}, mal_kalimba: {n: 'Malachite · Kalimba', dl: 'mal_kalimba'}, mal_damla: {n: 'Malachite · Damla', dl: 'mal_damla'},
@@ -1171,7 +1331,17 @@ const SKINS = {
     wheelLight: ['#5a4ee0','#ffffff','#127f84','#e7e8f7','#8e84ff','#d3d5ee'],
     wheelTextLight: ['#ffffff','#171a3a','#ffffff','#4338c4','#ffffff','#171a3a'],
     shelf: 'Temiz ve ferah seçki', line: r => (r[12].includes('Temiz') || r[12].includes('Misk')) && r[12].includes('Yüksek Puanlı') && r[5] > 6000,
-    swatch: 'linear-gradient(135deg,#0a0c1c 0 34%,#a99bff 34% 58%,#7fe3e0 58% 70%,#eff0fa 70%)', chip: '#a99bff'}
+    swatch: 'linear-gradient(135deg,#0a0c1c 0 34%,#a99bff 34% 58%,#7fe3e0 58% 70%,#eff0fa 70%)', chip: '#a99bff'},
+  sartorial: {premium: true, rimLight: '#8a6518', modes: ['Parchment · açık', 'Midnight · karanlık'],
+    set: {rem: 'so_piyano', price: 'so_klavsen', pig: 'so_kristal', all: ['so_piyano', 'so_saat', 'so_cello', 'so_klavsen', 'so_kristal'], note: 'Salon piyanosu: hatırlatıcılar · Klavsen: fiyat düştü · Kristal: kumbara.'},
+    n: 'Sartorial', sub: 'Penhaligon’s Sartorial · Savile Row terzisi · gece laciverti, altın varak, fildişi · açık ve karanlık', bar: '#0a101e', barLight: '#f4eee0', greet: 'Bugün üzerinizde', greetLight: 'Bugün üzerinizde', sound: 'so_piyano',
+    fonts: 'family=Playfair+Display:ital,wght@0,400..800;1,400..800&family=EB+Garamond:ital,wght@0,400..700;1,400..600',
+    wheel: ['#e0bd72','#111a2e','#8e2f42','#18233c','#f3ead6','#0a101e'],
+    wheelText: ['#1a1304','#f3ead6','#f3ead6','#e0bd72','#14203a','#e0bd72'], rim: '#e0bd72', hub: ['#fff4cf','#b98d3a'],
+    wheelLight: ['#14203a','#fbf7ec','#7d2a3a','#ece3cf','#b8902f','#d9ccae'],
+    wheelTextLight: ['#f3ead6','#14203a','#fbf7ec','#7d2a3a','#1a1304','#14203a'],
+    shelf: 'Old money klasikleri', line: r => r[12].includes('Klasik') && r[12].includes('Yüksek Puanlı') && r[5] > 7000,
+    swatch: 'linear-gradient(135deg,#0a101e 0 34%,#e0bd72 34% 46%,#fff4cf 46% 52%,#b98d3a 52% 60%,#8e2f42 60% 72%,#f4eee0 72%)', chip: '#e0bd72'}
 };
 const SAMPLE_ROWS = [
 [99116,"Eros Najim","Versace",2024,"E",2133,4,3,["Sıcak baharatlı","Karamel","Narenciye","Ud","Aromatik"],["Karamel","İtalyan mandalinası"],["Kakule","Ud"],["Tütsü","Paçuli","Vetiver"],["Günlük","Date","Ofis","Kış","Gece","Narenciye","Aromatik","Tatlı","Gurme","Amber","Baharatlı","Ud","Oryantal","Seksi","Orta","Erkek"],3.92],
@@ -1297,7 +1467,7 @@ const skin = () => {
 };
 const UI_DEFAULT = {fullscreen: false, anim: true, haptic: true, blur: true, amoled: false, compact: false, labels: true, fs: 'm'};
 // a premium theme brings its own sound set; leaving it puts the usual sounds back
-const SET_RX = /^(sc_|mal_|lune_)/;
+const SET_RX = /^(sc_|mal_|lune_|so_)/;
 function themeSounds(on){
   const set = on && SKINS[S.skin] && SKINS[S.skin].set;
   if (set) {
@@ -1756,6 +1926,7 @@ function render(){
     const dx = shownTab ? (TAB_ORDER.indexOf(S.tab) > TAB_ORDER.indexOf(shownTab) ? 18 : -18) : 0;
     view.style.setProperty('--dx', dx + 'px');
     view.classList.remove('view-in'); void view.offsetWidth; view.classList.add('view-in');
+    view.dataset.fresh = '1'; clearTimeout(view._fresh); view._fresh = setTimeout(() => { delete view.dataset.fresh; }, 900);
     shownTab = S.tab;
   }
   const d = DAYS.find(x => x.d === today());
@@ -2675,8 +2846,16 @@ const MONTHS = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz'
 function decodeBatch(p, raw){
   const code = String(raw).toUpperCase().replace(/[^A-Z0-9]/g, '');
   if (code.length < 3 || code.length > 12) return {cls: 'bad', h: 'Bu bir parti koduna benzemiyor', t: 'Parti kodu genelde 3–10 harf/rakamdır ve kutunun altına basılı, şişenin altına kazınmış ya da basılmıştır. Barkodun altındaki 13 haneli sayı parti kodu değildir.'};
-  const rule = BATCH_RULES.find(r => r.m.test(fold(p.brand || '')));
-  const launch = (CAT && p.cid && CAT.byId.get(p.cid) || {r: []}).r[3] || 0;
+  p = p || {name: '', brand: ''};
+  let rule = BATCH_RULES.find(r => r.m.test(fold(p.brand || '')));
+  const launch = (CAT && p.cid && CAT.byId.get(p.cid) || {r: []}).r[3] || p.year || 0;
+  if (!p.brand) {
+    const valid = r => { if (!r.fmt.test(code)) return false; const d = r.dec(code); return !!d && (d.m === undefined || !!d.m); };
+    rule = BATCH_RULES.find(valid);
+    if (!rule) return {cls: 'warn', code, h: 'Bildiğim düzenlere uymuyor', links: true,
+      t: 'Çözebildiğim düzenler: LVMH (ör. 2K01), Estée Lauder (ör. A83), Puig ve Coty (ör. 3123). Başka bir markanın kodu olabilir ya da 0/O, 1/I karışmış olabilir. Markayı yazarsan o markaya göre de bakarım.'};
+    if (rule.dec === yearDay.dec) rule = {...rule, n: 'Puig ya da Coty (JPG, Rabanne, C. Herrera, Hugo Boss, Gucci, Burberry…)'};
+  }
   if (!rule) return {cls: 'warn', code, h: 'Kod kaydedildi; bu markanın kod düzenini ben çözemiyorum',
     t: `${esc(p.brand || 'Bu marka')} için parti kodu düzenini güvenle bilmiyorum, o yüzden tarih uydurmuyorum. Kodu kopyaladım: CheckFresh ya da CheckCosmetic’te markayı seçip yapıştır. Asıl kontrol: kutudaki kod ile şişedeki kod birebir aynı mı?`, links: true};
   if (!rule.fmt.test(code)) return {cls: 'bad', code, h: 'Kod bu markanın düzenine uymuyor',
@@ -2782,42 +2961,61 @@ async function scanPhoto(p, file){
     else { scan.res = {cls: 'warn', h: 'Fotoğrafta QR ya da barkod bulunamadı', t: 'Kodu yakından, net ve düz bir açıyla çek. Parti kodu (küçük basılı harf/rakamlar) kamerayla okunamaz; onu elle yaz.'}; redrawSheet(); }
   } catch (e) { scan.res = {cls: 'warn', h: 'Fotoğraf okunamadı', t: 'Başka bir fotoğraf dene.'}; redrawSheet(); }
 }
-const BATCH_BRANDS = ['Dior', 'Guerlain', 'Givenchy', 'Kenzo', 'Jean Paul Gaultier', 'Rabanne', 'Carolina Herrera', 'Nina Ricci', 'Hugo Boss', 'Gucci', 'Burberry', 'Calvin Klein', 'Chloé', 'Davidoff', 'Marc Jacobs', 'Tom Ford', 'Jo Malone', 'By Kilian', 'Le Labo', 'Frederic Malle'];
-let bq = {pid: '', brand: ''};
+let bq = {pid: '', cid: 0, brand: ''};
 function bqPerfume(){
-  const p = bq.pid && byId(bq.pid);
-  if (p) return p;
-  if (!bq.brand) return null;
-  const other = bq.brand === '?';
-  return {name: other ? 'Başka marka' : bq.brand, brand: other ? '' : bq.brand, fam: [], top: [], heart: [], base: [], cats: []};
+  if (bq.pid && byId(bq.pid)) return byId(bq.pid);
+  if (bq.cid && CAT && CAT.byId.get(bq.cid)) { const r = CAT.byId.get(bq.cid).r; return {...toPerfume(r), year: r[3]}; }
+  return bq.brand ? {name: bq.brand, brand: bq.brand, fam: [], top: [], heart: [], base: [], cats: []} : null;
 }
-// one screen: pick the bottle (or just the brand), type the code, read the report
+// type a few letters: your own bottles first, then the catalogue, then houses
+function bqSuggest(q){
+  const t = expandQuery(q); if (!t.length) return '';
+  // while typing, every word may still be unfinished: match word beginnings
+  const hit = k => t.every(x => (' ' + k).includes(' ' + x));
+  const out = [];
+  for (const p of S.perfumes) if (out.length < 3 && hit(fold(p.name + ' ' + p.brand))) out.push(`<button data-act="bqpick" data-pid="${p.id}" type="button">${esc(p.name)}<small>${esc(p.brand)} · koleksiyonunda</small></button>`);
+  if (CAT) {
+    const seen = new Set(S.perfumes.map(p => p.cid));
+    const cs = CAT.filter(c => !seen.has(c.r[0]) && hit(c.key)).sort((a, b) => b.r[5] - a.r[5]).slice(0, 4);
+    for (const c of cs) out.push(`<button data-act="bqpick" data-cid="${c.r[0]}" type="button">${esc(c.r[1])}<small>${esc(c.r[2])}${c.r[3] ? ' · ' + c.r[3] : ''}</small></button>`);
+    const bs = brandIndex().filter(b => hit(fold(b.n))).slice(0, 3);
+    for (const b of bs) out.push(`<button data-act="bqpick" data-brand="${esc(b.n)}" type="button">${esc(b.n)}<small>marka · ${b.count} parfüm</small></button>`);
+  }
+  return out.join('');
+}
+// one screen: type the code and read the report; choosing the perfume is optional and only adds the launch-year check
 function openBatchQuick(){
   sheetMode = 'batchq'; scan.res = null;
   const f = openOverlay();
-  const mine = [...S.inv.map(i => byId(i.pid)).filter(Boolean), ...S.perfumes.filter(p => !invOf(p.id))];
-  if (!bq.pid && !bq.brand && S.lastBatch) { const lp = S.perfumes.find(x => x.name === S.lastBatch.name); if (lp) bq.pid = lp.id; else bq.brand = S.lastBatch.brand || ''; }
+  if (!CAT) loadCatalog().catch(() => {});
   const draw = () => {
     const p = bqPerfume(); currentP = p;
+    const old = document.getElementById('batch-in');
     f.innerHTML = `<div class="row spread"><span class="eyebrow">Batch kontrol</span>${closeIcon}</div>
       <h2>Parti kodu ve üretim raporu</h2>
-      <div class="field"><span class="label">Hangi şişe?</span>
-        ${mine.length ? `<div class="chips scroll">${mine.slice(0, 40).map(x => `<button class="chip${bq.pid === x.id ? ' on' : ''}" data-act="bqp" data-id="${x.id}" type="button">${esc(x.name)}</button>`).join('')}</div>` : ''}
-        <select class="input" id="bq-brand"><option value="">${mine.length ? 'ya da sadece markayı seç…' : 'Markayı seç…'}</option>${BATCH_BRANDS.map(b => `<option${bq.brand === b && !bq.pid ? ' selected' : ''}>${b}</option>`).join('')}<option value="?"${bq.brand === '?' ? ' selected' : ''}>Başka bir marka</option></select>
-        ${p ? `<span class="muted small">Seçili: <b>${esc([p.brand, p.name !== p.brand ? p.name : ''].filter(Boolean).join(' · '))}</b></span>` : ''}</div>
       <div class="field"><label for="batch-in">Parti (batch) kodu</label>
-        <div class="row" style="flex-wrap:nowrap"><input class="input" id="batch-in" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="14" placeholder="ör. 2K01" value="${esc(document.getElementById('batch-in') ? document.getElementById('batch-in').value : '')}" style="flex:1;min-width:0;text-transform:uppercase">
+        <div class="row" style="flex-wrap:nowrap"><input class="input" id="batch-in" type="text" autocapitalize="characters" autocomplete="off" spellcheck="false" maxlength="14" placeholder="ör. 2K01" value="${esc(old ? old.value : '')}" style="flex:1;min-width:0;text-transform:uppercase">
           <button class="btn primary" data-act="batchgo" type="button">Test et</button></div>
-        <span class="muted small">Kutunun altında ve şişenin altında/arkasında basılı ya da kazınmış 3–10 karakter.</span></div>
-      ${scan.on ? `<div class="scan-box"><video id="scan-video" playsinline muted autoplay></video></div><div class="row"><button class="btn sm" data-act="scanstop" type="button">Kamerayı kapat</button></div>`
-        : `<div class="row"><button class="btn sm" data-act="scanstart" type="button">QR / barkod okut</button><label class="btn sm file-label">Fotoğraftan oku<input id="scan-file" type="file" accept="image/*"></label></div>`}
+        <span class="muted small">Marka seçmene gerek yok: kodun düzeninden hangi gruba ait olduğunu bulurum. Kod kutunun ve şişenin altında, 3–10 karakter.</span></div>
       ${scanResHtml(scan.res)}
-      ${!scan.res && S.lastBatch ? `<div class="scan-res ${S.lastBatch.cls}"><span class="label">Son kontrol</span><b class="h">${esc(S.lastBatch.h)}</b><span>${esc(S.lastBatch.name)} · <code>${esc(S.lastBatch.code)}</code> · ${esc(fmtShort(S.lastBatch.t))}</span></div>` : ''}`;
+      ${!scan.res && S.lastBatch ? `<div class="scan-res ${S.lastBatch.cls}"><span class="label">Son kontrol</span><b class="h">${esc(S.lastBatch.h)}</b><span>${esc(S.lastBatch.name)} · <code>${esc(S.lastBatch.code)}</code> · ${esc(fmtShort(S.lastBatch.t))}</span></div>` : ''}
+      <div class="field"><label for="bq-q">Parfüm ya da marka (isteğe bağlı)</label>
+        ${p ? `<div class="row spread"><span><b>${esc(p.name)}</b>${p.brand && p.brand !== p.name ? ` <span class="muted small" lang="en">${esc(p.brand)}</span>` : ''}${p.year ? ` <span class="muted small">· ${p.year}</span>` : ''}</span>
+            <button class="btn sm ghost" data-act="bqclear" type="button">Değiştir</button></div>`
+          : `<input class="input" id="bq-q" type="search" placeholder="Yazmaya başla: sauvage, tom ford, jpg…" autocomplete="off"><div class="bq-sug" id="bq-sug"></div>`}
+        <span class="muted small">Parfümü seçersen üretim tarihini çıkış yılıyla da karşılaştırırım; sahte kodları yakalamanın en iyi yolu bu.</span></div>
+      ${scan.on ? `<div class="scan-box"><video id="scan-video" playsinline muted autoplay></video></div><div class="row"><button class="btn sm" data-act="scanstop" type="button">Kamerayı kapat</button></div>`
+        : `<div class="row"><button class="btn sm" data-act="scanstart" type="button">QR / barkod okut</button><label class="btn sm file-label">Fotoğraftan oku<input id="scan-file" type="file" accept="image/*"></label></div>`}`;
     const v = document.getElementById('scan-video');
     if (v && scan.stream) { v.srcObject = scan.stream; v.play().catch(() => {}); }
   };
   draw(); f._draw = draw;
+  setTimeout(() => { const i = document.getElementById('batch-in'); if (i && !scan.res) i.focus(); }, 250);
 }
+document.addEventListener('input', e => {
+  if (e.target.id !== 'bq-q') return;
+  const box = document.getElementById('bq-sug'); if (box) box.innerHTML = bqSuggest(e.target.value);
+});
 // the home-screen widget wears the current theme and shows the last report
 const hex6 = c => { c = String(c).trim(); return /^#[0-9a-f]{3}$/i.test(c) ? '#' + [...c.slice(1)].map(x => x + x).join('') : c; };
 function syncWidget(){
@@ -2827,7 +3025,13 @@ function syncWidget(){
     radius: skin().premium ? 30 : 22, title: 'BB · ' + skin().n + ' · Batch kontrol', main: lb ? lb.h : 'Parti kodunu kontrol et',
     sub: lb ? `${lb.name} · ${lb.code} · ${fmtShort(lb.t)}` : 'Dokun, kodu yaz: üretim tarihi ve rapor hemen gelsin.', btn: 'Kod kontrol et  ›'}));
 }
-window.onNativeOpen = () => { if (S && nativeCall('pendingOpen') === 'batch') openBatchQuick(); };
+function adoptNativeBatch(){
+  try {
+    const nb = JSON.parse(nativeCall('lastBatch') || 'null');
+    if (nb && nb.t && (!S.lastBatch || nb.t > S.lastBatch.t)) { S.lastBatch = {name: nb.group || 'Hızlı kontrol', brand: '', code: nb.code, h: nb.h, cls: 'good', t: nb.t}; save(); }
+  } catch (e) {}
+}
+window.onNativeOpen = () => { if (!S) return; adoptNativeBatch(); if (nativeCall('pendingOpen') === 'batch') openBatchQuick(); };
 
 /* ---------- app logos (one per premium theme) and the widget ---------- */
 const BB_PATH = 'M30,35H42.5A9,9 0 0 1 42.5,53H43.5A9.5,9.5 0 0 1 43.5,72H30ZM36.5,41V47H42.5A3,3 0 0 0 42.5,41ZM36.5,59V66H43.5A3.5,3.5 0 0 0 43.5,59ZM55,35H67.5A9,9 0 0 1 67.5,53H68.5A9.5,9.5 0 0 1 68.5,72H55ZM61.5,41V47H67.5A3,3 0 0 0 67.5,41ZM61.5,59V66H68.5A3.5,3.5 0 0 0 68.5,59Z';
@@ -2835,6 +3039,7 @@ const LOGOS = {
   classic: {n: 'Klasik', sub: 'Karamel BB', bg: ['#3a2214', '#140d09'], c: ['#ff8a3d', '#f26d21', '#c98a4b'], frame: 'M30,77.5H78', stroke: '#f26d21'},
   scandal: {n: 'Scandal', sub: 'Gül BB, altın halka', bg: ['#3a1528', '#12070d'], c: ['#ffc2d5', '#ff6f9f', '#cf3f79'], frame: 'M54,21A33,33 0 1 1 53.99,21Z', stroke: '#e2b56c'},
   malachite: {n: 'Malachite', sub: 'Zümrüt BB, pirinç çerçeve', bg: ['#12392c', '#06100d'], c: ['#86e6bf', '#2fc08a', '#0f7d58'], frame: 'M41,21H67L87,41V67L67,87H41L21,67V41Z', stroke: '#c9a45c'},
+  sartorial: {n: 'Sartorial', sub: 'Altın varak BB, oval kameo', bg: ['#1c2a4a', '#0a101e'], c: ['#fff1c4', '#e0bd72', '#9a7424'], frame: 'M54,21A29,33 0 1 1 53.99,21Z', stroke: '#e0bd72'},
   lune: {n: 'Lune', sub: 'Leylak BB, hilal', bg: ['#262b63', '#0b0d1c'], c: ['#e4deff', '#a99bff', '#6f7dff'], frame: 'M78,31A33,33 0 1 0 85,65A26,26 0 0 1 78,31Z', stroke: '#7fe3e0'}
 };
 function logoSvg(k){
@@ -2857,9 +3062,15 @@ function renderLogos(){
     <h2>Widget</h2>
     <div class="wprev"><span class="wt">BB · ${esc(skin().n)} · Batch kontrol</span><span class="wm">${esc(lb ? lb.h : 'Parti kodunu kontrol et')}</span>
       <span class="ws">${lb ? esc(`${lb.name} · ${lb.code} · ${fmtShort(lb.t)}`) : 'Dokun, kodu yaz: üretim tarihi ve rapor hemen gelsin.'}</span><span class="wb">Kod kontrol et  ›</span></div>
-    <span class="muted small">Ana ekran widget’ı seçili temanın renklerini giyer, son batch raporunu gösterir; dokununca uygulama doğrudan batch kontrol ekranında açılır.</span>
+    <span class="muted small">Widget artık ince bir şerit (4×1). Dokununca uygulama açılmadan küçük bir pencerede kodu yazıp raporu alırsın. Boyutunu değiştirmek için widget’a uzun bas ve kenarlarından çek: yükseltirsen ikinci satırda son rapor görünür, daraltırsan tek satır kalır. Eski büyük widget ekranında duruyorsa onu da aynı şekilde küçültebilirsin.</span>
     <div class="row"><button class="btn primary" data-act="pinwidget" type="button">Ana ekrana ekle</button><button class="btn" data-act="batchq" type="button">Batch kontrolü aç</button></div>
     <span class="muted small">“Ana ekrana ekle” çalışmazsa: ana ekranda boş bir yere uzun bas → Widget’lar → BB Parfüm Envanteri.</span>
+  </section>
+  <section class="section">
+    <h2>Kısayol kutucuğu</h2>
+    <span class="muted small">Ekranı yukarıdan aşağı kaydırınca açılan hızlı ayarlara (Wi‑Fi, Bluetooth kutucuklarının yanına) <b>Batch kontrol</b> kutucuğu ekler. Dokununca hangi uygulamada olursan ol küçük bir pencere açılır; marka seçmeden kodu yazıp üretim raporunu alırsın.</span>
+    <div class="row"><button class="btn primary" data-act="addtile" type="button">Hızlı ayarlara ekle</button></div>
+    <span class="muted small">Düğme çalışmazsa: bildirim panelini iki kez aşağı çek → kalem (düzenle) simgesi → “Batch kontrol”ü yukarı sürükle.</span>
   </section>`;
 }
 function scanResHtml(r){
@@ -4297,7 +4508,17 @@ document.addEventListener('click', async e => {
     case 'bell': toggleBell(t); break;
     case 'auth': openAuth(currentP); break;
     case 'batchq': openBatchQuick(); break;
-    case 'bqp': bq.pid = bq.pid === t.dataset.id ? '' : t.dataset.id; bq.brand = ''; scan.res = null; redrawSheet(); break;
+    case 'bqpick': {
+      bq = {pid: t.dataset.pid || '', cid: +t.dataset.cid || 0, brand: t.dataset.brand || ''};
+      const code = document.getElementById('batch-in').value.trim();
+      // a code already typed is read again for the chosen perfume straight away
+      scan.res = code ? decodeBatch(bqPerfume(), code) : null; redrawSheet(); break;
+    }
+    case 'bqclear': bq = {pid: '', cid: 0, brand: ''}; redrawSheet(); setTimeout(() => { const i = document.getElementById('bq-q'); if (i) i.focus(); }, 60); break;
+    case 'addtile': {
+      if (!NATIVE || !NATIVE.addTile) { toast('Kısayol kutucuğu uygulamanın yeni sürümünde (v22) gelir'); break; }
+      toast(nativeCall('addTile') ? 'Onay penceresi açıldı: “Ekle”ye dokun' : 'Bildirim panelini aç → kalem (düzenle) → “Batch kontrol”ü sürükle'); break;
+    }
     case 'seticon': {
       if (!NATIVE || !NATIVE.setAppIcon) { toast('Logo değiştirme uygulamanın yeni sürümünde (v21) çalışır'); break; }
       const ok = nativeCall('setAppIcon', t.dataset.v);
@@ -4312,10 +4533,10 @@ document.addEventListener('click', async e => {
     case 'scanstop': stopScan(); redrawSheet(); break;
     case 'batchgo': {
       const v = document.getElementById('batch-in').value.trim(); if (!v) { toast('Parti kodunu yaz'); break; }
-      if (!currentP) { toast('Önce şişeyi ya da markayı seç'); break; }
-      stopScan(); scan.res = decodeBatch(currentP, v);
-      if (scan.res.code) { S.lastBatch = {name: currentP.name, brand: currentP.brand, code: scan.res.code, h: scan.res.h, cls: scan.res.cls, t: Date.now()}; syncWidget(); }
-      if (scan.res.code) { S.authCodes = S.authCodes || {}; (S.authCodes[currentP.name] = S.authCodes[currentP.name] || {}).batch = scan.res.code; save(); try { navigator.clipboard && navigator.clipboard.writeText(scan.res.code).catch(() => {}); } catch (e) {} }
+      const bp = currentP || {name: '', brand: ''};
+      stopScan(); scan.res = decodeBatch(bp, v);
+      if (scan.res.code) { S.lastBatch = {name: bp.name || 'Marka seçilmedi', brand: bp.brand, code: scan.res.code, h: scan.res.h, cls: scan.res.cls, t: Date.now()}; syncWidget(); }
+      if (scan.res.code) { S.authCodes = S.authCodes || {}; (S.authCodes[bp.name] = S.authCodes[bp.name] || {}).batch = scan.res.code; save(); try { navigator.clipboard && navigator.clipboard.writeText(scan.res.code).catch(() => {}); } catch (e) {} }
       redrawSheet(); haptic(scan.res.cls === 'good' ? 'confirm' : 'tick'); break;
     }
     case 'wheelsrc': S.wheelInv = t.dataset.v === 'inv'; save(); renderWheel(); toast(S.wheelInv ? 'Çark envanterden dönüyor' : 'Çark koleksiyondan dönüyor'); break;
@@ -4577,7 +4798,6 @@ document.addEventListener('change', async e => {
     if (set.size) S.auth[name] = [...set]; else delete S.auth[name];
     save(); const sc = document.getElementById('sheet').scrollTop; redrawSheet(); document.getElementById('sheet').scrollTop = sc;
   }
-  if (t.id === 'bq-brand') { bq.brand = t.value; bq.pid = ''; scan.res = null; redrawSheet(); }
   if (t.id === 'scan-file' && t.files && t.files[0]) { scanPhoto(currentP || {name: '', brand: ''}, t.files[0]); }
   if (t.id === 'mac-skip') { S.macSkip = t.checked; repairWeek(); save(); }
   if (t.id === 'mac-time' && /^\d\d:\d\d$/.test(t.value)) {
