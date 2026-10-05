@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>BB Parfüm Envanteri</title>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://statics-mp.boyner.com.tr; connect-src 'self' https://api.github.com https://api.open-meteo.com; media-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://fimgs.net https://statics-mp.boyner.com.tr https://www.boyner.com.tr https://www.beymen.com https://www.sephora.com.tr https://www.gratis.com https://www.n11.com https://www.pazarama.com https://www.trendyol.com https://www.hepsiburada.com https://www.amazon.com.tr; connect-src 'self' https://api.github.com https://api.open-meteo.com; media-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="theme-color" content="#17110d">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -417,7 +417,6 @@ body.sheet-open{overflow:hidden}
 .mac-sum{background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;font-size:14px}
 .mac-sum b{font-family:var(--f-display);font-weight:var(--dw);font-size:17px}
 /* --- piggy bank --- */
-.bell-row{display:flex;gap:8px;flex-wrap:wrap}
 .pig-ring{position:relative;width:132px;height:132px;flex:none}
 .pig-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
 .pig-ring .tr{stroke:var(--line)}
@@ -449,10 +448,13 @@ body.sheet-open{overflow:hidden}
 .pig-card small{color:var(--muted);font-size:12px}
 .pig-card.full{border-color:var(--accent)}
 /* --- price-watch bell --- */
-.bell{display:inline-flex;align-items:center;gap:7px;padding:5px 11px 5px 7px;border-radius:999px;border:1px solid var(--line);background:var(--panel-2);color:var(--muted);font-size:12px;font-weight:700;width:max-content;max-width:100%}
+.dtools{display:flex;align-items:center;gap:8px;flex:none}
+.bell-row{display:flex;gap:6px;flex-wrap:nowrap}
+.bell{position:relative;width:36px;height:36px;padding:0;border-radius:50%;display:grid;place-items:center;flex:none;border:1px solid var(--line);background:transparent;color:var(--muted)}
 .bell svg{width:18px;height:18px;flex:none}
 .bell .fill{display:none}
-.bell.on{background:var(--grad);color:var(--ink);border-color:transparent;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.bell i{position:absolute;right:-4px;top:-4px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;background:var(--accent);color:var(--ink);font:700 9.5px/16px var(--f-body);font-style:normal;font-variant-numeric:tabular-nums}
+.bell.on{color:var(--accent);border-color:color-mix(in srgb,var(--accent) 45%,transparent);background:color-mix(in srgb,var(--accent) 14%,transparent)}
 .bell.on .fill{display:block}
 .bell.on .line{display:none}
 .bell.on svg{animation:ring .7s ease-in-out 1;transform-origin:50% 10%}
@@ -591,25 +593,72 @@ body.sheet-open{overflow:hidden}
 .vc-sw{display:flex;gap:10px;flex-wrap:wrap}
 .vc-sw button{width:38px;height:38px;border-radius:50%;border:2px solid transparent;background:var(--sw);padding:0;box-shadow:inset 0 0 0 2px var(--panel)}
 .vc-sw button.on{border-color:var(--fg)}
-/* notes: a small pyramid, the top step narrowest and the base widest; each note carries a dot in the colour of what it smells of */
-.np{display:flex;flex-direction:column;align-items:center;gap:8px}
-.np-t{width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 12px 16px;border-radius:22px;text-align:center;
-  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) var(--np-a,7%),transparent),color-mix(in srgb,var(--accent) 3%,transparent));border:1px solid color-mix(in srgb,var(--accent) 16%,transparent)}
-.np-t.t1{width:82%;--np-a:17%}
-.np-t.t2{width:91%;--np-a:11%}
-.np-h{display:flex;align-items:baseline;justify-content:center;gap:8px}
-.np-h b{font-family:var(--f-display);font-weight:var(--dw);text-transform:var(--dt);letter-spacing:var(--dls);font-size:17px}
-.np-h span{font-size:12px;color:var(--muted)}
-.np-t .chips{justify-content:center;gap:7px}
-.np .note-chip,.dpane .np .note-chip,html.premium .np .note-chip{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;line-height:1.2;padding:7px 13px 7px 10px;border-radius:999px;
-  background:color-mix(in srgb,var(--fg) 7%,transparent);border:1px solid color-mix(in srgb,var(--fg) 9%,transparent);color:var(--fg)}
-.np .note-chip::before{content:"";width:8px;height:8px;border-radius:50%;flex:none;background:hsl(var(--nh,0) var(--ns,0%) 62%)}
+/* notes: one pyramid. Until the script has laid the rows the bands are plain rounded steps; then .pyr cuts the block into a
+   single shape with straight sides and every row of notes sits inside it. Sizes here and in PYR (script) go together. */
+.np{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;--np-x:32%}
+.np-t{width:100%;display:flex;flex-direction:column;align-items:center;border-radius:20px;text-align:center;background:color-mix(in srgb,var(--accent) var(--np-a,10%),transparent)}
+.np-t.t1{width:72%;--np-a:24%}
+.np-t.t2{width:86%;--np-a:16%}
+.np-t.t3{--np-a:10%}
+.np-h{height:38px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex:none}
+.np-h b{font-family:var(--f-display);font-weight:var(--dw);text-transform:var(--dt);letter-spacing:var(--dls);font-size:14.5px;line-height:1.1}
+.np-h span{font-size:10px;color:var(--muted);line-height:1.1;white-space:nowrap}
+.np-c{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:0 12px 13px;width:100%}
+.np .note-chip,.dpane .np .note-chip,html.premium .np .note-chip{display:inline-block;flex:none;height:28px;line-height:27px;padding:0 11px 0 9px;font-size:12.5px;font-weight:500;border-radius:999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
+  background:color-mix(in srgb,var(--panel) 62%,transparent);border:0;color:var(--fg);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.np .note-chip::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px;background:hsl(var(--nh,0) var(--ns,0%) 62%)}
+.np .note-chip.off{opacity:.5;text-decoration:line-through}
+.np.pyr{gap:3px;clip-path:polygon(var(--np-x) 0,calc(100% - var(--np-x)) 0,100% 100%,0 100%)}
+.np.pyr .np-t,.np.pyr .np-t.t1,.np.pyr .np-t.t2{width:100%;border-radius:0}
+.np.pyr .np-c{display:block;padding:0 0 13px}
+.np-r{display:flex;justify-content:center;gap:6px;height:28px}
+.np-r+.np-r{margin-top:6px}
+.notecard.hold{gap:10px}
+.notecard .menu{border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.notecard .menu button,html.premium .notecard .menu button{grid-template-columns:minmax(0,1fr);padding:12px 14px}
+.notecard .menu small{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+html.premium .notecard .menu{border:0;background:var(--fill)}
+.dupe-row{display:flex;flex-wrap:wrap;gap:6px}
+.dupe-row:empty{display:none}
+.dupe-of{display:inline-block;font:600 11.5px/1.3 var(--f-body);color:var(--hi);background:color-mix(in srgb,var(--accent) 13%,transparent);border:0;border-radius:999px;padding:3px 9px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+span.dupe-of{align-self:flex-start}
+html.premium .dhead .dupe-row{justify-content:center}
+/* stores: a mark instead of a name */
+.slogo{position:relative;width:28px;height:28px;border-radius:8px;display:inline-grid;place-items:center;flex:none;overflow:hidden;background:#fff;border:1px solid color-mix(in srgb,#000 12%,transparent);vertical-align:middle}
+.slogo b{font:800 10.5px/1 system-ui,sans-serif;color:#2b2b2b;letter-spacing:-.03em}
+.slogo img{position:absolute;inset:4px;width:calc(100% - 8px);height:calc(100% - 8px);object-fit:contain;background:#fff}
+.slogo.sm{width:20px;height:20px;border-radius:6px}
+.slogo.sm b{font-size:8px}
+.slogo.sm img{inset:2px;width:calc(100% - 4px);height:calc(100% - 4px)}
+.prow{display:grid;grid-template-columns:auto minmax(0,1fr) auto 16px;gap:10px;align-items:center;padding:8px 12px;border-top:1px solid var(--line);color:var(--fg);text-decoration:none}
+.prow:first-child{border-top:0}
+.prow>svg{color:var(--muted);width:16px;height:16px}
+.ptags{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
+.ptags .pill,.ptags .seg-tag{font-size:10px;padding:1px 7px}
+.ptitle{font-size:12.5px;line-height:1.3;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.plogos{display:inline-flex;gap:4px;flex-wrap:wrap;vertical-align:middle}
+.pbest{display:inline-flex;align-items:center;gap:6px}
+.sbtns{display:flex;flex-wrap:wrap;gap:8px}
+.sbtn{display:grid;place-items:center;width:42px;height:42px;border-radius:13px;background:var(--panel-2);border:1px solid var(--line)}
+html.premium .prow{border-top-color:var(--hair)}
+html.premium .sbtn{background:var(--fill);border:0}
+/* "Aynı seriden" with bottles */
+.vers-img button{width:74px}
+.vers-img .art{width:64px;height:80px;border-radius:16px}
+.vers-img small{font-size:10.5px;color:var(--muted);margin-top:-5px}
+/* places in Explore: two rows that scroll sideways */
+.places{display:grid;grid-auto-flow:column;grid-template-rows:repeat(2,auto);grid-auto-columns:minmax(150px,43%);gap:10px;overflow-x:auto;margin-inline:-16px;padding:2px 16px 6px;scrollbar-width:none;scroll-snap-type:x proximity}
+.places::-webkit-scrollbar{display:none}
+.places button{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;text-align:left;min-width:0;min-height:62px;padding:11px 14px;border-radius:20px;background:var(--card);border:1px solid var(--edge);box-shadow:var(--lift);color:var(--fg);scroll-snap-align:start;transition:transform .12s}
+.places button:active{transform:scale(.97)}
+.places b{font-family:var(--f-display);font-weight:var(--dw);font-size:16px;line-height:1.15;letter-spacing:var(--dls)}
+.places small{font-size:11.5px;color:var(--muted);line-height:1.25}
 .rb-head{display:grid;grid-template-columns:84px minmax(0,1fr);gap:14px;align-items:center}
 .rb-head .art{border-radius:16px;aspect-ratio:4/5;font-size:18px}
 .rb-head .hero-name{font-size:22px}
 /* what can be done with a random pick comes after its scent, and small */
 .rb-mini{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding-top:4px}
-html.premium .rb-mini .btn.sm{min-height:36px;padding:0 13px;font-size:13px}
+html.premium .rb-mini .btn.sm{min-height:32px;padding:0 13px;font-size:13px}
 .top-acts{display:flex;gap:8px;flex:none}
 /* the press-and-hold menu: plain rows, no icon column */
 .qmenu .menu button,html.premium .qmenu .menu button{grid-template-columns:minmax(0,1fr) auto;padding:13px 16px;min-height:52px}
@@ -775,29 +824,29 @@ html.premium .note{background:var(--tint);border-color:transparent;box-shadow:no
 html.premium .update{border-radius:20px;background:var(--accent)}
 
 /* --- buttons: filled for the one main action, quiet for the rest, text for the least --- */
-html.premium .btn{min-height:48px;padding:0 20px;font-size:15px;font-weight:600;border-radius:999px;border:0;background:var(--fill);color:var(--fg);box-shadow:none;letter-spacing:-.005em;line-height:1.15}
+html.premium .btn{min-height:44px;padding:0 18px;font-size:14.5px;font-weight:600;border-radius:999px;border:0;background:var(--fill);color:var(--fg);box-shadow:none;letter-spacing:-.005em;line-height:1.15}
 html.premium .btn.primary{background:var(--grad);color:var(--ink);box-shadow:var(--pshadow)}
 html.premium .btn.ghost{background:transparent;color:var(--hi)}
 html.premium .btn.danger{background:color-mix(in srgb,var(--danger) 15%,transparent);color:var(--danger)}
-html.premium .btn.sm{min-height:40px;padding:0 16px;font-size:14px}
-html.premium .btn.block{min-height:52px}
+html.premium .btn.sm{min-height:34px;padding:0 14px;font-size:13.5px}
+html.premium .btn.block{min-height:46px}
 html.premium .btn:disabled{opacity:.5;box-shadow:none}
 html.premium .bi{display:block;width:18px;height:18px;flex:none}
 html.premium .btn:active,html.premium .icon-btn:active,html.premium .chip:active{transform:scale(.97)}
-html.premium .icon-btn{width:44px;height:44px;border-radius:50%;background:var(--fill);border:0;color:var(--fg)}
+html.premium .icon-btn{width:40px;height:40px;border-radius:50%;background:var(--fill);border:0;color:var(--fg)}
 html.premium .icon-btn svg{width:20px;height:20px}
 html.premium .icon-btn.added{background:var(--tint);color:var(--hi)}
 html.premium .linkbtn{color:var(--hi)}
-html.premium .back{align-self:flex-start;min-height:40px;padding:0 16px 0 10px;border-radius:999px;background:var(--fill);color:var(--fg);font-size:14px;margin:0}
-html.premium .chip{min-height:38px;display:inline-flex;align-items:center;padding:0 15px;font-size:14px;font-weight:500;border:0;background:var(--fill);color:var(--fg)}
+html.premium .back{align-self:flex-start;min-height:36px;padding:0 14px 0 9px;border-radius:999px;background:var(--fill);color:var(--fg);font-size:14px;margin:0}
+html.premium .chip{min-height:34px;display:inline-flex;align-items:center;padding:0 14px;font-size:13.5px;font-weight:500;border:0;background:var(--fill);color:var(--fg)}
 html.premium .chip.on{background:var(--fg);color:var(--bg);font-weight:600}
 html.premium .chip.grp{background:none;border-radius:0;padding:0 2px;margin-right:10px;color:var(--muted);font-weight:600;box-shadow:inset 0 -2px 0 transparent}
 html.premium .chip.grp.on{background:none;color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
 html.premium .seg{border-radius:16px;background:var(--fill);border:0;padding:4px}
-html.premium .seg button{min-height:40px;border-radius:12px;padding:0 6px;font-size:14px;color:var(--muted)}
+html.premium .seg button{min-height:36px;border-radius:12px;padding:0 6px;font-size:14px;color:var(--muted)}
 html.premium .seg button.on{background:var(--seg-on);color:var(--fg);box-shadow:none}
 html.premium[data-mode="light"] .seg button.on{box-shadow:0 1px 4px var(--shade)}
-html.premium .search{height:50px;padding:0 20px;font-size:16px;border-radius:999px;background:var(--fill);border:1px solid transparent}
+html.premium .search{height:46px;padding:0 20px;font-size:16px;border-radius:999px;background:var(--fill);border:1px solid transparent}
 html.premium .input,html.premium textarea.input,html.premium select.input{padding:13px 15px;font-size:16px;border-radius:16px;background:var(--fill);border:1px solid transparent}
 html.premium :is(.search,.input):focus{border-color:var(--accent)}
 html.premium .toggle-row{min-height:52px}
@@ -811,11 +860,11 @@ html.premium details.cg summary::after{content:"";width:8px;height:8px;border-ri
 html.premium details.cg[open]>summary::after{rotate:225deg;margin-top:4px}
 html.premium details.cg summary small{margin-left:auto;text-align:right}
 html.premium .note-chip{font-size:14px;padding:8px 13px;border-radius:999px;background:var(--fill);border:0}
-html.premium .rate button{min-width:48px;height:44px;border-radius:999px;border:0;background:var(--fill);color:var(--fg);padding:0 16px;font-weight:600}
+html.premium .rate button{min-width:46px;height:40px;border-radius:999px;border:0;background:var(--fill);color:var(--fg);padding:0 16px;font-weight:600}
 html.premium .rate button.on{background:var(--fg);color:var(--bg)}
-html.premium .sizes button{padding:10px 14px;min-width:86px;border-radius:16px;border:0;background:var(--fill);box-shadow:none}
+html.premium .sizes button{padding:8px 13px;min-width:80px;border-radius:16px;border:0;background:var(--fill);box-shadow:none}
 html.premium .sizes button.on{box-shadow:inset 0 0 0 2px var(--accent)}
-html.premium .pig-add button{min-height:50px;border-radius:999px;border:0;background:var(--fill)}
+html.premium .pig-add button{min-height:44px;border-radius:999px;border:0;background:var(--fill)}
 html.premium .pig-add button.big{background:var(--grad);box-shadow:var(--pshadow)}
 html.premium .level{height:4px;background:var(--hair)}
 html.premium .level i,html.premium .bar i,html.premium .dots i.on{background:var(--accent)}
@@ -835,13 +884,11 @@ html.premium .scan-res{border-left:3px solid var(--accent-2)}
 html.premium .scan-res.good{border-left-color:var(--ok)}
 html.premium .scan-res.bad{border-left-color:var(--danger)}
 html.premium .auth-step .n{background:var(--tint);color:var(--hi)}
-/* the three trackers: equal tiles, icon above the word */
-html.premium .bell-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:100%}
-html.premium .bell{width:auto;max-width:none;flex-direction:column;justify-content:center;gap:6px;min-height:68px;padding:10px 4px;border-radius:18px;font-size:12px;font-weight:600;line-height:1.15;text-align:center;border:0;background:var(--fill);color:var(--fg)}
-html.premium .bell svg{width:20px;height:20px;color:var(--muted)}
-html.premium .bell span{max-width:100%;overflow-wrap:anywhere}
-html.premium .bell.on{background:var(--tint);color:var(--fg);box-shadow:none}
-html.premium .bell.on svg{color:var(--accent);animation:none}
+/* the three trackers: quiet round icons beside the close button */
+html.premium .bell{width:38px;height:38px;border:0;background:var(--fill);color:var(--muted)}
+html.premium .bell.on{background:var(--tint);color:var(--accent)}
+html.premium .bell.on svg{animation:none}
+html.premium .dtools .icon-btn{width:38px;height:38px}
 
 /* --- today: the bottle on a stage, its name under it, the main button as wide as the card --- */
 html.premium .hero{display:flex;flex-direction:column;align-items:center;gap:0;padding:26px 18px 18px;border-radius:32px;text-align:center}
@@ -856,8 +903,8 @@ html.premium .hero .fam-line{justify-content:center}
 html.premium .hero .notes-mini{-webkit-line-clamp:1;max-width:100%}
 html.premium .hero .wx{justify-content:center}
 html.premium .hero-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;margin-top:14px;padding:0}
-html.premium .hero-actions .btn{min-height:48px;padding-inline:10px;font-size:14.5px}
-html.premium .hero-actions .btn:first-child{grid-column:1 / -1;min-height:56px;font-size:16.5px}
+html.premium .hero-actions .btn{min-height:44px;padding-inline:10px;font-size:14px}
+html.premium .hero-actions .btn:first-child{grid-column:1 / -1;min-height:50px;font-size:15.5px}
 html.premium .hero-actions .btn:last-child:nth-child(2){grid-column:1 / -1}
 html.premium .quick-sec{display:flex}
 html.premium .quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
@@ -904,11 +951,11 @@ html.premium .shelf{gap:14px}
 html.premium .pig-card{width:184px;padding:14px;border-radius:22px;gap:8px}
 /* search with the filter button beside it; the filters open underneath */
 html.premium .sbar{display:flex;gap:10px;align-items:center}
-html.premium .sfield{flex:1;min-width:0;display:flex;align-items:center;gap:10px;height:52px;padding:0 18px;border-radius:999px;background:var(--fill);border:1px solid transparent;color:var(--muted)}
+html.premium .sfield{flex:1;min-width:0;display:flex;align-items:center;gap:10px;height:46px;padding:0 18px;border-radius:999px;background:var(--fill);border:1px solid transparent;color:var(--muted)}
 html.premium .sfield:focus-within{border-color:var(--accent)}
 html.premium .sfield svg{width:20px;height:20px;flex:none}
 html.premium .sfield .search{flex:1;min-width:0;height:100%;padding:0;border:0;background:none;border-radius:0;color:var(--fg);outline:none}
-html.premium .fbtn{position:relative;width:52px;height:52px}
+html.premium .fbtn{position:relative;width:46px;height:46px}
 html.premium .fbtn.on{background:var(--fg);color:var(--bg)}
 html.premium .fbtn b{position:absolute;top:-3px;right:-3px;min-width:20px;height:20px;padding:0 5px;border-radius:999px;display:grid;place-items:center;background:var(--accent);color:var(--ink);font-size:11.5px;font-weight:700;box-shadow:0 0 0 2px var(--bg)}
 html.premium .fpanel{display:flex;flex-direction:column;gap:14px;padding:16px}
@@ -929,7 +976,7 @@ html.premium .dpane .tier{grid-template-columns:minmax(0,1fr);padding:14px 16px}
 html.premium .tier-name{flex-direction:row;align-items:baseline;gap:8px}
 html.premium .tier:first-child,html.premium .tier:nth-child(2),html.premium .tier:nth-child(3){background:none}
 /* the wheel: one wide button under it */
-html.premium .wheel-wrap+.row .btn{width:100%;min-height:58px;font-size:17px}
+html.premium .wheel-wrap+.row .btn{width:100%;min-height:52px;font-size:16px}
 html.premium .wheel-wrap canvas{box-shadow:0 30px 60px -34px var(--shade)}
 html.premium .result{grid-template-columns:84px minmax(0,1fr);padding:14px}
 
@@ -943,13 +990,13 @@ html.premium .sheet:has(>.row.spread>.btn.primary){padding-bottom:0}
 html.premium .sheet>.row.spread:has(>.btn.primary),html.premium .sheet>.rb-actions,html.premium .sheet>.row.acts{order:98;position:sticky;bottom:0;z-index:3;flex-wrap:nowrap;gap:10px;margin:auto -16px 0;padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));
   background:var(--panel);border-top:1px solid var(--hair)}
 html.premium .sheet>.row.spread:has(>.btn.primary)>span:empty{display:none}
-html.premium .sheet>.row.spread:has(>.btn.primary)>.btn{min-height:52px;white-space:nowrap}
+html.premium .sheet>.row.spread:has(>.btn.primary)>.btn{min-height:46px;white-space:nowrap}
 html.premium .sheet>.row.spread:has(>.btn.primary)>.btn.primary{flex:1;font-size:16px}
 html.premium .sheet:has(>.rb-actions),html.premium .sheet:has(>.row.acts){padding-bottom:0}
 html.premium .sheet>.rb-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
 html.premium .sheet>.rb-actions .btn{padding-inline:8px;font-size:14px}
-html.premium .sheet>.rb-actions .btn.primary{grid-column:1 / -1;min-height:54px;font-size:16px}
-html.premium .sheet>.row.acts>.btn{flex:1;min-height:52px;padding-inline:8px}
+html.premium .sheet>.rb-actions .btn.primary{grid-column:1 / -1;min-height:48px;font-size:15.5px}
+html.premium .sheet>.row.acts>.btn{flex:1;min-height:46px;padding-inline:8px}
 html.premium .sheet>.rb-actions~*,html.premium .sheet>.row.acts~*{order:97}
 html.premium .spin-hero{grid-template-columns:minmax(0,1fr);justify-items:center;text-align:center;gap:14px}
 html.premium .spin-hero .art{width:150px;border-radius:24px}
@@ -971,16 +1018,16 @@ html.premium .dtabs{border:0;border-bottom:1px solid var(--hair);border-radius:0
 html.premium .dtabs button{border-radius:0;min-height:48px;font-size:14.5px}
 html.premium .dtabs button.on{background:none;color:var(--fg);box-shadow:inset 0 -2px 0 var(--accent)}
 html.premium[data-mode="light"] .dtabs button.on{box-shadow:inset 0 -2px 0 var(--accent)}
-html.premium .dact{order:99;position:sticky;bottom:0;z-index:3;flex-wrap:nowrap;align-items:center;gap:6px;margin:auto -16px 0;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--hair)}
-html.premium .dact .btn{flex:0 0 58px;min-height:54px;padding:0 2px;flex-direction:column;gap:3px;background:none;border-radius:16px;font-size:11px;font-weight:600;line-height:1.1;color:var(--fg);text-align:center}
-html.premium .dact .btn .bi{width:22px;height:22px;color:var(--muted)}
+html.premium .dact{order:99;position:sticky;bottom:0;z-index:3;flex-wrap:nowrap;align-items:center;gap:6px;margin:auto -16px 0;padding:7px 14px calc(8px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--hair)}
+html.premium .dact .btn{flex:0 0 54px;min-height:46px;padding:0 2px;flex-direction:column;gap:3px;background:none;border-radius:16px;font-size:11px;font-weight:600;line-height:1.1;color:var(--fg);text-align:center}
+html.premium .dact .btn .bi{width:20px;height:20px;color:var(--muted)}
 html.premium .dact .btn .lg{display:none}
 html.premium .dact .btn .st{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-html.premium .dact .btn.primary{flex:1 1 0;min-width:0;order:9;flex-direction:row;gap:8px;min-height:54px;margin-left:2px;padding:0 10px;border-radius:999px;background:var(--grad);color:var(--ink);font-size:15px;white-space:nowrap;box-shadow:var(--pshadow)}
+html.premium .dact .btn.primary{flex:1 1 0;min-width:0;order:9;flex-direction:row;gap:8px;min-height:46px;margin-left:2px;padding:0 10px;border-radius:999px;background:var(--grad);color:var(--ink);font-size:14.5px;white-space:nowrap;box-shadow:var(--pshadow)}
 html.premium .dact .btn.primary .bi{display:none}
 html.premium .dact .btn.primary .st{display:none}
 html.premium .dact .btn.primary .lg{display:block;overflow:hidden;text-overflow:ellipsis}
-html.premium .dact .dact-x{display:inline-flex;order:-1;flex:0 0 48px;width:48px;min-height:48px;border-radius:50%;background:var(--fill);font-size:0;gap:0;margin-right:2px}
+html.premium .dact .dact-x{display:inline-flex;order:-1;flex:0 0 42px;width:42px;min-height:42px;border-radius:50%;background:var(--fill);font-size:0;gap:0;margin-right:2px}
 html.premium .dact .dact-x svg{width:20px;height:20px}
 
 /* --- dock: floating, every tab named, the open one tinted; the main action of the page floats above it with its name --- */
@@ -994,7 +1041,7 @@ html.premium .tab .ic{width:auto;height:24px;background:none}
 html.premium .tab svg{width:23px;height:23px}
 html.premium .tab.on{color:var(--fg);background:var(--tint)}
 html.premium .tab.on .ic{background:none;color:var(--accent)}
-html.premium .fab{width:auto;height:56px;padding:0 22px 0 18px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;right:max(16px,calc(50% - 264px));bottom:calc(96px + env(safe-area-inset-bottom,0px));
+html.premium .fab{width:auto;height:50px;padding:0 20px 0 16px;border-radius:999px;display:inline-flex;align-items:center;gap:8px;right:max(16px,calc(50% - 264px));bottom:calc(96px + env(safe-area-inset-bottom,0px));
   background:var(--grad);color:var(--ink);font-size:15.5px;font-weight:650;box-shadow:var(--pshadow),0 14px 30px -14px var(--shade);animation:pr-fab .3s cubic-bezier(.22,1,.36,1) both}
 html.premium .fab span{display:inline}
 html.premium .fab svg{width:22px;height:22px}
@@ -1472,7 +1519,7 @@ const IC = {
 const filtBar = (id, ph, val, n, open, act) => `<div class="sbar"><label class="sfield">${IC.search}<input class="search" id="${id}" type="search" enterkeyhint="search" placeholder="${esc(ph)}" value="${esc(val)}" autocomplete="off"></label>
   <button class="icon-btn fbtn${open ? ' on' : ''}" data-act="${act}" type="button" aria-label="Filtreler" aria-expanded="${!!open}">${IC.sliders}${n ? `<b>${n}</b>` : ''}</button></div>`;
 const offChip = (act, attr, label) => `<button class="chip on" data-act="${act}" ${attr} type="button">${esc(label)}<span class="x">×</span></button>`;
-const UI_DEFAULT = {fullscreen: false, anim: true, haptic: true, blur: true, amoled: false, compact: false, labels: true, fs: 'm', dock: 'bottom', dockHidden: false};
+const UI_DEFAULT = {fullscreen: false, anim: true, haptic: true, blur: true, amoled: false, compact: false, labels: true, fs: 'm', dock: 'bottom', dockHidden: false, versImg: true};
 // a premium theme brings its own sound set; leaving it puts the usual sounds back
 const SET_RX = /^(sc_|mal_|lune_|so_|dn_)/;
 function themeSounds(on){
@@ -1498,6 +1545,11 @@ function applyUi(){
 
 /* ---------- catalog ---------- */
 let CAT = null, CAT_LOADING = null, BOY = null, BOY_KEYS = new Map();
+let DUPES = new Map(), DUPED = new Map();   // clone id -> [original id, percent, listed by hand]; original id -> ids of its clones
+async function loadDupes(){
+  try { const r = await fetch('data/dupes.json'); if (!r.ok) throw new Error(r.status); const d = await r.json(); idbSet('dupes', d).catch(() => {}); return d; }
+  catch (e) { try { return await idbGet('dupes'); } catch (e2) { return null; } }
+}
 async function loadBoyner(){
   if (BOY) return BOY;
   try {
@@ -1514,6 +1566,7 @@ function loadCatalog(){
   if (CAT_LOADING) return CAT_LOADING;
   CAT_LOADING = (async () => {
     await loadBoyner();
+    const dupesP = loadDupes();
     let data = null;
     try {
       const r = await fetch('data/catalog.json');
@@ -1528,6 +1581,10 @@ function loadCatalog(){
       return {r, key: fold((r[1] + ' ' + r[2] + ' ' + (r[14] || '') + ' ' + (CONC_FULL[r[14]] || '')).replace(/['’&]/g, ' ')), nkey: fold([...r[8], ...r[9], ...r[10], ...r[11]].join(' ')), boy: BOY_KEYS.has(normBrand(r[2]))};
     });
     CAT.byId = new Map(CAT.map(c => [c.r[0], c]));
+    try {
+      const dd = await dupesP;
+      for (const [k, v] of Object.entries(dd && dd.d || {})) if (CAT.byId.has(+k) && CAT.byId.has(v[0])) { DUPES.set(+k, v); if (!DUPED.has(v[0])) DUPED.set(v[0], []); DUPED.get(v[0]).push(+k); }
+    } catch (e) {}
     if (S) {
       let changed = false;
       S.perfumes.forEach(p => { const c = p.cid && CAT.byId.get(p.cid); if (c && !p.conc && c.r[14]) { p.conc = c.r[14]; changed = true; } });
@@ -1952,7 +2009,7 @@ function logErr(where, e){
     localStorage.setItem('bb_errs', JSON.stringify(l.slice(0, 20)));
   } catch (x) {}
 }
-window.addEventListener('error', e => logErr('hata', e.error || e.message));
+window.addEventListener('error', e => { if (!/ResizeObserver loop/.test(String(e.message))) logErr('hata', e.error || e.message); });
 window.addEventListener('unhandledrejection', e => logErr('işlem', e.reason));
 function render(){
   try { renderNow(); }
@@ -2296,7 +2353,7 @@ function spin(){
 }
 
 /* ---------- explore ---------- */
-let ex = {q: '', g: '', boy: false, conc: '', seg: '', cats: [], group: 'Kullanım', limit: 40, mode: 'perf', brand: null, bq: ''};
+let ex = {q: '', g: '', boy: false, conc: '', seg: '', cats: [], group: 'Kullanım', limit: 40, mode: 'perf', brand: null, bq: '', lon: '', sil: '', place: '', sort: 'pop'};
 let BRANDS = null;
 function brandIndex(){
   if (BRANDS) return BRANDS;
@@ -2335,13 +2392,16 @@ function lineOf(p){
 function versInner(p){
   const list = lineOf(p);
   if (!list.length) return '';
+  const sub = c => [c.r[14], c.r[3]].filter(Boolean).join(' · ');
   return `<div class="row spread" style="margin-bottom:-4px"><span class="label">Aynı seriden · ${list.length} versiyon</span>
       <button class="linkbtn" data-act="brandgo" data-b="${esc(list[0].r[2])}" type="button">Marka ›</button></div>
-    <div class="chips scroll">${list.slice(0, 24).map(c => `<button class="chip vchip" data-act="cview" data-cid="${c.r[0]}" type="button">${esc(c.r[1])}${c.r[14] ? ' <small>' + esc(c.r[14]) + '</small>' : ''}${c.r[3] ? ' <small>' + c.r[3] + '</small>' : ''}</button>`).join('')}</div>`;
+    ${S.ui.versImg !== false
+      ? `<div class="td-alt vers-img">${list.slice(0, 24).map(c => `<button data-act="cview" data-cid="${c.r[0]}" type="button"><div class="art">${art({name: c.r[1], img: fimg(c.r[0])})}</div><span>${esc(c.r[1])}</span>${sub(c) ? `<small>${esc(sub(c))}</small>` : ''}</button>`).join('')}</div>`
+      : `<div class="chips scroll">${list.slice(0, 24).map(c => `<button class="chip vchip" data-act="cview" data-cid="${c.r[0]}" type="button">${esc(c.r[1])}${c.r[14] ? ' <small>' + esc(c.r[14]) + '</small>' : ''}${c.r[3] ? ' <small>' + c.r[3] + '</small>' : ''}</button>`).join('')}</div>`}`;
 }
 function versHtml(p){
   if (!CAT) {
-    loadCatalog().then(() => { const el = document.getElementById('vers'); if (el && currentP === p) el.innerHTML = versInner(p); }).catch(() => {});
+    loadCatalog().then(() => { if (currentP !== p) return; const el = document.getElementById('vers'), dr = document.getElementById('dupe-row'); if (el) el.innerHTML = versInner(p); if (dr) dr.innerHTML = dupeRow(p); }).catch(() => {});
     return '<div class="vers" id="vers"></div>';
   }
   return `<div class="vers" id="vers">${versInner(p)}</div>`;
@@ -2433,11 +2493,13 @@ function avoidRedraw(){
   ex.limit = 40;
   if (sheetMode === 'randbuy' && document.getElementById('rb-moods')) openRandomBuy();
   else if (S.tab === 'kesfet' && !document.getElementById('overlay')) renderExplore();
-  const nc = document.getElementById('notecard'); if (nc && nc.dataset.n) openNoteCard(nc.dataset.n, nc.dataset.tier || '');
+  // a perfume page is open on top: the list under it is redrawn too, and the page's own notes are marked
+  else if (S.tab === 'kesfet' && CAT && document.getElementById('ex-body')) renderExploreBody();
+  closeNoteCard(); noteChipsSync();
 }
 const concChips = (act, cur) => `<div class="chips scroll"><button class="chip${cur ? '' : ' on'}" data-act="${act}" data-v="" type="button">Tüm türler</button>${CONCS.map(c => `<button class="chip${cur === c ? ' on' : ''}" data-act="${act}" data-v="${c}" type="button">${c}</button>`).join('')}</div>`;
 function renderExplore(){
-  const n = (ex.boy ? 1 : 0) + (ex.g ? 1 : 0) + (ex.seg ? 1 : 0) + (ex.conc ? 1 : 0) + ex.cats.length + avoidList().length;
+  const n = (ex.boy ? 1 : 0) + (ex.g ? 1 : 0) + (ex.seg ? 1 : 0) + (ex.conc ? 1 : 0) + (ex.lon ? 1 : 0) + (ex.sil ? 1 : 0) + (showDupes() ? 0 : 1) + ex.cats.length + avoidList().length;
   const filters = `<div class="chips scroll">
       <button class="chip${ex.boy ? ' on' : ''}" data-act="exboy" type="button">Boyner'de</button>
       ${['E','K','U'].map(g => `<button class="chip${ex.g === g ? ' on' : ''}" data-act="exg" data-g="${g}" type="button">${GENDER[g]}</button>`).join('')}
@@ -2445,6 +2507,8 @@ function renderExplore(){
     <div class="chips scroll"><button class="chip${ex.seg ? '' : ' on'}" data-act="exseg" data-v="" type="button">Tüm segmentler</button>${Object.entries(SEG).map(([k, v]) => `<button class="chip${ex.seg === k ? ' on' : ''}" data-act="exseg" data-v="${k}" type="button">${v}</button>`).join('')}</div>
     ${concChips('exconc', ex.conc)}
     ${catFilter('excat', ex.group, ex.cats)}
+    ${lvlRow('exlvl', 'lon', ex.lon)}${lvlRow('exlvl', 'sil', ex.sil)}${LVL_HINT}
+    ${dupeToggle('ex-dupes')}
     ${avoidBox()}`;
   if (PR()) {
     view.innerHTML = `
@@ -2452,7 +2516,7 @@ function renderExplore(){
     <div class="seg"><button class="${ex.mode === 'perf' ? 'on' : ''}" data-act="exmode" data-v="perf" type="button">Parfümler</button><button class="${ex.mode === 'brands' ? 'on' : ''}" data-act="exmode" data-v="brands" type="button">Markalar</button></div>
     ${ex.mode === 'brands' && !ex.brand ? '' : filtBar('ex-q', 'Parfüm, marka ya da nota ara', ex.q, n, ex.fopen, 'exfilt')
       + (ex.fopen ? `<div class="fpanel">${filters}${n ? '<button class="btn sm ghost" data-act="exclear" type="button" style="align-self:flex-start;padding-inline:4px">Filtreleri temizle</button>' : ''}</div>`
-        : n ? `<div class="chips scroll">${ex.boy ? offChip('exboy', '', 'Boyner’de') : ''}${ex.g ? offChip('exg', `data-g="${ex.g}"`, GENDER[ex.g]) : ''}${ex.seg ? offChip('exseg', 'data-v=""', SEG[ex.seg]) : ''}${ex.conc ? offChip('exconc', 'data-v=""', ex.conc) : ''}${ex.cats.map(c => offChip('excat', `data-cat="${esc(c)}"`, c)).join('')}${avoidList().map(x => offChip('avoidrm', `data-n="${esc(x)}"`, x + ' yok')).join('')}</div>` : '')}
+        : n ? `<div class="chips scroll">${ex.boy ? offChip('exboy', '', 'Boyner’de') : ''}${ex.g ? offChip('exg', `data-g="${ex.g}"`, GENDER[ex.g]) : ''}${ex.seg ? offChip('exseg', 'data-v=""', SEG[ex.seg]) : ''}${ex.conc ? offChip('exconc', 'data-v=""', ex.conc) : ''}${ex.cats.map(c => offChip('excat', `data-cat="${esc(c)}"`, c)).join('')}${ex.lon ? offChip('exlvl', 'data-k="lon" data-v=""', 'Kalıcılık: ' + lvlName('lon', ex.lon)) : ''}${ex.sil ? offChip('exlvl', 'data-k="sil" data-v=""', 'Yayılım: ' + lvlName('sil', ex.sil)) : ''}${showDupes() ? '' : offChip('dupeson', '', 'Muadiller gizli')}${avoidList().map(x => offChip('avoidrm', `data-n="${esc(x)}"`, x + ' yok')).join('')}</div>` : '')}
   </section>
   <div id="ex-body"><div class="list">${'<div class="sk-row"><div class="sk"></div><div class="sk-lines"><div class="sk" style="width:70%"></div><div class="sk" style="width:45%"></div><div class="sk" style="width:55%"></div></div></div>'.repeat(6)}</div></div>`;
   } else
@@ -2468,6 +2532,8 @@ function renderExplore(){
     <div class="chips scroll"><button class="chip${ex.seg ? '' : ' on'}" data-act="exseg" data-v="" type="button">Tüm segmentler</button>${Object.entries(SEG).map(([k, v]) => `<button class="chip${ex.seg === k ? ' on' : ''}" data-act="exseg" data-v="${k}" type="button">${v}</button>`).join('')}</div>
     ${concChips('exconc', ex.conc)}
     ${catFilter('excat', ex.group, ex.cats)}
+    ${lvlRow('exlvl', 'lon', ex.lon)}${lvlRow('exlvl', 'sil', ex.sil)}${LVL_HINT}
+    ${dupeToggle('ex-dupes')}
     ${avoidBox()}`}
   </section>
   <div id="ex-body"><div class="list">${'<div class="sk-row"><div class="sk"></div><div class="sk-lines"><div class="sk" style="width:70%"></div><div class="sk" style="width:45%"></div><div class="sk" style="width:55%"></div></div></div>'.repeat(6)}</div></div>`;
@@ -2482,6 +2548,7 @@ function catRow(c){
       <span class="item-name">${esc(r[1])} ${catConc(r)}</span>
       <span class="item-meta"><span lang="en">${esc(r[2])}</span> ${segTag(r[15])}${c.boy ? ' <span class="boyner">Boyner</span>' : ''} · ${GENDER[r[4]]}${r[13] ? ' · ★ ' + r[13].toFixed(1) : ''}</span>
       <div class="fam-line">${r[8].slice(0, 2).map(famTag).join('')}</div>
+      ${dupeNote(r[0])}
     </div>
     <button class="icon-btn${owned ? ' added' : ''}" data-act="cadd" data-cid="${r[0]}" type="button" aria-label="${owned ? 'Koleksiyonda' : 'Koleksiyona ekle'}">
       ${owned ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m5 12 5 5 9-10"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>'}
@@ -2508,16 +2575,19 @@ function expandQuery(q){
 }
 // one- and two-letter words ("y", "le") must match a whole word, longer ones may match inside a word
 const hasTok = (k, t) => t.length <= 2 ? (' ' + k + ' ').includes(' ' + t + ' ') : k.includes(t);
-let avoidHidden = 0;
+let avoidHidden = 0, dupeHidden = 0;
 function searchCatalog(){
   const tk = expandQuery(ex.q);
-  const out = [], av = avoidShow ? [] : avoidKeys();
-  avoidHidden = 0;
+  const out = [], av = avoidShow ? [] : avoidKeys(), noDupes = !showDupes();
+  avoidHidden = 0; dupeHidden = 0;
   for (const c of CAT) {
     if (ex.boy && !c.boy) continue;
     if (ex.g && c.r[4] !== ex.g && !(c.r[4] === 'U' && ex.g !== 'U')) continue;
     if (ex.conc && c.r[14] !== ex.conc) continue;
     if (ex.seg && c.r[15] !== ex.seg) continue;
+    if (ex.lon && lvlOf(c.r[6]) !== ex.lon) continue;
+    if (ex.sil && lvlOf(c.r[7]) !== ex.sil) continue;
+    if (ex.place && !inCat(c.r[12], ex.place)) continue;
     if (ex.cats.length && !ex.cats.every(x => inCat(c.r[12], x))) continue;
     let rank = 0;
     if (tk.length) {
@@ -2526,17 +2596,39 @@ function searchCatalog(){
       else continue;
     }
     if (av.length && avoidedRow(c, av)) { avoidHidden++; continue; }
+    if (noDupes && isDupe(c.r[0])) { dupeHidden++; continue; }
     out.push([c, rank]);
   }
-  out.sort((a, b) => (a[1] - b[1]) || ((b[0].boy ? 1 : 0) - (a[0].boy ? 1 : 0)) || (b[0].r[5] - a[0].r[5]));
+  // "best liked" of a place: by rating, among those enough people have voted on
+  if (ex.place && ex.sort === 'top') out.sort((a, b) => (a[1] - b[1]) || ((b[0].r[5] >= 500) - (a[0].r[5] >= 500)) || (b[0].r[13] - a[0].r[13]) || (b[0].r[5] - a[0].r[5]));
+  else out.sort((a, b) => (a[1] - b[1]) || ((b[0].boy ? 1 : 0) - (a[0].boy ? 1 : 0)) || (b[0].r[5] - a[0].r[5]));
   return out.map(x => x[0]);
+}
+// Places: one tap from Explore to the perfumes of an occasion or an effect (Date, Seksi, Temiz ...). The catalogue already
+// carries these labels on every perfume; a place is that label with its own page, order and neighbours.
+const PLACES = [['Date', 'Buluşmaya, yakın mesafeye'], ['Seksi', 'Çekici, sıcak, tene yakın'], ['Temiz', 'Sabun, çamaşır, duş sonrası'], ['İltifat Toplayan', 'En çok övgü alanlar'],
+  ['Ofis', 'Rahatsız etmeyen, derli toplu'], ['Günlük', 'Her güne, her yere'], ['Parti', 'Kalabalıkta fark edilen'], ['Özel Gün', 'Davet, düğün, kutlama'],
+  ['Gece', 'Akşam çıkışları'], ['Spor', 'Ferah ve hafif'], ['Tatil', 'Güneş, deniz, tropik'], ['Yaz', 'Sıcakta boğmayan'], ['Kış', 'Soğukta sarıp sarmalayan'], ['Kör Alım Güvenli', 'Koklamadan alınabilecekler']];
+function placeTiles(){
+  return `<section class="section"><h3>Ne için arıyorsun?</h3>
+    <div class="places">${PLACES.map(([c, d]) => `<button data-act="place" data-v="${esc(c)}" type="button"><b>${esc(c)}</b><small>${esc(d)}</small></button>`).join('')}</div></section>`;
+}
+function placeHead(){
+  const d = (PLACES.find(x => x[0] === ex.place) || [])[1] || '';
+  return `<section class="section" style="margin-bottom:16px">
+    <button class="back" data-act="place" data-v="" type="button" style="margin:0"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 6-6 6 6 6"/></svg>Keşfet</button>
+    <div><h2>${esc(ex.place)}</h2><span class="muted small">${esc(d)}</span></div>
+    <div class="chips scroll" id="place-chips">${PLACES.map(([c]) => `<button class="chip${c === ex.place ? ' on' : ''}" data-act="place" data-v="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div>
+    <div class="seg"><button class="${ex.sort === 'top' ? '' : 'on'}" data-act="placesort" data-v="pop" type="button">En popüler</button><button class="${ex.sort === 'top' ? 'on' : ''}" data-act="placesort" data-v="top" type="button">En beğenilen</button></div>
+  </section>`;
 }
 function renderExploreBody(){
   const body = document.getElementById('ex-body'); if (!body || !CAT) return;
-  const filtered = ex.q || ex.g || ex.boy || ex.conc || ex.seg || ex.cats.length;
+  const filtered = ex.q || ex.g || ex.boy || ex.conc || ex.seg || ex.cats.length || ex.lon || ex.sil;
   let html = '';
-  if (!filtered) {
-    html += seenStrip(12);
+  if (ex.place) html += placeHead();
+  else if (!filtered) {
+    html += placeTiles() + seenStrip(12);
     const av0 = avoidKeys(), line = CAT.filter(c => skin().line(c.r) && !(av0.length && avoidedRow(c, av0))).slice(0, 16);
     if (line.length) html += `<section class="section"><h3>${esc(skin().shelf)}</h3>
       <div class="shelf">${line.map(c => `<button class="card" data-act="cview" data-cid="${c.r[0]}" type="button">
@@ -2548,14 +2640,17 @@ function renderExploreBody(){
           <div class="card-body"><span class="card-brand" lang="en">${esc(p.b)}</span><span class="card-name" style="font-size:14px">${esc(p.t.trim())}</span>
           ${p.p ? `<span class="price">${esc(p.p)} TL</span>` : ''}</div></button>`).join('')}</div></section>`;
   }
-  const res = searchCatalog();
-  html += `<section class="section"><div class="row spread"><h3>${filtered ? res.length.toLocaleString('tr-TR') + ' sonuç' : 'Popüler parfümler'}</h3>
-    <span class="muted small">${CAT.length.toLocaleString('tr-TR')} parfüm · Boyner önce</span></div>
+  const res = searchCatalog(), cnt = res.length.toLocaleString('tr-TR');
+  html += `<section class="section"><div class="row spread"><h3>${ex.place ? (filtered ? cnt + ' sonuç' : cnt + ' parfüm') : filtered ? cnt + ' sonuç' : 'Popüler parfümler'}</h3>
+    <span class="muted small">${ex.place && ex.sort === 'top' ? 'puana göre · en az 500 oy' : CAT.length.toLocaleString('tr-TR') + ' parfüm · Boyner önce'}</span></div>
     ${avoidHidden || avoidShow && avoidList().length ? `<span class="muted small">${avoidShow ? 'Elediğin notaları içerenler de gösteriliyor.' : `${avoidHidden.toLocaleString('tr-TR')} parfüm gizlendi: içinde ${esc(avoidList().join(', '))} var.`} <button class="linkbtn" data-act="avoidshow" type="button">${avoidShow ? 'Yine gizle' : 'Yine de göster'}</button></span>` : ''}
+    ${dupeHidden ? `<span class="muted small">${dupeHidden.toLocaleString('tr-TR')} muadil gizlendi. <button class="linkbtn" data-act="dupeson" type="button">Muadilleri göster</button></span>` : ''}
     ${res.length ? `<div class="list">${res.slice(0, ex.limit).map(catRow).join('')}</div>` : `<div class="empty">Sonuç yok. Yazımı kontrol et ya da filtreleri kaldır.</div>`}
     ${res.length > ex.limit ? `<button class="btn block" data-act="exmore" type="button">Daha fazla göster</button>` : ''}
     </section>`;
   body.innerHTML = html;
+  const on = document.querySelector('#place-chips .chip.on');
+  if (on && on.parentElement) on.parentElement.scrollLeft = Math.max(0, on.offsetLeft - on.parentElement.offsetLeft - 16);
 }
 
 /* ---------- collection ---------- */
@@ -2603,22 +2698,62 @@ function renderGrid(){
 let NOTES = null;
 async function loadNotes(){
   if (NOTES) return NOTES;
-  try { const r = await fetch('data/notes.json'); NOTES = await r.json(); } catch (e) { NOTES = {}; }
-  return NOTES;
+  let d = null;
+  try { const r = await fetch('data/notes2.json'); if (!r.ok) throw new Error(r.status); d = await r.json(); idbSet('notes2', d).catch(() => {}); }
+  catch (e) { try { d = await idbGet('notes2'); } catch (e2) {} }
+  return NOTES = noteRules(d || {exact: {}});
 }
+// NOTE-ENGINE (scripts/notes_check.js runs this same code over every note of the catalogue)
+function noteRules(d){
+  const c = l => (l || []).map(([r, t]) => ({re: new RegExp(r, 'g'), t}));
+  d.exact = d.exact || {}; d.exactF = {};
+  for (const [k, v] of Object.entries(d.exact)) d.exactF[fold(k).trim()] = v;
+  d.H = c(d.heads); d.G = c(d.generic); d.Q = c(d.quals); d.O = c(d.origins);
+  return d;
+}
+// A sentence written for this very name wins. Otherwise the name is read: the material it is about is the rightmost one
+// found in it (names are head-final in Turkish and English alike: "Tunisian Orange Blossom", "Sicilya limonu"), and what
+// is left of the name ("candied", "leaf", "white", "Sicilian") adds a short clause.
+function noteDesc(d, n){
+  if (!d || !d.H) return '';
+  if (d.exact[n]) return d.exact[n];
+  const fx = d.exactF[fold(n).trim()]; if (fx) return fx;
+  const f = fold(n).replace(/[^a-z0-9]+/g, ' ').trim();
+  const last = list => {
+    let b = null;
+    for (const r of list) {
+      r.re.lastIndex = 0; let m;
+      while ((m = r.re.exec(f))) {
+        const e = m.index + m[0].length;
+        if (!b || e > b.e || (e === b.e && m[0].length > b.len)) b = {s: m.index, e, len: m[0].length, t: r.t};
+        if (!m[0].length) r.re.lastIndex++;
+      }
+    }
+    return b;
+  };
+  // a family word ("flower", "wood", "notes") is asked only when no material was found, the most telling family first
+  const sp = last(d.H), h = sp || (g => g && last([g]))(d.G.find(r => { r.re.lastIndex = 0; return r.re.test(f); }));
+  if (!h) return /[™®]/.test(n) ? d.tm || '' : '';
+  const rest = (f.slice(0, h.s) + ' ' + f.slice(h.e)).trim();
+  let out = h.t, k = 0;
+  if (rest) {
+    if (sp) for (const q of d.Q) { q.re.lastIndex = 0; if (k < 2 && q.re.test(rest)) { out += ' ' + q.t; k++; } }
+    for (const o of d.O) { o.re.lastIndex = 0; if (o.re.test(rest)) { out += ' ' + o.t + ' kökenli.'; break; } }
+  }
+  return out;
+}
+// END NOTE-ENGINE
 function guessNote(n){
   const f = fold(n);
   const has = (...w) => w.some(x => f.includes(x));
-  if (has('agac', 'odun', 'sedir', 'sandal', 'ud', 'mese', 'cam')) return 'Odunsu bir not: kuru, sıcak ve ahşap hissi verir; genelde parfümün tabanında kalıcılık sağlar.';
-  if (has('cicek', 'gul', 'yasemin', 'zambak', 'orkide', 'lale', 'menekse', 'sumbul')) return 'Çiçeksi bir not: parfüme yumuşaklık, tazelik ya da romantik bir hava katar.';
-  if (has('biber', 'baharat', 'tarcin', 'karanfil', 'zencefil', 'muskat', 'safran')) return 'Baharatlı bir not: parfüme sıcaklık ve canlılık verir.';
-  if (has('limon', 'portakal', 'mandalina', 'greyfurt', 'narenciye', 'bergamot', 'yuzu')) return 'Narenciye notası: parlak, ferah ve enerjik; genelde açılışta hissedilir, çabuk uçar.';
-  if (has('meyve', 'elma', 'armut', 'kiraz', 'cilek', 'seftali', 'erik', 'uzum', 'mango', 'ananas')) return 'Meyveli bir not: tatlı, sulu ve neşeli bir hava verir.';
-  if (has('vanilya', 'karamel', 'seker', 'cikolata', 'kakao', 'kahve', 'pralin', 'bal', 'sut')) return 'Gurme bir not: yenilebilir bir şeyi çağrıştıran tatlı ve sıcak bir koku.';
-  if (has('misk', 'amber', 'reçine', 'recine', 'balsam', 'tutsu')) return 'Sıcak ve sarmalayıcı bir taban notası; parfümün tende uzun süre kalmasını sağlar.';
-  if (has('deniz', 'su ', 'ozon', 'tuz')) return 'Ferah, sulu bir not: deniz, yağmur ya da temiz hava hissi verir.';
-  if (has('yesil', 'yaprak', 'cimen', 'ot', 'nane', 'adacayi', 'fesleken', 'kekik')) return 'Yeşil ya da aromatik bir not: taze kesilmiş bitki ve ferahlık hissi verir.';
-  return 'Bu notanın kısa açıklaması henüz yok; aşağıdaki parfümlerde nasıl koktuğunu deneyebilirsin.';
+  if (has('agac', 'odun', 'sedir', 'sandal', 'mese', 'wood')) return 'Odunsu bir not: kuru, sıcak ve ahşap hissi verir; genelde parfümün tabanında kalıcılık sağlar.';
+  if (has('cicek', 'gul', 'yasemin', 'zambak', 'orkide', 'lale', 'menekse', 'sumbul', 'flower', 'blossom')) return 'Çiçeksi bir not: parfüme yumuşaklık, tazelik ya da romantik bir hava katar.';
+  if (has('biber', 'baharat', 'tarcin', 'karanfil', 'zencefil', 'muskat', 'safran', 'spice')) return 'Baharatlı bir not: parfüme sıcaklık ve canlılık verir.';
+  if (has('limon', 'portakal', 'mandalina', 'greyfurt', 'narenciye', 'bergamot', 'yuzu', 'citrus')) return 'Narenciye notası: parlak, ferah ve enerjik; genelde açılışta hissedilir, çabuk uçar.';
+  if (has('meyve', 'elma', 'armut', 'kiraz', 'cilek', 'seftali', 'erik', 'uzum', 'mango', 'ananas', 'fruit', 'berry')) return 'Meyveli bir not: tatlı, sulu ve neşeli bir hava verir.';
+  if (has('vanilya', 'karamel', 'seker', 'cikolata', 'kakao', 'kahve', 'pralin', 'sugar', 'sweet')) return 'Gurme bir not: yenilebilir bir şeyi çağrıştıran tatlı ve sıcak bir koku.';
+  if (has('misk', 'amber', 'recine', 'balsam', 'tutsu', 'musk')) return 'Sıcak ve sarmalayıcı bir taban notası; parfümün tende uzun süre kalmasını sağlar.';
+  return '';
 }
 // the colour of the little dot on a note: what kind of smell it is (citrus yellow, flowers pink, woods brown…); null when unknown
 const NOTE_HUES = [[/limon|portakal|mandalina|greyfurt|narenciye|bergamot|yuzu|turunc|misket|pomelo/, 48], [/lavanta|menekse|iris|leylak|mor /, 268],
@@ -2632,24 +2767,41 @@ const NOTE_HUES = [[/limon|portakal|mandalina|greyfurt|narenciye|bergamot|yuzu|t
 const noteHue = n => { const f = fold(n); const h = NOTE_HUES.find(x => x[0].test(f)); return h ? h[1] : null; };
 const TIER_INFO = {top: 'Üst nota: ilk 15–30 dakikada hissedilir.', heart: 'Kalp nota: parfümün karakterini 30 dk – 3 saat boyunca taşır.', base: 'Alt nota: saatlerce tende kalan iz.'};
 function closeNoteCard(){ const c = document.getElementById('notecard'); if (c) c.remove(); }
+const noteOff = (n, keys) => { const f = fold(n); return (keys || avoidKeys()).some(a => f.includes(a)); };
+const noteCardX = '<button class="icon-btn" data-act="noteclose" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg></button>';
 async function openNoteCard(n, tier){
   closeNoteCard();
   const d = await loadNotes();
-  const desc = d[n] || guessNote(n);
+  closeNoteCard();
+  const desc = noteDesc(d, n) || guessNote(n) || d.unknown || 'Bu notanın kısa açıklaması henüz yok; aşağıdaki parfümlerde nasıl koktuğunu deneyebilirsin.';
   const fn = fold(n);
   const with_ = CAT ? CAT.filter(c => c.r[9].concat(c.r[10], c.r[11]).some(x => fold(x) === fn)).slice(0, 6) : [];
   const total = CAT ? CAT.reduce((k, c) => k + (c.r[9].concat(c.r[10], c.r[11]).some(x => fold(x) === fn) ? 1 : 0), 0) : 0;
   const el = document.createElement('div'); el.className = 'notecard'; el.id = 'notecard'; el.dataset.n = n; el.dataset.tier = tier || '';
-  const avoided = avoidList().some(x => fold(x) === fn);
-  el.innerHTML = `<div class="row spread"><h3>${esc(n)}</h3><button class="icon-btn" data-act="noteclose" type="button" aria-label="Kapat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  el.innerHTML = `<div class="row spread"><h3>${esc(n)}</h3>${noteCardX}</div>
     <p>${esc(desc)}</p>
     ${tier ? `<span class="muted small">${TIER_INFO[tier]}</span>` : ''}
-    <div class="row"><button class="btn sm${avoided ? '' : ' ghost'}" data-act="${avoided ? 'avoidrm' : 'avoidadd'}" data-n="${esc(avoided ? avoidList().find(x => fold(x) === fn) : n)}" type="button">${avoided ? 'Öneriliyor olsun (elemeyi kaldır)' : 'Bu notayı içerenleri önerme'}</button></div>
+    ${noteOff(n) ? '<span class="muted small">Bu notayı elemişsin: içeren parfümler önerilmiyor. Geri almak için notaya basılı tut.</span>' : ''}
     ${with_.length ? `<span class="label">Bu notayı taşıyan popüler parfümler${total ? ' · ' + total.toLocaleString('tr-TR') + ' parfüm' : ''}</span>
       <div class="chips">${with_.map(c => `<button class="chip" data-act="cview" data-cid="${c.r[0]}" type="button">${esc(c.r[1])}</button>`).join('')}</div>` : ''}`;
   document.body.appendChild(el);
   if (!CAT) loadCatalog().catch(() => {});
 }
+// pressed and held: the choice to keep this note out of what is offered (or to let it back in)
+function openNoteHold(n){
+  closeNoteCard();
+  const fn = fold(n), mine = avoidList().find(x => fold(x) === fn), over = mine ? [] : avoidList().filter(x => fn.includes(fold(x)));
+  const total = CAT ? CAT.reduce((k, c) => k + (c.nkey.includes(fn) ? 1 : 0), 0) : 0;
+  const el = document.createElement('div'); el.className = 'notecard hold'; el.id = 'notecard';
+  el.innerHTML = `<div class="row spread"><h3>${esc(n)}</h3>${noteCardX}</div>
+    <div class="menu">${mine ? `<button data-act="avoidrm" data-n="${esc(mine)}" type="button"><span><b>Yeniden önerilsin</b><small>Bu notayı elemeyi bırakır</small></span></button>`
+      : over.length ? `<button data-act="avoidrm" data-n="${esc(over[0])}" type="button"><span><b>“${esc(over[0])}” elemesini kaldır</b><small>Bu nota onun yüzünden eleniyor</small></span></button>`
+      : `<button data-act="avoidadd" data-n="${esc(n)}" type="button"><span><b>Bu notayı içerenleri önerme</b><small>${total ? total.toLocaleString('tr-TR') + ' parfüm aramada, rastgele seçimde ve benzerlerde elenir' : 'Aramada, rastgele seçimde ve benzerlerde elenir'}</small></span></button>`}
+      <button data-act="note" data-n="${esc(n)}" type="button"><span><b>Ne kokar?</b><small>Notanın açıklaması</small></span></button></div>`;
+  document.body.appendChild(el);
+}
+// the notes on screen show at once what is ruled out
+function noteChipsSync(){ const k = avoidKeys(); document.querySelectorAll('.note-chip[data-n]').forEach(c => c.classList.toggle('off', noteOff(c.dataset.n, k))); }
 
 /* ---------- prices from several stores ---------- */
 let SHOP_RULES = null;
@@ -2804,17 +2956,30 @@ function pickConc(data, want, p){
   return data;
 }
 const hasAny = b => Object.values(b || {}).some(x => Object.keys(x).length);
-// Several ways to write the same search. The short one comes first: a store's search narrows with every extra word
-// ("Chanel Bleu de Chanel Eau de Parfum" finds nothing where "Bleu de Chanel" finds everything).
+// A perfume is never searched under one name only. The first two spellings go to every store at once and what they find
+// is put together; the rest are asked only when those found nothing. The short ones come first: a store's search narrows
+// with every extra word ("Chanel Bleu de Chanel Eau de Parfum" finds nothing where "Bleu de Chanel" finds everything).
+const qAscii = s => String(s).normalize('NFD').replace(/\p{M}/gu, '').replace(/[’'`´]/g, ' ').replace(/&/g, ' ').replace(/\s+/g, ' ').trim();
+const qCore = x => x.replace(/\s+(eau de (parfum|toilette|cologne)|extrait de parfum|edp|edt|edc)\s*$/i, '').trim() || x;
 function queryVariants(p){
-  const ascii = s => String(s).normalize('NFD').replace(/\p{M}/gu, '').replace(/[’'`´]/g, ' ').replace(/&/g, ' ').replace(/\s+/g, ' ').trim();
-  const b = ascii(shortBrand(p.brand)), n = ascii(p.name);
-  const core = n.replace(/\s+(eau de (parfum|toilette|cologne)|extrait de parfum|edp|edt|edc)\s*$/i, '').trim() || n;
+  const b = qAscii(shortBrand(p.brand)), n = qAscii(p.name), strip = qCore;
+  const core = strip(n);
   // the name already says the house: "Bleu de Chanel", "Armani Code", "Emporio Armani Stronger With You"
   const bt = mToks(b).filter(w => w.length > 2), nt = mToks(n), own = !b || bt.some(w => nt.includes(w)) || brandSyn(p.brand).some(x => mToks(x).every(w => nt.includes(w)));
-  const pre = own ? '' : b + ' ', syn = own ? '' : brandSyn(p.brand).find(x => !/&/.test(x) && x.length > 3) || '';
-  const v = [pre + core, own && b && mToks(b).some(w => !nt.includes(w)) ? `${b} ${core}` : '', syn ? `${syn} ${core}` : '', core !== n ? pre + n : '', p.conc && !mConcs(mFold(core)).length ? `${pre}${core} ${p.conc}` : '', !own && mToks(core).filter(w => !M_STOP.has(w)).join('').length >= 6 ? core : ''];
-  return [...new Set(v.map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean))].slice(0, 4);
+  const pre = own ? '' : b + ' ', syns = own ? [] : brandSyn(p.brand).filter(x => !/&/.test(x) && x.length > 3);
+  // a name that can stand without its house ("Khamrah", "Sauvage", "Eros"; not "Y" or "Si")
+  const solo = !own && mToks(core).filter(w => !M_STOP.has(w)).join('').length >= 4;
+  // ...and a name that carries its house can be searched without it ("Emporio Armani Stronger With You" as "Stronger With You")
+  const bw = new Set(brandWords(p.brand)), bare = own ? core.split(' ').filter(w => !bw.has(mFold(w))).join(' ') : '';
+  const bareOK = bare && bare !== core && mToks(bare).filter(w => !M_STOP.has(w)).join('').length >= 6;
+  // "L'Homme" is also written "LHomme"; "1 Million" also "One Million"
+  const joined = /['’]/.test(String(p.name)) ? strip(qAscii(String(p.name).replace(/['’`´]/g, ''))) : '';
+  const swap = /\b1\b/.test(core) ? core.replace(/\b1\b/, 'One') : /\bone\b/i.test(core) ? core.replace(/\bone\b/i, '1') : '';
+  const v = [pre + core,
+    solo ? core : bareOK ? bare : own && b && mToks(b).some(w => !nt.includes(w)) ? `${b} ${core}` : syns[0] ? `${syns[0]} ${core}` : '',
+    syns[0] ? `${syns[0]} ${core}` : '', p.conc && !mConcs(mFold(core)).length ? `${pre}${core} ${p.conc}` : '', core !== n ? pre + n : '',
+    joined && joined !== core ? pre + joined : '', swap ? pre + swap : '', syns[1] ? `${syns[1]} ${core}` : ''];
+  return [...new Set(v.map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean))].slice(0, 6);
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 function mSizes(items, p){
@@ -2843,7 +3008,6 @@ function boynerGroup(d, p){
   const gs = d && d.groups || [];
   return gs.find(g => mMatch(p, g.label)) || (gs[0] && gs[0].extra === 0 ? gs[0] : null);
 }
-// Boyner titles carry the size ("125 ml", "75ML"), so one search is enough; size-filtered searches only when they don't
 async function boynerItems(q){
   let res = await nativeAsync('boynerSearch', q, '');
   if (!res || (res.error && !res.blocked)) { await sleep(1200); res = await nativeAsync('boynerSearch', q, ''); }
@@ -2852,53 +3016,77 @@ async function boynerItems(q){
     .map(it => ({t: it.t, u: 'https://www.boyner.com.tr/' + String(it.u).replace(/^\//, ''), p: parsePrice(it.p)}));
   return {items};
 }
-// hint: what this store answered last time ({q: the spelling that found it} or {miss: true})
-async function boynerShop(p, qs, hint){
-  let failed = false;
-  for (const q of qs.slice(0, hint && hint.miss ? 1 : 3)) {
-    const r = await boynerItems(q);
-    if (r.blocked) return {sizes: {}, blocked: true};
-    if (r.error) { failed = true; continue; }
-    let bc = mBuckets(r.items, p);
-    if (!hasAny(bc) && r.items.some(it => mMatchName(p, it.t) && !/\d{2,3}\s*ml/i.test(it.t))) {
-      // the perfume is there but its titles have no size: ask Boyner per size
+// apps before v17 run one request at a time
+const parallelNet = () => appVersion() >= 17;
+// Spellings kept for the "different try": looser than the usual ones, so they bring more results of which fewer are the perfume.
+function looseVariants(p, used){
+  const b = qAscii(shortBrand(p.brand)), core = qCore(qAscii(p.name)), w = mToks(core).filter(x => !M_STOP.has(x));
+  const line = p.brand ? lineKey(p.brand, p.name) : '', full = !mConcs(mFold(core)).length && CONC_FULL[p.conc] || '';
+  const v = [core, w.length > 2 ? `${b} ${w.slice(0, 2).join(' ')}` : '', line && line.length > 3 ? `${b} ${line}` : '', full ? `${core} ${full}` : '',
+    `${core} parfüm`, p.g === 'E' || p.g === 'K' ? `${b} ${core} ${p.g === 'E' ? 'erkek' : 'kadın'}` : `${b} ${core} parfüm`];
+  const have = new Set((used || []).map(mFold)), out = [];
+  for (const x of v) { const q = x.replace(/\s+/g, ' ').trim(), k = mFold(q); if (q && !have.has(k) && mToks(q).filter(t => !M_STOP.has(t)).join('').length >= 4) { have.add(k); out.push(q); } }
+  return out.slice(0, 4);
+}
+// A listing that is about this perfume but is not it for sure: most of the name is there, and the house or the whole name.
+function mNear(p, title){
+  const raw = String(title);
+  if (/\d\s*(ml|gr?)\s*\+|\+\s*\d/i.test(raw) || mFold(raw).split(' ').some(w => M_BAD.has(w))) return false;
+  const tt = new Set(mToks(raw.replace(/parf[üÜ]m/gi, ' '))), brandT = new Set(brandWords(p.brand));
+  let nameT = mToks(p.name).filter(w => !M_STOP.has(w) && (w.length > 1 || /\d/.test(w)));
+  const core = nameT.filter(w => !brandT.has(w)); if (core.length) nameT = core;
+  if (!nameT.length) return false;
+  const hit = nameT.filter(w => tt.has(w)).length;
+  return hit >= Math.max(1, Math.ceil(nameT.length * .6)) && ([...brandT].some(w => tt.has(w)) || (hit >= 2 && hit === nameT.length));
+}
+function nearList(items, p){
+  const seen = new Set(), out = [];
+  for (const it of items) {
+    if (!(it.p > 0) || mMatchName(p, it.t) || !mNear(p, it.t)) continue;
+    const k = mFold(it.t); if (seen.has(k)) continue;
+    seen.add(k); out.push({t: it.t, p: it.p, u: it.u});
+  }
+  return out.sort((a, b) => a.t.length - b.t.length).slice(0, 3);
+}
+// hint: what this store answered last time ({q: the spelling that found it} or {miss: true}); a store that did not sell
+// the perfume last week is asked once. o.deep: the different try, every spelling given goes out together.
+// One store lists the 50 ml under "Rabanne 1 Million" and the 100 ml under "Paco Rabanne One Million": what the
+// spellings of a wave find is merged before it is read.
+async function storeShop(rule, k, p, qs, hint, o){
+  const deep = !!(o && o.deep), seen = new Set(), items = [], per = new Map();
+  let blocked = false, bad = 0, n = 0;
+  const ask = async q => {
+    const r = k === 'boyner' ? await boynerItems(q) : await shopTry(rule, k, q); n++;
+    if (r.blocked) { blocked = true; return; }
+    if (r.error) { bad++; return; }
+    const mine = [];
+    for (const it of r.items || []) { const id = it.u || it.t; if (seen.has(id)) continue; seen.add(id); items.push(it); mine.push(it); }
+    per.set(q, mine);
+  };
+  const waves = deep ? [qs] : hint && hint.miss ? [qs.slice(0, 1)] : [qs.slice(0, 2), qs.slice(2)];
+  for (const w of waves) {
+    if (!w.length || blocked) continue;
+    if (parallelNet()) await Promise.all(w.map(ask)); else for (const q of w) { if (blocked) break; await ask(q); }
+    const bc = mBuckets(items, p, rule.market);
+    if (hasAny(bc)) return {byConc: bc, sizes: {}, q: qs.find(q => hasAny(mBuckets(per.get(q) || [], p, rule.market))) || qs[0]};
+  }
+  // Boyner titles carry the size ("125 ml", "75ML"); when they don't, Boyner is asked per size
+  if (k === 'boyner' && !blocked) {
+    const q = qs.find(x => (per.get(x) || []).some(it => mMatchName(p, it.t) && !/\d{2,3}\s*ml/i.test(it.t)));
+    if (q) {
       const extra = [];
       for (const ml of [50, 100, 200]) {
         const x = await nativeAsync('boynerSearch', q, ml + '-ml');
         if (x && x.products) extra.push(...x.products.filter(it => fold(it.c).includes('parfum'))
           .map(it => ({t: it.t, u: 'https://www.boyner.com.tr/' + String(it.u).replace(/^\//, ''), p: parsePrice(it.p), ml})));
       }
-      bc = mBuckets(extra, p);
+      const bc = mBuckets(extra, p);
+      if (hasAny(bc)) return {byConc: bc, sizes: {}, q};
     }
-    if (hasAny(bc)) return {byConc: bc, sizes: {}, q};
   }
-  return failed ? {sizes: {}, failed: true} : {sizes: {}, miss: true};
-}
-// apps before v17 run one request at a time
-const parallelNet = () => appVersion() >= 17;
-// One request per store when things go well: the first spelling. Only a miss costs more, and then the other spellings go out together.
-// A store that did not sell the perfume last time is asked once.
-async function storeShop(rule, k, p, qs, hint){
-  const ask = async q => {
-    const r = await shopTry(rule, k, q);
-    if (r.blocked) return {blocked: true};
-    if (r.error) return {error: true};
-    const bc = mBuckets(r.items, p, rule.market);
-    return hasAny(bc) ? {byConc: bc, sizes: {}, q} : {};
-  };
-  const first = await ask(qs[0]);
-  if (first.blocked) return {sizes: {}, blocked: true};
-  if (first.byConc) return first;
-  const rest = hint && hint.miss ? [] : qs.slice(1);
-  let failed = !!first.error;
-  const runs = parallelNet() ? rest.map(ask) : null;
-  for (let i = 0; i < rest.length; i++) {
-    const r = runs ? await runs[i] : await ask(rest[i]);
-    if (r.blocked) return {sizes: {}, blocked: true};
-    if (r.byConc) return r;
-    if (!r.error) failed = false;
-  }
-  return failed ? {sizes: {}, failed: true} : {sizes: {}, miss: true};
+  if (blocked && !items.length) return {sizes: {}, blocked: true};
+  const near = deep ? nearList(items, p) : [];
+  return n && bad === n ? {sizes: {}, failed: true} : near.length ? {sizes: {}, miss: true, near} : {sizes: {}, miss: true};
 }
 // A store that answers "too many requests" is left alone for a while (5, 10, 20… up to 60 minutes) instead of being asked again
 // with every perfume: asking keeps it closed for longer, and waiting for its refusal is what makes a search slow.
@@ -2918,6 +3106,8 @@ async function cachedMulti(p){
 }
 const mpFlight = new Map();
 // opt.fresh: skip the cache. The same perfume is never searched twice at the same time (detail, bell and piggy bank share one search).
+// opt.deep: the different try, for when the usual search found nothing twice: looser spellings, the stores that are switched off
+// in the settings as well, and more patience with a slow store.
 function fetchMulti(p, onProgress, opt){
   const key = mKey(p);
   if (mpFlight.has(key)) { const f = mpFlight.get(key); if (onProgress) f.listeners.push(onProgress); return f.promise; }
@@ -2926,11 +3116,15 @@ function fetchMulti(p, onProgress, opt){
     if (!(opt && opt.fresh)) { const c = await cachedMulti(p); if (c && Date.now() - c.t < 12 * 3600e3) return c; }
     if (!NATIVE) return null;
     const rules = await loadShops();
-    const ids = S.shop.order.filter(k => !S.shop.off.includes(k) && rules[k] && (k === 'boyner' || NATIVE.shopSearch));
+    const deep = !!(opt && opt.deep), can = k => rules[k] && (k === 'boyner' || NATIVE.shopSearch);
+    const on = S.shop.order.filter(k => !S.shop.off.includes(k) && can(k));
+    const extra = deep ? Object.keys(rules).filter(k => !on.includes(k) && can(k)) : [];
+    const ids = [...on, ...extra];
     const old = await cachedMulti(p);
     const force = !!(opt && opt.force), week = old && Date.now() - old.t < 7 * 864e5;
-    const base = queryVariants(p);
+    const base = queryVariants(p), loose = deep ? looseVariants(p, base) : [];
     const out = {t: Date.now(), shops: {}, order: ids};
+    if (deep) { out.deep = true; out.extra = extra; }
     let done = 0;
     const settle = () => {
       // a store that is closed or slow right now keeps the prices it gave last time
@@ -2943,16 +3137,18 @@ function fetchMulti(p, onProgress, opt){
       // "not sold here" is worth remembering too: the next look is instant and asks each store once instead of four times
       if (Object.values(out.shops).some(x => hasAny(x.byConc) || Object.keys(x.sizes).length || x.miss)) { mpMem.set(key, out); idbSet(key, out).catch(() => {}); }
     };
-    // every store at once; the page stops waiting for a slow store after 12 s, its answer is still added when it arrives
+    // every store at once; the page stops waiting for a slow store after 10 s (20 on the different try), its answer is still added when it arrives
     await Promise.all(ids.map(async k => {
-      const hint = !force && old && old.shops && old.shops[k] ? {q: old.shops[k].q, miss: !!(week && old.shops[k].miss)} : null;
-      // the spelling that found the perfume in this store last time goes first
-      const qs = hint && hint.q ? [hint.q, ...base.filter(q => q !== hint.q)] : base;
+      const hint = !force && !deep && old && old.shops && old.shops[k] ? {q: old.shops[k].q, miss: !!(week && old.shops[k].miss)} : null;
+      // the spelling that found the perfume in this store last time goes first; the different try sends what was not tried yet,
+      // and a store that was never asked gets the usual spellings as well
+      const qs = deep ? (extra.includes(k) ? [...base.slice(0, 3), ...loose.slice(0, 2)] : [base[0], ...loose])
+        : hint && hint.q ? [hint.q, ...base.filter(q => q !== hint.q)] : base;
       const closed = !force && blockUntil(k) > Date.now();
       const job = closed ? Promise.resolve({sizes: {}, blocked: true, wait: blockUntil(k)})
-        : (k === 'boyner' ? boynerShop(p, qs, hint) : storeShop(rules[k], k, p, qs, hint)).catch(() => ({sizes: {}, failed: true}));
+        : storeShop(rules[k], k, p, qs, hint, {deep}).catch(() => ({sizes: {}, failed: true}));
       const note = r => { if (!closed && r && !r.failed) noteBlock(k, !!r.blocked); if (r && r.blocked) r.wait = blockUntil(k); return r; };
-      const r = note(await withTimeout(job, 12000, null));
+      const r = note(await withTimeout(job, deep ? 20000 : 10000, null));
       out.shops[k] = r || {sizes: {}, slow: true};
       settle();
       done++;
@@ -3040,8 +3236,8 @@ async function openBest(p){
 const BELL_SVG = '<svg class="line" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg>'
   + '<svg class="fill" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a6 6 0 0 0-6 6v6l-2 3h16l-2-3V9a6 6 0 0 0-6-6zM10 20.5a2 2 0 0 0 4 0z"/></svg>';
 function bellHtml(p){
-  const a = p && alarmFor(p.name);
-  return `<button class="bell${a ? ' on' : ''}" data-act="bell" type="button" aria-pressed="${a ? 'true' : 'false'}" aria-label="Fiyat takibi">${BELL_SVG}<span>${a ? 'Fiyat takibi · ≤ ' + fmtPrice(a.target) : 'Fiyat takibi'}</span></button>`;
+  const a = p && alarmFor(p.name), t = a ? `Fiyat takibi açık · ≤ ${fmtPrice(a.target)}` : 'Fiyat takibi';
+  return `<button class="bell${a ? ' on' : ''}" data-act="bell" type="button" aria-pressed="${a ? 'true' : 'false'}" aria-label="${t}" title="${t}">${BELL_SVG}</button>`;
 }
 const PIG_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 11.5a6.5 5.5 0 0 1 12.2-2.6c.9-.9 2.3-1.2 2.3-1.2l-.4 2.6c.6.6 1 1.3 1.2 2.1H21v3h-1.4a6.6 6.6 0 0 1-2.1 2.4V20h-2.6v-1.2a8 8 0 0 1-3.8 0V20H8.5v-2a5.4 5.4 0 0 1-3.5-5"/><path d="M10 7.2h3.6"/><circle cx="15.6" cy="11.3" r=".8" fill="currentColor"/><path d="M5 12.2c-1.3 0-2-.8-2-1.8"/></svg>';
 const pigFor = name => (S.piggies || []).find(g => g.name === name);
@@ -3417,8 +3613,8 @@ function scanResHtml(r){
     ${r.url || r.links ? `<div class="row">${r.url ? `<a class="btn sm primary" href="${esc(r.url)}" data-act="extlink">Sayfayı aç</a>` : ''}${r.links ? '<a class="btn sm" href="https://www.checkfresh.com" data-act="extlink">CheckFresh</a><a class="btn sm" href="https://checkcosmetic.net" data-act="extlink">CheckCosmetic</a>' : ''}</div>` : ''}</div>`;
 }
 function authChip(p){
-  const st = p && S.auth && S.auth[p.name], n = st ? st.length : 0;
-  return `<button class="bell${n >= 7 ? ' on' : ''}" data-act="auth" type="button" aria-label="Orijinallik testi">${SHIELD_SVG}<span>${n ? `Orijinallik · ${n}/${AUTH_CHECKS.length}` : 'Orijinallik'}</span></button>`;
+  const st = p && S.auth && S.auth[p.name], n = st ? st.length : 0, t = n ? `Orijinallik testi · ${n}/${AUTH_CHECKS.length}` : 'Orijinallik testi';
+  return `<button class="bell${n >= 7 ? ' on' : ''}" data-act="auth" type="button" aria-label="${t}" title="${t}">${SHIELD_SVG}${n ? `<i>${n}</i>` : ''}</button>`;
 }
 function openAuth(p){
   if (!p) return;
@@ -3457,8 +3653,8 @@ function openAuth(p){
   draw(); f._draw = draw;
 }
 function piggyChip(p){
-  const g = p && pigFor(p.name);
-  return `<button class="bell${g ? ' on' : ''}" data-act="pig" type="button" aria-label="Kumbara">${PIG_SVG}<span>${g ? `Kumbara · %${pigPct(g)}` : 'Kumbara'}</span></button>`;
+  const g = p && pigFor(p.name), t = g ? `Kumbara · %${pigPct(g)}` : 'Kumbara';
+  return `<button class="bell${g ? ' on' : ''}" data-act="pig" type="button" aria-label="${t}" title="${t}">${PIG_SVG}${g ? `<i>%${pigPct(g)}</i>` : ''}</button>`;
 }
 function refreshBells(){
   document.querySelectorAll('.bell-row').forEach(b => { b.innerHTML = bellHtml(currentP) + piggyChip(currentP) + authChip(currentP); });
@@ -3600,7 +3796,7 @@ async function syncAlarms(){
   const rules = await loadShops();
   const use = S.shop.order.filter(k => rules[k] && !S.shop.off.includes(k)).map(k => ({...rules[k], id: k}));
   nativeCall('setPriceWatches', JSON.stringify(S.alarms.map(a => ({id: a.id, name: a.name, brand: brandWords(a.brand).join(' '), conc: a.conc || '', q: a.q,
-    qs: queryVariants(a), ml: a.ml, target: a.target, rules: use}))), S.alarmTime);
+    qs: queryVariants(a).slice(0, 4), ml: a.ml, target: a.target, rules: use}))), S.alarmTime);
 }
 function alarmResults(){ try { return JSON.parse(nativeCall('priceResults') || '{}'); } catch (e) { return {}; } }
 function openAlarmSheet(){
@@ -3646,6 +3842,41 @@ const KNOWN_DUPES = {
 };
 const DUPE_OF = {};
 for (const [o, ds] of Object.entries(KNOWN_DUPES)) for (const d of ds) (DUPE_OF[d] = DUPE_OF[d] || []).push(+o);
+// The list above is what the app knew before data/dupes.json; that file carries these pairs too and several hundred more,
+// worked out from the notes. "known" pairs were listed by hand; the others carry the measured likeness instead of a claim.
+const showDupes = () => S.dupes !== false;
+const isDupe = cid => DUPES.has(cid) || !!DUPE_OF[cid];
+function dupeOf(cid){
+  if (!CAT || !cid) return null;
+  const v = DUPES.get(cid);
+  if (v) return {c: CAT.byId.get(v[0]), pct: v[1], known: !!v[2]};
+  const o = (DUPE_OF[cid] || []).map(id => CAT.byId.get(id)).filter(Boolean)[0];
+  return o ? {c: o, pct: 0, known: true} : null;
+}
+function dupesOf(cid){
+  if (!CAT || !cid) return [];
+  const l = (DUPED.get(cid) || []).map(id => ({c: CAT.byId.get(id), pct: DUPES.get(id)[1], known: !!DUPES.get(id)[2]}));
+  for (const id of KNOWN_DUPES[cid] || []) if (CAT.byId.get(id) && !l.some(x => x.c.r[0] === id)) l.push({c: CAT.byId.get(id), pct: 0, known: true});
+  return l.sort((a, b) => (b.known - a.known) || (b.pct - a.pct) || (b.c.r[5] - a.c.r[5]));
+}
+const dupeText = d => d.known ? `${esc(shortBrand(d.c.r[2]))} ${esc(d.c.r[1])} muadili` : `Benzediği: ${esc(shortBrand(d.c.r[2]))} ${esc(d.c.r[1])} · %${d.pct}`;
+const dupeNote = cid => { const d = dupeOf(cid); return d ? `<span class="dupe-of" lang="en">${dupeText(d)}</span>` : ''; };
+// under a perfume's name: what it copies (tap opens the original) and, for an original, how many copies are known
+function dupeRow(p, plain){
+  if (!CAT || !p || !p.cid) return '';
+  const d = dupeOf(p.cid), n = plain ? 0 : dupesOf(p.cid).length;
+  return (d ? `<button class="dupe-of" data-act="cview" data-cid="${d.c.r[0]}" type="button">${dupeText(d)} ›</button>` : '')
+    + (n && S.sim.on ? `<button class="dupe-of" data-act="simgo" type="button">${n} muadili var ›</button>` : '');
+}
+const dupeToggle = id => `<label class="toggle-row" for="${id}"><span><b>Muadilleri göster</b><br><span class="muted small">Kapalıyken başka bir parfümün muadili olanlar aramada ve rastgele seçimde önerilmez.</span></span>
+    <span class="switch"><input type="checkbox" class="dupe-sw" id="${id}"${showDupes() ? ' checked' : ''}><span></span></span></label>`;
+// longevity and projection are scored 1-5 in the catalogue; almost everything sits at 2, 3 or 4, so three steps are offered
+const LVL = {lon: ['Kalıcılık', [['', 'Fark etmez'], ['1', 'Hafif'], ['2', 'Orta'], ['3', 'Uzun']]], sil: ['Yayılım', [['', 'Fark etmez'], ['1', 'Yakın'], ['2', 'Orta'], ['3', 'Güçlü']]]};
+const lvlOf = v => v <= 2 ? '1' : v === 3 ? '2' : '3';
+const lvlName = (k, v) => (LVL[k][1].find(x => x[0] === v) || [])[1] || '';
+const lvlRow = (act, k, cur) => `<div class="field" style="gap:6px"><span class="label">${LVL[k][0]}</span>
+    <div class="seg">${LVL[k][1].map(([v, l]) => `<button class="${cur === v ? 'on' : ''}" data-act="${act}" data-k="${k}" data-v="${v}" type="button">${l}</button>`).join('')}</div></div>`;
+const LVL_HINT = '<span class="muted small" style="margin-top:-6px">5 üzerinden: hafif / yakın 1–2, orta 3, uzun / güçlü 4–5.</span>';
 // rare notes say more than common ones (oud vs bergamot), and heart/base notes shape a scent more than the opening
 const TIER_W = [.7, 1, 1.15];
 let NOTE_DF = null;
@@ -3683,6 +3914,7 @@ function similarTo(p, cheapOnly){
   if (!pn.norm && !pf.norm) return [];
   const brandK = normBrand(p.brand), line = p.brand ? lineKey(p.brand, p.name) : '';
   const out = [], av = avoidKeys();
+  const listed = new Set(dupesOf(p.cid).map(x => x.c.r[0])), src = dupeOf(p.cid); if (src) listed.add(src.c.r[0]);
   for (const c of CAT) {
     if (av.length && avoidedRow(c, av)) continue;
     const r = c.r;
@@ -3702,7 +3934,7 @@ function similarTo(p, cheapOnly){
     const y = r[3] || 0;
     score *= y >= 2020 ? (cheapOnly ? 1.12 : 1.06) : y >= 2015 ? (cheapOnly ? 1.06 : 1.03) : y && y < 2005 ? .93 : 1;
     if (cheapOnly && y && y < 2010 && r[5] < 2000) continue;
-    if (KNOWN_DUPES[p.cid] && KNOWN_DUPES[p.cid].includes(r[0])) continue;
+    if (listed.has(r[0])) continue;
     if (score > .34) out.push([c, score]);
   }
   out.sort((a, b) => b[1] - a[1] || b[0].r[5] - a[0].r[5]);
@@ -3716,15 +3948,15 @@ function sharedNotes(p, c){
 function simPane(p){
   if (!CAT) { loadCatalog().then(() => { const el = document.querySelector('.dpane[data-pane="sim"]'); if (el) el.innerHTML = simPane(p); }); return '<span class="muted small">Katalog yükleniyor…</span>'; }
   const list = similarTo(p, S.sim.cheap);
-  const known = (KNOWN_DUPES[p.cid] || []).map(id => CAT.byId.get(id)).filter(Boolean);
-  const origin = (DUPE_OF[p.cid] || []).map(id => CAT.byId.get(id)).filter(Boolean);
-  const kRow = (c, tag) => `<div class="item">
+  const known = dupesOf(p.cid), origin = dupeOf(p.cid);
+  const kRow = (x, tag) => { const c = x.c; return `<div class="item">
       <div class="art tap" data-act="cview" data-cid="${c.r[0]}">${art({name: c.r[1], img: fimg(c.r[0])})}</div>
       <div class="item-body tap" data-act="cview" data-cid="${c.r[0]}"><span class="item-name">${esc(c.r[1])} ${catConc(c.r)}</span>
         <span class="item-meta"><span lang="en">${esc(c.r[2])}</span> ${segTag(c.r[15])}${c.r[3] ? ' · ' + c.r[3] : ''}${c.r[13] ? ' · ★ ' + c.r[13].toFixed(1) : ''}</span></div>
-      <span class="dupe-tag">${tag}</span></div>`;
-  const knownHtml = (origin.length ? `<span class="label">Bunun ilham aldığı parfüm</span><div class="list">${origin.map(c => kRow(c, 'Orijinal')).join('')}</div>` : '')
-    + (known.length ? `<span class="label">Bilinen muadiller</span><div class="list">${known.map(c => kRow(c, 'Muadil')).join('')}</div>` : '');
+      <span class="dupe-tag">${tag}</span></div>`; };
+  const knownHtml = (origin ? `<span class="label">Bunun muadili olduğu parfüm</span><div class="list">${kRow(origin, origin.known ? 'Orijinal' : 'Orijinal · %' + origin.pct)}</div>` : '')
+    + (known.length ? `<span class="label">Muadilleri · ${known.length}</span><div class="list">${known.slice(0, 8).map(x => kRow(x, x.known ? 'Bilinen' : '%' + x.pct)).join('')}</div>` : '')
+    + (origin || known.length ? '<span class="muted small">“Bilinen / Orijinal” herkesin bildiği eşleşmelerdir. Yüzdeli olanlar notaların örtüşmesinden hesaplanır; kesin değildir.</span>' : '');
   return `${knownHtml}<div class="chips"><button class="chip${S.sim.cheap ? '' : ' on'}" data-act="simcheap" data-v="0" type="button">Benzerler</button><button class="chip${S.sim.cheap ? ' on' : ''}" data-act="simcheap" data-v="1" type="button">Uygun muadiller</button></div>
     ${list.length ? `<div class="list">${list.map(([c, sc]) => `<div class="item">
       <div class="art tap" data-act="cview" data-cid="${c.r[0]}">${art({name: c.r[1], img: fimg(c.r[0])})}</div>
@@ -4087,33 +4319,44 @@ function headHtml(p, sub){
       </div>
     </div>`;
 }
+// A store is shown by its own mark (the icon its site serves), with its initials underneath for when that does not load.
+const STORE_ICO = {boyner: 'www.boyner.com.tr', beymen: 'www.beymen.com', sephora: 'www.sephora.com.tr', gratis: 'www.gratis.com', n11: 'www.n11.com',
+  pazarama: 'www.pazarama.com', trendyol: 'www.trendyol.com', hepsiburada: 'www.hepsiburada.com', amazon: 'www.amazon.com.tr'};
+function slogo(k, sm){
+  const n = (STORES[k] || {n: k}).n, h = STORE_ICO[k];
+  return `<span class="slogo${sm ? ' sm' : ''}" role="img" aria-label="${esc(n)}" title="${esc(n)}"><b>${esc(n.replace(/[^A-Za-z0-9]/g, '').slice(0, 2))}</b>${h ? `<img src="https://${h}/favicon.ico" alt="" loading="lazy" decoding="async" onerror="this.remove()">` : ''}</span>`;
+}
+const storeBtns = (p, keys) => { const q = storeQuery(p); return `<div class="sbtns">${keys.filter(k => STORES[k]).map(k => `<a class="sbtn" href="${esc(STORES[k].url(q))}" target="_blank" rel="noopener" data-act="extlink" aria-label="${esc(STORES[k].loc)} ara">${slogo(k)}</a>`).join('')}</div>`; };
 function storeLinks(p){
-  const q = storeQuery(p);
   return `<button class="btn block" data-act="openbest" type="button">${S.shop.exact && NATIVE ? 'Mağazada tam ürünü aç' : 'Mağazada aç'}</button>
-    <div class="field"><span class="label">Mağazalarda ara</span><div class="chips">${Object.entries(STORES).map(([k, s]) =>
-    `<a class="chip" href="${esc(s.url(q))}" target="_blank" rel="noopener" data-act="extlink">${s.n}</a>`).join('')}</div></div>`;
+    <div class="field"><span class="label">Mağazalarda ara</span>${storeBtns(p, Object.keys(STORES))}</div>`;
 }
 function pricesBox(p){
   return `<div class="prices" id="prices"><div class="row spread"><span class="label">Mağaza fiyatları</span><span class="muted small" id="price-meta"></span></div>
     <div id="price-body">${NATIVE ? '<span class="muted small">Fiyatlar alınıyor…</span>' : `<span class="muted small">Canlı fiyatlar Android uygulamasında görünür.</span> <a href="${esc(STORES.boyner.url(storeQuery(p)))}" target="_blank" rel="noopener">Boyner'de ara</a>`}</div></div>`;
 }
 let priceState = null;
-async function loadPricesInto(p, force){
+const priceTries = new Map();   // searches in a row that found nothing for a perfume; after two the retry button changes its way
+async function loadPricesInto(p, force, deep){
   if (!NATIVE) return;
   const token = {}; priceState = {token, p, gi: 0, ml: null, data: null};
-  const meta = () => document.getElementById('price-meta');
+  const key = mKey(p), meta = () => document.getElementById('price-meta');
   const live = () => priceState && priceState.token === token;
   // last known prices appear instantly; fresh ones replace them as stores answer
   const old = force ? null : await cachedMulti(p);
   if (!live()) return;
-  if (old && allSizes(old).length) { priceState.data = old; drawPrices(); if (Date.now() - old.t < 2 * 3600e3) return; }
+  if (old && allSizes(old).length) { priceTries.delete(key); priceState.data = old; drawPrices(); if (Date.now() - old.t < 2 * 3600e3) return; }
   // nobody sold it a moment ago: believed for a day, or for half an hour when a store could not be reached
-  else if (old && Date.now() - old.t < (Object.values(old.shops).some(v => v.blocked || v.failed || v.slow) ? 30 * 60e3 : 24 * 3600e3)) { priceState.data = old; drawPrices(); return; }
+  else if (old && Date.now() - old.t < (Object.values(old.shops).some(v => v.blocked || v.failed || v.slow) ? 30 * 60e3 : 24 * 3600e3)) {
+    if (!priceTries.get(key)) priceTries.set(key, 1);
+    priceState.data = old; drawPrices(); return;
+  }
   const data = await fetchMulti(p, (shop, i, n, part, late) => {
     if (!live()) return;
     if (part && allSizes(part).length && (late || i + 1 < n)) { priceState.data = part; drawPrices(); }
     if (meta() && !late) meta().textContent = i + 1 < n ? `${i + 1}/${n} mağaza tamam…${parallelNet() ? '' : ' · hızlı arama için uygulamayı güncelle'}` : '';
-  }, {fresh: !!old || !!force, force: !!force});
+  }, {fresh: !!old || !!force, force: !!force, deep: !!deep});
+  if (data && allSizes(data).length) priceTries.delete(key); else priceTries.set(key, (priceTries.get(key) || 0) + 1);
   if (!live()) return;
   if (data && (allSizes(data).length || !old)) priceState.data = data;
   drawPrices();
@@ -4122,45 +4365,51 @@ function drawPrices(){
   const body = document.getElementById('price-body'); if (!body || !priceState) return;
   const {data, p} = priceState;
   const meta = document.getElementById('price-meta');
-  const searchChips = `<div class="chips">${S.shop.order.filter(k => STORES[k] && !S.shop.off.includes(k)).map(k => `<a class="chip" href="${esc(STORES[k].url(storeQuery(p)))}" data-act="extlink">${STORES[k].n}</a>`).join('')}</div>`;
   const sizes = data ? allSizes(data) : [];
+  const logos = keys => `<span class="plogos">${keys.map(k => slogo(k, true)).join('')}</span>`;
   if (!sizes.length) {
     if (meta) meta.textContent = '';
-    const blocked = data && Object.entries(data.shops).filter(([, v]) => v.blocked).map(([k]) => (STORES[k] || {n: k}).n);
-    body.innerHTML = `<span class="muted small">${data ? 'Seçili mağazalarda bu parfüm bulunamadı.' : 'Fiyatlara ulaşılamadı.'}${blocked && blocked.length ? ' ' + blocked.join(', ') + ' şu an yanıt vermiyor; “Tekrar dene” onları da yeniden sorar.' : ''}</span>
-      <div class="row"><button class="btn sm" data-act="pricerefresh" type="button">Tekrar dene</button></div>${searchChips}${priceToggle(p, null)}`;
+    const blocked = data ? Object.entries(data.shops).filter(([, v]) => v.blocked).map(([k]) => k) : [];
+    // the same listing title from several stores is shown once, at its cheapest
+    const nearSeen = new Set(), near = (data && data.deep ? Object.entries(data.shops).flatMap(([k, v]) => (v.near || []).map(x => ({...x, k}))) : [])
+      .sort((a, b) => a.p - b.p).filter(x => { const t = mFold(x.t); return nearSeen.has(t) ? false : (nearSeen.add(t), true); }).slice(0, 6);
+    const deepNext = S.shop.deep !== false && (priceTries.get(mKey(p)) || 0) >= 2;
+    body.innerHTML = `<span class="muted small">${!data ? 'Fiyatlara ulaşılamadı.' : data.deep ? 'Farklı yoldan da arandı; birebir eşleşen ürün yok.' : 'Seçili mağazalarda bu parfüm bulunamadı.'}${blocked.length ? ' Şu an yanıt vermiyor: ' + logos(blocked) : ''}</span>
+      ${near.length ? `<span class="label">Yakın sonuçlar · aynı ürün olmayabilir</span>
+        <div class="list">${near.map(x => `<a class="prow near" href="${esc(x.u)}" data-act="extlink">${slogo(x.k)}<span class="ptitle">${esc(x.t)}</span><span class="price">${fmtPrice(x.p)}</span>${ICONS.chev}</a>`).join('')}</div>` : ''}
+      <div class="row" style="flex-wrap:nowrap;align-items:center"><button class="btn sm" data-act="pricerefresh" type="button" style="flex:none">${deepNext ? 'Farklı yoldan dene' : 'Tekrar dene'}</button>
+        ${deepNext ? '<span class="muted small">Başka yazılışlarla, kapalı tuttuğun mağazalara da bakarak ve daha uzun bekleyerek arar.</span>' : ''}</div>
+      ${storeBtns(p, S.shop.order.filter(k => !S.shop.off.includes(k)))}${priceToggle(p, null)}`;
     return;
   }
   if (meta) { const m = Math.round((Date.now() - data.t) / 60000); meta.textContent = m < 2 ? 'şimdi güncellendi' : m < 60 ? m + ' dk önce' : Math.round(m / 60) + ' saat önce'; }
   const cc = concCounts(data), cl = Object.keys(cc).sort((a, b) => CONC_RANK.indexOf(a) - CONC_RANK.indexOf(b)), sel = data.conc;
   const concLbl = c => c === '?' ? 'Türü yazmıyor' : (CONC_FULL[c] || c);
   const concBar = `<div class="field" style="gap:6px"><span class="label">Mağazada satılan tür</span>
-      <div class="chips">${cl.map(c => `<button class="chip${c === sel ? ' on' : ''}" data-act="priceconc" data-v="${esc(c)}" type="button">${esc(c === '?' ? 'Türü yazmıyor' : c)} <small style="opacity:.7">· ${cc[c]} mağaza</small></button>`).join('')}</div>
+      <div class="chips">${cl.map(c => `<button class="chip${c === sel ? ' on' : ''}" data-act="priceconc" data-v="${esc(c)}" type="button">${esc(c === '?' ? 'Türü yazmıyor' : c)} <small style="opacity:.7">· ${cc[c]}</small></button>`).join('')}</div>
       ${sel === '?' ? '<span class="muted small">Bu ilanlar türü (EDP/EDT…) belirtmiyor; mağazada açıp kontrol et.</span>'
-        : p.conc && sel !== p.conc ? `<span class="muted small">Dikkat: bunlar <b>${esc(concLbl(sel))}</b>; katalogdaki tür ${esc(concLbl(p.conc))}.${cc[p.conc] ? '' : ' Mağazalarda ' + esc(p.conc) + ' bulunamadı.'}</span>`
-        : `<span class="muted small">Sadece <b>${esc(concLbl(sel))}</b> olarak satılan ürünler gösteriliyor.</span>`}</div>`;
+        : p.conc && sel !== p.conc ? `<span class="muted small">Dikkat: bunlar <b>${esc(concLbl(sel))}</b>; katalogdaki tür ${esc(concLbl(p.conc))}.${cc[p.conc] ? '' : ' Mağazalarda ' + esc(p.conc) + ' bulunamadı.'}</span>` : ''}</div>`;
   const sl = document.getElementById('sold-line');
   if (sl) sl.innerHTML = cl.filter(c => c !== '?').length ? 'Satışta: ' + cl.filter(c => c !== '?').map(c => `<span class="conc">${esc(c)}</span>`).join(' ') : '';
   // the size stays where the user put it; until then it follows the stores as they answer (the first one may only have 200 ml)
   const ml = priceState.userMl && sizes.includes(priceState.userMl) ? priceState.userMl : pickMl(sizes, 100);
   priceState.ml = ml;
   const rows = Object.entries(data.shops).filter(([, v]) => v.sizes[ml]).map(([k, v]) => ({k, stale: v.stale, ...v.sizes[ml]})).sort((a, b) => (!!a.sus - !!b.sus) || a.p - b.p);
-  const closed = data.order.filter(k => data.shops[k] && (data.shops[k].blocked || data.shops[k].stale)).map(k => { const v = data.shops[k], m = Math.max(1, Math.ceil(((v.wait || 0) - Date.now()) / 60e3));
-    return (STORES[k] || {n: k}).n + (v.wait > Date.now() ? ` (${m} dk sonra yeniden denenir)` : ''); });
-  const missing = data.order.filter(k => !(data.shops[k] && data.shops[k].sizes[ml])).map(k => (STORES[k] || {n: k}).n);
-  const rules = SHOP_RULES || {};
+  const closed = data.order.filter(k => data.shops[k] && (data.shops[k].blocked || data.shops[k].stale));
+  const wait = Math.max(0, ...closed.map(k => Math.ceil(((data.shops[k].wait || 0) - Date.now()) / 60e3)));
+  const missing = data.order.filter(k => !(data.shops[k] && data.shops[k].sizes[ml]));
+  const rules = SHOP_RULES || {}, extra = data.extra || [];
+  const tags = (r, i) => [i === 0 && rows.length > 1 && !r.sus ? '<span class="seg-tag N">En ucuz</span>' : '', rules[r.k] && rules[r.k].market ? '<span class="pill">pazar yeri</span>' : '',
+    r.sus ? '<span class="pill" style="color:var(--danger)">şüpheli ucuz</span>' : '', r.stale ? '<span class="pill">son bilinen</span>' : '', extra.includes(r.k) ? '<span class="pill">kapalı mağaza</span>' : ''].join('');
   body.innerHTML = `${concBar}
-    <div class="row spread" style="align-items:flex-end"><div><span class="muted small">${sel && sel !== '?' ? esc(sel) + ' · ' : ''}${ml} ml · en ucuz ${esc((STORES[rows[0].k] || {n: rows[0].k}).n)}</span><div class="bigprice">${fmtPrice(rows[0].p)}</div></div>
+    <div class="row spread" style="align-items:flex-end;flex-wrap:nowrap"><div><span class="muted small pbest">${sel && sel !== '?' ? esc(sel) + ' · ' : ''}${ml} ml · en ucuz ${slogo(rows[0].k, true)}</span><div class="bigprice">${fmtPrice(rows[0].p)}</div></div>
       <a class="btn sm primary" href="${esc(rows[0].u)}" data-act="extlink">Aç</a></div>
     <div class="sizes">${sizes.map(sz => { const b = bestAt(data, sz); return `<button class="${sz === ml ? 'on' : ''}" data-act="pricesize" data-ml="${sz}" type="button"><b>${sz} ml</b><small>${fmtPrice(b.p)}</small></button>`; }).join('')}</div>
-    <div class="list">${rows.map((r, i) => `<div class="item" style="grid-template-columns:minmax(0,1fr) auto auto">
-      <div class="item-body"><span class="item-name" style="font-size:15px">${esc((STORES[r.k] || {n: r.k}).n)} ${sel && sel !== '?' ? concTag(sel, '') : ''}${i === 0 && rows.length > 1 && !r.sus ? ' <span class="seg-tag N">En ucuz</span>' : ''}${rules[r.k] && rules[r.k].market ? ' <span class="pill">pazar yeri</span>' : ''}${r.sus ? ' <span class="pill" style="color:var(--danger)">şüpheli ucuz</span>' : ''}${r.stale ? ' <span class="pill">son bilinen</span>' : ''}</span>
-        <span class="item-meta">${esc(r.t || '')}</span></div>
-      <span class="price">${fmtPrice(r.p)}</span>
-      <a class="btn sm" href="${esc(r.u)}" data-act="extlink">Aç</a></div>`).join('')}</div>
-    ${missing.length ? `<span class="muted small">${ml} ml bulunamadı: ${esc(missing.join(', '))}</span>` : ''}
-    ${closed.length ? `<span class="muted small">Şu an yanıt vermiyor: ${esc(closed.join(', '))}. Varsa son bilinen fiyatı gösteriliyor.</span>` : ''}
+    <div class="list">${rows.map((r, i) => `<a class="prow" href="${esc(r.u)}" data-act="extlink" title="${esc(r.t || '')}">${slogo(r.k)}<span class="ptags">${tags(r, i)}</span><span class="price">${fmtPrice(r.p)}</span>${ICONS.chev}</a>`).join('')}</div>
+    ${missing.length ? `<span class="muted small">${ml} ml yok: ${logos(missing)}</span>` : ''}
+    ${closed.length ? `<span class="muted small">Şu an yanıt vermiyor: ${logos(closed)} · varsa son bilinen fiyatı gösteriliyor${wait > 0 ? `, ${wait} dk sonra yeniden denenir` : ''}.</span>` : ''}
     ${rows.some(r => r.sus) ? '<span class="muted small">“Şüpheli ucuz”: pazar yerindeki fiyat, mağazaların fiyatının yarısına yakın. En ucuz sayılmaz; almadan önce satıcıya bak.</span>' : ''}
+    ${data.deep ? '<span class="muted small">Farklı yoldan arandı: başka yazılışlar ve kapalı tuttuğun mağazalar da soruldu.</span>' : ''}
     ${priceToggle(p, ml)}`;
 }
 function priceToggle(p, ml){
@@ -4180,23 +4429,90 @@ function wearInfo(p){
 }
 // one action of the perfume page: the full label in the classic row, a short one under an icon in the premium toolbar
 const dBtn = (cls, icon, lg, st, attrs) => `<button class="btn sm${cls ? ' ' + cls : ''}" ${attrs} type="button">${icon}<span class="lg">${lg}</span><span class="st">${st}</span></button>`;
-// the notes as a small pyramid; a brand that publishes one plain list gets one block, not a pyramid with two empty steps
+// The notes as one pyramid: a single shape with straight sides, cut into bands (top, heart, base). A row of notes is as
+// wide as the pyramid is at that height, so the notes themselves stack up: one at the tip, more towards the base.
+// A brand that publishes one plain list gets a single band.
 function notesBlock(p){
   const tiers = TIERS.filter(([k]) => p[k].length);
   if (!tiers.length) return '';
-  const chip = (n, k) => { const h = noteHue(n); return `<button class="note-chip"${h == null ? '' : ` style="--nh:${h};--ns:72%"`} data-act="note" data-n="${esc(n)}" data-tier="${k}" type="button">${esc(n)}</button>`; };
+  const av = avoidKeys();
+  const chip = (n, k) => { const h = noteHue(n); return `<button class="note-chip${av.length && noteOff(n, av) ? ' off' : ''}"${h == null ? '' : ` style="--nh:${h};--ns:72%"`} data-act="note" data-n="${esc(n)}" data-tier="${k}" type="button">${esc(n)}</button>`; };
+  requestAnimationFrame(pyrArm);
   return `<div class="np">${tiers.length === 1
-    ? `<div class="np-t t3"><div class="np-h"><b>Notalar</b></div><div class="chips">${p[tiers[0][0]].map(n => chip(n, '')).join('')}</div></div>`
-    : tiers.map(([k, label, when]) => `<div class="np-t t${k === 'top' ? 1 : k === 'heart' ? 2 : 3}"><div class="np-h"><b>${label}</b><span>${when}</span></div><div class="chips">${p[k].map(n => chip(n, k)).join('')}</div></div>`).join('')}</div>
-    <span class="muted small" style="text-align:center">Bir notaya dokun, ne koktuğunu anlatsın.</span>`;
+    ? `<div class="np-t t2"><div class="np-h"><b>Notalar</b></div><div class="np-c">${p[tiers[0][0]].map(n => chip(n, '')).join('')}</div></div>`
+    : tiers.map(([k, label, when]) => `<div class="np-t t${k === 'top' ? 1 : k === 'heart' ? 2 : 3}"><div class="np-h"><b>${label}</b><span>${when}</span></div><div class="np-c">${p[k].map(n => chip(n, k)).join('')}</div></div>`).join('')}</div>
+    <span class="muted small" style="text-align:center">Dokun: ne koktuğunu anlatır · Basılı tut: içerenleri önerme</span>`;
 }
+// the sizes below are the ones the style sheet gives a band's title, a row of notes and the gaps (.np.pyr …)
+const PYR = {top: .36, head: 38, row: 28, gap: 6, foot: 13, band: 3, inset: 10};
+function pyrFlat(np){
+  np.classList.remove('pyr');
+  np.querySelectorAll('.np-c').forEach(box => { const cs = [...box.querySelectorAll('.note-chip')]; box.textContent = ''; cs.forEach(c => { c.style.maxWidth = ''; box.appendChild(c); }); });
+}
+function pyrLay(np){
+  const W = np.clientWidth; if (!W) return;
+  np._w = W;
+  const tiers = [...np.querySelectorAll('.np-t')], chips = tiers.map(t => [...t.querySelectorAll('.note-chip')]);
+  // how wide every note wants to be, measured once while they still lie loose
+  if (!np.classList.contains('pyr')) chips.forEach(l => l.forEach(c => { c._nw = Math.ceil(c.getBoundingClientRect().width) + 1; }));
+  // a single band has no tip to come to: it starts wider
+  const a = tiers.length > 1 ? PYR.top : .56, step = PYR.row + PYR.gap, tierH = n => PYR.head + n * PYR.row + Math.max(0, n - 1) * PYR.gap + PYR.foot;
+  const total = rs => rs.reduce((h, r) => h + tierH(r.length), 0) + (rs.length - 1) * PYR.band;
+  const room = (y, H) => W * (a + (1 - a) * y / H) - 2 * PYR.inset;
+  // the same rows, filled from the bottom: a band never has a lone note under a full row
+  const settle = (l, rows, y0, H) => {
+    const R = rows.length, out = []; let end = l.length;
+    if (R < 2) return rows;
+    for (let j = R - 1; j >= 1; j--) {
+      const cap = room(y0 + j * step, H); let start = end, cw = 0;
+      while (start > j) { const need = cw ? cw + PYR.gap + l[start - 1]._nw : l[start - 1]._nw; if (cw && need > cap) break; cw = need; start--; }
+      out.unshift(l.slice(start, end)); end = start;
+    }
+    const first = l.slice(0, end);
+    if (!first.length || (first.length > 1 && first.reduce((w, c) => w + c._nw, 0) + (first.length - 1) * PYR.gap > room(y0, H))) return rows;
+    out.unshift(first); return out;
+  };
+  const pack = H => { let y = 0; return chips.map(l => {
+    const rows = []; let cur = [], cw = 0;
+    for (const c of l) {
+      const need = cur.length ? cw + PYR.gap + c._nw : c._nw;
+      if (cur.length && need > room(y + PYR.head + rows.length * step, H)) { rows.push(cur); cur = [c]; cw = c._nw; } else { cur.push(c); cw = need; }
+    }
+    if (cur.length) rows.push(cur);
+    const fit = settle(l, rows, y + PYR.head, H);
+    y += tierH(fit.length) + PYR.band; return fit; }); };
+  // the height decides how wide a row may be and the rows decide the height: the assumed height grows until the rows fit it.
+  // Rows packed for a taller pyramid than the real one only ever have room to spare.
+  let H = total(chips.map(() => [0])), rows = pack(H);
+  for (let i = 0; i < 16 && total(rows) > H; i++) { H = total(rows); rows = pack(H); }
+  H = total(rows);
+  let y = 0;
+  tiers.forEach((t, i) => {
+    const box = t.querySelector('.np-c'); box.textContent = '';
+    rows[i].forEach((r, j) => {
+      const d = document.createElement('div'); d.className = 'np-r';
+      const max = Math.floor(room(y + PYR.head + j * step, H));
+      r.forEach(c => { c.style.maxWidth = r.length === 1 && c._nw > max ? max + 'px' : ''; d.appendChild(c); });
+      box.appendChild(d);
+    });
+    y += tierH(rows[i].length) + PYR.band;
+  });
+  np.style.setProperty('--np-x', (50 * (1 - a)) + '%');
+  np.classList.add('pyr');
+}
+const pyrSafe = np => { try { pyrLay(np); } catch (e) { logErr('pyr', e); } };
+// laid out on the next frame: changing the block inside the observer's own call makes the browser report a "loop"
+const pyrRO = 'ResizeObserver' in window ? new ResizeObserver(es => requestAnimationFrame(() => { for (const e of es) { const np = e.target; if (np.isConnected && np.clientWidth && np.clientWidth !== np._w) pyrSafe(np); } })) : null;
+function pyrArm(){ document.querySelectorAll('.np:not([data-pyr])').forEach(np => { np.dataset.pyr = '1'; if (pyrRO) pyrRO.observe(np); pyrSafe(np); }); }
+// a theme's own typeface arrives after the first drawing and its letters are wider or narrower: measure again
+try { document.fonts.addEventListener('loadingdone', () => document.querySelectorAll('.np.pyr').forEach(np => { if (np.clientWidth) { pyrFlat(np); pyrSafe(np); } })); } catch (e) {}
 function detailHtml(p, o){
   currentP = p;
   if (dTab === 'sim' && !S.sim.on) dTab = 'notes';
   const notes = p.top.length || p.heart.length || p.base.length;
   const stats = [p.rating ? '★ ' + p.rating.toFixed(1) : '', p.lon ? 'Kalıcılık ' + miniDots(p.lon) : '', p.sil ? 'Yayılım ' + miniDots(p.sil) : ''].filter(Boolean).map(x => `<span class="mini">${x}</span>`).join('');
   return `
-    <div class="row spread"><span class="eyebrow">${o.eyebrow}</span>${closeIcon}</div>
+    <div class="row spread" style="flex-wrap:nowrap"><span class="eyebrow">${o.eyebrow}</span><span class="dtools"><span class="bell-row">${bellHtml(p)}${piggyChip(p)}${authChip(p)}</span>${closeIcon}</span></div>
     <div class="dhead">
       <div class="art">${art(p)}</div>
       <div class="hero-body">
@@ -4204,7 +4520,7 @@ function detailHtml(p, o){
         <span class="hero-name">${esc(p.name)}</span>
         ${stats ? `<div class="dstats">${stats}</div>` : ''}
         <span class="muted small" id="sold-line">${soldLine(p)}</span>
-        <div class="bell-row">${bellHtml(p)}${piggyChip(p)}${authChip(p)}</div>
+        <span class="dupe-row" id="dupe-row">${dupeRow(p)}</span>
         ${p.fam.length ? `<div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>` : ''}
       </div>
     </div>
@@ -4295,12 +4611,15 @@ function addFromCatalog(cid){
 
 /* random buy: segment + mood; gender and store come from settings; the result gets its own one-screen view */
 const MOODS = [...TAX[0][1], 'Seksi', 'İltifat Toplayan', 'Temiz', 'Kör Alım Güvenli', 'Yaz', 'Kış', 'Gece'];
-let rb = {cat: '', seg: '', good: true, rolling: false, cid: null};
+let rb = {cat: '', seg: '', good: true, rolling: false, cid: null, lon: '', sil: ''};
 function rbPool(){
-  const owned = new Set(S.inv.map(i => (byId(i.pid) || {}).cid).filter(Boolean)), av = avoidKeys();
+  const owned = new Set(S.inv.map(i => (byId(i.pid) || {}).cid).filter(Boolean)), av = avoidKeys(), noDupes = !showDupes();
   return CAT.filter(c => c.r[5] >= 1000 && !owned.has(c.r[0]) && !(av.length && avoidedRow(c, av))
     && (!rb.good || c.r[13] >= 3.9)
     && (!rb.seg || c.r[15] === rb.seg)
+    && (!rb.lon || lvlOf(c.r[6]) === rb.lon)
+    && (!rb.sil || lvlOf(c.r[7]) === rb.sil)
+    && !(noDupes && isDupe(c.r[0]))
     && (!S.gender || c.r[4] === S.gender || c.r[4] === 'U')
     && (!rb.cat || inCat(c.r[12], rb.cat))
     && (S.global || S.store !== 'boyner' || c.boy));
@@ -4314,7 +4633,9 @@ function openRandomBuy(){
       <div class="chips"><button class="chip${rb.seg ? '' : ' on'}" data-act="rbseg" data-v="" type="button">Fark etmez</button>${Object.entries(SEG).map(([k, v]) => `<button class="chip${rb.seg === k ? ' on' : ''}" data-act="rbseg" data-v="${k}" type="button">${v}</button>`).join('')}</div></div>
     <div class="field"><span class="label">Ne için?</span>
       <div class="chips" id="rb-moods">${MOODS.map(c => `<button class="chip${rb.cat === c ? ' on' : ''}" data-act="rbcat" data-cat="${esc(c)}" type="button">${esc(c)}</button>`).join('')}</div></div>
+    ${lvlRow('rblvl', 'lon', rb.lon)}${lvlRow('rblvl', 'sil', rb.sil)}${LVL_HINT}
     ${avoidBox()}
+    ${dupeToggle('rb-dupes')}
     <label class="toggle-row" for="rb-global"><span><b>Global katalog</b><br><span class="muted small">${S.global ? 'Dünyadaki tüm parfümler' : 'Türkiye’de bulunan markalar (Boyner)'}</span></span>
       <span class="switch"><input type="checkbox" id="rb-global"${S.global ? ' checked' : ''}><span></span></span></label>
     <label class="toggle-row" for="rb-good"><span><b>Sadece beğenilenler</b><br><span class="muted small">★ 3,9 ve üstü, en az 1000 oy</span></span>
@@ -4365,6 +4686,7 @@ async function rbPick(){
         <span class="hero-brand" lang="en">${esc(p.brand)} ${catConc(r)} ${segTag(r[15])}</span>
         <span class="hero-name">${esc(p.name)}</span>
         <div class="dstats">${stats}</div>
+        <span class="dupe-row">${dupeRow(p, true)}</span>
         <div class="fam-line">${p.fam.slice(0, 3).map(famTag).join('')}</div>
       </div>
     </div>
@@ -4719,6 +5041,8 @@ function renderShop(){
       <div style="display:flex;flex-direction:column;gap:12px;padding:4px 12px 14px">
         <label class="toggle-row" for="shop-exact"><span><b>Tam ürüne git</b><br><span class="muted small">“Mağazada aç” önce ${esc(STORES[S.shop.order.find(k => !S.shop.off.includes(k)) || 'boyner'].loc)} ürünü arar; bulamazsa aşağıdaki sırayla sonraki mağazaya geçer.</span></span>
           <span class="switch"><input type="checkbox" id="shop-exact"${S.shop.exact ? ' checked' : ''}><span></span></span></label>
+        <label class="toggle-row" for="shop-deep"><span><b>Bulunamayınca farklı yoldan dene</b><br><span class="muted small">Fiyat çıkmazsa “Tekrar dene” ilk basışta aynı aramayı yineler. İki arama da boş dönerse düğme “Farklı yoldan dene” olur: başka yazılışlarla, kapalı tuttuğun mağazalara da bakarak ve daha uzun bekleyerek arar; birebir bulamazsa yakın sonuçları gösterir.</span></span>
+          <span class="switch"><input type="checkbox" id="shop-deep"${S.shop.deep !== false ? ' checked' : ''}><span></span></span></label>
         <div class="order">${S.shop.order.map((k, i) => `<div class="o${S.shop.off.includes(k) ? ' off' : ''}">
           <b>${i + 1}</b><span><input type="checkbox" data-shopk="${k}"${S.shop.off.includes(k) ? '' : ' checked'} style="accent-color:var(--accent);width:18px;height:18px;vertical-align:-3px"> ${STORES[k].n}
             <span class="muted small">${['boyner', 'beymen', 'gratis', 'perfumepoint', 'n11', 'pazarama'].includes(k) ? '· fiyat + tam ürün' : '· arama sayfası'}${k === 'n11' || k === 'pazarama' ? ' · pazar yeri' : ''}</span></span>
@@ -4752,6 +5076,8 @@ function renderShop(){
           <span class="switch"><input type="checkbox" id="sim-on"${S.sim.on ? ' checked' : ''}><span></span></span></label>
         <label class="toggle-row" for="sim-cheap"><span><b>Önce uygun muadiller</b><br><span class="muted small">Başka markalardan, Orta Doğu ve uygun fiyat segmentindeki benzerleri gösterir.</span></span>
           <span class="switch"><input type="checkbox" id="sim-cheap"${S.sim.cheap ? ' checked' : ''}><span></span></span></label>
+        ${dupeToggle('set-dupes')}
+        <span class="muted small">Bir muadilin sayfasında ve arama sonuçlarında hangi parfümün muadili olduğu yazar. “… muadili” herkesin bildiği eşleşmedir; “Benzediği: … · %” notaların örtüşmesinden hesaplanır, kesin değildir.</span>
       </div>
     </details>
   </section>`;
@@ -4785,7 +5111,7 @@ function renderLook(){
   </section>
   <section class="section">
     <details class="cg" open style="background:var(--panel)">
-      <summary>Uygulama görünümü <small>${['fullscreen', 'anim', 'haptic', 'blur', 'amoled', 'compact', 'labels'].filter(k => S.ui[k] === true).length} açık</small></summary>
+      <summary>Uygulama görünümü <small>${['fullscreen', 'anim', 'haptic', 'blur', 'amoled', 'compact', 'labels', 'versImg'].filter(k => S.ui[k] === true).length} açık</small></summary>
       <div style="display:flex;flex-direction:column;gap:14px;padding:4px 12px 14px">
         ${[
           ['fullscreen', 'Tam ekran', NATIVE && NATIVE.setFullscreen ? 'Üstteki saat ve bildirim çubuğunu gizler.' : 'Uygulamanın son sürümünde çalışır.'],
@@ -4794,7 +5120,8 @@ function renderLook(){
           ['blur', 'Cam efekti', 'Üst ve alt çubuklar arkadaki içeriği bulanık gösterir.'],
           ['amoled', 'Saf siyah (AMOLED)', 'Koyu temalarda zemini tamamen siyah yapar, pil dostu.'],
           ['compact', 'Sıkı yerleşim', 'Listeler ve kartlar daha az yer kaplar.'],
-          ['labels', 'Sekme yazıları', 'Alt çubukta ikonların altındaki yazılar.']
+          ['labels', 'Sekme yazıları', 'Alt çubukta ikonların altındaki yazılar.'],
+          ['versImg', 'Aynı seriyi görselli göster', 'Parfüm sayfasındaki “Aynı seriden” bölümü şişe görselleriyle gelir; kapalıyken yalnız adları yazar.']
         ].map(([k, t, d]) => `<label class="toggle-row" for="ui-${k}"><span><b>${t}</b><br><span class="muted small">${d}</span></span>
           <span class="switch"><input type="checkbox" id="ui-${k}" data-ui="${k}"${S.ui[k] ? ' checked' : ''}><span></span></span></label>`).join('')}
         <div class="field"><span class="label">Yazı boyutu</span><div class="seg">${[['s', 'Küçük'], ['m', 'Normal'], ['l', 'Büyük']].map(([k, l]) => `<button class="${S.ui.fs === k ? 'on' : ''}" data-act="uifs" data-v="${k}" type="button">${l}</button>`).join('')}</div></div>
@@ -5043,18 +5370,24 @@ document.addEventListener('click', async e => {
     case 'excat-g': ex.group = t.dataset.g; renderExplore(); break;
     case 'excat': ex.cats = t.dataset.cat ? toggleIn(ex.cats, t.dataset.cat) : []; ex.limit = 40; renderExplore(); break;
     case 'exmore': ex.limit += 40; ex.mode === 'brands' ? renderBrands() : renderExploreBody(); break;
-    case 'exmode': ex.mode = t.dataset.v; ex.brand = null; ex.limit = 40; renderExplore(); break;
+    case 'exmode': ex.mode = t.dataset.v; ex.brand = null; ex.place = ''; ex.limit = 40; renderExplore(); break;
     case 'brandopen': ex.brand = t.dataset.b; ex.q = ''; ex.limit = 40; renderExplore(); window.scrollTo(0, 0); break;
     case 'brandback': ex.brand = null; renderExplore(); break;
-    case 'brandgo': closeSheet(true); S.tab = 'kesfet'; ex.mode = 'brands'; ex.brand = t.dataset.b; ex.q = ''; ex.g = ''; ex.conc = ''; ex.seg = ''; ex.cats = []; ex.boy = false; save(); render(); window.scrollTo(0, 0); break;
+    case 'brandgo': closeSheet(true); S.tab = 'kesfet'; ex.mode = 'brands'; ex.brand = t.dataset.b; ex.q = ''; ex.g = ''; ex.conc = ''; ex.seg = ''; ex.cats = []; ex.boy = false; ex.lon = ''; ex.sil = ''; ex.place = ''; save(); render(); window.scrollTo(0, 0); break;
     case 'exconc': ex.conc = t.dataset.v; ex.limit = 40; renderExplore(); break;
+    case 'exlvl': ex[t.dataset.k] = t.dataset.v; ex.limit = 40; renderExplore(); break;
+    case 'rblvl': rb[t.dataset.k] = t.dataset.v; openRandomBuy(); break;
+    case 'dupeson': S.dupes = true; save(); ex.limit = 40; renderExplore(); break;
+    case 'place': ex.place = t.dataset.v; ex.sort = 'pop'; ex.limit = 40; renderExploreBody(); window.scrollTo(0, 0); break;
+    case 'placesort': ex.sort = t.dataset.v; ex.limit = 40; renderExploreBody(); break;
+    case 'simgo': { const b = document.querySelector('.dtabs [data-v="sim"]'); if (b) { b.click(); b.scrollIntoView({block: 'start', behavior: 'smooth'}); } break; }
     case 'cconc': col.conc = t.dataset.v; renderCollection(); break;
     case 'cfilt': col.fopen = !col.fopen; renderCollection(); break;
     case 'cclear': col.conc = ''; col.cats = []; renderCollection(); break;
     case 'exfilt': ex.fopen = !ex.fopen; renderExplore(); break;
-    case 'exclear': ex.boy = false; ex.g = ''; ex.seg = ''; ex.conc = ''; ex.cats = []; ex.limit = 40; S.avoid = []; save(); renderExplore(); break;
+    case 'exclear': ex.boy = false; ex.g = ''; ex.seg = ''; ex.conc = ''; ex.cats = []; ex.lon = ''; ex.sil = ''; ex.limit = 40; S.avoid = []; S.dupes = true; save(); renderExplore(); break;
     case 'avoidadd': { const i = document.getElementById('avoid-in'), v = t.dataset.n || (i && i.value); if (avoidAdd(v)) { avoidRedraw(); toast('Artık önerilmeyecek: ' + avoidList()[avoidList().length - 1]); } else if (i) i.value = ''; break; }
-    case 'avoidrm': S.avoid = avoidList().filter(x => x !== t.dataset.n); save(); avoidRedraw(); break;
+    case 'avoidrm': S.avoid = avoidList().filter(x => x !== t.dataset.n); save(); avoidRedraw(); toast('Yeniden önerilecek: ' + t.dataset.n); break;
     case 'avoidshow': avoidShow = !avoidShow; renderExploreBody(); break;
     case 'addmenu': openAddMenu(); break;
     case 'invconc': { const it = S.inv.find(i => i.id === t.dataset.iid); if (it) { it.conc = it.conc === t.dataset.v ? '' : t.dataset.v; save(); redrawSheet(); if (S.tab === 'envanter') renderInventory(); } break; }
@@ -5219,7 +5552,11 @@ document.addEventListener('click', async e => {
     case 'buydel': S.buys = S.buys.filter(b => b.id !== t.dataset.id); save(); closeSheet(); render(); toast('Hatırlatıcı silindi'); break;
     case 'pricesize': if (priceState) { priceState.ml = priceState.userMl = +t.dataset.ml; drawPrices(); } break;
     case 'priceconc': if (priceState && priceState.data) { pickConc(priceState.data, t.dataset.v, priceState.p); priceState.ml = priceState.userMl = null; drawPrices(); } break;
-    case 'pricerefresh': if (priceState) { const p = priceState.p; priceMem.clear(); const b = document.getElementById('price-body'); if (b) b.innerHTML = '<span class="muted small">Fiyatlar alınıyor…</span>'; loadPricesInto(p, true); } break;
+    case 'pricerefresh': if (priceState) {
+      // the first press repeats the search; after two searches that found nothing the next one goes another way (Ayarlar > Alışveriş)
+      const p = priceState.p, deep = S.shop.deep !== false && (priceTries.get(mKey(p)) || 0) >= 2; priceMem.clear();
+      const b = document.getElementById('price-body'); if (b) b.innerHTML = `<span class="muted small">${deep ? 'Farklı yoldan aranıyor: başka yazılışlar, kapalı tuttuğun mağazalar, daha uzun bekleme…' : 'Fiyatlar alınıyor…'}</span>`;
+      loadPricesInto(p, true, deep); } break;
     case 'addboy': { const d = draft; closeSheet(); draft = d; openSheet(null); break; }
     case 'ccat-g': col.group = t.dataset.g; renderCollection(); break;
     case 'ccat': col.cats = t.dataset.cat ? toggleIn(col.cats, t.dataset.cat) : []; renderCollection(); break;
@@ -5382,6 +5719,11 @@ document.addEventListener('change', async e => {
   if (t.id === 'rb-good') { rb.good = t.checked; rbCount(); }
   if (t.id === 'rb-global' || t.id === 'set-global') { S.global = t.checked; save(); if (t.id === 'rb-global') openRandomBuy(); else renderShop(); }
   if (t.id === 'shop-exact') { S.shop.exact = t.checked; save(); }
+  if (t.id === 'shop-deep') { S.shop.deep = t.checked; save(); }
+  if (t.classList && t.classList.contains('dupe-sw')) {
+    S.dupes = t.checked; save(); ex.limit = 40;
+    if (t.id === 'rb-dupes') rbCount(); else if (t.id === 'ex-dupes') renderExplore();
+  }
   if (t.id === 'pc-on' && priceState && priceState.data) {
     const pp = priceState.p;
     if (t.checked) {
@@ -5402,7 +5744,7 @@ document.addEventListener('change', async e => {
   if (t.id === 'wx-on') { S.weather.on = t.checked; save(); if (t.checked) fetchWeather(true).then(() => renderLook()); else renderLook(); }
   if (t.id === 'wx-auto') { S.weather.auto = t.checked; save(); }
   if (t.id === 'wx-city') { S.weather.city = t.value; WX = null; save(); fetchWeather(true).then(() => renderLook()); }
-  if (t.dataset && t.dataset.ui) { S.ui[t.dataset.ui] = t.checked; save(); applyUi(); const sm = document.querySelector('details.cg summary small'); if (sm) sm.textContent = ['fullscreen', 'anim', 'haptic', 'blur', 'amoled', 'compact', 'labels'].filter(k => S.ui[k] === true).length + ' açık'; }
+  if (t.dataset && t.dataset.ui) { S.ui[t.dataset.ui] = t.checked; save(); applyUi(); const sm = document.querySelector('details.cg summary small'); if (sm) sm.textContent = ['fullscreen', 'anim', 'haptic', 'blur', 'amoled', 'compact', 'labels', 'versImg'].filter(k => S.ui[k] === true).length + ' açık'; }
   if (t.id === 'wheel-inv') { S.wheelInv = t.checked; save(); renderWheel(); }
   if (['pig-remind', 'pig-tgt'].includes(t.id)) {
     const g = S.piggies.find(x => x.id === document.getElementById('sheet').dataset.pig);
@@ -5497,6 +5839,7 @@ document.addEventListener('visibilitychange', () => {
 window.onNativeBack = () => {
   if (document.getElementById('overlay')) { closeSheet(); return true; }
   if (S.tab === 'ayarlar' && S.sub) { S.sub = null; render(); return true; }
+  if (S.tab === 'kesfet' && ex.place) { ex.place = ''; renderExploreBody(); window.scrollTo(0, 0); return true; }
   if (S.tab !== 'hafta') { go('hafta'); return true; }
   return false;
 };
@@ -5614,6 +5957,8 @@ const holdOff = () => { if (hold) { clearTimeout(hold.t); hold = null; } };
 document.addEventListener('pointerdown', e => {
   holdOff(); holdFired = false;
   if (e.button || !e.isPrimary) return;
+  const chip = e.target.closest('.np .note-chip');
+  if (chip) { hold = {x: e.clientX, y: e.clientY, t: setTimeout(() => { hold = null; holdFired = true; haptic('confirm'); openNoteHold(chip.dataset.n); }, 480)}; return; }
   const el = e.target.closest(HOLD_SEL);
   if (!el || el.closest('.qmenu,.dact,.tabs,.td-acts') || e.target.closest('input,select,textarea,.icon-btn')) return;
   const x = e.clientX, y = e.clientY;
