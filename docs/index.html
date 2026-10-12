@@ -651,6 +651,7 @@ html.premium .bubble{background:var(--fill)}
 .otap{display:grid;grid-template-columns:44px minmax(0,1fr);gap:10px;align-items:center;background:none;border:0;padding:0;color:var(--fg);text-align:left;min-width:0}
 .otap .art{width:44px;height:54px;border-radius:12px;position:relative;overflow:hidden;display:block}
 .otap .ptitle{display:block;overflow:visible}
+.odesc{grid-column:1 / -1;margin:2px 0 4px;font-size:13px;line-height:1.5;color:var(--muted)}
 .obuy{display:flex;flex-direction:column;align-items:flex-end;gap:2px;text-decoration:none;color:var(--fg);padding:6px 4px 6px 10px;border-left:1px solid var(--line)}
 .obuy small{font-size:10.5px;color:var(--accent);font-weight:700}
 .obuy small.left{color:var(--ok)}
@@ -3777,7 +3778,7 @@ function openMsg(id){
         <button class="otap" data-act="msgperf" data-cid="${+o.cid}" type="button"><span class="art">${art({name: o.name, img: fimg(+o.cid)})}</span>
           <span class="ptitle" style="color:var(--fg)"><b>${esc(o.name)}</b>${o.pick ? ' <span class="seg-tag N">Önerim</span>' : ''}<br><span class="muted">${o.note ? esc(o.note) + ' · ' : ''}notalar ›</span>
           ${(o.alt || []).length ? `<span class="oalt">${o.alt.map(a => `${STORES[a.shop] ? slogo(a.shop, true) : ''}<i>${fmtPrice(+a.p)}</i>`).join('')}</span>` : ''}</span></button>
-        <a class="obuy" href="${esc(safeUrl(o.u))}" data-act="extlink">${STORES[o.shop] ? slogo(o.shop, true) : ''}<span class="price">${fmtPrice(+o.p || 0)}</span>${S.budget ? `<small class="${+o.p <= S.budget ? 'left' : 'short'}">${+o.p <= S.budget ? 'kalan ' + fmtPrice(S.budget - o.p) : fmtPrice(o.p - S.budget) + ' eksik'}</small>` : ''}<small>mağaza ›</small></a></div>`
+        <a class="obuy" href="${esc(safeUrl(o.u))}" data-act="extlink">${STORES[o.shop] ? slogo(o.shop, true) : ''}<span class="price">${fmtPrice(+o.p || 0)}</span>${S.budget ? `<small class="${+o.p <= S.budget ? 'left' : 'short'}">${+o.p <= S.budget ? 'kalan ' + fmtPrice(S.budget - o.p) : fmtPrice(o.p - S.budget) + ' eksik'}</small>` : ''}<small>mağaza ›</small></a>${o.desc ? `<p class="odesc">${esc(o.desc)}</p>` : ''}</div>`
         : `<a class="prow offer" href="${esc(safeUrl(o.u))}" data-act="extlink">${STORES[o.shop] ? slogo(o.shop) : '<span class="slogo"><b>?</b></span>'}
         <span class="ptitle" style="color:var(--fg)"><b>${esc(o.name)}</b>${o.pick ? ' <span class="seg-tag N">Önerim</span>' : ''}<br><span class="muted">${esc((STORES[o.shop] || {n: o.shop}).n)}${o.note ? ' · ' + esc(o.note) : ''}</span></span>
         <span class="price">${fmtPrice(+o.p || 0)}</span>${ICONS.chev}</a>`).join('')}</div>`).join(''))([...new Set(m.offers.map(o => o.group || ''))])}

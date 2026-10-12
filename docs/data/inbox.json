@@ -945,6 +945,638 @@
      ]
     }
    ]
+  },
+  {
+   "id": "2026-10-14-dortlu",
+   "t": "2026-10-14T01:30:00+03:00",
+   "budget": 12335,
+   "title": "Date, kış, günlük, ofis: 37 parfümlük uzun rapor",
+   "short": "Le Male Elixir ve Elixir Absolu birlikte nasıl sığar, Phantom ve Carolina Herrera'da hangisi; hepsi açıklamalı.",
+   "body": [
+    "## Önce istediğin ikisi",
+    "Le Male Elixir ve Le Male Elixir Absolu'nun ikisini de 125 ml almak sığmıyor: 6.560 + 7.108 = 13.668 TL, bütçenden 1.333 TL fazla. Sığan yol: Elixir'in 75 ml'si (4.852 TL) + Absolu 125 ml (7.108 TL) = 11.960 TL, elinde 375 TL kalır.",
+    "Dürüst görüşüm: bu ikisi aynı ailenin iki tonu ve ikisi de date / kış / gece kokusu. İkisini birden alırsan gündüz ve ofis için elinde koku kalmaz. Emlakçılık için birini al, yanına gündüz kokusu koy. Hangisi dersen: Elixir daha tatlı, daha sevilen ve daha ucuz; Absolu daha baharatlı ve yeni.",
+    "## Phantom ailesi",
+    "Beş üye buldum. Güne ve işe en uygunu Phantom Parfum (en ucuzu da o); en beğenileni Phantom Intense; kışa en uygunu Phantom in Red. Phantom Elixir yeni, puanı düşük ve tartışmalı: koklamadan alma. İlk Phantom (EDT) ailenin en zayıfı.",
+    "## Carolina Herrera",
+    "Bad Boy ailesinde iki çizgi var. Siyah şimşek (Bad Boy, Bad Boy Elixir) tatlı-baharatlı ve akşama; mavi şimşek (Cobalt) daha odunsu ve işe. En yüksek puanlısı Bad Boy Cobalt (4,32). Ucuz bir giriş istersen 212 VIP Black 50 ml 3.988 TL.",
+    "## Dört başlık nasıl okunur",
+    "Aşağıda 37 şişe dört başlıkta: Date, Kış, Günlük, Ofis. Her birinin altında neden orada olduğunu yazdım. Başlıklar uygulamanın kataloğundaki etiketlere dayanıyor; yayılım, kalıcılık ve yıldızlar da katalogdaki kullanıcı puanları. Ada dokununca parfümün sayfası, fiyata dokununca mağaza açılır; küçük fiyatlar diğer mağazalar.",
+    "## Yollar",
+    "On yol var; hepsinin altında toplam ve elinde kalan yazıyor. Önerim 2. yol: Le Male Elixir 75 ml + Bad Boy Cobalt Absolute. İstediğin evlerden biri akşama, diğeri işe; 979 TL de kalıyor.",
+    "## Dikkat",
+    "En ucuz fiyatların çoğu Perfume Point'ten; yetkili zincir değil. Ürün gelince parti kodunu orijinallik testinden geçir. Aynı şişe Beymen'de ortalama dörtte bir, Gratis'te bazen iki kat pahalı. Boyner, Sephora, Trendyol, Hepsiburada ve Amazon'a bakamadım. Stoklara tek tek bakmadım; fiyatlar 14 Ekim 2026 gecesi okundu, kargo dahil değil. Hiçbirini koklamadım: açıklamalar notalara, katalog etiketlerine ve genel üne dayanıyor. Almadan önce bir mağazada teninde dene."
+   ],
+   "offers": [
+    {
+     "group": "Date · buluşma ve akşam",
+     "name": "Le Male Elixir · 125 ml",
+     "shop": "perfumepoint",
+     "p": 6560,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-elixir-edp-125-ml",
+     "note": "Yayılım 4/5 · kalıcılık 4/5 · ★ 4,5",
+     "desc": "İstediğin iki kokudan ilki. Bal, vanilya, tonka ve lavanta: sıcak, tatlı ve çok fark edilen bir koku. Katalogda Date, Parti, Kış, Gece, Seksi ve İltifat Toplayan olarak işaretli; bu listedeki en yüksek puanlılardan. Buluşma için biçilmiş kaftan, ama gündüz ofiste ve sıcakta ağır gelir: akşam ve soğuk hava kokusu.",
+     "cid": 81642,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 8200
+      },
+      {
+       "shop": "gratis",
+       "p": 13079
+      }
+     ],
+     "pick": true
+    },
+    {
+     "group": "Date · buluşma ve akşam",
+     "name": "Le Male Elixir · 75 ml",
+     "shop": "perfumepoint",
+     "p": 4852,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-elixir-edp-75ml",
+     "note": "Aynı koku, küçük şişe",
+     "desc": "İki Le Male'i birlikte almak istiyorsan çözüm bu şişe: 125 ml yerine 75 ml alınca Elixir Absolu ile birlikte bütçene sığıyor. Yoğun bir koku olduğu için 75 ml uzun süre gider; date için haftada bir iki kez sıkılan bir parfümde 125 ml şart değil.",
+     "cid": 81642,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 6065
+      }
+     ]
+    },
+    {
+     "group": "Date · buluşma ve akşam",
+     "name": "Le Male Elixir Absolu · 125 ml",
+     "shop": "perfumepoint",
+     "p": 7108,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-elixir-absolu-edp-125-ml",
+     "note": "Yayılım 4/5 · kalıcılık 4/5 · ★ 4,1",
+     "desc": "İstediğin ikinci koku; Elixir'in 2025 çıkışlı daha koyu hali. Sıcak baharat, amber ve meyve öne çıkıyor; Elixir'e göre daha az ballı, daha baharatlı ve olgun. Yeni olduğu için oy sayısı az, puanı henüz oturmamış. Bulduğum tek yer Perfume Point; Beymen ve Gratis'te yok. Elixir ile aynı ailenin iki üyesi oldukları için birbirlerine benzerler: ikisini birden almak çeşitlilik değil, aynı tarzın iki tonunu verir.",
+     "cid": 101529
+    },
+    {
+     "group": "Date · buluşma ve akşam",
+     "name": "Stronger With You Intensely · 150 ml",
+     "shop": "perfumepoint",
+     "p": 6650,
+     "u": "https://www.perfumepoint.com.tr/emporio-armani-stronger-with-you-intensely-edp-150-ml-18352",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,6",
+     "desc": "Vanilya, tarçın, amber ve tatlı kestane. Bu listedeki en yüksek puanlı koku (4,58) ve iltifat toplamasıyla bilinir. Le Male Elixir'e göre daha yumuşak ve sarmalayıcı, bağırmaz. 150 ml şişe bu fiyata çok hesaplı. Kış akşamı buluşması için en güvenli seçimlerden.",
+     "cid": 52802,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 9500
+      }
+     ]
+    },
+    {
+     "group": "Date · buluşma ve akşam",
+     "name": "Scandal Pour Homme EDT · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5748,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-scandal-pour-homme-edt-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,3",
+     "desc": "Gaultier'nin diğer erkek çizgisi: karamel, tonka ve adaçayı. Le Male'den daha modern ve karamelli; tatlı ama lavantasız. Date, Parti, Günlük ve İltifat Toplayan olarak işaretli; gündüz de taşınabilen tatlı kokulardan.",
+     "cid": 68074
+    },
+    {
+     "group": "Date · buluşma ve akşam",
+     "name": "Scandal Le Parfum · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6324,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-scandal-le-parfum-for-him-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,4",
+     "desc": "Scandal'ın daha koyu, vanilyalı ve odunsu hali. EDT'ye göre daha az şekerli, daha olgun; Ofis, Date ve Günlük olarak üçünde de işaretli. Gaultier evinden tek şişeyle hem buluşmaya hem işe gitmek istersen en dengelisi bu.",
+     "cid": 74915
+    },
+    {
+     "group": "Date · buluşma ve akşam",
+     "name": "1 Million Elixir · 100 ml",
+     "shop": "beymen",
+     "p": 7960,
+     "u": "https://www.beymen.com/tr/p_rabanne-1-million-elixir-100ml_1864538",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,4",
+     "desc": "Rabanne'ın altın külçesinin en sevilen hali: vanilya, erik ve gül. Klasik 1 Million'ın tarçınlı keskinliği yok; daha tatlı, meyveli ve yumuşak. Date ve İltifat Toplayan. Perfume Point'te bulamadım, en ucuzu Beymen.",
+     "cid": 71708,
+     "alt": [
+      {
+       "shop": "gratis",
+       "p": 12439
+      }
+     ]
+    },
+    {
+     "group": "Date · buluşma ve akşam",
+     "name": "Invictus Victory Elixir · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6368,
+     "u": "https://www.perfumepoint.com.tr/rabanne-invictus-victory-elixir-parfum-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,5",
+     "desc": "Tütsülü vanilya, lavanta ve amber. Invictus ailesinin en koyu ve en yüksek puanlısı (4,52). Tatlı ama dumanlı bir derinliği var; kış gecesi için güçlü bir seçenek. Gratis'te neredeyse iki katı.",
+     "cid": 78575,
+     "alt": [
+      {
+       "shop": "gratis",
+       "p": 12439
+      }
+     ]
+    },
+    {
+     "group": "Date · buluşma ve akşam",
+     "name": "Phantom Elixir · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6000,
+     "u": "https://www.perfumepoint.com.tr/rabanne-phantom-elixir-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 3,7",
+     "desc": "Phantom'un en yeni ve en yoğun hali: vanilya, mineral-deniz notaları ve ud. İlginç ama tartışmalı; puanı ailenin en düşüklerinden (3,69) ve oy sayısı az. Koklamadan almanı önermem: Phantom istiyorsan önce Parfum'a bak.",
+     "cid": 101370,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 7500
+      }
+     ]
+    },
+    {
+     "group": "Date · buluşma ve akşam",
+     "name": "Bad Boy Cobalt Elixir · 100 ml",
+     "shop": "beymen",
+     "p": 8130,
+     "u": "https://www.beymen.com/tr/p_carolina-herrera-bad-boy-cobalt-elixir-100-ml_1838969",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,0",
+     "desc": "Carolina Herrera'nın mavi şimşeğinin koyu hali: topraksı, baharatlı, vanilyalı. Cobalt çizgisinin ferahlığını tutup akşama taşıyor. Ofis, Günlük ve Date üçünde de işaretli; yalnız Beymen'de buldum.",
+     "cid": 89374
+    },
+    {
+     "group": "Date · buluşma ve akşam",
+     "name": "Le Beau EDT · 75 ml",
+     "shop": "perfumepoint",
+     "p": 4168,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-beau-edt-75-ml",
+     "note": "Yayılım 3/5 · kalıcılık 3/5 · ★ 4,3",
+     "desc": "Hindistan cevizi, tonka ve bergamot: Gaultier'nin yaz buluşması kokusu. Le Male ailesinin kışlık ağırlığına karşılık bu sıcak havada çalışır. Yazın date için ayrı bir şişe düşünürsen.",
+     "cid": 55785
+    },
+    {
+     "group": "Kış · soğuk hava",
+     "name": "Boss Bottled Absolu · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5585,
+     "u": "https://www.perfumepoint.com.tr/hugo-boss-bottled-absolu-edp-100-ml",
+     "note": "Yayılım 4/5 · kalıcılık 4/5 · ★ 4,5",
+     "desc": "Deri, tütsü, amber ve sıcak baharat. Yayılımı 4/5 olan dört kokudan biri ve aralarında en ciddisi. Tatlı değil; koyu, reçineli, olgun. Katalogda Özel Gün, Date, Kış ve Gece; ofis etiketi yok ama az sıkılırsa işte de taşınır.",
+     "cid": 96246,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 7446
+      }
+     ],
+     "pick": true
+    },
+    {
+     "group": "Kış · soğuk hava",
+     "name": "Stronger With You Absolutely · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6090,
+     "u": "https://www.perfumepoint.com.tr/emporio-armani-stronger-with-you-absolutely-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,5",
+     "desc": "Rom, kestane, vanilya ve lavanta. Intensely'nin daha içkili ve odunsu kardeşi. Kış, Parti, Date ve Ofis; soğuk havada çok iyi açılır.",
+     "cid": 64501,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 8700
+      }
+     ]
+    },
+    {
+     "group": "Kış · soğuk hava",
+     "name": "Bad Boy Elixir · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6504,
+     "u": "https://www.perfumepoint.com.tr/carolina-herrera-bad-boy-elixir-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 3,9",
+     "desc": "Deri, odun ve hayvansı notalar: Bad Boy'un 2025 çıkışlı en sert hali. Klasik Bad Boy'un kakaolu tatlılığından uzak, daha erkeksi. Kış ve Gece; yeni olduğu için oy sayısı az.",
+     "cid": 101597,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 8130
+      }
+     ]
+    },
+    {
+     "group": "Kış · soğuk hava",
+     "name": "Phantom in Red · 100 ml",
+     "shop": "beymen",
+     "p": 6520,
+     "u": "https://www.beymen.com/tr/p_rabanne-phantom-in-red-re26-edp-100-ml-erkek-parfum_2000301",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,0",
+     "desc": "Phantom'un kırmızı robotu: amber, sıcak baharat ve lavanta. Ailenin kışa en uygun üyesi; Ofis, Günlük ve Date olarak da işaretli. Yalnız Beymen'de buldum.",
+     "cid": 120953
+    },
+    {
+     "group": "Kış · soğuk hava",
+     "name": "Invictus Victory Absolu · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6628,
+     "u": "https://www.perfumepoint.com.tr/rabanne-invictus-victory-absolu-parfum-intense-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,1",
+     "desc": "Amber, odun ve baharat; Victory Elixir'e göre daha az tatlı, daha odunsu. Date, Ofis ve Kış. Tatlı kokulardan sıkılırsan Invictus ailesinde bakılacak olan.",
+     "cid": 103462,
+     "alt": [
+      {
+       "shop": "gratis",
+       "p": 12949
+      }
+     ]
+    },
+    {
+     "group": "Kış · soğuk hava",
+     "name": "Boss Bottled Elixir · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5532,
+     "u": "https://www.perfumepoint.com.tr/hugo-boss-bottled-elixir-parfum-intense-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,3",
+     "desc": "Tütsü, sedir, labdanum ve vetiver. Absolu'dan biraz daha odunsu ve daha az derili. Ofis, Günlük ve Date üçü birden; kışın işe giderken sıkılabilecek koyu kokulardan.",
+     "cid": 84074,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 7376
+      },
+      {
+       "shop": "gratis",
+       "p": 10039
+      }
+     ]
+    },
+    {
+     "group": "Kış · soğuk hava",
+     "name": "Le Male Le Parfum · 200 ml",
+     "shop": "perfumepoint",
+     "p": 8084,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-le-parfum-200-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,6",
+     "desc": "İlk sorduğun koku: kakule, lavanta, iris ve vanilya. Bu rapordaki en yüksek puan (4,59). Elixir'lere göre daha sakin ve şık; Ofis, Date ve Günlük olarak işaretli tek Le Male. 125 ml'si yalnız Gratis'te ve 12.209 TL; 200 ml'si burada daha ucuz.",
+     "cid": 61856,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 10105
+      }
+     ]
+    },
+    {
+     "group": "Kış · soğuk hava",
+     "name": "1 Million Royal · 50 ml",
+     "shop": "perfumepoint",
+     "p": 4560,
+     "u": "https://www.perfumepoint.com.tr/rabanne-one-million-royal-edp-50-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,3",
+     "desc": "Kakule, lavanta ve benzoin; 1 Million ailesinin en az tatlı, en baharatlı üyesi. Günlük ve Ofis olarak da işaretli.",
+     "cid": 79159,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 5700
+      }
+     ]
+    },
+    {
+     "group": "Günlük · her güne",
+     "name": "Phantom Parfum · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5740,
+     "u": "https://www.perfumepoint.com.tr/rabanne-phantom-parfum-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 3,9",
+     "desc": "Kremsi lavanta, vanilya ve hafif baharat. Phantom ailesinde işe ve güne en uygun olan: Ofis, Günlük, Sonbahar ve Kış. Sıcak ve sevimli; ciddiyetten çok yakınlık verir.",
+     "cid": 81927,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 7175
+      }
+     ],
+     "pick": true
+    },
+    {
+     "group": "Günlük · her güne",
+     "name": "Phantom Parfum · 50 ml",
+     "shop": "perfumepoint",
+     "p": 3519,
+     "u": "https://www.perfumepoint.com.tr/rabanne-phantom-parfum-edp-50-ml",
+     "note": "Aynı koku, küçük şişe",
+     "desc": "Phantom'u denemek ve bütçede yer açmak için en ucuz yol.",
+     "cid": 81927,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 5415
+      }
+     ]
+    },
+    {
+     "group": "Günlük · her güne",
+     "name": "Phantom EDT · 100 ml",
+     "shop": "beymen",
+     "p": 6520,
+     "u": "https://www.beymen.com/tr/p_rabanne-phantom-edt-100ml_1838757",
+     "note": "Yayılım 3/5 · kalıcılık 3/5 · ★ 3,6",
+     "desc": "İlk Phantom: limon, lavanta ve vanilya. Ailenin en hafifi ve dört mevsim işaretli tek üyesi, ama puanı da en düşüğü (3,55); kalıcılığından şikâyet edilir. Parfum hali hem daha ucuz hem daha beğenilmiş.",
+     "cid": 68226
+    },
+    {
+     "group": "Günlük · her güne",
+     "name": "Bad Boy EDT · 100 ml",
+     "shop": "beymen",
+     "p": 6775,
+     "u": "https://www.beymen.com/tr/p_carolina-herrera-bad-boy-edt-ns-100ml_1838907",
+     "note": "Yayılım 3/5 · kalıcılık 3/5 · ★ 3,7",
+     "desc": "Şimşek şişenin ilki: karabiber, adaçayı, kakao ve tonka. Tatlı-baharatlı, genç bir koku. Ofis, Günlük ve Date olarak işaretli ama puanı ailenin düşüklerinden; Cobalt hali daha beğenilmiş.",
+     "cid": 55449
+    },
+    {
+     "group": "Günlük · her güne",
+     "name": "Versace Eros EDP · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5296,
+     "u": "https://www.perfumepoint.com.tr/versace-eros-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,3",
+     "desc": "Nane, yeşil elma ve vanilya. Tatlı ama ferah; dört mevsimin üçünde işaretli ve İltifat Toplayan. Rabanne ve Gaultier'yi seviyorsan aynı “tatlı, gür, genç” çizginin en ucuz ve en ferah temsilcisi.",
+     "cid": 62762,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 7565
+      },
+      {
+       "shop": "gratis",
+       "p": 8839
+      }
+     ]
+    },
+    {
+     "group": "Günlük · her güne",
+     "name": "Y EDP · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6685,
+     "u": "https://www.perfumepoint.com.tr/yves-saint-laurent-y-for-men-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,4",
+     "desc": "Elma, adaçayı, zencefil ve odun. Tatlı değil; temiz, enerjik ve modern. Günlük ve Ofis; gündüz için en çok tavsiye edilen kokulardan.",
+     "cid": 50757,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 9550
+      }
+     ]
+    },
+    {
+     "group": "Günlük · her güne",
+     "name": "1 Million EDT · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5304,
+     "u": "https://www.perfumepoint.com.tr/rabanne-one-million-edt-100-ml-24170",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 3,7",
+     "desc": "Tarçın, deri, amber ve kan portakalı. 2008'den beri en tanınan erkek kokularından; herkes bilir, o yüzden “imza” olmaz. Date ve Günlük.",
+     "cid": 3747,
+     "alt": [
+      {
+       "shop": "gratis",
+       "p": 10369
+      }
+     ]
+    },
+    {
+     "group": "Günlük · her güne",
+     "name": "Le Male EDT · 125 ml",
+     "shop": "perfumepoint",
+     "p": 5468,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-edt-125-ml",
+     "note": "Klasik; katalogda yok",
+     "desc": "Ailenin 1995 çıkışlı atası: nane, lavanta ve vanilya. Elixir'lerden çok daha hafif ve pudralı; günlük taşınabilir. Uygulamanın kataloğunda bu sürüm olmadığı için puan veremiyorum.",
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 6835
+      },
+      {
+       "shop": "gratis",
+       "p": 10899
+      }
+     ]
+    },
+    {
+     "group": "Günlük · her güne",
+     "name": "Montblanc Explorer EDP · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5076,
+     "u": "https://www.perfumepoint.com.tr/montblanc-explorer-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 3/5 · ★ 4,2",
+     "desc": "Bergamot, vetiver ve ambroxan. Tatlı kokuların yanına sıcak günler için konacak uygun fiyatlı, odunsu bir şişe.",
+     "cid": 52002,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 6768
+      }
+     ]
+    },
+    {
+     "group": "Ofis · iş ve müşteri",
+     "name": "Bad Boy Cobalt Absolute · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6504,
+     "u": "https://www.perfumepoint.com.tr/carolina-herrera-bad-boy-cobalt-absolute-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 3/5 · ★ 3,8",
+     "desc": "Cobalt çizgisinin 2025 çıkışlı yenisi: aromatik, topraksı, vanilyalı. Ofis ve Günlük. Carolina Herrera'dan işe gidecek şişe arıyorsan Perfume Point'teki en ucuzu; oy sayısı henüz az.",
+     "cid": 121025,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 8130
+      }
+     ]
+    },
+    {
+     "group": "Ofis · iş ve müşteri",
+     "name": "Bad Boy Cobalt (Parfum Electrique) · 100 ml",
+     "shop": "beymen",
+     "p": 7115,
+     "u": "https://www.beymen.com/tr/p_carolina-herrera-bad-boy-cobalt-edp-100ml_1838898",
+     "note": "Yayılım 3/5 · kalıcılık 3/5 · ★ 4,3",
+     "desc": "Lavanta, erik, sedir ve trüf. Bad Boy ailesinin en yüksek puanlısı (4,32) ve işe en uygunu: Ofis, Günlük, Gündüz. Tatlılığı az, odunsu ve temiz. Carolina Herrera istiyorsan önerim bu.",
+     "cid": 71888,
+     "pick": true
+    },
+    {
+     "group": "Ofis · iş ve müşteri",
+     "name": "Phantom Intense · 100 ml",
+     "shop": "beymen",
+     "p": 7045,
+     "u": "https://www.beymen.com/tr/p_rabanne-phantom-intense-100ml_1838881",
+     "note": "Yayılım 3/5 · kalıcılık 3/5 · ★ 4,2",
+     "desc": "Lavanta, vanilya ve baharat; Phantom ailesinin en beğenileni (4,16). Ofis ve Günlük. Yalnız Beymen'de buldum; fiyatı Parfum'un Perfume Point fiyatından 1.305 TL fazla.",
+     "cid": 89717
+    },
+    {
+     "group": "Ofis · iş ve müşteri",
+     "name": "Invictus Parfum · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6100,
+     "u": "https://www.perfumepoint.com.tr/rabanne-invictus-parfum-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 4,3",
+     "desc": "Misk, sabunsu notalar ve deniz havası. Katalogda Temiz olarak işaretli; Rabanne'ın ofise en uygun kokusu. Yaz ve gündüz için.",
+     "cid": 90433
+    },
+    {
+     "group": "Ofis · iş ve müşteri",
+     "name": "Scandal Pour Homme Intense · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6324,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-scandal-for-him-intense-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 4/5 · ★ 3,9",
+     "desc": "Scandal'ın derili ve aromatik hali; tatlılığı en az olan. Ofis ve Günlük. 2025 çıkışlı, oy sayısı az.",
+     "cid": 102884
+    },
+    {
+     "group": "Ofis · iş ve müşteri",
+     "name": "Bleu de Chanel EDP · 100 ml",
+     "shop": "beymen",
+     "p": 8400,
+     "u": "https://www.beymen.com/tr/p_chanel-bleu-de-chanel-edp-spray-100ml_614436",
+     "note": "Yayılım 3/5 · kalıcılık 3/5 · ★ 4,4",
+     "desc": "Greyfurt, tütsü, sedir ve amber. İstediğin evlerden değil ama ofis için ölçü bu: ciddi, temiz, herkesin sevdiği. Yetkili mağazadan.",
+     "cid": 25967
+    },
+    {
+     "group": "Ofis · iş ve müşteri",
+     "name": "Boss Bottled Parfum · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5029,
+     "u": "https://www.perfumepoint.com.tr/hugo-boss-bottled-parfum-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 3/5 · ★ 4,1",
+     "desc": "Deri, sedir ve iris kökü. Ofis ve Kış; uygun fiyatlı, olgun bir iş kokusu.",
+     "cid": 75183,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 6705
+      }
+     ]
+    },
+    {
+     "group": "Ofis · iş ve müşteri",
+     "name": "212 VIP Black · 50 ml",
+     "shop": "perfumepoint",
+     "p": 3988,
+     "u": "https://www.perfumepoint.com.tr/carolina-herrera-212-vip-men-black-edp-50-ml-23130",
+     "note": "Yayılım 3/5 · kalıcılık 3/5 · ★ 4,3",
+     "desc": "Absinthe, lavanta ve vanilya. Carolina Herrera'nın şimşeksiz çizgisi; Ofis, Günlük ve Date olarak işaretli, ayrıca Temiz. Bu listedeki en ucuz şişe.",
+     "cid": 46093
+    },
+    {
+     "group": "Ofis · iş ve müşteri",
+     "name": "Luna Rossa Black · 100 ml",
+     "shop": "perfumepoint",
+     "p": 7420,
+     "u": "https://www.perfumepoint.com.tr/prada-luna-rossa-black-edp-100-ml",
+     "note": "Yayılım 3/5 · kalıcılık 3/5 · ★ 4,4",
+     "desc": "Amber, kumarin ve misk. Sıcak ama temiz; Ofis, Günlük, Date ve Kış dördü birden. Tatlı sevip ofiste abartmak istemeyenlere.",
+     "cid": 48682,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 10600
+      }
+     ]
+    }
+   ],
+   "plans": [
+    {
+     "name": "1 · İstediğin ikisi birden",
+     "why": "Le Male Elixir'in 75 ml'si ile Elixir Absolu sığıyor. 125 ml + 125 ml sığmıyor (13.668 TL, 1.333 TL eksik). İkisi de date ve kış kokusu; ofis için elinde bir şey kalmaz.",
+     "offers": [
+      1,
+      2
+     ]
+    },
+    {
+     "name": "2 · Önerim: date + ofis",
+     "why": "Le Male Elixir akşama, Bad Boy Cobalt Absolute işe. İki ayrı ev, iki ayrı iş.",
+     "offers": [
+      1,
+      28
+     ]
+    },
+    {
+     "name": "3 · Üç evden üç şişe",
+     "why": "Gaultier date'e, Rabanne güne, Carolina Herrera ofise. Hepsi küçük şişe; 24 TL eksik kalıyor.",
+     "offers": [
+      1,
+      20,
+      35
+     ]
+    },
+    {
+     "name": "4 · Elixir Absolu + Phantom Parfum",
+     "why": "İstediğin Absolu date ve kışa, Phantom Parfum güne ve ofise.",
+     "offers": [
+      2,
+      20
+     ]
+    },
+    {
+     "name": "5 · Le Male Elixir (büyük) + Phantom Parfum",
+     "why": "İkisi de 100 ml üstü; neredeyse tam bütçe.",
+     "offers": [
+      0,
+      19
+     ]
+    },
+    {
+     "name": "6 · Le Male Elixir + Boss Bottled Absolu",
+     "why": "İkisinin de yayılımı 4/5: biri tatlı, biri ciddi.",
+     "offers": [
+      0,
+      11
+     ]
+    },
+    {
+     "name": "7 · Le Male Elixir + Bad Boy Elixir",
+     "why": "Gaultier + Carolina Herrera, ikisi de akşam ve kış.",
+     "offers": [
+      1,
+      13
+     ]
+    },
+    {
+     "name": "8 · Rabanne ikilisi: Invictus Victory Elixir + Phantom Parfum",
+     "why": "Date + günlük, tek evden.",
+     "offers": [
+      7,
+      19
+     ]
+    },
+    {
+     "name": "Tekli · Le Male Elixir 125 ml",
+     "why": "",
+     "offers": [
+      0
+     ]
+    },
+    {
+     "name": "Tekli · Le Male Elixir Absolu 125 ml",
+     "why": "",
+     "offers": [
+      2
+     ]
+    }
+   ]
   }
  ]
 }
