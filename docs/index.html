@@ -3746,14 +3746,55 @@ const safeUrl = u => /^https:\/\//.test(String(u)) ? String(u) : '#';
 // at the next working session) or through the phone's share sheet. Answers come back as messages.
 const ASK_URL = 'https://github.com/burakbagdat-py/parfumdb/issues/new';
 const outbox = () => (S.outbox = S.outbox || []);
+// Sending straight from the app: the user's own GitHub key (one that may only open issues in one repository) and a PIN,
+// both typed in on the phone and kept apart from the rest of the app's data, so they never travel with a backup and are
+// never part of this page. The PIN is asked once each time the app is opened, before the first message goes out.
+let ASK = null, askPinOk = false;
+const ASK_REPO = 'burakbagdat-py/parfumdb';
+async function askCfg(){ if (ASK === null) { try { ASK = await idbGet('ask') || {}; } catch (e) { ASK = {}; } } return ASK; }
+async function sha(t){ const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+function openAskSetup(){
+  sheetMode = 'asksetup';
+  const f = openOverlay(), c = ASK || {};
+  f.innerHTML = `<div class="row spread"><h2>Doğrudan gönderim</h2>${closeIcon}</div>
+    <span class="muted small">Kurulunca “Gönder” sorunu tarayıcı açmadan, uygulamanın içinden yollar. Bunun için GitHub'da yalnız kayıt (issue) açabilen bir anahtar gerekir; anahtarı sen oluşturur ve buraya sen yazarsın. Anahtar ve şifre yalnız bu telefonda durur, yedeğe girmez.</span>
+    <div class="auth-step"><span class="n">1</span><div><b>Anahtarı oluştur</b><p>GitHub → Settings → Developer settings → Fine-grained tokens. “Only select repositories” ile yalnız mesajların gideceği depoyu seç; “Repository permissions” altında yalnız <b>Issues: Read and write</b> ver.</p>
+      <div class="row" style="margin-top:8px"><a class="btn sm" href="https://github.com/settings/personal-access-tokens/new" data-act="extlink">Anahtar sayfasını aç</a></div></div></div>
+    <div class="field"><label for="ask-repo">Mesajların gideceği depo</label><input class="input" id="ask-repo" type="text" autocapitalize="off" autocomplete="off" spellcheck="false" value="${esc(c.repo || ASK_REPO)}">
+      <span class="muted small">Bu depo herkese açık; yazdıkların da açık olur. Gizli kalsın istersen GitHub'da özel (private) bir depo aç, adını buraya yaz ve anahtarı o depo için oluştur.</span></div>
+    <div class="field"><label for="ask-token">GitHub anahtarı</label><input class="input" id="ask-token" type="password" autocomplete="off" placeholder="${c.token ? 'Kayıtlı (değiştirmek için yenisini yaz)' : 'github_pat_…'}"></div>
+    <div class="field"><label for="ask-pin">Gönderme şifresi (rakam)</label><input class="input" id="ask-pin" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="${c.pin ? 'Kayıtlı (değiştirmek için yenisini yaz)' : 'en az 4 rakam'}">
+      <span class="muted small">Uygulama her açıldığında ilk mesajdan önce bir kez sorulur. Telefonun başkasının elindeyse senin adına mesaj gidemesin diye.</span></div>
+    <div class="row spread">${c.token ? '<button class="btn sm danger" data-act="askforget" type="button">Kurulumu sil</button>' : '<span></span>'}<button class="btn primary" data-act="asksave" type="button">Kaydet</button></div>`;
+}
+async function askDirect(x){
+  const c = await askCfg();
+  if (!c.token || !c.pin) return false;
+  if (!askPinOk) {
+    // typed into the field above the buttons; a page's own prompt window is not shown by every Android shell
+    const i = document.getElementById('ask-pinin'), p = i ? i.value.trim() : '';
+    if (!p) { toast('Gönderme şifresini yaz'); if (i) i.focus(); return 'cancel'; }
+    if (await sha('bb|' + p) !== c.pin) { toast('Şifre yanlış'); if (i) { i.value = ''; i.focus(); } return 'cancel'; }
+    askPinOk = true;
+  }
+  const m = INBOX.find(y => y.id === x.re);
+  try {
+    const r = await fetch('https://api.github.com/repos/' + (c.repo || ASK_REPO) + '/issues', {method: 'POST',
+      headers: {'Authorization': 'Bearer ' + c.token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json'},
+      body: JSON.stringify({title: 'Soru: ' + x.text.slice(0, 60), body: x.text + (m ? '\n\n(Yanıtlanan mesaj: ' + m.title + ')' : '')})});
+    if (!r.ok) { toast(r.status === 401 || r.status === 403 ? 'Anahtar kabul edilmedi; kurulumu kontrol et' : r.status === 404 ? 'Depo bulunamadı ya da anahtarın oraya izni yok' : 'Gönderilemedi (' + r.status + ')'); return 'cancel'; }
+    x.sent = true; save(); toast('Gönderildi'); return true;
+  } catch (e) { toast('Bağlantı yok; mesaj burada duruyor, sonra “Gönder”e bas'); return 'cancel'; }
+}
 function askBox(re){
   const mine = outbox().filter(x => x.re === re);
   return `${mine.map(x => `<div class="bubble me"><span>${esc(x.text)}</span><small>${esc(phDay(x.t))} · ${x.sent ? 'gönderildi' : 'gönderilmedi'}${x.sent ? '' : ` · <button class="linkbtn" data-act="asksend" data-id="${x.id}" type="button">Gönder</button>`} · <button class="linkbtn" data-act="askdel" data-id="${x.id}" type="button">Sil</button></small></div>`).join('')}
     <div class="ask"><textarea class="input" id="ask-text" rows="2" placeholder="Cevap yaz ya da soru sor…" maxlength="1500"></textarea>
+      ${ASK && ASK.token && !askPinOk ? '<input class="input" id="ask-pinin" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Gönderme şifresi (uygulama açılınca bir kez)">' : ''}
       <div class="row" style="flex-wrap:nowrap"><button class="btn sm" data-act="askmic" type="button" aria-label="Sesle yaz">${MIC_SVG}Söyle</button>
         <button class="btn sm primary" data-act="askgo" data-re="${esc(re)}" type="button" style="flex:1">Gönder</button>
         <button class="btn sm ghost" data-act="askshare" data-re="${esc(re)}" type="button">Paylaş</button></div>
-      <span class="muted small">“Gönder” sorunu GitHub sayfasında yeni bir kayıt olarak açar; oradaki yeşil düğmeye basınca gider. Kayıt herkese açıktır: bakiye, telefon gibi özel bilgi yazma. Cevap, bir sonraki çalışma oturumunda buraya mesaj olarak gelir.</span></div>`;
+      <span class="muted small">${ASK && ASK.token ? 'Doğrudan gönderim kurulu: “Gönder” mesajı uygulamanın içinden yollar.' : '“Gönder” sorunu GitHub sayfasında yeni bir kayıt olarak açar; oradaki yeşil düğmeye basınca gider.'} Cevap, bir sonraki çalışma oturumunda buraya mesaj olarak gelir. <button class="linkbtn" data-act="asksetup" type="button">${ASK && ASK.token ? 'Kurulumu değiştir' : 'Doğrudan gönderimi kur'}</button></span></div>`;
 }
 const MIC_SVG = '<svg class="bi" style="display:block;width:18px;height:18px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg>';
 function askKeep(re){
@@ -3762,7 +3803,8 @@ function askKeep(re){
   const x = {id: uid(), t: Date.now(), re, text: v, sent: false};
   outbox().push(x); save(); return x;
 }
-function askSend(x){
+async function askSend(x){
+  const d = await askDirect(x); if (d) return;
   const m = INBOX.find(y => y.id === x.re);
   openLink(ASK_URL + '?title=' + encodeURIComponent('Soru: ' + x.text.slice(0, 60)) + '&body=' + encodeURIComponent(x.text + (m ? '\n\n(Yanıtlanan mesaj: ' + m.title + ')' : '')));
   x.sent = true; save();
@@ -5819,9 +5861,20 @@ document.addEventListener('click', async e => {
     case 'priceconc': if (priceState && priceState.data) { pickConc(priceState.data, t.dataset.v, priceState.p); priceState.ml = priceState.userMl = null; drawPrices(); } break;
     case 'inbox': openInbox(); break;
     case 'askmic': await askMic(); break;
-    case 'askgo': { const x = askKeep(t.dataset.re); if (x) { askSend(x); if (x.re) openMsg(x.re); else openInbox(); } break; }
+    case 'askgo': { const x = askKeep(t.dataset.re); if (x) { await askSend(x); if (x.re) openMsg(x.re); else openInbox(); } break; }
+    case 'asksetup': await askCfg(); openAskSetup(); break;
+    case 'asksave': {
+      const c = await askCfg(), repo = document.getElementById('ask-repo').value.trim().replace(/^https?:\/\/github\.com\//i, '').replace(/\/+$/, ''), tok = document.getElementById('ask-token').value.trim(), pin = document.getElementById('ask-pin').value.trim();
+      if (!/^[\w.-]+\/[\w.-]+$/.test(repo)) { toast('Depo “kullanıcı/depo” biçiminde olmalı'); break; }
+      if (!tok && !c.token) { toast('Anahtarı yaz'); break; }
+      if (pin && !/^\d{4,12}$/.test(pin)) { toast('Şifre 4–12 rakam olmalı'); break; }
+      if (!pin && !c.pin) { toast('Bir gönderme şifresi yaz'); break; }
+      ASK = {repo, token: tok || c.token, pin: pin ? await sha('bb|' + pin) : c.pin}; askPinOk = false;
+      try { await idbSet('ask', ASK); } catch (e) { toast('Kaydedilemedi'); break; }
+      closeSheet(); toast('Doğrudan gönderim kuruldu'); break; }
+    case 'askforget': ASK = {}; askPinOk = false; try { await idbSet('ask', ASK); } catch (e) {} closeSheet(); toast('Kurulum silindi'); break;
     case 'askshare': { const x = askKeep(t.dataset.re); if (!x) break; if (NATIVE && NATIVE.shareText) nativeCall('shareText', x.text); else if (navigator.share) navigator.share({text: x.text}).catch(() => {}); else { try { await navigator.clipboard.writeText(x.text); toast('Panoya kopyalandı'); } catch (e) {} } x.sent = true; save(); if (x.re) openMsg(x.re); else openInbox(); break; }
-    case 'asksend': { const x = outbox().find(y => y.id === t.dataset.id); if (x) { askSend(x); if (x.re) openMsg(x.re); else openInbox(); } break; }
+    case 'asksend': { const x = outbox().find(y => y.id === t.dataset.id); if (x) { await askSend(x); if (x.re) openMsg(x.re); else openInbox(); } break; }
     case 'askdel': { const x = outbox().find(y => y.id === t.dataset.id); S.outbox = outbox().filter(y => y.id !== t.dataset.id); save(); if (x && x.re) openMsg(x.re); else openInbox(); break; }
     case 'msg': openMsg(t.dataset.id); break;
     case 'pricenow': if (priceState) { const p = priceState.p, m = document.getElementById('price-meta'); if (m) m.textContent = 'yenileniyor…'; await loadPricesInto(p, true); if (document.getElementById('price-meta') && priceState && priceState.p === p) drawPrices(); } break;
@@ -6271,7 +6324,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
   window.onNativeOpen();
   if (S.alarms.length) syncAlarms();
   phSeed();
-  loadInbox();
+  askCfg().then(loadInbox);
   weatherBoot();
   if (S.perfumes.some(p => p.cid && !p.conc)) setTimeout(() => loadCatalog().catch(() => {}), 1500);
 })();
