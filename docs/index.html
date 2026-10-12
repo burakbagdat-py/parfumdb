@@ -636,6 +636,17 @@ html.premium .dhead .dupe-row{justify-content:center}
 .ptags{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
 .ptags .pill,.ptags .seg-tag{font-size:10px;padding:1px 7px}
 .ptitle{font-size:12.5px;line-height:1.3;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pchg{font:700 11px/1.5 var(--f-body);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pchg.up{color:var(--danger)}
+.pchg.down{color:var(--ok)}
+.pwas{font-size:11px;color:var(--muted);text-decoration:line-through;white-space:nowrap}
+.ptags{align-items:center}
+.ph-body{display:flex;flex-direction:column;gap:12px;padding:2px 12px 14px}
+.ph-shop{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start}
+.ph-list{display:flex;flex-direction:column;gap:5px;padding-top:4px}
+.ph-list>div{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:8px;align-items:baseline;font-size:13px;font-variant-numeric:tabular-nums}
+.ph-list span{color:var(--muted);font-size:12px}
+.ph-list b{font-weight:600}
 .plogos{display:inline-flex;gap:4px;flex-wrap:wrap;vertical-align:middle}
 .pbest{display:inline-flex;align-items:center;gap:6px}
 .sbtns{display:flex;flex-wrap:wrap;gap:8px}
@@ -3105,6 +3116,67 @@ async function cachedMulti(p){
   return null;
 }
 const mpFlight = new Map();
+// Price history: every price a store gave is written down the moment it arrives; a new line is added only when the price
+// has changed, so a series reads as "it cost this from then on". S.ph[search key] = {"store|kind|ml": [[time, price], ...]}.
+function phRecord(key, data, t){
+  if (!data || !data.shops) return false;
+  const all = S.ph || (S.ph = {}), mine = all[key] || (all[key] = {}); let changed = false;
+  t = t || data.t || Date.now();
+  for (const [k, v] of Object.entries(data.shops)) {
+    if (!v || v.stale) continue;   // a price carried over from last time is not a new reading
+    for (const [c, b] of Object.entries(v.byConc || {})) for (const [ml, x] of Object.entries(b)) {
+      const pr = Math.round(x.p * 100) / 100; if (!(pr > 0)) continue;
+      const id = k + '|' + c + '|' + ml, a = mine[id] || (mine[id] = []), last = a[a.length - 1];
+      if (last && (last[1] === pr || t <= last[0])) continue;
+      a.push([t, pr]); if (a.length > 40) a.splice(1, a.length - 40);   // the first reading is kept, the middle thins out
+      changed = true;
+    }
+  }
+  if (!Object.keys(mine).length) delete all[key];
+  if (changed) save();
+  return changed;
+}
+const phOf = (p, k, c, ml) => ((S.ph || {})[mKey(p)] || {})[k + '|' + c + '|' + ml] || [];
+const phDay = t => new Date(t).toLocaleDateString('tr-TR', new Date(t).getFullYear() === new Date().getFullYear() ? {day: 'numeric', month: 'short'} : {day: 'numeric', month: 'short', year: '2-digit'});
+const phChg = (now, was) => { const d = (now - was) / was * 100, r = Math.abs(d) < 10 ? Math.round(Math.abs(d) * 10) / 10 : Math.round(Math.abs(d)); return `<span class="pchg ${now > was ? 'up' : 'down'}">${now > was ? '▲' : '▼'} %${String(r).replace('.', ',')}</span>`; };
+// What was saved before this existed: the last answer of every search is still in the cache, and the daily background
+// check keeps its last result. Both are written into the history once, with the time they were read.
+async function phSeed(){
+  try {
+    if (!S.phSeed) {
+      const d = await db();
+      const rows = await new Promise((res, rej) => { const out = [], q = d.transaction('kv').objectStore('kv').openCursor(IDBKeyRange.bound('mp5:', 'mp5:\uffff'));
+        q.onsuccess = () => { const c = q.result; if (c) { out.push([c.key, c.value]); c.continue(); } else res(out); }; q.onerror = () => rej(q.error); });
+      for (const [k, v] of rows) phRecord(k, v, v && v.t);
+      for (const a of S.alarms || []) if (a.start > 0 && a.created) phRecord(mKey(a), {shops: {'?': {byConc: {[a.conc || '?']: {[a.ml]: {p: a.start}}}}}}, a.created);
+      S.phSeed = 1; save();
+    }
+    const res = alarmResults();
+    for (const a of S.alarms || []) {
+      const r = res[a.id]; if (!r || !(r.price > 0)) continue;
+      const k = Object.keys(STORES).find(x => STORES[x].n === r.shop) || '?';
+      phRecord(mKey(a), {shops: {[k]: {byConc: {[a.conc || '?']: {[a.ml]: {p: r.price}}}}}}, r.t);
+    }
+  } catch (e) { logErr('fiyat geçmişi', e); }
+}
+function phBox(p, sel, ml, rows){
+  const mine = (S.ph || {})[mKey(p)] || {}, tail = '|' + ml;
+  // this size in the kind on show; readings whose kind was not known ("?") belong to every kind
+  const ids = Object.keys(mine).filter(id => id.endsWith(tail) && (id.split('|')[1] === sel || id.split('|')[1] === '?' || sel === '?'));
+  const total = ids.reduce((n, id) => n + mine[id].length, 0);
+  if (!total) return '';
+  const order = rows.map(r => r.k), rank = id => { const i = order.indexOf(id.split('|')[0]); return i < 0 ? 99 : i; };
+  ids.sort((a, b) => rank(a) - rank(b));
+  const all = ids.flatMap(id => mine[id].map(x => ({t: x[0], p: x[1], k: id.split('|')[0]}))), low = all.reduce((m, x) => !m || x.p < m.p ? x : m, null), high = all.reduce((m, x) => !m || x.p > m.p ? x : m, null);
+  const moved = ids.some(id => mine[id].length > 1);
+  return `<details class="cg phist"${moved ? ' open' : ''}><summary>Fiyat geçmişi <small>${ml} ml · ${total} kayıt</small></summary>
+    <div class="ph-body">
+      ${low && high && high.p > low.p ? `<span class="muted small">En düşük ${fmtPrice(low.p)} (${esc(phDay(low.t))}) · en yüksek ${fmtPrice(high.p)} (${esc(phDay(high.t))})</span>` : ''}
+      ${ids.map(id => { const k = id.split('|')[0], a = mine[id].slice().reverse();
+        return `<div class="ph-shop">${k === '?' ? '<span class="slogo"><b>?</b></span>' : slogo(k)}<div class="ph-list">${a.slice(0, 10).map((x, i) => `<div><span>${esc(phDay(x[0]))}</span><b>${fmtPrice(x[1])}</b>${a[i + 1] ? phChg(x[1], a[i + 1][1]) : '<span class="muted">ilk kayıt</span>'}</div>`).join('')}</div></div>`; }).join('')}
+      <span class="muted small">${moved ? 'Her satır, fiyatın o gün o değere geçtiğini gösterir.' : 'Henüz değişiklik yok. Fiyat her çekildiğinde kaydedilir; değişince eskisi burada kalır, artış ya da düşüş yüzdesiyle görünür.'}</span>
+    </div></details>`;
+}
 // opt.fresh: skip the cache. The same perfume is never searched twice at the same time (detail, bell and piggy bank share one search).
 // opt.deep: the different try, for when the usual search found nothing twice: looser spellings, the stores that are switched off
 // in the settings as well, and more patience with a slow store.
@@ -3136,6 +3208,7 @@ function fetchMulti(p, onProgress, opt){
       settle();
       // "not sold here" is worth remembering too: the next look is instant and asks each store once instead of four times
       if (Object.values(out.shops).some(x => hasAny(x.byConc) || Object.keys(x.sizes).length || x.miss)) { mpMem.set(key, out); idbSet(key, out).catch(() => {}); }
+      phRecord(key, out);
     };
     // every store at once; the page stops waiting for a slow store after 10 s (20 on the different try), its answer is still added when it arrives
     await Promise.all(ids.map(async k => {
@@ -4400,6 +4473,7 @@ function drawPrices(){
   const missing = data.order.filter(k => !(data.shops[k] && data.shops[k].sizes[ml]));
   const rules = SHOP_RULES || {}, extra = data.extra || [];
   const tags = (r, i) => [i === 0 && rows.length > 1 && !r.sus ? '<span class="seg-tag N">En ucuz</span>' : '', rules[r.k] && rules[r.k].market ? '<span class="pill">pazar yeri</span>' : '',
+    (h => h.length > 1 ? `${phChg(h[h.length - 1][1], h[h.length - 2][1])}<span class="pwas">önce ${fmtPrice(h[h.length - 2][1])}</span>` : '')(phOf(p, r.k, sel, ml)),
     r.sus ? '<span class="pill" style="color:var(--danger)">şüpheli ucuz</span>' : '', r.stale ? '<span class="pill">son bilinen</span>' : '', extra.includes(r.k) ? '<span class="pill">kapalı mağaza</span>' : ''].join('');
   body.innerHTML = `${concBar}
     <div class="row spread" style="align-items:flex-end;flex-wrap:nowrap"><div><span class="muted small pbest">${sel && sel !== '?' ? esc(sel) + ' · ' : ''}${ml} ml · en ucuz ${slogo(rows[0].k, true)}</span><div class="bigprice">${fmtPrice(rows[0].p)}</div></div>
@@ -4410,6 +4484,7 @@ function drawPrices(){
     ${closed.length ? `<span class="muted small">Şu an yanıt vermiyor: ${logos(closed)} · varsa son bilinen fiyatı gösteriliyor${wait > 0 ? `, ${wait} dk sonra yeniden denenir` : ''}.</span>` : ''}
     ${rows.some(r => r.sus) ? '<span class="muted small">“Şüpheli ucuz”: pazar yerindeki fiyat, mağazaların fiyatının yarısına yakın. En ucuz sayılmaz; almadan önce satıcıya bak.</span>' : ''}
     ${data.deep ? '<span class="muted small">Farklı yoldan arandı: başka yazılışlar ve kapalı tuttuğun mağazalar da soruldu.</span>' : ''}
+    ${phBox(p, sel, ml, rows)}
     ${priceToggle(p, ml)}`;
 }
 function priceToggle(p, ml){
@@ -5833,6 +5908,7 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible' || !S) return;
   if (S.weekKey !== weekKey()) { S.weekKey = weekKey(); shuffleWeek(); save(); render(); }
   if (cleanBuys()) { save(); render(); }
+  phSeed();
   weatherBoot();
   if (S.tab === 'ayarlar' && S.sub === 'bildirim') renderNotif();
 });
@@ -5987,6 +6063,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
   requestAnimationFrame(() => nativeCall('ready'));
   window.onNativeOpen();
   if (S.alarms.length) syncAlarms();
+  phSeed();
   weatherBoot();
   if (S.perfumes.some(p => p.cid && !p.conc)) setTimeout(() => loadCatalog().catch(() => {}), 1500);
 })();
