@@ -209,6 +209,13 @@ public class Bridge {
     }
 
     @JavascriptInterface
+    public void inboxMark(String idsJson) {
+        if (!activity.trusted()) return;
+        InboxWatch.mark(activity, idsJson);
+        InboxWatch.schedule(activity);
+    }
+
+    @JavascriptInterface
     public void checkPricesNow() {
         if (!activity.trusted()) return;
         new Thread(() -> PriceWatch.check(activity)).start();

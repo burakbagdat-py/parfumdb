@@ -10,5 +10,6 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context c, Intent intent) {
         Scheduler.scheduleAll(c);
         PriceWatch.schedule(c);
+        InboxWatch.schedule(c);
     }
 }

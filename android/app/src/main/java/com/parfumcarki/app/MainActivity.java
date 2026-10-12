@@ -193,6 +193,7 @@ public class MainActivity extends Activity {
 
         loadHome();
 
+        InboxWatch.schedule(this);
         Scheduler.scheduleAll(this);
     }
 

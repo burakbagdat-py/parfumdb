@@ -3736,9 +3736,12 @@ async function loadInbox(){
     const mb = INBOX.find(m => m.budget > 0 && !inboxSeen().includes(m.id));
     if (mb && +S.budget !== +mb.budget) { S.budget = +mb.budget; save(); }
     inboxBadge();
+    // from v32 the app itself watches the file while it is closed and notifies; the page only tells it what it has shown
+    const bg = !!(NATIVE && NATIVE.inboxMark);
+    if (bg) { nativeCall('inboxMark', JSON.stringify(INBOX.map(x => x.id))); if (INBOX.length && !nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission'); }
     const fresh = inboxUnread(); if (!fresh.length) return;
     const told = S.inboxTold || (S.inboxTold = []), m = fresh[0];
-    if (!told.includes(m.id)) {
+    if (!bg && !told.includes(m.id)) {
       told.push(m.id); save();
       if (NATIVE && NATIVE.test) { if (!nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission'); nativeCall('test', m.title, m.short || 'Yeni mesajın var', 'default', true); }
     }
