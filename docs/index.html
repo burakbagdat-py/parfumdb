@@ -641,6 +641,9 @@ html.premium .dhead .dupe-row{justify-content:center}
 .pchg.down{color:var(--ok)}
 .pwas{font-size:11px;color:var(--muted);text-decoration:line-through;white-space:nowrap}
 .ptags{align-items:center}
+.ph-spark{width:100%;height:56px;color:var(--accent);display:block}
+.ph-ax{font-size:11.5px;color:var(--muted);margin-top:-8px;font-variant-numeric:tabular-nums}
+#price-meta .linkbtn{font-size:12px;padding:0}
 .ph-body{display:flex;flex-direction:column;gap:12px;padding:2px 12px 14px}
 .ph-shop{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start}
 .ph-list{display:flex;flex-direction:column;gap:5px;padding-top:4px}
@@ -2107,6 +2110,8 @@ function todayTiles(){
   const buy = (S.buys || []).filter(b => b.at > now && byId(b.pid)).sort((a, b) => a.at - b.at)[0];
   if (buy) out.push(tile(`data-act="buyopen" data-id="${buy.pid}"`, IC.clock, esc(new Date(buy.at).toLocaleDateString('tr-TR', {day: 'numeric', month: 'short'})), 'almayı planladın', esc(byId(buy.pid).name)));
   if (S.alarms.length) out.push(tile('data-act="gosub" data-sub="alisveris"', ICONS.bell, S.alarms.length, 'fiyat takibinde', esc(S.alarms.map(a => a.name).join(', '))));
+  const mv = phMoves().filter(x => now - x.t < 14 * 864e5);
+  if (mv.length) out.push(tile('data-act="moves"', IC.swap, mv.length, 'fiyat değişti', `${esc(mv[0].n)} ${mv[0].now > mv[0].was ? '▲' : '▼'} ${fmtPrice(mv[0].now)}`));
   if (S.lastBatch) out.push(tile('data-act="batchq"', SHIELD_SVG, esc(S.lastBatch.code), esc(S.lastBatch.h), 'Son kod kontrolü'));
   return out;
 }
@@ -3136,6 +3141,11 @@ function phRecord(key, data, t){
   if (changed) save();
   return changed;
 }
+function phName(key, p){
+  if (!p || !p.name) return;
+  const all = S.phN || (S.phN = {}), cid = p.cid || (all[key] || {}).cid || 0;
+  if (!all[key] || all[key].n !== p.name || all[key].cid !== cid) { all[key] = {n: p.name, b: p.brand || '', cid}; save(); }
+}
 const phOf = (p, k, c, ml) => ((S.ph || {})[mKey(p)] || {})[k + '|' + c + '|' + ml] || [];
 const phDay = t => new Date(t).toLocaleDateString('tr-TR', new Date(t).getFullYear() === new Date().getFullYear() ? {day: 'numeric', month: 'short'} : {day: 'numeric', month: 'short', year: '2-digit'});
 const phChg = (now, was) => { const d = (now - was) / was * 100, r = Math.abs(d) < 10 ? Math.round(Math.abs(d) * 10) / 10 : Math.round(Math.abs(d)); return `<span class="pchg ${now > was ? 'up' : 'down'}">${now > was ? '▲' : '▼'} %${String(r).replace('.', ',')}</span>`; };
@@ -3151,13 +3161,66 @@ async function phSeed(){
       for (const a of S.alarms || []) if (a.start > 0 && a.created) phRecord(mKey(a), {shops: {'?': {byConc: {[a.conc || '?']: {[a.ml]: {p: a.start}}}}}}, a.created);
       S.phSeed = 1; save();
     }
+    let log = {}; try { log = JSON.parse(nativeCall('priceLog') || '{}'); } catch (e) {}
     const res = alarmResults();
     for (const a of S.alarms || []) {
-      const r = res[a.id]; if (!r || !(r.price > 0)) continue;
+      phName(mKey(a), a.cid ? a : {...a, cid: (S.perfumes.find(x => x.name === a.name) || {}).cid});
+      for (const [t, shops] of log[a.id] || []) {
+        const sh = {}; for (const [k, pr] of Object.entries(shops || {})) sh[k] = {byConc: {[a.conc || '?']: {[a.ml]: {p: pr}}}};
+        phRecord(mKey(a), {shops: sh}, t);
+      }
+      const r = res[a.id]; if (!r || !(r.price > 0) || (log[a.id] || []).length) continue;
       const k = Object.keys(STORES).find(x => STORES[x].n === r.shop) || '?';
       phRecord(mKey(a), {shops: {[k]: {byConc: {[a.conc || '?']: {[a.ml]: {p: r.price}}}}}}, r.t);
     }
   } catch (e) { logErr('fiyat geçmişi', e); }
+}
+// the cheapest price on offer after every change, as steps: [[time, price], ...]
+function phLow(series){
+  const ev = series.flatMap((a, i) => a.map(x => [x[0], i, x[1]])).sort((x, y) => x[0] - y[0]), cur = {}, out = [];
+  for (const [t, i, pr] of ev) { cur[i] = pr; const low = Math.min(...Object.values(cur)), last = out[out.length - 1]; if (last && t - last[0] < 60e3) last[1] = low; else if (!last || last[1] !== low) out.push([t, low]); }
+  return out;
+}
+function phSpark(pts){
+  if (pts.length < 2) return '';
+  const W = 300, H = 56, t0 = pts[0][0], t1 = Math.max(Date.now(), pts[pts.length - 1][0] + 1), lo = Math.min(...pts.map(x => x[1])), hi = Math.max(...pts.map(x => x[1]));
+  const X = t => 4 + (t - t0) / (t1 - t0) * (W - 8), Y = v => hi === lo ? H / 2 : 6 + (hi - v) / (hi - lo) * (H - 12);
+  let d = `M${X(pts[0][0]).toFixed(1)} ${Y(pts[0][1]).toFixed(1)}`;
+  for (let i = 1; i < pts.length; i++) d += ` H${X(pts[i][0]).toFixed(1)} V${Y(pts[i][1]).toFixed(1)}`;
+  d += ` H${X(t1).toFixed(1)}`;
+  const last = pts[pts.length - 1];
+  return `<svg class="ph-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="En ucuz fiyatın seyri"><path d="${d}" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>
+    <div class="row spread ph-ax"><span>${esc(phDay(t0))} · ${fmtPrice(pts[0][1])}</span><span>şimdi · ${fmtPrice(last[1])} ${last[1] !== pts[0][1] ? phChg(last[1], pts[0][1]) : ''}</span></div>`;
+}
+// every perfume whose cheapest recorded price has moved, newest move first
+function phMoves(){
+  const out = [];
+  for (const [key, mine] of Object.entries(S.ph || {})) {
+    const groups = {};
+    for (const [id, a] of Object.entries(mine)) { const [k, c, ml] = id.split('|'); (groups[c + '|' + ml] || (groups[c + '|' + ml] = [])).push(a); }
+    let best = null;
+    for (const [g, series] of Object.entries(groups)) {
+      const low = phLow(series); if (low.length < 2) continue;
+      const now = low[low.length - 1], was = low[low.length - 2];
+      if (!best || now[0] > best.t) best = {t: now[0], now: now[1], was: was[1], first: low[0][1], conc: g.split('|')[0], ml: +g.split('|')[1]};
+    }
+    const who = (S.phN || {})[key];
+    if (best && who) out.push({key, ...who, ...best});
+  }
+  return out.sort((a, b) => b.t - a.t);
+}
+function openMoves(){
+  sheetMode = 'moves';
+  const f = openOverlay(), l = phMoves(), tracked = Object.keys(S.ph || {}).length;
+  f.innerHTML = `<div class="row spread"><h2>Fiyat hareketleri</h2>${closeIcon}</div>
+    ${l.length ? `<div class="list">${l.map((x, i) => `<button class="item" data-act="moveopen" data-i="${i}" type="button" style="grid-template-columns:52px minmax(0,1fr) auto">
+      <div class="art">${art({name: x.n, img: x.cid ? fimg(x.cid) : ''})}</div>
+      <div class="item-body"><span class="item-name">${esc(x.n)}</span>
+        <span class="item-meta"><span lang="en">${esc(x.b)}</span> · ${x.ml} ml${x.conc !== '?' ? ' · ' + esc(x.conc) : ''} · ${esc(phDay(x.t))}</span>
+        <span class="item-meta"><span class="pwas">${fmtPrice(x.was)}</span> <b style="color:var(--fg)">${fmtPrice(x.now)}</b> ${phChg(x.now, x.was)}</span></div>
+      ${ICONS.chev}</button>`).join('')}</div>` : `<div class="empty">Henüz fiyatı değişen parfüm yok.${tracked ? ` ${tracked} parfümün fiyatı kayıtlı; biri değişince burada görünür.` : ' Bir parfümün Fiyat sekmesini açınca fiyatı kaydedilmeye başlar.'}</div>`}
+    <span class="muted small">En ucuz fiyatın son değişimi gösterilir. Fiyat takibindeki (çan) parfümler her gün kendiliğinden kontrol edilir; diğerleri sayfaları açıldığında.</span>`;
+  f._moves = l;
 }
 function phBox(p, sel, ml, rows){
   const mine = (S.ph || {})[mKey(p)] || {}, tail = '|' + ml;
@@ -3171,9 +3234,11 @@ function phBox(p, sel, ml, rows){
   const moved = ids.some(id => mine[id].length > 1);
   return `<details class="cg phist"${moved ? ' open' : ''}><summary>Fiyat geçmişi <small>${ml} ml · ${total} kayıt</small></summary>
     <div class="ph-body">
+      ${phSpark(phLow(ids.map(id => mine[id])))}
       ${low && high && high.p > low.p ? `<span class="muted small">En düşük ${fmtPrice(low.p)} (${esc(phDay(low.t))}) · en yüksek ${fmtPrice(high.p)} (${esc(phDay(high.t))})</span>` : ''}
       ${ids.map(id => { const k = id.split('|')[0], a = mine[id].slice().reverse();
         return `<div class="ph-shop">${k === '?' ? '<span class="slogo"><b>?</b></span>' : slogo(k)}<div class="ph-list">${a.slice(0, 10).map((x, i) => `<div><span>${esc(phDay(x[0]))}</span><b>${fmtPrice(x[1])}</b>${a[i + 1] ? phChg(x[1], a[i + 1][1]) : '<span class="muted">ilk kayıt</span>'}</div>`).join('')}</div></div>`; }).join('')}
+      <div class="row spread"><button class="linkbtn" data-act="moves" type="button">Tüm fiyat hareketleri ›</button><button class="linkbtn" data-act="phclear" type="button" style="color:var(--muted)">Bu geçmişi sil</button></div>
       <span class="muted small">${moved ? 'Her satır, fiyatın o gün o değere geçtiğini gösterir.' : 'Henüz değişiklik yok. Fiyat her çekildiğinde kaydedilir; değişince eskisi burada kalır, artış ya da düşüş yüzdesiyle görünür.'}</span>
     </div></details>`;
 }
@@ -3208,7 +3273,7 @@ function fetchMulti(p, onProgress, opt){
       settle();
       // "not sold here" is worth remembering too: the next look is instant and asks each store once instead of four times
       if (Object.values(out.shops).some(x => hasAny(x.byConc) || Object.keys(x.sizes).length || x.miss)) { mpMem.set(key, out); idbSet(key, out).catch(() => {}); }
-      phRecord(key, out);
+      phName(key, p); phRecord(key, out);
     };
     // every store at once; the page stops waiting for a slow store after 10 s (20 on the different try), its answer is still added when it arrives
     await Promise.all(ids.map(async k => {
@@ -3869,7 +3934,7 @@ async function syncAlarms(){
   const rules = await loadShops();
   const use = S.shop.order.filter(k => rules[k] && !S.shop.off.includes(k)).map(k => ({...rules[k], id: k}));
   nativeCall('setPriceWatches', JSON.stringify(S.alarms.map(a => ({id: a.id, name: a.name, brand: brandWords(a.brand).join(' '), conc: a.conc || '', q: a.q,
-    qs: queryVariants(a).slice(0, 4), ml: a.ml, target: a.target, rules: use}))), S.alarmTime);
+    qs: queryVariants(a).slice(0, 4), ml: a.ml, target: a.target, chg: S.priceChg !== false, rules: use}))), S.alarmTime);
 }
 function alarmResults(){ try { return JSON.parse(nativeCall('priceResults') || '{}'); } catch (e) { return {}; } }
 function openAlarmSheet(){
@@ -4455,7 +4520,7 @@ function drawPrices(){
       ${storeBtns(p, S.shop.order.filter(k => !S.shop.off.includes(k)))}${priceToggle(p, null)}`;
     return;
   }
-  if (meta) { const m = Math.round((Date.now() - data.t) / 60000); meta.textContent = m < 2 ? 'şimdi güncellendi' : m < 60 ? m + ' dk önce' : Math.round(m / 60) + ' saat önce'; }
+  if (meta) { const m = Math.round((Date.now() - data.t) / 60000); meta.innerHTML = (m < 2 ? 'şimdi güncellendi' : m < 60 ? m + ' dk önce' : Math.round(m / 60) + ' saat önce') + (m >= 2 ? ' · <button class="linkbtn" data-act="pricenow" type="button">Yenile</button>' : ''); }
   const cc = concCounts(data), cl = Object.keys(cc).sort((a, b) => CONC_RANK.indexOf(a) - CONC_RANK.indexOf(b)), sel = data.conc;
   const concLbl = c => c === '?' ? 'Türü yazmıyor' : (CONC_FULL[c] || c);
   const concBar = `<div class="field" style="gap:6px"><span class="label">Mağazada satılan tür</span>
@@ -5131,6 +5196,9 @@ function renderShop(){
       <div style="display:flex;flex-direction:column;gap:12px;padding:4px 12px 14px">
         ${NATIVE && NATIVE.setPriceWatches ? `
         <span class="muted small">Bir parfümün Fiyat sekmesinde “Fiyat düşünce haber ver”e dokun. Uygulama her gün Boyner fiyatını kontrol eder, hedefin altına inince bildirim gönderir.</span>
+        <label class="toggle-row" for="price-chg"><span><b>Fiyat değişince bildir</b><br><span class="muted small">Takipteki bir parfümün en ucuz fiyatı %1 ve üstü artar ya da düşerse, hedefe inmese de haber verir. Uygulamanın v29 sürümüyle çalışır.</span></span>
+          <span class="switch"><input type="checkbox" id="price-chg"${S.priceChg !== false ? ' checked' : ''}><span></span></span></label>
+        <div class="row"><button class="btn sm" data-act="moves" type="button">Fiyat hareketleri</button></div>
         <div class="field"><label for="al-time">Günlük kontrol saati</label><input class="input" type="time" id="al-time" value="${esc(S.alarmTime)}"></div>
         <div class="field"><label for="al-sound">Fiyat düştüğünde çalacak ses</label>
           <div class="row" style="flex-wrap:nowrap"><select class="input" id="al-sound" style="flex:1;min-width:0">${Object.entries(SOUNDS).map(([k, d]) => `<option value="${k}"${(S.alarmSound || 'fiyat') === k ? ' selected' : ''}>${esc(d.n)}</option>`).join('')}<option value="default"${S.alarmSound === 'default' ? ' selected' : ''}>Telefonun bildirim sesi</option></select>
@@ -5627,6 +5695,14 @@ document.addEventListener('click', async e => {
     case 'buydel': S.buys = S.buys.filter(b => b.id !== t.dataset.id); save(); closeSheet(); render(); toast('Hatırlatıcı silindi'); break;
     case 'pricesize': if (priceState) { priceState.ml = priceState.userMl = +t.dataset.ml; drawPrices(); } break;
     case 'priceconc': if (priceState && priceState.data) { pickConc(priceState.data, t.dataset.v, priceState.p); priceState.ml = priceState.userMl = null; drawPrices(); } break;
+    case 'pricenow': if (priceState) { const p = priceState.p, m = document.getElementById('price-meta'); if (m) m.textContent = 'yenileniyor…'; await loadPricesInto(p, true); if (document.getElementById('price-meta') && priceState && priceState.p === p) drawPrices(); } break;
+    case 'moves': openMoves(); break;
+    case 'moveopen': { const f = document.getElementById('sheet'), x = f && f._moves && f._moves[+t.dataset.i]; if (!x) break;
+      const own = S.perfumes.find(q => mKey(q) === x.key);
+      dTab = 'price';
+      if (own) openDetail(own); else if (x.cid) { try { await loadCatalog(); } catch (e) { toast('Katalog yüklenemedi'); break; } openCatalogDetail(x.cid); } else toast('Bu parfüm artık koleksiyonunda değil');
+      break; }
+    case 'phclear': if (priceState) { const k = mKey(priceState.p); if (t.dataset.armed !== '1') { t.dataset.armed = '1'; t.textContent = 'Emin misin? Tekrar dokun'; break; } if (S.ph) delete S.ph[k]; save(); drawPrices(); toast('Fiyat geçmişi silindi'); } break;
     case 'pricerefresh': if (priceState) {
       // the first press repeats the search; after two searches that found nothing the next one goes another way (Ayarlar > Alışveriş)
       const p = priceState.p, deep = S.shop.deep !== false && (priceTries.get(mKey(p)) || 0) >= 2; priceMem.clear();
@@ -5795,6 +5871,7 @@ document.addEventListener('change', async e => {
   if (t.id === 'rb-global' || t.id === 'set-global') { S.global = t.checked; save(); if (t.id === 'rb-global') openRandomBuy(); else renderShop(); }
   if (t.id === 'shop-exact') { S.shop.exact = t.checked; save(); }
   if (t.id === 'shop-deep') { S.shop.deep = t.checked; save(); }
+  if (t.id === 'price-chg') { S.priceChg = t.checked; save(); syncAlarms(); }
   if (t.classList && t.classList.contains('dupe-sw')) {
     S.dupes = t.checked; save(); ex.limit = 40;
     if (t.id === 'rb-dupes') rbCount(); else if (t.id === 'ex-dupes') renderExplore();

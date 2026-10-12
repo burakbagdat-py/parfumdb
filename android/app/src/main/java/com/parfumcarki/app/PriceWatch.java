@@ -25,6 +25,9 @@ public class PriceWatch extends BroadcastReceiver {
     private static final String KEY_WATCHES = "price_watches";
     private static final String KEY_RESULTS = "price_results";
     private static final String KEY_TIME = "price_time";
+    // every daily reading, kept so the page can show how a price moved while the app was closed: {"id": [[time, {"shop": price}], ...]}
+    private static final String KEY_LOG = "price_log";
+    private static final int LOG_MAX = 90;
     private static final int REQ = 900;
     private static final Set<String> SKIP = new HashSet<>(java.util.Arrays.asList(
             "eau", "de", "du", "la", "le", "parfum", "toilette", "edt", "edp", "extrait", "cologne", "spray", "ml",
@@ -47,6 +50,10 @@ public class PriceWatch extends BroadcastReceiver {
 
     static String results(Context c) {
         return prefs(c).getString(KEY_RESULTS, "{}");
+    }
+
+    static String log(Context c) {
+        return prefs(c).getString(KEY_LOG, "{}");
     }
 
     static void schedule(Context c) {
@@ -100,6 +107,23 @@ public class PriceWatch extends BroadcastReceiver {
         } catch (Exception e) {
             res = new JSONObject();
         }
+        JSONObject log;
+        try {
+            log = new JSONObject(log(c));
+        } catch (Exception e) {
+            log = new JSONObject();
+        }
+        // readings of watches that no longer exist are dropped
+        JSONObject kept = new JSONObject();
+        for (int i = 0; i < w.length(); i++) {
+            JSONObject x = w.optJSONObject(i);
+            if (x == null) continue;
+            JSONArray old = log.optJSONArray(x.optString("id"));
+            try {
+                if (old != null) kept.put(x.optString("id"), old);
+            } catch (Exception ignored) { }
+        }
+        log = kept;
         for (int i = 0; i < w.length(); i++) {
             JSONObject x = w.optJSONObject(i);
             if (x == null) continue;
@@ -163,6 +187,22 @@ public class PriceWatch extends BroadcastReceiver {
             }
             if (best == Double.MAX_VALUE) continue;
             try {
+                JSONObject was = res.optJSONObject(x.optString("id"));
+                double before = was == null ? 0 : was.optDouble("price", 0);
+                JSONArray series = log.optJSONArray(x.optString("id"));
+                if (series == null) series = new JSONArray();
+                series.put(new JSONArray().put(System.currentTimeMillis()).put(perShop));
+                while (series.length() > LOG_MAX) series.remove(0);
+                log.put(x.optString("id"), series);
+                // a move of one percent or more is told, whichever way it went; the target has its own message below
+                double target0 = x.optDouble("target", 0);
+                if (x.optBoolean("chg") && before > 0 && Math.abs(best - before) / before >= 0.01 && !(target0 > 0 && best <= target0)) {
+                    boolean up = best > before;
+                    Notifier.show(c, 800 + i, (up ? "Fiyat arttı: " : "Fiyat düştü: ") + name,
+                            bestShop + " · " + ml + " ml · " + formatTl(before) + " → " + formatTl(best)
+                                    + " (" + (up ? "▲" : "▼") + " %" + Math.round(Math.abs(best - before) / before * 100) + ")",
+                            prefs(c).getString("price_sound", "dl:fiyat"), true, "Fiyat alarmı");
+                }
                 res.put(x.optString("id"), new JSONObject().put("price", best).put("url", bestUrl).put("shop", bestShop)
                         .put("shops", perShop).put("t", System.currentTimeMillis()));
                 double target = x.optDouble("target", 0);
@@ -173,7 +213,7 @@ public class PriceWatch extends BroadcastReceiver {
                 }
             } catch (Exception ignored) { }
         }
-        prefs(c).edit().putString(KEY_RESULTS, res.toString()).apply();
+        prefs(c).edit().putString(KEY_RESULTS, res.toString()).putString(KEY_LOG, log.toString()).apply();
     }
 
     private static JSONArray defaultRules() {

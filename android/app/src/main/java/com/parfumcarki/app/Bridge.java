@@ -203,6 +203,12 @@ public class Bridge {
     }
 
     @JavascriptInterface
+    public String priceLog() {
+        if (!activity.trusted()) return "{}";
+        return PriceWatch.log(activity);
+    }
+
+    @JavascriptInterface
     public void checkPricesNow() {
         if (!activity.trusted()) return;
         new Thread(() -> PriceWatch.check(activity)).start();
