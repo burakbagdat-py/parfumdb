@@ -636,6 +636,17 @@ html.premium .dhead .dupe-row{justify-content:center}
 .ptags{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
 .ptags .pill,.ptags .seg-tag{font-size:10px;padding:1px 7px}
 .ptitle{font-size:12.5px;line-height:1.3;color:var(--muted);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bud{display:block;font-size:12px;font-weight:600;margin-top:3px}
+.bud.ok{color:var(--ok)}
+.bud.no{color:var(--danger)}
+#inbox-btn{position:relative}
+#inbox-dot{position:absolute;top:6px;right:7px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--bg)}
+.msg{display:flex;flex-direction:column;gap:9px}
+.msg h3{font-size:20px;line-height:1.2}
+.bubble{margin:0;padding:11px 14px;border-radius:6px 18px 18px 18px;background:var(--panel-2);font-size:14.5px;line-height:1.5;max-width:94%;align-self:flex-start}
+html.premium .bubble{background:var(--fill)}
+.msg-new{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:7px;vertical-align:2px}
+.prow.offer{padding:10px 12px}
 .pchg{font:700 11px/1.5 var(--f-body);font-variant-numeric:tabular-nums;white-space:nowrap}
 .pchg.up{color:var(--danger)}
 .pchg.down{color:var(--ok)}
@@ -1145,6 +1156,7 @@ html.premium[data-dock="right"].dock-hidden #dock-show svg{rotate:-90deg}
     <div class="logo"><span class="mono">BB</span><div><h1 class="disp">Parfüm Envanteri</h1><small id="today-label"></small></div></div>
     <span class="bar-title" id="bar-title"></span>
     <div class="top-acts">
+      <button class="icon-btn" id="inbox-btn" data-act="inbox" type="button" aria-label="Mesajlar" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h16v9.5a1.5 1.5 0 0 1-1.5 1.5H9l-4 3v-3H5.5A1.5 1.5 0 0 1 4 16z"/><path d="M8 10.5h8M8 13.5h5"/></svg><i id="inbox-dot" hidden></i></button>
       <button class="icon-btn" data-act="gosub" data-sub="kart" type="button" aria-label="Kartvizitim"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8.5" r="3.6"/><path d="M4.8 19.5c1-3.6 3.8-5.4 7.2-5.4s6.2 1.8 7.2 5.4"/></svg></button>
       <button class="icon-btn" data-tab="ayarlar" type="button" aria-label="Ayarlar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
     </div>
@@ -3695,6 +3707,64 @@ function adoptNativeBatch(){
     if (nb && nb.t && (!S.lastBatch || nb.t > S.lastBatch.t)) { S.lastBatch = {name: nb.group || 'Hızlı kontrol', brand: '', code: nb.code, h: nb.h, cls: nb.cls || 'good', t: nb.t}; save(); }
   } catch (e) {}
 }
+// Messages: research done for the user outside the app arrives as a small file beside the page (data/inbox.json). The app
+// reads it when it opens; a new message raises a notification and opens by itself, and stays in the inbox afterwards.
+// The file is public like the rest of the site, so nothing personal is written into it: the budget stays on the phone.
+let INBOX = [];
+const inboxSeen = () => (S.inboxSeen = S.inboxSeen || []);
+const inboxUnread = () => INBOX.filter(m => !inboxSeen().includes(m.id));
+function inboxBadge(){
+  const b = document.getElementById('inbox-btn'), d = document.getElementById('inbox-dot'); if (!b) return;
+  b.hidden = !INBOX.length; if (d) d.hidden = !inboxUnread().length;
+}
+async function loadInbox(){
+  try {
+    const r = await fetch('data/inbox.json?h=' + Math.floor(Date.now() / 6e5), {cache: 'no-store'}); if (!r.ok) return;
+    const d = await r.json();
+    INBOX = (d.msgs || []).filter(m => m && m.id && m.title).sort((a, b) => new Date(b.t) - new Date(a.t));
+    inboxBadge();
+    const fresh = inboxUnread(); if (!fresh.length) return;
+    const told = S.inboxTold || (S.inboxTold = []), m = fresh[0];
+    if (!told.includes(m.id)) {
+      told.push(m.id); save();
+      if (NATIVE && NATIVE.test) { if (!nativeCall('hasNotifPermission')) nativeCall('requestNotifPermission'); nativeCall('test', m.title, m.short || 'Yeni mesajın var', 'default', true); }
+    }
+    // tapping the notification opens the app: the message is then already on screen
+    if (!document.getElementById('overlay')) openMsg(m.id);
+  } catch (e) {}
+}
+const budgetLine = sum => { const b = +S.budget || 0; return !b ? '' : sum <= b ? `<span class="bud ok">Bütçen ${fmtPrice(b)}: yetiyor, ${fmtPrice(b - sum)} artıyor.</span>` : `<span class="bud no">Bütçen ${fmtPrice(b)}: ${fmtPrice(sum - b)} eksik.</span>`; };
+const safeUrl = u => /^https:\/\//.test(String(u)) ? String(u) : '#';
+function openInbox(){
+  sheetMode = 'inbox';
+  const f = openOverlay();
+  f.innerHTML = `<div class="row spread"><h2>Mesajlar</h2>${closeIcon}</div>
+    ${INBOX.length ? `<div class="list">${INBOX.map(m => `<button class="item" data-act="msg" data-id="${esc(m.id)}" type="button" style="grid-template-columns:minmax(0,1fr) auto">
+      <div class="item-body"><span class="item-name">${inboxSeen().includes(m.id) ? '' : '<span class="msg-new"></span>'}${esc(m.title)}</span><span class="item-meta">${esc(phDay(new Date(m.t).getTime()))} · ${esc(m.short || '')}</span></div>${ICONS.chev}</button>`).join('')}</div>`
+      : '<div class="empty">Henüz mesaj yok.</div>'}`;
+}
+function openMsg(id){
+  const m = INBOX.find(x => x.id === id); if (!m) return;
+  if (!inboxSeen().includes(id)) { inboxSeen().push(id); save(); inboxBadge(); }
+  sheetMode = 'msg';
+  const f = openOverlay();
+  pageFn = () => openMsg(id);
+  const picks = (m.offers || []).filter(o => o.pick), sum = picks.reduce((a, o) => a + (+o.p || 0), 0);
+  f.innerHTML = `<div class="row spread" style="flex-wrap:nowrap"><button class="back" style="margin:0" data-act="inbox" type="button">‹ Mesajlar</button>${closeIcon}</div>
+    <div class="msg">
+      <span class="eyebrow">${esc(new Date(m.t).toLocaleString('tr-TR', {day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit'}))}</span>
+      <h3>${esc(m.title)}</h3>
+      ${(m.body || []).map(x => `<p class="bubble">${esc(x)}</p>`).join('')}
+    </div>
+    ${(m.offers || []).length ? `<span class="label">Bulduğum yerler</span>
+      <div class="list">${m.offers.map(o => `<a class="prow offer" href="${esc(safeUrl(o.u))}" data-act="extlink">${STORES[o.shop] ? slogo(o.shop) : '<span class="slogo"><b>?</b></span>'}
+        <span class="ptitle" style="color:var(--fg)"><b>${esc(o.name)}</b>${o.pick ? ' <span class="seg-tag N">Önerim</span>' : ''}<br><span class="muted">${esc((STORES[o.shop] || {n: o.shop}).n)}${o.note ? ' · ' + esc(o.note) : ''}</span></span>
+        <span class="price">${fmtPrice(+o.p || 0)}</span>${ICONS.chev}</a>`).join('')}</div>` : ''}
+    ${picks.length > 1 ? `<div class="box" style="gap:6px"><div class="row spread"><span>Önerdiklerimin toplamı</span><b>${fmtPrice(sum)}</b></div>
+      ${budgetLine(sum) || '<span class="muted small">Bütçeni Ayarlar > Alışveriş’e yazarsan yetip yetmediğini burada görürsün.</span>'}
+      ${S.budget ? picks.map(o => `<span class="muted small">Yalnız ${esc(o.name)}: ${+o.p <= S.budget ? fmtPrice(S.budget - o.p) + ' artar' : fmtPrice(o.p - S.budget) + ' eksik'}</span>`).join('') : ''}
+      <div class="row"><button class="btn sm" data-act="gosub" data-sub="alisveris" type="button">Bütçemi ayarla</button></div></div>` : ''}`;
+}
 window.onNativeOpen = () => {
   if (!S) return; adoptNativeBatch();
   const o = nativeCall('pendingOpen');
@@ -4541,7 +4611,7 @@ function drawPrices(){
     (h => h.length > 1 ? `${phChg(h[h.length - 1][1], h[h.length - 2][1])}<span class="pwas">önce ${fmtPrice(h[h.length - 2][1])}</span>` : '')(phOf(p, r.k, sel, ml)),
     r.sus ? '<span class="pill" style="color:var(--danger)">şüpheli ucuz</span>' : '', r.stale ? '<span class="pill">son bilinen</span>' : '', extra.includes(r.k) ? '<span class="pill">kapalı mağaza</span>' : ''].join('');
   body.innerHTML = `${concBar}
-    <div class="row spread" style="align-items:flex-end;flex-wrap:nowrap"><div><span class="muted small pbest">${sel && sel !== '?' ? esc(sel) + ' · ' : ''}${ml} ml · en ucuz ${slogo(rows[0].k, true)}</span><div class="bigprice">${fmtPrice(rows[0].p)}</div></div>
+    <div class="row spread" style="align-items:flex-end;flex-wrap:nowrap"><div><span class="muted small pbest">${sel && sel !== '?' ? esc(sel) + ' · ' : ''}${ml} ml · en ucuz ${slogo(rows[0].k, true)}</span><div class="bigprice">${fmtPrice(rows[0].p)}</div>${budgetLine(rows[0].p)}</div>
       <a class="btn sm primary" href="${esc(rows[0].u)}" data-act="extlink">Aç</a></div>
     <div class="sizes">${sizes.map(sz => { const b = bestAt(data, sz); return `<button class="${sz === ml ? 'on' : ''}" data-act="pricesize" data-ml="${sz}" type="button"><b>${sz} ml</b><small>${fmtPrice(b.p)}</small></button>`; }).join('')}</div>
     <div class="list">${rows.map((r, i) => `<a class="prow" href="${esc(r.u)}" data-act="extlink" title="${esc(r.t || '')}">${slogo(r.k)}<span class="ptags">${tags(r, i)}</span><span class="price">${fmtPrice(r.p)}</span>${ICONS.chev}</a>`).join('')}</div>
@@ -5171,6 +5241,9 @@ function renderShop(){
         <span class="switch"><input type="checkbox" id="set-global"${S.global ? ' checked' : ''}><span></span></span></label>
       <div class="field"><span class="label">Rastgele al için mağaza</span><div class="chips">${Object.entries(STORES).map(([k, s]) => `<button class="chip${S.store === k ? ' on' : ''}" data-act="setstore" data-v="${k}" type="button">${s.n}</button>`).join('')}</div>
         <span class="muted small">${S.store === 'boyner' ? "Boyner seçiliyken sadece Boyner'de satılan markalardan seçilir ve canlı fiyat gösterilir." : 'Seçilen parfüm bu mağazada aranır.'}</span></div>
+      <div class="field"><label for="set-budget">Bütçem (TL)</label>
+        <input class="input" id="set-budget" type="number" inputmode="numeric" min="0" placeholder="örn. 12000" value="${S.budget ? esc(S.budget) : ''}">
+        <span class="muted small">Yalnız bu telefonda durur. Fiyat kutularında ve mesajlarda “yetiyor / şu kadar eksik” diye gösterilir; boş bırakırsan gösterilmez.</span></div>
       <div class="field"><span class="label">Kimin için</span><div class="seg">
         <button class="${S.gender ? '' : 'on'}" data-act="setgender" data-g="" type="button">Hepsi</button>
         ${['E','K'].map(g => `<button class="${S.gender === g ? 'on' : ''}" data-act="setgender" data-g="${g}" type="button">${GENDER[g]}</button>`).join('')}</div>
@@ -5695,6 +5768,8 @@ document.addEventListener('click', async e => {
     case 'buydel': S.buys = S.buys.filter(b => b.id !== t.dataset.id); save(); closeSheet(); render(); toast('Hatırlatıcı silindi'); break;
     case 'pricesize': if (priceState) { priceState.ml = priceState.userMl = +t.dataset.ml; drawPrices(); } break;
     case 'priceconc': if (priceState && priceState.data) { pickConc(priceState.data, t.dataset.v, priceState.p); priceState.ml = priceState.userMl = null; drawPrices(); } break;
+    case 'inbox': openInbox(); break;
+    case 'msg': openMsg(t.dataset.id); break;
     case 'pricenow': if (priceState) { const p = priceState.p, m = document.getElementById('price-meta'); if (m) m.textContent = 'yenileniyor…'; await loadPricesInto(p, true); if (document.getElementById('price-meta') && priceState && priceState.p === p) drawPrices(); } break;
     case 'moves': openMoves(); break;
     case 'moveopen': { const f = document.getElementById('sheet'), x = f && f._moves && f._moves[+t.dataset.i]; if (!x) break;
@@ -5871,6 +5946,7 @@ document.addEventListener('change', async e => {
   if (t.id === 'rb-global' || t.id === 'set-global') { S.global = t.checked; save(); if (t.id === 'rb-global') openRandomBuy(); else renderShop(); }
   if (t.id === 'shop-exact') { S.shop.exact = t.checked; save(); }
   if (t.id === 'shop-deep') { S.shop.deep = t.checked; save(); }
+  if (t.id === 'set-budget') { S.budget = Math.max(0, Math.round(+t.value || 0)); save(); toast(S.budget ? 'Bütçe: ' + fmtPrice(S.budget) : 'Bütçe kaldırıldı'); }
   if (t.id === 'price-chg') { S.priceChg = t.checked; save(); syncAlarms(); }
   if (t.classList && t.classList.contains('dupe-sw')) {
     S.dupes = t.checked; save(); ex.limit = 40;
@@ -5985,7 +6061,7 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState !== 'visible' || !S) return;
   if (S.weekKey !== weekKey()) { S.weekKey = weekKey(); shuffleWeek(); save(); render(); }
   if (cleanBuys()) { save(); render(); }
-  phSeed();
+  phSeed(); loadInbox();
   weatherBoot();
   if (S.tab === 'ayarlar' && S.sub === 'bildirim') renderNotif();
 });
@@ -6141,6 +6217,7 @@ document.addEventListener('click', e => { const b = e.target.closest && e.target
   window.onNativeOpen();
   if (S.alarms.length) syncAlarms();
   phSeed();
+  loadInbox();
   weatherBoot();
   if (S.perfumes.some(p => p.cid && !p.conc)) setTimeout(() => loadCatalog().catch(() => {}), 1500);
 })();

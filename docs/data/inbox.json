@@ -1,0 +1,25 @@
+{
+ "v": 1,
+ "msgs": [
+  {
+   "id": "2026-10-12-lemale",
+   "t": "2026-10-12T19:30:00+03:00",
+   "title": "Le Male Le Parfum + Elixir Absolu araştırması",
+   "short": "İkisi birlikte bütçeye sığmıyor; Elixir Absolu için en uygun yeri buldum.",
+   "body": [
+    "Baktığım mağazalarda ikisini birlikte almak şu an mümkün değil: en ucuz Le Male Le Parfum 125 ml (12.209 TL) ile en ucuz Elixir Absolu 125 ml (7.108 TL) toplam 19.317 TL ediyor.",
+    "Elixir Absolu'yu yalnızca Perfume Point'te buldum: 125 ml 7.108 TL, stokta. Beymen ve Gratis'te Absolu yok, yalnız normal Elixir var. Aşağıdaki ilk bağlantı o ürün sayfası.",
+    "Le Parfum için dikkat: Perfume Point'te 200 ml'si 8.084 TL, yani Gratis'teki 125 ml'den (12.209 TL) hem büyük hem ucuz. Beymen'de 200 ml 10.105 TL. Mağazalar bu parfümü “Le Male EDP” diye de yazıyor.",
+    "Önerim: önce Elixir Absolu'yu al (7.108 TL). Le Parfum 200 ml için 8.084 TL gerekiyor; ikisinin toplamı 15.192 TL. Ayarlar > Alışveriş'e bütçeni yazarsan aradaki farkı aşağıda ve fiyat kutularında görürsün; Le Parfum için kumbara da kurabilirsin.",
+    "Bakamadıklarım: Boyner, Sephora, Trendyol, Hepsiburada ve Amazon otomatik sorguya izin vermiyor, n11 ve Pazarama yanıt vermedi. Perfume Point yetkili bir zincir değil, bir parfüm mağazası: ürün gelince kutudaki parti kodunu uygulamadaki orijinallik testinden geçir. Fiyatlar 12 Ekim 2026 akşamı okundu, değişebilir."
+   ],
+   "offers": [
+    {"name": "Le Male Elixir Absolu · 125 ml", "shop": "perfumepoint", "p": 7108, "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-elixir-absolu-edp-125-ml", "pick": true, "note": "Bulduğum tek ve en uygun yer"},
+    {"name": "Le Male Le Parfum · 200 ml", "shop": "perfumepoint", "p": 8084, "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-le-parfum-200-ml", "pick": true, "note": "125 ml'den ucuz"},
+    {"name": "Le Male Le Parfum · 125 ml", "shop": "gratis", "p": 12209, "u": "https://www.gratis.com/erkek-parfum/jean-paul-gaultier-le-male-edp-erkek-parfum-125-ml-p-10213649"},
+    {"name": "Le Male Le Parfum · 75 ml", "shop": "gratis", "p": 9039, "u": "https://www.gratis.com/erkek-parfum/jean-paul-gaultier-le-male-edp-erkek-parfum-75-ml-p-10213665"},
+    {"name": "Le Male Le Parfum · 200 ml", "shop": "beymen", "p": 10105, "u": "https://www.beymen.com/tr/p_jean-paul-gaultier-jean-paul-gaultier-le-male-edp-200ml_1839244"}
+   ]
+  }
+ ]
+}
