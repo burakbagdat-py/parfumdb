@@ -14,11 +14,151 @@
     "Bakamadıklarım: Boyner, Sephora, Trendyol, Hepsiburada ve Amazon otomatik sorguya izin vermiyor, n11 ve Pazarama yanıt vermedi. Perfume Point yetkili bir zincir değil, bir parfüm mağazası: ürün gelince kutudaki parti kodunu uygulamadaki orijinallik testinden geçir. Fiyatlar 12 Ekim 2026 akşamı okundu, değişebilir."
    ],
    "offers": [
-    {"name": "Le Male Elixir Absolu · 125 ml", "shop": "perfumepoint", "p": 7108, "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-elixir-absolu-edp-125-ml", "pick": true, "note": "Bulduğum tek ve en uygun yer"},
-    {"name": "Le Male Le Parfum · 200 ml", "shop": "perfumepoint", "p": 8084, "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-le-parfum-200-ml", "pick": true, "note": "125 ml'den ucuz"},
-    {"name": "Le Male Le Parfum · 125 ml", "shop": "gratis", "p": 12209, "u": "https://www.gratis.com/erkek-parfum/jean-paul-gaultier-le-male-edp-erkek-parfum-125-ml-p-10213649"},
-    {"name": "Le Male Le Parfum · 75 ml", "shop": "gratis", "p": 9039, "u": "https://www.gratis.com/erkek-parfum/jean-paul-gaultier-le-male-edp-erkek-parfum-75-ml-p-10213665"},
-    {"name": "Le Male Le Parfum · 200 ml", "shop": "beymen", "p": 10105, "u": "https://www.beymen.com/tr/p_jean-paul-gaultier-jean-paul-gaultier-le-male-edp-200ml_1839244"}
+    {
+     "name": "Le Male Elixir Absolu · 125 ml",
+     "shop": "perfumepoint",
+     "p": 7108,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-elixir-absolu-edp-125-ml",
+     "pick": true,
+     "note": "Bulduğum tek ve en uygun yer"
+    },
+    {
+     "name": "Le Male Le Parfum · 200 ml",
+     "shop": "perfumepoint",
+     "p": 8084,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-le-parfum-200-ml",
+     "pick": true,
+     "note": "125 ml'den ucuz"
+    },
+    {
+     "name": "Le Male Le Parfum · 125 ml",
+     "shop": "gratis",
+     "p": 12209,
+     "u": "https://www.gratis.com/erkek-parfum/jean-paul-gaultier-le-male-edp-erkek-parfum-125-ml-p-10213649"
+    },
+    {
+     "name": "Le Male Le Parfum · 75 ml",
+     "shop": "gratis",
+     "p": 9039,
+     "u": "https://www.gratis.com/erkek-parfum/jean-paul-gaultier-le-male-edp-erkek-parfum-75-ml-p-10213665"
+    },
+    {
+     "name": "Le Male Le Parfum · 200 ml",
+     "shop": "beymen",
+     "p": 10105,
+     "u": "https://www.beymen.com/tr/p_jean-paul-gaultier-jean-paul-gaultier-le-male-edp-200ml_1839244"
+    }
+   ]
+  },
+  {
+   "id": "2026-10-12-emlak",
+   "t": "2026-10-12T21:40:00+03:00",
+   "title": "Bütçene göre rapor: emlakçı için günlük parfüm planı",
+   "short": "Beş yol çıkardım; önerim Elixir Absolu + işe uygun bir ikinci şişe.",
+   "body": [
+    "## İşin gerektirdiği",
+    "Emlakçı müşteriyle arabada, asansörde, boş dairede yan yana durur. Koku temiz ve güven veren olmalı, kapalı yerde kimseyi boğmamalı. Bu yüzden iş için ferah, sabunsu ya da hafif odunsu kokular en güvenlisi; 2–4 fıs yeter.",
+    "Le Male Elixir Absolu ve Le Male Le Parfum tatlı, yoğun ve akşam kokuları. Çok güzeller ama gündüz müşteriyle kapalı alanda ağır kaçabilirler. İkisini birden almak yerine birini akşam için, yanına işe uygun bir şişe almak daha mantıklı.",
+    "## Günlük düzen",
+    "Hafta içi gündüz ve müşteri randevusu: temiz koku (Prada L'Homme, Montblanc Legend, Boss Bottled, Lacoste Blanc). Akşam yemeği, davet, hafta sonu: Elixir Absolu. Sıcak yaz günü ve ev gezdirme: en hafifi (Lacoste Blanc ya da Cool Water).",
+    "## Yollar",
+    "Aşağıda beş yol var; her birinin toplamı ve bütçenden kalan yazıyor. Kalanı görmek için bütçeni Ayarlar > Alışveriş'e bir kez yazman yeterli.",
+    "## Nelere dikkat",
+    "En ucuz fiyatların çoğu Perfume Point'te; yetkili zincir değil, bir parfüm mağazası. Ürün gelince parti kodunu uygulamadaki orijinallik testinden geçir. Yetkili zincirden almak istersen dördüncü yol Beymen. Boyner, Sephora, Trendyol, Hepsiburada ve Amazon'a bakamadım (otomatik sorguya izin vermiyorlar). Fiyatlar 12 Ekim 2026 akşamı okundu; kargo ücreti dahil değil."
+   ],
+   "offers": [
+    {
+     "name": "Le Male Elixir Absolu · 125 ml",
+     "shop": "perfumepoint",
+     "p": 7108,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-elixir-absolu-edp-125-ml",
+     "note": "Akşam ve özel gün"
+    },
+    {
+     "name": "Montblanc Legend EDT · 100 ml",
+     "shop": "perfumepoint",
+     "p": 4320,
+     "u": "https://www.perfumepoint.com.tr/montblanc-legend-edt-100-ml",
+     "note": "Temiz, ofis klasiği"
+    },
+    {
+     "name": "Boss Bottled EDT · 200 ml",
+     "shop": "perfumepoint",
+     "p": 4853,
+     "u": "https://www.perfumepoint.com.tr/hugo-boss-bottled-edt-200-ml",
+     "note": "Elmalı-odunsu, iş kokusu; büyük şişe"
+    },
+    {
+     "name": "Prada L'Homme EDT · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6825,
+     "u": "https://www.perfumepoint.com.tr/arama?q=prada+l+homme",
+     "note": "Sabunsu, en derli toplu"
+    },
+    {
+     "name": "Lacoste L.12.12 Blanc EDT · 100 ml",
+     "shop": "perfumepoint",
+     "p": 4095,
+     "u": "https://www.perfumepoint.com.tr/lacoste-l1212-blanc-edt-100-ml",
+     "note": "Hafif, yaz ve gündüz"
+    },
+    {
+     "name": "Davidoff Cool Water EDT · 125 ml",
+     "shop": "perfumepoint",
+     "p": 2565,
+     "u": "https://www.perfumepoint.com.tr/davidoff-cool-water-edt-125-ml",
+     "note": "Ferah, ucuz günlük"
+    },
+    {
+     "name": "Bleu de Chanel EDP · 100 ml",
+     "shop": "beymen",
+     "p": 8400,
+     "u": "https://www.beymen.com/tr/p_chanel-bleu-de-chanel-edp-spray-100ml_614436",
+     "note": "Yetkili mağaza; her ortama uyar"
+    }
+   ],
+   "plans": [
+    {
+     "name": "1 · Önerim: istediğin koku + iş kokusu",
+     "why": "Elixir Absolu akşam için, Montblanc Legend her gün işe.",
+     "offers": [
+      0,
+      1
+     ]
+    },
+    {
+     "name": "2 · İstediğin koku + büyük iş şişesi",
+     "why": "Boss Bottled 200 ml uzun süre gider; her gün sıkılır.",
+     "offers": [
+      0,
+      2
+     ]
+    },
+    {
+     "name": "3 · Yalnız iş: iki şişe",
+     "why": "En profesyonel ikili; Le Male'i sonraya bırakır.",
+     "offers": [
+      3,
+      1
+     ]
+    },
+    {
+     "name": "4 · Yetkili mağazadan tek imza + ferah yedek",
+     "why": "Bleu de Chanel Beymen'den; hem işe hem akşama gider.",
+     "offers": [
+      6,
+      5
+     ]
+    },
+    {
+     "name": "5 · En çok artan: üç şişelik düzen",
+     "why": "Gündüz, yaz ve iş için üç ayrı koku.",
+     "offers": [
+      1,
+      4,
+      5
+     ]
+    }
    ]
   }
  ]

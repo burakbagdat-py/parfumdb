@@ -3754,12 +3754,19 @@ function openMsg(id){
     <div class="msg">
       <span class="eyebrow">${esc(new Date(m.t).toLocaleString('tr-TR', {day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit'}))}</span>
       <h3>${esc(m.title)}</h3>
-      ${(m.body || []).map(x => `<p class="bubble">${esc(x)}</p>`).join('')}
+      ${(m.body || []).map(x => /^## /.test(x) ? `<span class="label" style="margin-top:6px">${esc(x.slice(3))}</span>` : `<p class="bubble">${esc(x)}</p>`).join('')}
     </div>
     ${(m.offers || []).length ? `<span class="label">Bulduğum yerler</span>
       <div class="list">${m.offers.map(o => `<a class="prow offer" href="${esc(safeUrl(o.u))}" data-act="extlink">${STORES[o.shop] ? slogo(o.shop) : '<span class="slogo"><b>?</b></span>'}
         <span class="ptitle" style="color:var(--fg)"><b>${esc(o.name)}</b>${o.pick ? ' <span class="seg-tag N">Önerim</span>' : ''}<br><span class="muted">${esc((STORES[o.shop] || {n: o.shop}).n)}${o.note ? ' · ' + esc(o.note) : ''}</span></span>
         <span class="price">${fmtPrice(+o.p || 0)}</span>${ICONS.chev}</a>`).join('')}</div>` : ''}
+    ${(m.plans || []).length ? `<span class="label">Yollar · toplam ve bütçenden kalan</span>
+      ${m.plans.map(pl => { const os = (pl.offers || []).map(i => m.offers[i]).filter(Boolean), tot = os.reduce((a, o) => a + (+o.p || 0), 0), b = +S.budget || 0;
+        return `<div class="box plan" style="gap:6px"><b>${esc(pl.name)}</b>${pl.why ? `<span class="muted small">${esc(pl.why)}</span>` : ''}
+          ${os.map(o => `<div class="row spread" style="flex-wrap:nowrap;font-size:13.5px"><span>${esc(o.name)}</span><span style="font-variant-numeric:tabular-nums;white-space:nowrap">${fmtPrice(+o.p || 0)}</span></div>`).join('')}
+          <div class="row spread" style="border-top:1px solid var(--line);padding-top:6px"><span>Toplam</span><b>${fmtPrice(tot)}</b></div>
+          ${b ? `<div class="row spread"><span>Elinde kalan</span><b class="bud ${tot <= b ? 'ok' : 'no'}" style="margin:0;font-size:15px">${tot <= b ? fmtPrice(b - tot) : '−' + fmtPrice(tot - b) + ' (yetmiyor)'}</b></div>` : ''}</div>`; }).join('')}
+      ${S.budget ? '' : '<div class="row"><button class="btn sm primary" data-act="gosub" data-sub="alisveris" type="button">Bütçemi yaz, kalanı göster</button></div>'}` : ''}
     ${picks.length > 1 ? `<div class="box" style="gap:6px"><div class="row spread"><span>Önerdiklerimin toplamı</span><b>${fmtPrice(sum)}</b></div>
       ${budgetLine(sum) || '<span class="muted small">Bütçeni Ayarlar > Alışveriş’e yazarsan yetip yetmediğini burada görürsün.</span>'}
       ${S.budget ? picks.map(o => `<span class="muted small">Yalnız ${esc(o.name)}: ${+o.p <= S.budget ? fmtPrice(S.budget - o.p) + ' artar' : fmtPrice(o.p - S.budget) + ' eksik'}</span>`).join('') : ''}
