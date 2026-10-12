@@ -283,6 +283,178 @@
      ]
     }
    ]
+  },
+  {
+   "id": "2026-10-13-uclu",
+   "t": "2026-10-13T00:20:00+03:00",
+   "title": "Boss Bottled Absolu, Phantom, Bad Boy: olur mu?",
+   "short": "Üçü de olur; işe en uygunu Boss Bottled Absolu. Tekli ve çiftli yollar hazır.",
+   "body": [
+    "## Kısa cevap",
+    "Üçü de olur. Emlakçılık için sıralamam: Boss Bottled Absolu, sonra Phantom Parfum, sonra Bad Boy. Hiçbirini koklamadan, notalarına ve genel ününe göre söylüyorum; almadan önce bir mağazada teninde dene.",
+    "## Tek tek",
+    "Boss Bottled Absolu: deri, tütsü ve sıcak baharat. Ciddi, olgun, “işini bilen adam” kokusu; imza koku olmaya en yakın olan bu. Yazın öğle sıcağında ağır gelebilir, 1–2 fıs yeter.",
+    "Phantom Parfum: kremsi lavanta ve vanilya. Sıcak, sevimli ve yaklaşılabilir; ciddiyetten çok samimiyet verir. Phantom Elixir aynı çizginin daha yoğun ve tatlı hali; gündüz iş için Parfum daha dengeli.",
+    "Bad Boy: ailede işe en uygun olan Cobalt çizgisi (daha ferah, odunsu). Bad Boy Elixir deri ağırlıklı ve gece kokusu. Bad Boy tatlı-baharatlı ve genç bir çizgi; müşteri karşısında Boss kadar “güven” vermez, ama akşam için güzel bir ikinci şişe olur.",
+    "## Yollar",
+    "Önce tekli alımlar, sonra çiftler. Her yolun altında toplam ve elinde kalan yazar (bütçen Ayarlar > Alışveriş'te yazılıysa).",
+    "## Dikkat",
+    "Fiyatlar 13 Ekim 2026 gecesi okundu; kargo dahil değil. Perfume Point yetkili zincir değil: gelince parti kodunu orijinallik testinden geçir. Aynı ürünlerin Beymen fiyatları daha yüksek (Boss Bottled Absolu 100 ml 7.446 TL, Phantom Parfum 100 ml 7.175 TL, Bad Boy Elixir 100 ml 8.130 TL). Stok durumlarına tek tek bakmadım."
+   ],
+   "offers": [
+    {
+     "name": "Boss Bottled Absolu · 100 ml",
+     "cid": 96246,
+     "shop": "perfumepoint",
+     "p": 5585,
+     "u": "https://www.perfumepoint.com.tr/hugo-boss-bottled-absolu-edp-100-ml",
+     "note": "İmza adayı",
+     "pick": true
+    },
+    {
+     "name": "Rabanne Phantom Parfum · 100 ml",
+     "cid": 81927,
+     "shop": "perfumepoint",
+     "p": 5740,
+     "u": "https://www.perfumepoint.com.tr/rabanne-phantom-parfum-edp-100-ml",
+     "note": "Sıcak, samimi"
+    },
+    {
+     "name": "Rabanne Phantom Elixir · 100 ml",
+     "cid": 101370,
+     "shop": "perfumepoint",
+     "p": 6000,
+     "u": "https://www.perfumepoint.com.tr/rabanne-phantom-elixir-edp-100-ml",
+     "note": "Daha yoğun ve tatlı"
+    },
+    {
+     "name": "Bad Boy Cobalt (Parfum Electrique) · 100 ml",
+     "cid": 71888,
+     "shop": "beymen",
+     "p": 7115,
+     "u": "https://www.beymen.com/tr/p_carolina-herrera-bad-boy-cobalt-edp-100ml_1838898",
+     "note": "Ailenin işe en uygunu"
+    },
+    {
+     "name": "Bad Boy Elixir · 100 ml",
+     "cid": 101597,
+     "shop": "perfumepoint",
+     "p": 6504,
+     "u": "https://www.perfumepoint.com.tr/carolina-herrera-bad-boy-elixir-edp-100-ml",
+     "note": "Deri ağırlıklı, gece"
+    },
+    {
+     "name": "Bad Boy Cobalt Absolute · 100 ml",
+     "cid": 121025,
+     "shop": "perfumepoint",
+     "p": 6504,
+     "u": "https://www.perfumepoint.com.tr/carolina-herrera-bad-boy-cobalt-absolute-edp-100-ml",
+     "note": "Yeni; ferah-odunsu"
+    },
+    {
+     "name": "Le Male Elixir Absolu · 125 ml",
+     "cid": 101529,
+     "shop": "perfumepoint",
+     "p": 7108,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-elixir-absolu-edp-125-ml",
+     "note": "İlk istediğin; akşam"
+    },
+    {
+     "name": "Boss Bottled Absolu · 50 ml",
+     "cid": 96246,
+     "shop": "perfumepoint",
+     "p": 4412,
+     "u": "https://www.perfumepoint.com.tr/hugo-boss-bottled-absolu-edp-50-ml",
+     "note": "Küçük şişe"
+    },
+    {
+     "name": "Rabanne Phantom Parfum · 50 ml",
+     "cid": 81927,
+     "shop": "perfumepoint",
+     "p": 3520,
+     "u": "https://www.perfumepoint.com.tr/rabanne-phantom-parfum-edp-50-ml",
+     "note": "Küçük şişe"
+    }
+   ],
+   "plans": [
+    {
+     "name": "Tekli 1 · Boss Bottled Absolu 100 ml",
+     "why": "Önerim. Tek imza koku, en çok para kalan yol.",
+     "offers": [
+      0
+     ]
+    },
+    {
+     "name": "Tekli 2 · Phantom Parfum 100 ml",
+     "offers": [
+      1
+     ]
+    },
+    {
+     "name": "Tekli 3 · Phantom Elixir 100 ml",
+     "offers": [
+      2
+     ]
+    },
+    {
+     "name": "Tekli 4 · Bad Boy Elixir 100 ml",
+     "offers": [
+      4
+     ]
+    },
+    {
+     "name": "Tekli 5 · Bad Boy Cobalt 100 ml (Beymen)",
+     "offers": [
+      3
+     ]
+    },
+    {
+     "name": "Çiftli 1 · Boss Bottled Absolu + Phantom Parfum",
+     "why": "Önerdiğim çift: gündüz Boss, rahat günler ve akşam Phantom.",
+     "offers": [
+      0,
+      1
+     ]
+    },
+    {
+     "name": "Çiftli 2 · Boss Bottled Absolu + Phantom Elixir",
+     "offers": [
+      0,
+      2
+     ]
+    },
+    {
+     "name": "Çiftli 3 · Boss Bottled Absolu + Bad Boy Elixir",
+     "why": "İş + gece. Çok az para kalır.",
+     "offers": [
+      0,
+      4
+     ]
+    },
+    {
+     "name": "Çiftli 4 · Le Male Elixir Absolu + Boss Bottled Absolu 50 ml",
+     "why": "İlk istediğin koku akşama, Boss işe (küçük şişe).",
+     "offers": [
+      6,
+      7
+     ]
+    },
+    {
+     "name": "Çiftli 5 · Le Male Elixir Absolu + Phantom Parfum 50 ml",
+     "offers": [
+      6,
+      8
+     ]
+    },
+    {
+     "name": "Çiftli 6 · Phantom Parfum + Bad Boy Elixir",
+     "why": "Sığıyor ama kargo çıkarsa yetmeyebilir.",
+     "offers": [
+      1,
+      4
+     ]
+    }
+   ]
   }
  ]
 }
