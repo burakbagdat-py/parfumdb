@@ -455,6 +455,496 @@
      ]
     }
    ]
+  },
+  {
+   "id": "2026-10-13-buyuk",
+   "t": "2026-10-13T02:10:00+03:00",
+   "budget": 12335,
+   "title": "Büyük rapor: 27 parfüm, üç mağaza, “Burak geldi” seçenekleri",
+   "short": "Yayılımı yüksek olanları ayrı listeledim; tekli ve çiftli alımda kalanlar yazıyor.",
+   "body": [
+    "## Nasıl baktım",
+    "27 erkek parfümünün fiyatını üç mağazada okudum: Perfume Point, Beymen ve Gratis. Her satırda en ucuz fiyat büyük, diğer mağazaların fiyatı küçük yazıyor. Yayılım ve kalıcılık puanları uygulamanın kataloğundaki 5 üzerinden puanlar (kullanıcı oylarına dayanır); benim burnum değil.",
+    "## “Burak geldi” ne demek",
+    "Odaya girince fark edilen koku: yayılımı yüksek, tatlı ya da reçineli, uzun kalan. Katalogda yayılımı 4/5 olan dört parfüm var: Le Male Elixir, Le Male Elixir Absolu, Boss Bottled Absolu ve Sauvage Elixir. Gerisi 3/5; onlar da güçlü ama oda doldurmaz.",
+    "Dikkat: yayılımı yüksek koku küçük ofiste ve müşteriyle yan yana rahatsız edebilir. 2 fıs (boyun ve göğüs) yeter; 5–6 fıs sıkarsan “Burak geldi” yerine “Burak fazla sıkmış” denir.",
+    "## Fiyat kıyasında gördüğüm",
+    "Perfume Point neredeyse her üründe en ucuz: Beymen'den ortalama dörtte bir, Gratis'ten yarıya yakın ucuz. Örnek: Le Male Elixir 125 ml Perfume Point 6.560, Beymen 8.200, Gratis 13.079 TL. Bu kadar fark normal değil gibi görünebilir; Perfume Point yetkili zincir değil, bir parfüm mağazası. Ürün gelince parti kodunu orijinallik testinden geçir, jelatini ve kutuyu kontrol et. Garantili olsun dersen Beymen fiyatlarını esas al.",
+    "## Önerim",
+    "Tek şişe: Boss Bottled Absolu (yayılım 4/5, ciddi, işe uygun). Çift: Boss Bottled Absolu + Le Male Elixir. İkisi birlikte bütçene sığıyor, ikisi de fark edilir; biri iş, biri akşam.",
+    "## Bakamadıklarım ve eksikler",
+    "Boyner, Sephora, Trendyol, Hepsiburada ve Amazon otomatik sorguya izin vermiyor; oralarda daha ucuzu olabilir. Bulamadıklarım: JPG Ultra Male, Spicebomb Extreme, Bad Boy Extreme, Lattafa Khamrah ve Asad, Club de Nuit Intense Man (bu üç mağazada yok). Stok durumlarına tek tek bakmadım. Fiyatlar 13 Ekim 2026 gecesi okundu; kargo dahil değil. Hiçbirini koklamadan öneriyorum."
+   ],
+   "offers": [
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Le Male Elixir · 125 ml",
+     "shop": "perfumepoint",
+     "p": 6560,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-elixir-edp-125-ml",
+     "note": "Yayılım 4/5 · ballı, tatlı; en çok fark edilen",
+     "cid": 81642,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 8200
+      },
+      {
+       "shop": "gratis",
+       "p": 13079
+      }
+     ],
+     "pick": true
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Le Male Elixir Absolu · 125 ml",
+     "shop": "perfumepoint",
+     "p": 7108,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-elixir-absolu-edp-125-ml",
+     "note": "Yayılım 4/5 · daha koyu ve baharatlı",
+     "cid": 101529
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Boss Bottled Absolu · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5585,
+     "u": "https://www.perfumepoint.com.tr/hugo-boss-bottled-absolu-edp-100-ml",
+     "note": "Yayılım 4/5 · deri, tütsü; ciddi",
+     "cid": 96246,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 7446
+      }
+     ],
+     "pick": true
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Sauvage Elixir · 100 ml",
+     "shop": "perfumepoint",
+     "p": 11717,
+     "u": "https://www.perfumepoint.com.tr/dior-sauvage-elixir-edp-100-ml",
+     "note": "Yayılım 4/5 · çok güçlü; tek başına bütçeyi yer",
+     "cid": 68415,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 13785
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Stronger With You Absolutely · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6090,
+     "u": "https://www.perfumepoint.com.tr/emporio-armani-stronger-with-you-absolutely-edp-100-ml",
+     "note": "Yayılım 3/5, kalıcılık 4/5 · kestane, rom, vanilya",
+     "cid": 64501,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 8700
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Stronger With You Intensely · 150 ml",
+     "shop": "perfumepoint",
+     "p": 6650,
+     "u": "https://www.perfumepoint.com.tr/emporio-armani-stronger-with-you-intensely-edp-150-ml-18352",
+     "note": "Yayılım 3/5 · tatlı-tarçınlı; büyük şişe",
+     "cid": 52802,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 9500
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Invictus Victory Elixir · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6368,
+     "u": "https://www.perfumepoint.com.tr/rabanne-invictus-victory-elixir-parfum-100-ml",
+     "note": "Yayılım 3/5, kalıcılık 4/5 · tütsülü vanilya",
+     "cid": 78575,
+     "alt": [
+      {
+       "shop": "gratis",
+       "p": 12439
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "1 Million Elixir · 100 ml",
+     "shop": "beymen",
+     "p": 7960,
+     "u": "https://www.beymen.com/tr/p_rabanne-1-million-elixir-100ml_1864538",
+     "note": "Yayılım 3/5 · tatlı, meyveli-odunsu",
+     "cid": 71708,
+     "alt": [
+      {
+       "shop": "gratis",
+       "p": 12439
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Versace Eros EDP · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5296,
+     "u": "https://www.perfumepoint.com.tr/versace-eros-edp-100-ml",
+     "note": "Yayılım 3/5 · naneli vanilya; genç ve gür",
+     "cid": 62762,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 7565
+      },
+      {
+       "shop": "gratis",
+       "p": 8839
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Versace Eros Parfum · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6146,
+     "u": "https://www.perfumepoint.com.tr/versace-eros-parfum-100-ml",
+     "note": "Eros'un daha koyu hali",
+     "cid": 70090,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 9455
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Boss Bottled Elixir · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5532,
+     "u": "https://www.perfumepoint.com.tr/hugo-boss-bottled-elixir-parfum-intense-100-ml",
+     "note": "Yayılım 3/5, kalıcılık 4/5 · reçineli, odunsu",
+     "cid": 84074,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 7376
+      },
+      {
+       "shop": "gratis",
+       "p": 10039
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Dior Homme Intense · 100 ml",
+     "shop": "perfumepoint",
+     "p": 7013,
+     "u": "https://www.perfumepoint.com.tr/dior-homme-intense-edp-100-ml",
+     "note": "Yayılım 3/5 · iris ve kakao; şık",
+     "cid": 13016,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 8250
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Armani Code Parfum · 75 ml",
+     "shop": "perfumepoint",
+     "p": 6930,
+     "u": "https://www.perfumepoint.com.tr/giorgio-armani-code-le-parfum-75-ml",
+     "note": "Yayılım 3/5 · tonka, iris; akşam",
+     "cid": 75126,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 9900
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Phantom Elixir · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6000,
+     "u": "https://www.perfumepoint.com.tr/rabanne-phantom-elixir-edp-100-ml",
+     "note": "Yayılım 3/5 · yoğun vanilya",
+     "cid": 101370,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 7500
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Tom Ford Noir Extreme EDP · 50 ml",
+     "shop": "perfumepoint",
+     "p": 8310,
+     "u": "https://www.perfumepoint.com.tr/tom-ford-noir-extreme-edp-50-ml",
+     "note": "Yayılım 3/5 · kulfi tatlısı, amber; pahalı",
+     "cid": 29675,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 8310
+      }
+     ]
+    },
+    {
+     "group": "Yayılımı yüksek · “Burak geldi”",
+     "name": "Azzaro The Most Wanted Parfum · 100 ml",
+     "shop": "beymen",
+     "p": 8550,
+     "u": "https://www.beymen.com/tr/p_azzaro-the-most-wanted-parfum-100-ml-erkek-parfum_1610905",
+     "note": "Baharatlı vanilya; katalogda puanı yok"
+    },
+    {
+     "group": "İmza ve iş · dengeli",
+     "name": "Bleu de Chanel EDP · 100 ml",
+     "shop": "beymen",
+     "p": 8400,
+     "u": "https://www.beymen.com/tr/p_chanel-bleu-de-chanel-edp-spray-100ml_614436",
+     "note": "Yayılım 3/5 · her ortama uyan imza",
+     "cid": 25967,
+     "pick": true
+    },
+    {
+     "group": "İmza ve iş · dengeli",
+     "name": "Y EDP · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6685,
+     "u": "https://www.perfumepoint.com.tr/yves-saint-laurent-y-for-men-edp-100-ml",
+     "note": "Yayılım 3/5, kalıcılık 4/5 · enerjik",
+     "cid": 50757,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 9550
+      }
+     ]
+    },
+    {
+     "group": "İmza ve iş · dengeli",
+     "name": "Sauvage EDP · 100 ml",
+     "shop": "beymen",
+     "p": 8250,
+     "u": "https://www.beymen.com/tr/search?q=dior+sauvage+edp",
+     "note": "Yayılım 3/5, kalıcılık 4/5 · herkesin tanıdığı",
+     "cid": 48100
+    },
+    {
+     "group": "İmza ve iş · dengeli",
+     "name": "Terre d'Hermès Eau Intense Vétiver · 100 ml",
+     "shop": "perfumepoint",
+     "p": 7155,
+     "u": "https://www.perfumepoint.com.tr/hermes-terre-d-17372",
+     "note": "Olgun, odunsu; katalogda puanı yok"
+    },
+    {
+     "group": "İmza ve iş · dengeli",
+     "name": "Acqua di Giò Profondo Parfum · 100 ml",
+     "shop": "perfumepoint",
+     "p": 7665,
+     "u": "https://www.perfumepoint.com.tr/giorgio-armani-acqua-di-gio-homme-profondo-parfum-100-ml",
+     "note": "Yayılım 3/5 · ferah ama kalıcı",
+     "cid": 90451,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 10950
+      }
+     ]
+    },
+    {
+     "group": "İmza ve iş · dengeli",
+     "name": "Luna Rossa Black · 100 ml",
+     "shop": "perfumepoint",
+     "p": 7420,
+     "u": "https://www.perfumepoint.com.tr/prada-luna-rossa-black-edp-100-ml",
+     "note": "Yayılım 3/5 · amber, kumarin; sıcak ve temiz",
+     "cid": 48682,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 10600
+      }
+     ]
+    },
+    {
+     "group": "İmza ve iş · dengeli",
+     "name": "The One for Men EDP · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6814,
+     "u": "https://www.perfumepoint.com.tr/dolce-gabbana-the-one-for-men-edp-100-ml-23072",
+     "note": "Yayılım 2/5 · çok güzel ama tene yakın",
+     "cid": 31909,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 9085
+      }
+     ]
+    },
+    {
+     "group": "İmza ve iş · dengeli",
+     "name": "Gentleman Society · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6402,
+     "u": "https://www.perfumepoint.com.tr/givenchy-gentleman-society-edp-100-ml",
+     "note": "Yayılım 3/5 · nergis, vetiver; beyefendi",
+     "cid": 78639
+    },
+    {
+     "group": "İmza ve iş · dengeli",
+     "name": "Phantom Parfum · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5740,
+     "u": "https://www.perfumepoint.com.tr/rabanne-phantom-parfum-edp-100-ml",
+     "note": "Yayılım 3/5 · kremsi lavanta",
+     "cid": 81927,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 7175
+      }
+     ]
+    },
+    {
+     "group": "İmza ve iş · dengeli",
+     "name": "Montblanc Explorer EDP · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5076,
+     "u": "https://www.perfumepoint.com.tr/montblanc-explorer-edp-100-ml",
+     "note": "Yayılım 3/5 · odunsu, modern",
+     "cid": 52002,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 6768
+      }
+     ]
+    },
+    {
+     "group": "İmza ve iş · dengeli",
+     "name": "Boss Bottled Parfum · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5029,
+     "u": "https://www.perfumepoint.com.tr/hugo-boss-bottled-parfum-100-ml",
+     "note": "Yayılım 3/5 · uygun fiyatlı iş kokusu",
+     "cid": 75183,
+     "alt": [
+      {
+       "shop": "beymen",
+       "p": 6705
+      }
+     ]
+    }
+   ],
+   "plans": [
+    {
+     "name": "Tekli 1 · Burak geldi: Le Male Elixir",
+     "why": "Bu listedeki en çok fark edilen koku; ilk istediğin Le Male ailesinden.",
+     "offers": [
+      0
+     ]
+    },
+    {
+     "name": "Tekli 2 · Burak geldi ama ciddi: Boss Bottled Absolu",
+     "why": "Yayılımı yüksek ve işe en uygun olan.",
+     "offers": [
+      2
+     ]
+    },
+    {
+     "name": "Tekli 3 · Güvenli imza: Bleu de Chanel EDP",
+     "why": "Yetkili mağazadan; iz bırakır ama bağırmaz.",
+     "offers": [
+      16
+     ]
+    },
+    {
+     "name": "Tekli 4 · En ucuz güçlü: Versace Eros EDP",
+     "why": "",
+     "offers": [
+      8
+     ]
+    },
+    {
+     "name": "Çiftli 1 · Önerim: Boss Bottled Absolu + Le Male Elixir",
+     "why": "İkisinin de yayılımı 4/5. Boss işe, Le Male Elixir akşama ve soğuk günlere.",
+     "offers": [
+      2,
+      0
+     ]
+    },
+    {
+     "name": "Çiftli 2 · Le Male Elixir + Montblanc Explorer",
+     "why": "Güçlü koku + sıcak günler için hafif odunsu.",
+     "offers": [
+      0,
+      25
+     ]
+    },
+    {
+     "name": "Çiftli 3 · Boss Bottled Absolu + Versace Eros EDP",
+     "why": "Ciddi + genç; en çok para kalan güçlü çift.",
+     "offers": [
+      2,
+      8
+     ]
+    },
+    {
+     "name": "Çiftli 4 · Stronger With You Absolutely + Boss Bottled Absolu",
+     "why": "",
+     "offers": [
+      4,
+      2
+     ]
+    },
+    {
+     "name": "Çiftli 5 · Le Male Elixir Absolu + Boss Bottled Parfum",
+     "why": "İlk istediğin Absolu + uygun fiyatlı iş kokusu.",
+     "offers": [
+      1,
+      26
+     ]
+    },
+    {
+     "name": "Çiftli 6 · Invictus Victory Elixir + Phantom Parfum",
+     "why": "İkisi de tatlı-vanilyalı; iş için ikisi de biraz genç.",
+     "offers": [
+      6,
+      24
+     ]
+    },
+    {
+     "name": "Çiftli 7 · Y EDP + Boss Bottled Absolu",
+     "why": "Gündüz enerjik, akşam ağır.",
+     "offers": [
+      17,
+      2
+     ]
+    }
+   ]
   }
  ]
 }
