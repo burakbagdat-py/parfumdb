@@ -160,6 +160,129 @@
      ]
     }
    ]
+  },
+  {
+   "id": "2026-10-12-imza",
+   "t": "2026-10-12T23:10:00+03:00",
+   "title": "İmza koku: EDP ve parfum önerileri",
+   "short": "Neden EDT önerdiğimi yazdım; imza koku için EDP / parfum yolları hazır.",
+   "body": [
+    "## Neden EDT önermiştim",
+    "İki sebebi vardı: o parfümlerin en ucuz bulduğum hali EDT'ydi, ve müşteriyle arabada çok vakit geçireceğini varsayıp hafif olanı seçtim. İkisi de senin durumuna tam oturmuyor: arabada görüşme az olacaksa ve imza koku istiyorsan EDP ya da parfum daha doğru. Daha uzun kalır, gün içinde tazelemen gerekmez, iz bırakır.",
+    "EDT'nin hâlâ mantıklı olduğu tek yer: çok sıcak yaz günleri. Onun için ayrı şişe almana gerek yok; aynı kokudan 1–2 fıs az sıkman yeter.",
+    "## İmza koku nasıl seçilir",
+    "İmza koku her gün, her mevsim, her ortamda sıkılabilen tek kokudur. Bu yüzden çok tatlı ya da çok ağır olmamalı. Le Male Elixir Absolu bu tanıma uymuyor: akşam ve soğuk hava kokusu, yazın gündüz ağır gelir. Onu “ikinci şişe” olarak düşün.",
+    "Emlakçı için imza adaylarım, sırayla: Bleu de Chanel EDP (odunsu-narenciyeli, ciddi ve temiz; yetkili mağazada), Terre d'Hermès Eau Intense Vétiver (olgun, güven veren), YSL Y EDP (genç ve enerjik), Acqua di Giò Profondo Parfum (ferah ama kalıcı), Boss Bottled Parfum (uygun fiyatlı, iş kokusu).",
+    "## Yollar",
+    "Aşağıda altı yol var. Toplam ve elinde kalan, bütçeni Ayarlar > Alışveriş'e yazdıysan her yolun altında görünür.",
+    "## Dikkat",
+    "Bu kokuları koklamadan öneriyorum; imza koku kişiseldir. Almadan önce bir mağazada (Sephora, Boyner, Beymen) teninde dene, en az iki saat bekle. Perfume Point yetkili zincir değil: gelince parti kodunu orijinallik testinden geçir. Bu mesajdaki ürünlerin stok durumuna tek tek bakmadım; fiyatlar 12 Ekim 2026 akşamı okundu, kargo dahil değil."
+   ],
+   "offers": [
+    {
+     "name": "Bleu de Chanel EDP · 100 ml",
+     "shop": "beymen",
+     "p": 8400,
+     "u": "https://www.beymen.com/tr/p_chanel-bleu-de-chanel-edp-spray-100ml_614436",
+     "note": "İmza adayı 1 · yetkili mağaza"
+    },
+    {
+     "name": "Bleu de Chanel Parfum · 100 ml",
+     "shop": "beymen",
+     "p": 10000,
+     "u": "https://www.beymen.com/tr/p_chanel-bleu-de-chanel-parfum-spray-100ml_614910",
+     "note": "Daha koyu ve kalıcı hali"
+    },
+    {
+     "name": "Terre d'Hermès Eau Intense Vétiver EDP · 100 ml",
+     "shop": "perfumepoint",
+     "p": 7155,
+     "u": "https://www.perfumepoint.com.tr/hermes-terre-d-17372",
+     "note": "İmza adayı 2 · olgun, odunsu"
+    },
+    {
+     "name": "YSL Y EDP · 100 ml",
+     "shop": "perfumepoint",
+     "p": 6685,
+     "u": "https://www.perfumepoint.com.tr/yves-saint-laurent-y-for-men-edp-100-ml",
+     "note": "İmza adayı 3 · enerjik"
+    },
+    {
+     "name": "Acqua di Giò Profondo Parfum · 100 ml",
+     "shop": "perfumepoint",
+     "p": 7665,
+     "u": "https://www.perfumepoint.com.tr/giorgio-armani-acqua-di-gio-homme-profondo-parfum-100-ml",
+     "note": "Ferah ama kalıcı"
+    },
+    {
+     "name": "Boss Bottled Parfum · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5029,
+     "u": "https://www.perfumepoint.com.tr/hugo-boss-bottled-parfum-100-ml",
+     "note": "Uygun fiyatlı iş kokusu"
+    },
+    {
+     "name": "Montblanc Explorer EDP · 100 ml",
+     "shop": "perfumepoint",
+     "p": 5076,
+     "u": "https://www.perfumepoint.com.tr/montblanc-explorer-edp-100-ml",
+     "note": "Odunsu, modern"
+    },
+    {
+     "name": "Le Male Elixir Absolu · 125 ml",
+     "shop": "perfumepoint",
+     "p": 7108,
+     "u": "https://www.perfumepoint.com.tr/jean-paul-gaultier-le-male-elixir-absolu-edp-125-ml",
+     "note": "Akşam ve soğuk hava"
+    }
+   ],
+   "plans": [
+    {
+     "name": "1 · Önerim: tek imza, yetkili mağazadan",
+     "why": "Bleu de Chanel EDP. Artan parayla sonra Elixir Absolu için biriktirirsin.",
+     "offers": [
+      0
+     ]
+    },
+    {
+     "name": "2 · İstediğin koku + iş imzası",
+     "why": "Elixir Absolu akşama, Boss Bottled Parfum her güne.",
+     "offers": [
+      7,
+      5
+     ]
+    },
+    {
+     "name": "3 · Olgun imza + uygun ikinci şişe",
+     "why": "Terre d'Hermès Eau Intense Vétiver imza, Boss Bottled Parfum yedek.",
+     "offers": [
+      2,
+      5
+     ]
+    },
+    {
+     "name": "4 · Genç ve enerjik ikili",
+     "why": "YSL Y EDP imza, Montblanc Explorer EDP değişiklik için.",
+     "offers": [
+      3,
+      6
+     ]
+    },
+    {
+     "name": "5 · Ferah imza, tek şişe",
+     "why": "Acqua di Giò Profondo Parfum; yaz-kış gider.",
+     "offers": [
+      4
+     ]
+    },
+    {
+     "name": "6 · Bleu de Chanel'in parfum hali",
+     "why": "Daha koyu ve kalıcı; tek şişe.",
+     "offers": [
+      1
+     ]
+    }
+   ]
   }
  ]
 }

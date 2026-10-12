@@ -66,6 +66,12 @@ public class Bridge {
     }
 
     @JavascriptInterface
+    public void listen(int reqId) {
+        if (!activity.trusted()) return;
+        activity.runOnUiThread(() -> activity.listen(reqId));
+    }
+
+    @JavascriptInterface
     public void pickSound(int reqId) {
         if (!activity.trusted()) return;
         activity.runOnUiThread(() -> activity.pickSound(reqId));

@@ -53,6 +53,8 @@ public class MainActivity extends Activity {
     private PermissionRequest cameraRequest;
     private static final int PERM_REQ = 8;
     private static final int SOUND_REQ = 9;
+    private static final int SPEECH_REQ = 10;
+    private int speechReqId = -1;
     static final String UA = "Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Mobile Safari/537.36";
 
     private WebView web;
@@ -629,6 +631,21 @@ public class MainActivity extends Activity {
         if (preview != null) preview.play();
     }
 
+    /** Speech to text through the phone's own recogniser window; the page gets {"text": "..."} or {}. */
+    void listen(int reqId) {
+        speechReqId = reqId;
+        Intent i = new Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                .putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                .putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE, "tr-TR")
+                .putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, "Sorunu söyle");
+        try {
+            startActivityForResult(i, SPEECH_REQ);
+        } catch (Exception e) {
+            speechReqId = -1;
+            deliver(reqId, "{\"error\":\"none\"}");
+        }
+    }
+
     void pickSound(int reqId) {
         soundReqId = reqId;
         Intent i = new Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
@@ -708,6 +725,16 @@ public class MainActivity extends Activity {
         if (code == FILE_REQ && fileCallback != null) {
             fileCallback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(result, data));
             fileCallback = null;
+        } else if (code == SPEECH_REQ && speechReqId >= 0) {
+            int id = speechReqId;
+            speechReqId = -1;
+            java.util.ArrayList<String> said = result == RESULT_OK && data != null
+                    ? data.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS) : null;
+            try {
+                deliver(id, said == null || said.isEmpty() ? "{}" : new JSONObject().put("text", said.get(0)).toString());
+            } catch (Exception e) {
+                deliver(id, "{}");
+            }
         } else if (code == SOUND_REQ && soundReqId >= 0) {
             int id = soundReqId;
             soundReqId = -1;

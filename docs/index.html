@@ -645,6 +645,12 @@ html.premium .dhead .dupe-row{justify-content:center}
 .msg h3{font-size:20px;line-height:1.2}
 .bubble{margin:0;padding:11px 14px;border-radius:6px 18px 18px 18px;background:var(--panel-2);font-size:14.5px;line-height:1.5;max-width:94%;align-self:flex-start}
 html.premium .bubble{background:var(--fill)}
+.bubble.me{align-self:flex-end;border-radius:18px 6px 18px 18px;background:color-mix(in srgb,var(--accent) 22%,transparent);display:flex;flex-direction:column;gap:4px}
+html.premium .bubble.me{background:var(--tint)}
+.bubble.me small{font-size:11px;color:var(--muted)}
+.bubble.me .linkbtn{font-size:11px;padding:0}
+.ask{display:flex;flex-direction:column;gap:8px}
+.ask textarea{resize:vertical;min-height:58px}
 .msg-new{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:7px;vertical-align:2px}
 .prow.offer{padding:10px 12px}
 .pchg{font:700 11px/1.5 var(--f-body);font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -3735,13 +3741,48 @@ async function loadInbox(){
 }
 const budgetLine = sum => { const b = +S.budget || 0; return !b ? '' : sum <= b ? `<span class="bud ok">Bütçen ${fmtPrice(b)}: yetiyor, ${fmtPrice(b - sum)} artıyor.</span>` : `<span class="bud no">Bütçen ${fmtPrice(b)}: ${fmtPrice(sum - b)} eksik.</span>`; };
 const safeUrl = u => /^https:\/\//.test(String(u)) ? String(u) : '#';
+// What the user writes back. There is no server behind the app, so a question cannot reach anyone by itself: it is kept
+// here as part of the thread and handed over when the user sends it, as a new issue on the app's GitHub page (public, read
+// at the next working session) or through the phone's share sheet. Answers come back as messages.
+const ASK_URL = 'https://github.com/burakbagdat-py/parfumdb/issues/new';
+const outbox = () => (S.outbox = S.outbox || []);
+function askBox(re){
+  const mine = outbox().filter(x => x.re === re);
+  return `${mine.map(x => `<div class="bubble me"><span>${esc(x.text)}</span><small>${esc(phDay(x.t))} · ${x.sent ? 'gönderildi' : 'gönderilmedi'}${x.sent ? '' : ` · <button class="linkbtn" data-act="asksend" data-id="${x.id}" type="button">Gönder</button>`} · <button class="linkbtn" data-act="askdel" data-id="${x.id}" type="button">Sil</button></small></div>`).join('')}
+    <div class="ask"><textarea class="input" id="ask-text" rows="2" placeholder="Cevap yaz ya da soru sor…" maxlength="1500"></textarea>
+      <div class="row" style="flex-wrap:nowrap"><button class="btn sm" data-act="askmic" type="button" aria-label="Sesle yaz">${MIC_SVG}Söyle</button>
+        <button class="btn sm primary" data-act="askgo" data-re="${esc(re)}" type="button" style="flex:1">Gönder</button>
+        <button class="btn sm ghost" data-act="askshare" data-re="${esc(re)}" type="button">Paylaş</button></div>
+      <span class="muted small">“Gönder” sorunu GitHub sayfasında yeni bir kayıt olarak açar; oradaki yeşil düğmeye basınca gider. Kayıt herkese açıktır: bakiye, telefon gibi özel bilgi yazma. Cevap, bir sonraki çalışma oturumunda buraya mesaj olarak gelir.</span></div>`;
+}
+const MIC_SVG = '<svg class="bi" style="display:block;width:18px;height:18px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/></svg>';
+function askKeep(re){
+  const i = document.getElementById('ask-text'), v = i ? i.value.trim() : '';
+  if (!v) { toast('Önce bir şey yaz ya da “Söyle”ye bas'); return null; }
+  const x = {id: uid(), t: Date.now(), re, text: v, sent: false};
+  outbox().push(x); save(); return x;
+}
+function askSend(x){
+  const m = INBOX.find(y => y.id === x.re);
+  openLink(ASK_URL + '?title=' + encodeURIComponent('Soru: ' + x.text.slice(0, 60)) + '&body=' + encodeURIComponent(x.text + (m ? '\n\n(Yanıtlanan mesaj: ' + m.title + ')' : '')));
+  x.sent = true; save();
+}
+async function askMic(){
+  const i = document.getElementById('ask-text'); if (!i) return;
+  const put = t => { i.value = (i.value.trim() ? i.value.trim() + ' ' : '') + t; i.focus(); };
+  if (NATIVE && NATIVE.listen) { const r = await nativeAsync('listen'); if (r && r.text) put(r.text); else toast(r && r.error ? 'Telefonda ses tanıma bulunamadı' : 'Bir şey duyamadım'); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast(NATIVE ? 'Sesle yazma uygulamanın v30 sürümüyle gelir; şimdilik klavyedeki mikrofonu kullan' : 'Bu tarayıcı sesle yazmayı desteklemiyor'); return; }
+  try { const r = new SR(); r.lang = 'tr-TR'; r.onresult = e => put(e.results[0][0].transcript); r.onerror = () => toast('Bir şey duyamadım'); r.start(); toast('Dinliyorum…'); } catch (e) { toast('Sesle yazma açılamadı'); }
+}
 function openInbox(){
   sheetMode = 'inbox';
   const f = openOverlay();
   f.innerHTML = `<div class="row spread"><h2>Mesajlar</h2>${closeIcon}</div>
     ${INBOX.length ? `<div class="list">${INBOX.map(m => `<button class="item" data-act="msg" data-id="${esc(m.id)}" type="button" style="grid-template-columns:minmax(0,1fr) auto">
       <div class="item-body"><span class="item-name">${inboxSeen().includes(m.id) ? '' : '<span class="msg-new"></span>'}${esc(m.title)}</span><span class="item-meta">${esc(phDay(new Date(m.t).getTime()))} · ${esc(m.short || '')}</span></div>${ICONS.chev}</button>`).join('')}</div>`
-      : '<div class="empty">Henüz mesaj yok.</div>'}`;
+      : '<div class="empty">Henüz mesaj yok.</div>'}
+    <span class="label">Yeni soru</span>${askBox('')}`;
 }
 function openMsg(id){
   const m = INBOX.find(x => x.id === id); if (!m) return;
@@ -3770,7 +3811,8 @@ function openMsg(id){
     ${picks.length > 1 ? `<div class="box" style="gap:6px"><div class="row spread"><span>Önerdiklerimin toplamı</span><b>${fmtPrice(sum)}</b></div>
       ${budgetLine(sum) || '<span class="muted small">Bütçeni Ayarlar > Alışveriş’e yazarsan yetip yetmediğini burada görürsün.</span>'}
       ${S.budget ? picks.map(o => `<span class="muted small">Yalnız ${esc(o.name)}: ${+o.p <= S.budget ? fmtPrice(S.budget - o.p) + ' artar' : fmtPrice(o.p - S.budget) + ' eksik'}</span>`).join('') : ''}
-      <div class="row"><button class="btn sm" data-act="gosub" data-sub="alisveris" type="button">Bütçemi ayarla</button></div></div>` : ''}`;
+      <div class="row"><button class="btn sm" data-act="gosub" data-sub="alisveris" type="button">Bütçemi ayarla</button></div></div>` : ''}
+    <span class="label">Sen</span>${askBox(id)}`;
 }
 window.onNativeOpen = () => {
   if (!S) return; adoptNativeBatch();
@@ -5776,6 +5818,11 @@ document.addEventListener('click', async e => {
     case 'pricesize': if (priceState) { priceState.ml = priceState.userMl = +t.dataset.ml; drawPrices(); } break;
     case 'priceconc': if (priceState && priceState.data) { pickConc(priceState.data, t.dataset.v, priceState.p); priceState.ml = priceState.userMl = null; drawPrices(); } break;
     case 'inbox': openInbox(); break;
+    case 'askmic': await askMic(); break;
+    case 'askgo': { const x = askKeep(t.dataset.re); if (x) { askSend(x); if (x.re) openMsg(x.re); else openInbox(); } break; }
+    case 'askshare': { const x = askKeep(t.dataset.re); if (!x) break; if (NATIVE && NATIVE.shareText) nativeCall('shareText', x.text); else if (navigator.share) navigator.share({text: x.text}).catch(() => {}); else { try { await navigator.clipboard.writeText(x.text); toast('Panoya kopyalandı'); } catch (e) {} } x.sent = true; save(); if (x.re) openMsg(x.re); else openInbox(); break; }
+    case 'asksend': { const x = outbox().find(y => y.id === t.dataset.id); if (x) { askSend(x); if (x.re) openMsg(x.re); else openInbox(); } break; }
+    case 'askdel': { const x = outbox().find(y => y.id === t.dataset.id); S.outbox = outbox().filter(y => y.id !== t.dataset.id); save(); if (x && x.re) openMsg(x.re); else openInbox(); break; }
     case 'msg': openMsg(t.dataset.id); break;
     case 'pricenow': if (priceState) { const p = priceState.p, m = document.getElementById('price-meta'); if (m) m.textContent = 'yenileniyor…'; await loadPricesInto(p, true); if (document.getElementById('price-meta') && priceState && priceState.p === p) drawPrices(); } break;
     case 'moves': openMoves(); break;
